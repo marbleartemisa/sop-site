@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Producción - SOP</title>
+<title>ARTEMISA MARBLE & CABINETS - SOP</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 
 <style>
+/* ===== FONDO ===== */
 body{
   margin:0;
   font-family:'Segoe UI',Arial,sans-serif;
@@ -19,7 +20,7 @@ body{
   min-height:100vh;
 }
 
-/* NAVBAR */
+/* ===== NAVBAR ===== */
 .navbar{
   position:sticky;
   top:0;
@@ -63,7 +64,7 @@ body{
   cursor:pointer;
 }
 
-/* BANNER */
+/* ===== BANNER ===== */
 .banner{
   text-align:center;
   padding:60px 20px 20px 20px;
@@ -78,8 +79,37 @@ body{
   font-size:1.1rem;
   opacity:0.9;
 }
+.cta-btn{
+  display:inline-block;
+  margin-top:20px;
+  padding:12px 28px;
+  border-radius:30px;
+  background:linear-gradient(135deg,#0072C6,#005a9e);
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  transition:.3s;
+}
+.cta-btn:hover{
+  transform:scale(1.05);
+}
 
-/* TARJETAS */
+/* ===== BUSCADOR ===== */
+.search-container{
+  text-align:center;
+  margin:30px 20px;
+}
+.search-container input{
+  width:90%;
+  max-width:500px;
+  padding:14px 18px;
+  border-radius:30px;
+  border:none;
+  font-size:1rem;
+  outline:none;
+}
+
+/* ===== TARJETAS ===== */
 .container{
   max-width:1100px;
   margin:40px auto 60px auto;
@@ -103,31 +133,22 @@ body{
   opacity:0;
   transform:translateY(30px);
 }
-.card:hover{
-  transform:translateY(-8px);
-  box-shadow:0 20px 45px rgba(0,0,0,0.4);
+.card i{
+  font-size:28px;
+  margin-bottom:10px;
+  display:block;
+  color:#005a9e;
 }
 .card.show{
   opacity:1;
   transform:translateY(0);
 }
-
-/* BUSCADOR */
-.search-container{
-  text-align:center;
-  margin:30px 20px;
-}
-.search-container input{
-  width:90%;
-  max-width:500px;
-  padding:14px 18px;
-  border-radius:30px;
-  border:none;
-  font-size:1rem;
-  outline:none;
+.card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 20px 45px rgba(0,0,0,0.4);
 }
 
-/* VIDEOS */
+/* ===== VIDEOS ===== */
 .video-section{
   max-width:1100px;
   margin:40px auto;
@@ -145,7 +166,7 @@ body{
   object-fit:cover;
 }
 
-/* CARRUSEL */
+/* ===== CARRUSEL ===== */
 .carousel{
   width:100%;
   max-width:700px;
@@ -175,7 +196,7 @@ body{
   100%{transform:translateX(-50%);}
 }
 
-/* FOOTER */
+/* ===== FOOTER ===== */
 .footer{
   text-align:center;
   padding:30px;
@@ -184,7 +205,7 @@ body{
   background:#003366;
 }
 
-/* RESPONSIVE */
+/* ===== RESPONSIVE ===== */
 @media(max-width:768px){
   .banner h1{ font-size:1.8rem; }
   .banner p{ font-size:0.9rem; }
@@ -232,21 +253,28 @@ body{
 
 <!-- BANNER -->
 <div class="banner">
-<h1>Producción - SOP</h1>
-<p>Gestión de Procedimientos Operativos Estándar</p>
+<h1>BIENVENIDO AL PORTAL DE PROCEDIMIENTOS OPERATIVOS ESTÁNDAR</h1>
+<p>(SOP)</p>
+<p>ARTEMISA MARBLE & CABINETS</p>
+<p>830 W 19TH ST, HIALEAH, FL 33010</p>
+<p>Tel: 305-884-1223</p>
+<a href="#cardContainer" class="cta-btn">Ver SOP</a>
 </div>
 
 <!-- BUSCADOR -->
 <div class="search-container">
-<input type="text" id="searchInput" placeholder="Buscar SOP..." onkeyup="filterCards()">
+<input type="text" id="searchInput" placeholder="Buscar departamento..." onkeyup="filterCards()">
 </div>
 
-<!-- TARJETAS DE SOP -->
+<!-- TARJETAS -->
 <div class="container" id="cardContainer">
-<a href="SOP-CARPINTERIA-COMPRA-STOCK/" class="card">📄 Compra por Stock Mínimo</a>
-<a href="SOP-COMPRA-EDGEBANDING/" class="card">📄 Compra de Edgebanding</a>
-<a href="SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/" class="card">📄 Cuidado de Herramientas de Carpintería</a>
-<a href="SOP-NIVELES-INICIALES/" class="card">📄 Niveles Iniciales</a>
+<a href="/sop-site/comercial/index.html" class="card"><i class="fa-solid fa-chart-line"></i>Comercial</a>
+<a href="/sop-site/produccion/index.html" class="card"><i class="fa-solid fa-industry"></i>Producción</a>
+<a href="/sop-site/instalacion/index.html" class="card"><i class="fa-solid fa-screwdriver-wrench"></i>Instalación</a>
+<a href="/sop-site/administracion/index.html" class="card"><i class="fa-solid fa-briefcase"></i>Administración</a>
+<a href="/sop-site/maquinarias/index.html" class="card"><i class="fa-solid fa-gears"></i>Maquinarias</a>
+<a href="/sop-site/vehiculos/index.html" class="card"><i class="fa-solid fa-truck"></i>Vehículos</a>
+<a href="/sop-site/houzz-pro/index.html" class="card"><i class="fa-solid fa-house"></i>Houzz Pro</a>
 </div>
 
 <!-- VIDEOS -->
