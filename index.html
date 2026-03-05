@@ -10,6 +10,67 @@
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 
 <style>
+
+/* MENU NORMAL */
+.menu{
+display:flex;
+gap:25px;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+/* BOTON HAMBURGUESA */
+.menu-toggle{
+display:none;
+font-size:24px;
+cursor:pointer;
+color:white;
+}
+
+/* VERSION MOVIL */
+@media(max-width:768px){
+
+.menu{
+display:none;
+position:absolute;
+top:60px;
+left:0;
+width:100%;
+background:rgba(0,0,0,0.85);
+flex-direction:column;
+text-align:center;
+padding:20px 0;
+}
+
+.menu a{
+display:block;
+padding:12px;
+border-top:1px solid rgba(255,255,255,0.1);
+}
+
+.menu-toggle{
+display:block;
+}
+
+.menu.active{
+display:flex;
+}
+
+}
+
+<script>
+
+function toggleMenu(){
+let menu=document.getElementById("menu")
+menu.classList.toggle("active")
+}
+
+</script>
+
 /* ===== FONDO ===== */
 body{
   margin:0;
@@ -221,15 +282,25 @@ body{
 
 <!-- NAVBAR -->
 <div class="navbar">
-  <div class="logo">
-    <img src="/sop-site/logo.png" alt="Logo Artemisa">
-    <span>ARTEMISA MARBLE & CABINETS</span>
-  </div>
-  <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
-  </div>
+
+<div class="logo">
+ARTEMISA SOP
+</div>
+
+<!-- BOTON HAMBURGUESA -->
+<div class="menu-toggle" onclick="toggleMenu()">
+<i class="fa-solid fa-bars"></i>
+</div>
+
+<!-- MENU -->
+<div class="menu" id="menu">
+
+<a href="/sop-site/">Inicio</a>
+<a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+<a href="/sop-site/registrar-sop/">Registrar SOP</a>
+
+</div>
+
 </div>
 
 <!-- BANNER -->
