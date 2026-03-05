@@ -3,136 +3,217 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Comercial - ARTEMISA MARBLE & CABINETS</title>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background-color: #f4f6f9;
+
+body{
+margin:0;
+font-family:'Segoe UI',Arial,sans-serif;
+background:#f4f6f9;
 }
 
-.overlay {
-    min-height: 100vh;
-    padding: 0 20px;
+/* NAVBAR */
+.navbar{
+position:sticky;
+top:0;
+background:#003366;
+padding:12px 30px;
+color:white;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:999;
 }
 
-/* Banner */
-.banner {
-    text-align: center;
-    padding: 40px 20px 20px 20px;
-    background: linear-gradient(to right, #0072C6, #005a9e);
-    color: white;
-    border-radius: 12px;
-    margin-top: 20px;
+.navbar a{
+color:white;
+text-decoration:none;
+margin-left:20px;
+font-weight:600;
 }
 
-.banner h1 {
-    margin: 0;
-    font-size: 2.2rem;
+.navbar a:hover{
+opacity:0.8;
 }
 
-.banner p {
-    margin: 5px 0;
-    font-size: 1rem;
-    opacity: 0.9;
+/* BANNER */
+.banner{
+text-align:center;
+padding:40px 20px;
+background:linear-gradient(to right,#0072C6,#005a9e);
+color:white;
 }
 
-/* Botón volver al inicio */
-.home-btn {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 25px;
-    border-radius: 25px;
-    background: #003366;
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.3s;
+.banner h1{
+margin:0;
+font-size:2.2rem;
 }
 
-.home-btn:hover {
-    opacity: 0.9;
+.banner p{
+margin:5px 0;
+opacity:0.9;
 }
 
-/* Buscador interno */
-.search-container {
-    text-align: center;
-    margin: 25px 0;
+/* BOTON HOME */
+.home-btn{
+display:inline-block;
+margin-top:15px;
+padding:10px 25px;
+border-radius:25px;
+background:#003366;
+color:white;
+text-decoration:none;
+font-weight:bold;
 }
 
-.search-container input {
-    width: 90%;
-    max-width: 400px;
-    padding: 12px 16px;
-    border-radius: 30px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    outline: none;
+/* BUSCADOR */
+.search-container{
+text-align:center;
+margin:30px 0;
 }
 
-/* Contenedor tarjetas SOP */
-.container {
-    max-width: 900px;
-    margin: 0 auto 50px auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
+.search-container input{
+width:90%;
+max-width:450px;
+padding:12px 18px;
+border-radius:30px;
+border:1px solid #ccc;
+font-size:1rem;
+outline:none;
 }
 
-/* Tarjetas SOP */
-.card {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    text-decoration: none;
-    color: #1f2937;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
+/* CONTENEDOR SOP */
+.container{
+max-width:900px;
+margin:auto;
+padding:10px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:20px;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+/* TARJETAS */
+.card{
+background:white;
+border-radius:15px;
+padding:22px;
+text-align:center;
+text-decoration:none;
+color:#1f2937;
+font-weight:600;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+transition:0.3s;
 }
+
+.card i{
+font-size:24px;
+margin-bottom:10px;
+display:block;
+color:#005a9e;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 15px 35px rgba(0,0,0,0.25);
+}
+
+/* FOOTER */
+.footer{
+text-align:center;
+margin-top:60px;
+padding:25px;
+background:#003366;
+color:white;
+}
+
 </style>
 </head>
 
 <body>
-<div class="overlay">
 
-<!-- Banner -->
+<!-- NAVBAR GLOBAL -->
+<div class="navbar">
+
+<div>
+ARTEMISA SOP
+</div>
+
+<div>
+<a href="/sop-site/">Inicio</a>
+<a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+<a href="/sop-site/registrar-sop/">Registrar SOP</a>
+</div>
+
+</div>
+
+<!-- BANNER -->
 <div class="banner">
-    <h1>Comercial - ARTEMISA MARBLE & CABINETS</h1>
-    <p>Procedimientos y SOP del departamento Comercial</p>
-    <a href="../index.html" class="home-btn">⬅ Volver al Menú Principal</a>
+
+<h1>Departamento Comercial</h1>
+<p>Procedimientos Operativos Estándar</p>
+
+<a href="/sop-site/" class="home-btn">
+⬅ Volver al Menú Principal
+</a>
+
 </div>
 
-<!-- Buscador SOP -->
+<!-- BUSCADOR -->
 <div class="search-container">
-    <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Buscar SOP...">
+
+<input type="text"
+id="searchInput"
+onkeyup="filterCards()"
+placeholder="Buscar SOP del departamento comercial">
+
 </div>
 
-<!-- Contenedor SOP -->
+<!-- CONTENEDOR SOP -->
 <div class="container" id="cardContainer">
-    <a href="SOP PARA COTIZACIÓN DE VENTAS rev 1-.html" class="card">📄 Cotización de Ventas</a>
-    <a href="SOP SALES CONSULTANT1.html" class="card">📄 Sales Consultant</a>
+
+<a href="SOP PARA COTIZACIÓN DE VENTAS rev 1-.html" class="card">
+<i class="fa-solid fa-file-lines"></i>
+Cotización de Ventas
+</a>
+
+<a href="SOP SALES CONSULTANT1.html" class="card">
+<i class="fa-solid fa-user-tie"></i>
+Sales Consultant
+</a>
+
 </div>
+
+<!-- FOOTER -->
+<div class="footer">
+
+ARTEMISA MARBLE & CABINETS  
+830 W 19TH ST HIALEAH FL  
 
 </div>
 
 <script>
-function filterCards() {
-    let input = document.getElementById("searchInput").value.toLowerCase();
-    let cards = document.querySelectorAll(".card");
-    cards.forEach(card => {
-        let text = card.textContent.toLowerCase();
-        card.style.display = text.includes(input) ? "block" : "none";
-    });
+
+function filterCards(){
+
+let input=document.getElementById("searchInput").value.toLowerCase()
+
+let cards=document.querySelectorAll(".card")
+
+cards.forEach(card=>{
+
+let text=card.textContent.toLowerCase()
+
+card.style.display=text.includes(input)?"block":"none"
+
+})
+
 }
+
 </script>
 
 </body>
