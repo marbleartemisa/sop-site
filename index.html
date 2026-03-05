@@ -6,258 +6,325 @@
 <title>ARTEMISA MARBLE & CABINETS - SOP</title>
 
 <style>
-/* ==== Background y overlay ==== */
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: url('Luxury.MAINPIC.210404.jpg') no-repeat center top;
-    background-size: cover;
-    background-color: #f4f6f9;
+
+/* ==== Background ==== */
+
+body{
+margin:0;
+font-family:'Segoe UI',Arial,sans-serif;
+background:url('Luxury.MAINPIC.210404.jpg') no-repeat center top;
+background-size:cover;
+background-color:#f4f6f9;
 }
 
-.overlay {
-    background: rgba(0,0,0,0.65);
-    min-height: 100vh;
+/* overlay menos oscuro */
+
+.overlay{
+background:rgba(0,0,0,0.25);
+min-height:100vh;
 }
+
 
 /* ==== Barra superior ==== */
-.navbar {
-    padding: 20px 40px;
-    color: white;
-    font-weight: bold;
-    letter-spacing: 1px;
-    font-size: 1rem;
+
+.navbar{
+padding:20px 40px;
+color:white;
+font-weight:bold;
+letter-spacing:1px;
+font-size:1rem;
 }
+
 
 /* ==== Banner ==== */
-.banner {
-    text-align: center;
-    padding: 50px 20px 20px 20px;
-    color: white;
+
+.banner{
+text-align:center;
+padding:50px 20px 20px 20px;
+color:white;
 }
 
-.banner h1 {
-    margin: 0;
-    font-size: 2.8rem;
+.banner h1{
+margin:0;
+font-size:2.8rem;
 }
 
-.banner p {
-    margin: 5px 0;
-    font-size: 1.1rem;
-    opacity: 0.9;
+.banner p{
+margin:5px 0;
+font-size:1.1rem;
+opacity:0.9;
 }
 
-.banner .cta-btn {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 12px 28px;
-    border-radius: 30px;
-    background: linear-gradient(135deg, #0072C6, #005a9e);
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.3s;
+.banner .cta-btn{
+display:inline-block;
+margin-top:20px;
+padding:12px 28px;
+border-radius:30px;
+background:linear-gradient(135deg,#0072C6,#005a9e);
+color:white;
+text-decoration:none;
+font-weight:bold;
+transition:0.3s;
 }
 
-.banner .cta-btn:hover {
-    opacity: 0.9;
+.banner .cta-btn:hover{
+opacity:0.9;
 }
+
 
 /* ==== Buscador ==== */
-.search-container {
-    text-align: center;
-    margin: 30px 20px;
+
+.search-container{
+text-align:center;
+margin:30px 20px;
 }
 
-.search-container input {
-    width: 90%;
-    max-width: 500px;
-    padding: 14px 18px;
-    border-radius: 30px;
-    border: none;
-    font-size: 1rem;
-    outline: none;
+.search-container input{
+width:90%;
+max-width:500px;
+padding:14px 18px;
+border-radius:30px;
+border:none;
+font-size:1rem;
+outline:none;
 }
 
-/* ==== Carrusel ==== */
-.carousel {
-    width: 100%;
-    max-width: 1200px;
-    margin: 40px auto;
-    overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+
+/* ==== Tarjetas ==== */
+
+.container{
+max-width:1100px;
+margin:40px auto 60px auto;
+padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
 }
 
-.slides {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
+.card{
+background:rgba(255,255,255,0.95);
+backdrop-filter:blur(8px);
+border-radius:18px;
+padding:30px 20px;
+text-align:center;
+text-decoration:none;
+color:#1f2937;
+font-weight:600;
+font-size:1.1rem;
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
+transition:all 0.3s ease;
 }
 
-.slides img {
-    width: 100%;
-    flex-shrink: 0;
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 20px 45px rgba(0,0,0,0.4);
 }
 
-/* ==== Tarjetas departamentos ==== */
-.container {
-    max-width: 1100px;
-    margin: 40px auto 60px auto;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 25px;
+
+/* ==== Videos ==== */
+
+.video-section{
+max-width:1100px;
+margin:40px auto;
+padding:0 20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
 }
 
-.card {
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(8px);
-    border-radius: 18px;
-    padding: 30px 20px;
-    text-align: center;
-    text-decoration: none;
-    color: #1f2937;
-    font-weight: 600;
-    font-size: 1.1rem;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
+.video-section iframe,
+.video-section video{
+width:100%;
+height:200px;
+border-radius:15px;
+border:none;
+object-fit:cover;
 }
 
-.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+
+/* ==== Carrusel NUEVO ==== */
+
+.carousel{
+width:100%;
+max-width:600px;
+margin:40px auto;
+overflow:hidden;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
 
-/* ==== Videos SOP ==== */
-.video-section {
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 0 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
-    gap: 20px;
+.slides{
+display:flex;
+animation:scroll 40s linear infinite;
 }
 
-.video-section iframe {
-    width: 100%;
-    height: 200px;
-    border-radius: 15px;
-    border: none;
+.slides img{
+width:250px;
+height:180px;
+object-fit:cover;
+margin-right:10px;
+border-radius:10px;
 }
+
+@keyframes scroll{
+0%{transform:translateX(0);}
+100%{transform:translateX(-50%);}
+}
+
 
 /* ==== Footer ==== */
-.footer {
-    text-align: center;
-    padding: 30px;
-    color: white;
-    opacity: 0.8;
-    background: #003366;
+
+.footer{
+text-align:center;
+padding:30px;
+color:white;
+opacity:0.8;
+background:#003366;
 }
 
-/* ==== Ajustes móviles ==== */
-@media (max-width: 768px) {
-    body {
-        background-size: cover;
-        background-position: center top;
-    }
-    .slides img {
-        height: auto;
-    }
+
+/* ==== Móvil ==== */
+
+@media(max-width:768px){
+
+.slides img{
+width:200px;
+height:150px;
 }
+
+}
+
 </style>
 </head>
 
 <body>
+
 <div class="overlay">
 
-<!-- Barra superior -->
+<!-- Navbar -->
+
 <div class="navbar">
-    ARTEMISA MARBLE & CABINETS
+ARTEMISA MARBLE & CABINETS
 </div>
 
-<!-- Banner principal -->
+
+<!-- Banner -->
+
 <div class="banner">
-    <h1>Manual Corporativo de SOP</h1>
-    <p>830 W 19TH ST, HIALEAH, FL 33010</p>
-    <p>Tel: 305-884-1223</p>
-    <a href="#cardContainer" class="cta-btn">Ver SOP</a>
+
+<h1>Manual Corporativo de SOP</h1>
+
+<p>830 W 19TH ST, HIALEAH, FL 33010</p>
+
+<p>Tel: 305-884-1223</p>
+
+<a href="#cardContainer" class="cta-btn">Ver SOP</a>
+
 </div>
 
-<!-- Buscador departamentos -->
+
+<!-- Buscador -->
+
 <div class="search-container">
-    <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Buscar departamento...">
+
+<input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Buscar departamento...">
+
 </div>
 
 
-<!-- Tarjetas de departamentos -->
+<!-- Tarjetas -->
+
 <div class="container" id="cardContainer">
-    <a href="comercial/index.html" class="card">📄 Comercial</a>
-    <a href="produccion/index.html" class="card">⚙️ Producción</a>
-    <a href="instalacion/index.html" class="card">🔧 Instalación</a>
-    <a href="administracion/index.html" class="card">📊 Administración</a>
-    <a href="maquinarias/index.html" class="card">🏗️ Maquinarias</a>
-    <a href="vehiculos/index.html" class="card">🚗 Vehículos</a>
-    <a href="houzz-pro/index.html" class="card">🏠 Houzz Pro</a>
+
+<a href="comercial/index.html" class="card">📄 Comercial</a>
+
+<a href="produccion/index.html" class="card">⚙️ Producción</a>
+
+<a href="instalacion/index.html" class="card">🔧 Instalación</a>
+
+<a href="administracion/index.html" class="card">📊 Administración</a>
+
+<a href="maquinarias/index.html" class="card">🏗️ Maquinarias</a>
+
+<a href="vehiculos/index.html" class="card">🚗 Vehículos</a>
+
+<a href="houzz-pro/index.html" class="card">🏠 Houzz Pro</a>
+
 </div>
 
-<!-- Sección videos SOP -->
+
+<!-- Videos -->
+
 <div class="video-section">
-    <iframe src="seleccion video 5.MP4" allowfullscreen></iframe>
-    <iframe src="https://www.youtube.com/watch?v=ZaGJEKPt-A0&t=4s" allowfullscreen></iframe>
-    <iframe src="seleccion video super 1.mp4" allowfullscreen></iframe>
+
+<video autoplay muted loop playsinline>
+<source src="seleccion video 5.MP4" type="video/mp4">
+</video>
+
+<iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
+
+<video autoplay muted loop playsinline>
+<source src="seleccion video super 1.mp4" type="video/mp4">
+</video>
+
 </div>
 
-	<!-- Carrusel de imágenes -->
+
+<!-- Carrusel -->
+
 <div class="carousel">
-    <div class="slides">
-    <img src="ABQM0471.jpg" alt="Proyecto 1">
-    <img src="outlet.jpg" alt="Proyecto 2">
-    <img src="VanitiesBath.jpg" alt="Proyecto 3">
-	<img src="IMG_2393.jpg" alt="Proyecto 4">
-	<img src="IHCH5272.jpg" alt="Proyecto 5">
-	<img src="wall1.jpg" alt="Proyecto 6">
-	<img src="IMG_4646.jpg" alt="Proyecto 7">
-	<img src="Kitchen.jpg" alt="Proyecto 8">
-	<img src="HOPE1380.jpg" alt="Proyecto 9">
-	<img src="JXUQ9396.jpg" alt="Proyecto 10">
-	<img src="POHQ5752.jpg" alt="Proyecto 11">
-	<img src="wall2.jpg" alt="Proyecto 12">
-    </div>
+
+<div class="slides">
+
+<img src="ABQM0471.jpg" alt="">
+<img src="outlet.jpg" alt="">
+<img src="VanitiesBath.jpg" alt="">
+<img src="IMG_2393.jpg" alt="">
+<img src="IHCH5272.jpg" alt="">
+<img src="wall1.jpg" alt="">
+<img src="IMG_4646.jpg" alt="">
+<img src="Kitchen.jpg" alt="">
+<img src="HOPE1380.jpg" alt="">
+<img src="JXUQ9396.jpg" alt="">
+<img src="POHQ5752.jpg" alt="">
+<img src="wall2.jpg" alt="">
+
 </div>
+
+</div>
+
 
 <!-- Footer -->
+
 <div class="footer">
-    © 2026 ARTEMISA MARBLE & CABINETS | 830 W 19TH ST, HIALEAH, FL 33010 | Tel: 305-884-1223
-</div>
+
+© 2026 ARTEMISA MARBLE & CABINETS | 830 W 19TH ST, HIALEAH, FL 33010 | Tel: 305-884-1223
 
 </div>
 
-<!-- Scripts -->
+</div>
+
+
 <script>
-function filterCards() {
-    let input = document.getElementById("searchInput").value.toLowerCase();
-    let cards = document.querySelectorAll(".card");
-    cards.forEach(card => {
-        let text = card.textContent.toLowerCase();
-        card.style.display = text.includes(input) ? "block" : "none";
-    });
+
+function filterCards(){
+
+let input=document.getElementById("searchInput").value.toLowerCase();
+
+let cards=document.querySelectorAll(".card");
+
+cards.forEach(card=>{
+
+let text=card.textContent.toLowerCase();
+
+card.style.display=text.includes(input)?"block":"none";
+
+});
+
 }
 
-/* Carrusel automático */
-let index = 0;
-const slides = document.querySelector('.slides');
-const total = slides.children.length;
-setInterval(() => {
-    index++;
-    if(index >= total) index = 0;
-    slides.style.transform = `translateX(-${index*100}%)`;
-}, 4000);
 </script>
 
 </body>
 
 </html>
-
-
-
-
