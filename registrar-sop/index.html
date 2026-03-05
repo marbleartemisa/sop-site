@@ -3,29 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registrar SOP - Artemisa Marble & Cabinets</title>
+<title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
-body { margin:0; font-family:'Segoe UI',Arial,sans-serif; background:#f0f0f0; }
-.container { max-width:700px; margin:50px auto; padding:20px; background:white; border-radius:15px; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
-h1 { text-align:center; color:#005a9e; }
-form { display:flex; flex-direction:column; gap:15px; }
-input, textarea, select, button { padding:12px; border-radius:8px; border:1px solid #ccc; font-size:1rem; width:100%; }
-button { background:#0072C6; color:white; border:none; cursor:pointer; transition:0.3s; font-weight:bold; }
-button:hover { background:#005a9e; }
+body{
+  margin:0;
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:#f0f0f0;
+}
+.navbar{
+  position:sticky;
+  top:0;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(8px);
+  padding:10px 40px;
+  color:white;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.navbar .logo img{
+  height:40px;
+  width:auto;
+}
+.navbar .menu a{
+  color:white;
+  text-decoration:none;
+  margin-left:25px;
+  font-weight:bold;
+  transition:0.3s;
+}
+.navbar .menu a:hover{
+  color:#00aaff;
+  transform:scale(1.05);
+}
+.container{
+  max-width:800px;
+  margin:50px auto;
+  background:white;
+  padding:30px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+h1{ text-align:center; margin-bottom:20px;}
+input, textarea, button{
+  width:100%;
+  margin:8px 0;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:1rem;
+}
+button{
+  background:#0072C6;
+  color:white;
+  font-weight:bold;
+  border:none;
+  cursor:pointer;
+  transition:.3s;
+}
+button:hover{
+  background:#005a9e;
+}
 </style>
 </head>
 <body>
 
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <img src="../logo.png" alt="Logo Artemisa">
+    <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+  <div class="menu">
+    <a href="../index.html">Inicio</a>
+    <a href="index.html">Registrar SOP</a>
+    <a href="../biblioteca/index.html">Biblioteca SOP</a>
+  </div>
+</div>
+
+<!-- FORMULARIO -->
 <div class="container">
-<h1>Registrar Nuevo SOP</h1>
-<form action="https://docs.google.com/forms/d/e/YOUR_GOOGLE_FORM_ID/formResponse" method="POST" target="_blank">
-  <input type="text" name="entry.123456789" placeholder="Nombre del SOP" required>
-  <input type="text" name="entry.987654321" placeholder="Departamento" required>
-  <textarea name="entry.1122334455" rows="6" placeholder="Descripción / Requerimientos" required></textarea>
-  <input type="url" name="entry.5566778899" placeholder="Enlace a archivos (si aplica)">
-  <button type="submit">Enviar SOP</button>
-</form>
+  <h1>Registrar Nuevo SOP</h1>
+  <form>
+    <input type="text" name="departamento" placeholder="Departamento">
+    <input type="text" name="titulo" placeholder="Título del SOP">
+    <textarea name="descripcion" rows="6" placeholder="Descripción / Especificaciones"></textarea>
+    <button type="submit">Enviar</button>
+  </form>
 </div>
 
 </body>
