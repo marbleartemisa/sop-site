@@ -1,72 +1,53 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Biblioteca SOP - ARTEMISA MARBLE & CABINETS</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <img src="/sop-site/logo.png" alt="Logo Artemisa"> <!-- Logo -->
+    <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+  <div class="menu">
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+  </div>
+</div>
 
 <style>
-body{
-  margin:0;
-  font-family:'Segoe UI',Arial,sans-serif;
-  background:#f0f0f0;
+/* Fuente del menú */
+@import url('https://fonts.googleapis.com/css2?family=Nuevo&display=swap');
+
+.navbar {
+  position: sticky;
+  top: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(8px);
+  padding: 10px 40px;
+  color: white;
+  font-family: 'Nuevo', 'Segoe UI', Arial, sans-serif;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-size: 1rem;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.navbar{
-  position:sticky;
-  top:0;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(8px);
-  padding:10px 40px;
-  color:white;
-  font-weight:bold;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+
+.navbar .logo img {
+  height: 40px;
+  width: auto;
 }
-.navbar .logo img{
-  height:40px;
-  width:auto;
+
+.navbar .menu a {
+  color: white;
+  text-decoration: none;
+  margin-left: 25px;
+  font-weight: bold;
+  transition: 0.3s;
 }
-.navbar .menu a{
-  color:white;
-  text-decoration:none;
-  margin-left:25px;
-  font-weight:bold;
-  transition:0.3s;
-}
-.navbar .menu a:hover{
-  color:#00aaff;
-  transform:scale(1.05);
-}
-.container{
-  max-width:1000px;
-  margin:50px auto;
-  background:white;
-  padding:30px;
-  border-radius:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
-h1{ text-align:center; margin-bottom:20px;}
-.sop-list{
-  list-style:none;
-  padding:0;
-}
-.sop-list li{
-  padding:12px 15px;
-  border-bottom:1px solid #ccc;
-  font-weight:bold;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.sop-list li a{
-  text-decoration:none;
-  color:#0072C6;
-  transition:.3s;
-}
-.sop-list li a:hover{
-  color:#005a9e;
+
+.navbar .menu a:hover {
+  color: #00aaff;
+  transform: scale(1.05);
 }
 </style>
 </head>
