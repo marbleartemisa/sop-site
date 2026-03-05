@@ -9,12 +9,13 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: url('Luxury.MAINPIC.175106.jpg') no-repeat center center fixed;
-    background-size: cover;
+    background: url('Luxury.MAINPIC.210404.jpg') no-repeat center top;
+    background-size: contain;       /* Ajusta la imagen sin deformar */
+    background-color: #f4f6f9;     /* Color de respaldo si no llena todo */
 }
 
 .overlay {
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.65);  /* Fondo semitransparente para contraste del texto */
     min-height: 100vh;
 }
 
@@ -98,6 +99,14 @@ body {
     color: white;
     opacity: 0.8;
 }
+
+/* Ajustes móviles */
+@media (max-width: 768px) {
+    body {
+        background-size: cover;   /* En móvil ocupa toda la pantalla */
+        background-position: center top;
+    }
+}
 </style>
 </head>
 
@@ -138,14 +147,9 @@ body {
 function filterCards() {
     let input = document.getElementById("searchInput").value.toLowerCase();
     let cards = document.querySelectorAll(".card");
-
     cards.forEach(card => {
         let text = card.textContent.toLowerCase();
-        if (text.includes(input)) {
-            card.style.display = "block";
-        } else {
-            card.style.display = "none";
-        }
+        card.style.display = text.includes(input) ? "block" : "none";
     });
 }
 </script>
