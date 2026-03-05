@@ -6,20 +6,21 @@
 <title>ARTEMISA MARBLE & CABINETS - SOP</title>
 
 <style>
+/* ==== Background y overlay ==== */
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
     background: url('Luxury.MAINPIC.210404.jpg') no-repeat center top;
-    background-size: contain;       /* Ajusta la imagen sin deformar */
-    background-color: #f4f6f9;     /* Color de respaldo si no llena todo */
+    background-size: cover;
+    background-color: #f4f6f9;
 }
 
 .overlay {
-    background: rgba(0,0,0,0.65);  /* Fondo semitransparente para contraste del texto */
+    background: rgba(0,0,0,0.65);
     min-height: 100vh;
 }
 
-/* Barra superior */
+/* ==== Barra superior ==== */
 .navbar {
     padding: 20px 40px;
     color: white;
@@ -28,10 +29,10 @@ body {
     font-size: 1rem;
 }
 
-/* Banner */
+/* ==== Banner ==== */
 .banner {
     text-align: center;
-    padding: 50px 20px 10px 20px;
+    padding: 50px 20px 20px 20px;
     color: white;
 }
 
@@ -46,7 +47,23 @@ body {
     opacity: 0.9;
 }
 
-/* Buscador */
+.banner .cta-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 28px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #0072C6, #005a9e);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.banner .cta-btn:hover {
+    opacity: 0.9;
+}
+
+/* ==== Buscador ==== */
 .search-container {
     text-align: center;
     margin: 30px 20px;
@@ -62,17 +79,36 @@ body {
     outline: none;
 }
 
-/* Contenedor tarjetas */
+/* ==== Carrusel ==== */
+.carousel {
+    width: 100%;
+    max-width: 1200px;
+    margin: 40px auto;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slides img {
+    width: 100%;
+    flex-shrink: 0;
+}
+
+/* ==== Tarjetas departamentos ==== */
 .container {
     max-width: 1100px;
-    margin: 20px auto 60px auto;
+    margin: 40px auto 60px auto;
     padding: 20px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 25px;
 }
 
-/* Tarjetas */
 .card {
     background: rgba(255,255,255,0.95);
     backdrop-filter: blur(8px);
@@ -92,19 +128,40 @@ body {
     box-shadow: 0 20px 45px rgba(0,0,0,0.4);
 }
 
-/* Footer */
+/* ==== Videos SOP ==== */
+.video-section {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 20px;
+}
+
+.video-section iframe {
+    width: 100%;
+    height: 200px;
+    border-radius: 15px;
+    border: none;
+}
+
+/* ==== Footer ==== */
 .footer {
     text-align: center;
     padding: 30px;
     color: white;
     opacity: 0.8;
+    background: #003366;
 }
 
-/* Ajustes móviles */
+/* ==== Ajustes móviles ==== */
 @media (max-width: 768px) {
     body {
-        background-size: cover;   /* En móvil ocupa toda la pantalla */
+        background-size: cover;
         background-position: center top;
+    }
+    .slides img {
+        height: auto;
     }
 }
 </style>
@@ -113,20 +170,34 @@ body {
 <body>
 <div class="overlay">
 
+<!-- Barra superior -->
 <div class="navbar">
     ARTEMISA MARBLE & CABINETS
 </div>
 
+<!-- Banner principal -->
 <div class="banner">
     <h1>Manual Corporativo de SOP</h1>
     <p>830 W 19TH ST, HIALEAH, FL 33010</p>
     <p>Tel: 305-884-1223</p>
+    <a href="#cardContainer" class="cta-btn">Ver SOP</a>
 </div>
 
+<!-- Buscador departamentos -->
 <div class="search-container">
     <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Buscar departamento...">
 </div>
 
+<!-- Carrusel de imágenes -->
+<div class="carousel">
+    <div class="slides">
+        <img src="obra1.jpg" alt="Proyecto 1">
+        <img src="obra2.jpg" alt="Proyecto 2">
+        <img src="obra3.jpg" alt="Proyecto 3">
+    </div>
+</div>
+
+<!-- Tarjetas de departamentos -->
 <div class="container" id="cardContainer">
     <a href="comercial" class="card">📄 Comercial</a>
     <a href="produccion" class="card">⚙️ Producción</a>
@@ -137,12 +208,21 @@ body {
     <a href="houzz-pro" class="card">🏠 Houzz Pro</a>
 </div>
 
+<!-- Sección videos SOP -->
+<div class="video-section">
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID1" allowfullscreen></iframe>
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID2" allowfullscreen></iframe>
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID3" allowfullscreen></iframe>
+</div>
+
+<!-- Footer -->
 <div class="footer">
     © 2026 ARTEMISA MARBLE & CABINETS | 830 W 19TH ST, HIALEAH, FL 33010 | Tel: 305-884-1223
 </div>
 
 </div>
 
+<!-- Scripts -->
 <script>
 function filterCards() {
     let input = document.getElementById("searchInput").value.toLowerCase();
@@ -152,6 +232,16 @@ function filterCards() {
         card.style.display = text.includes(input) ? "block" : "none";
     });
 }
+
+/* Carrusel automático */
+let index = 0;
+const slides = document.querySelector('.slides');
+const total = slides.children.length;
+setInterval(() => {
+    index++;
+    if(index >= total) index = 0;
+    slides.style.transform = `translateX(-${index*100}%)`;
+}, 4000);
 </script>
 
 </body>
