@@ -4,59 +4,91 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SOP - Marble Artemisa</title>
+
 <style>
-  body {
+body {
     margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background: #f8f8f8;
-    text-align: center;
-  }
-  header {
-    background: #0072C6;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+/* ===== Banner ===== */
+.banner {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     color: white;
-    padding: 20px;
-    font-size: 1.6rem;
-    font-weight: bold;
-  }
-  .container {
-    margin-top: 30px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    padding: 10px;
-  }
-  .card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 18px 25px;
-    flex: 0 1 250px;
-    text-decoration: none;
-    color: #003366;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.banner h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+.banner p {
+    margin-top: 10px;
     font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* ===== Contenedor ===== */
+.container {
+    max-width: 1100px;
+    margin: -40px auto 40px auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* ===== Tarjetas ===== */
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    text-decoration: none;
+    color: #1f2937;
     font-weight: 600;
-    transition: 0.3s ease;
-  }
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-  }
+    font-size: 1.1rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* ===== Footer ===== */
+.footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}
 </style>
 </head>
+
 <body>
 
-<header>SOP - Marble Artemisa</header>
+<div class="banner">
+    <h1>Marble Artemisa</h1>
+    <p>Manual de Procedimientos Operativos (SOP)</p>
+</div>
 
 <div class="container">
-  <a href="comercial" class="card">📄 Comercial</a>
-  <a href="produccion" class="card">⚙️ Producción</a>
-  <a href="instalacion" class="card">🔧 Instalación</a>
-  <a href="administracion" class="card">📊 Administración</a>
-  <a href="maquinarias" class="card">🚜 Maquinarias</a>
-  <a href="vehiculos" class="card">🚗 Vehículos</a>
-  <a href="houzz-pro" class="card">🏠 Houzz Pro</a>
+    <a href="comercial" class="card">📄 Comercial</a>
+    <a href="produccion" class="card">⚙️ Producción</a>
+    <a href="instalacion" class="card">🔧 Instalación</a>
+    <a href="administracion" class="card">📊 Administración</a>
+    <a href="maquinarias" class="card">🚜 Maquinarias</a>
+    <a href="vehiculos" class="card">🚗 Vehículos</a>
+    <a href="houzz-pro" class="card">🏠 Houzz Pro</a>
+</div>
+
+<div class="footer">
+    © 2026 Marble Artemisa - Sistema Interno de Procedimientos
 </div>
 
 </body>
