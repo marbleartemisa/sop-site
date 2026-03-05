@@ -17,7 +17,7 @@
 body{
 margin:0;
 font-family:'Segoe UI',Arial,sans-serif;
-background:url('kitchen14.jpeg') no-repeat center top;
+background:url('Kitchen14.jpeg') no-repeat center top;
 background-size:cover;
 }
 
@@ -71,19 +71,14 @@ opacity:0.9;
 .cta-btn{
 
 display:inline-block;
-
 margin-top:20px;
-
 padding:12px 28px;
-
 border-radius:30px;
 
 background:linear-gradient(135deg,#0072C6,#005a9e);
 
 color:white;
-
 text-decoration:none;
-
 font-weight:bold;
 
 transition:.3s;
@@ -123,15 +118,11 @@ outline:none;
 .container{
 
 max-width:1100px;
-
 margin:40px auto 60px auto;
-
 padding:20px;
 
 display:grid;
-
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-
 gap:25px;
 
 }
@@ -180,7 +171,6 @@ transform:translateY(0);
 .card:hover{
 
 transform:translateY(-8px);
-
 box-shadow:0 20px 45px rgba(0,0,0,0.4);
 
 }
@@ -207,13 +197,9 @@ gap:20px;
 .video-section video{
 
 width:100%;
-
 height:200px;
-
 border-radius:15px;
-
 border:none;
-
 object-fit:cover;
 
 }
@@ -223,11 +209,8 @@ object-fit:cover;
 .carousel{
 
 width:100%;
-
 max-width:700px;
-
 margin:40px auto;
-
 overflow:hidden;
 
 border-radius:15px;
@@ -239,17 +222,13 @@ box-shadow:0 10px 25px rgba(0,0,0,0.3);
 .slides{
 
 display:flex;
-
-width:max-content;
-
-animation:scroll 35s linear infinite;
+animation:scroll 45s linear infinite;
 
 }
 
 .slides img{
 
 width:220px;
-
 height:160px;
 
 object-fit:cover;
@@ -296,10 +275,8 @@ background:#003366;
 @media(max-width:768px){
 
 .slides img{
-
 width:180px;
 height:130px;
-
 }
 
 }
@@ -318,12 +295,10 @@ ARTEMISA MARBLE & CABINETS
 
 <div class="banner">
 
-<h1>BIENVENIDO AL PORTAL DE PROCEDIMIENTOS OPERATIVOS ESTANDAR </h1>
+<h1>BIENVENIDO AL PORTAL DE PROCEDIMIENTOS OPERATIVOS ESTANDAR</h1>
 <p>(SOP)</p>
 
 <p>ARTEMISA MARBLE & CABINETS</p>
-
-
 
 <p>830 W 19TH ST, HIALEAH, FL 33010</p>
 
@@ -394,25 +369,6 @@ ARTEMISA MARBLE & CABINETS
 <img src="Kitchen14.jpeg">
 <img src="Kitchen15.jpeg">
 
-<img src="ABQM0471.JPG">
-<img src="outlet.png">
-<img src="VanitiesBath.png">
-<img src="IMG_2393.JPG">
-<img src="IHCH5272.JPG">
-<img src="wall1.jpg">
-<img src="IMG_4646.jpg">
-<img src="Kitchen.jpg">
-<img src="HOPE1380.JPG">
-<img src="JXUQ9396.JPG">
-<img src="POHQ5752.JPG">
-<img src="wall2.jpg">
-<img src="Kitchen10.jpeg">
-<img src="Kitchen11.jpeg">
-<img src="Kitchen12.jpeg">
-<img src="Kitchen13.jpeg">
-<img src="Kitchen14.jpeg">
-<img src="Kitchen15.jpeg">
-
 </div>
 
 </div>
@@ -425,7 +381,7 @@ ARTEMISA MARBLE & CABINETS
 
 <script>
 
-/* buscador */
+/* ===== BUSCADOR ===== */
 
 function filterCards(){
 
@@ -437,13 +393,21 @@ cards.forEach(card=>{
 
 let text=card.textContent.toLowerCase();
 
-card.style.display=text.includes(input)?"block":"none";
+if(text.includes(input)){
+
+card.style.display="";
+
+}else{
+
+card.style.display="none";
+
+}
 
 });
 
 }
 
-/* animacion tarjetas */
+/* ===== ANIMACION TARJETAS ===== */
 
 const observer=new IntersectionObserver(entries=>{
 
@@ -467,7 +431,4 @@ observer.observe(card);
 
 </body>
 
-
 </html>
-
-
