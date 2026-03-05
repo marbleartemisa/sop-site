@@ -204,12 +204,12 @@ body{
   background:#003366;
 }
 
-/* ===== RESPONSIVE ===== */
+/* RESPONSIVE */
 @media(max-width:768px){
   .banner h1{ font-size:1.8rem; }
   .banner p{ font-size:0.9rem; }
   .menu{
-    display:none;
+    display:none;           /* Oculto inicialmente */
     flex-direction:column;
     background:rgba(0,0,0,0.85);
     position:absolute;
@@ -242,7 +242,7 @@ body{
     <img src="/sop-site/logo.png" alt="Logo Artemisa">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
-  <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+  <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
@@ -265,7 +265,7 @@ body{
 <input type="text" id="searchInput" placeholder="Buscar departamento..." onkeyup="filterCards()">
 </div>
 
-<!-- TARJETAS DE DEPARTAMENTOS -->
+<!-- TARJETAS -->
 <div class="container" id="cardContainer">
 <a href="/sop-site/comercial/index.html" class="card"><i class="fa-solid fa-chart-line"></i>Comercial</a>
 <a href="/sop-site/produccion/index.html" class="card"><i class="fa-solid fa-industry"></i>Producción</a>
@@ -336,9 +336,18 @@ document.querySelectorAll(".card").forEach(card=>{
 });
 
 /* MENU HAMBURGUESA */
-function toggleMenu(){
-  document.querySelector('.menu').classList.toggle('show');
-}
+const toggle = document.querySelector('.menu-toggle');
+const menu = document.querySelector('.menu');
+toggle.addEventListener('click', ()=>{
+  menu.classList.toggle('show');
+});
+
+/* OPCIONAL: cerrar al tocar un enlace */
+document.querySelectorAll('.menu a').forEach(link=>{
+  link.addEventListener('click', ()=>{
+    menu.classList.remove('show');
+  });
+});
 </script>
 </body>
 </html>
