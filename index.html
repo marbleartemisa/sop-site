@@ -3,81 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOP - Marble Artemisa</title>
+<title>ARTEMISA MARBLE & CABINETS - SOP</title>
 
 <style>
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f4f6f9;
+    background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+    background-size: cover;
 }
 
-/* ===== Banner ===== */
-.banner {
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+.overlay {
+    background: rgba(0,0,0,0.7);
+    min-height: 100vh;
+}
+
+/* Barra superior */
+.navbar {
+    padding: 20px 40px;
     color: white;
-    padding: 60px 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 1rem;
+}
+
+/* Banner */
+.banner {
     text-align: center;
+    padding: 50px 20px 10px 20px;
+    color: white;
 }
 
 .banner h1 {
     margin: 0;
-    font-size: 2.5rem;
+    font-size: 2.8rem;
 }
 
 .banner p {
-    margin-top: 10px;
+    margin: 5px 0;
     font-size: 1.1rem;
     opacity: 0.9;
 }
 
-/* ===== Contenedor ===== */
+/* Buscador */
+.search-container {
+    text-align: center;
+    margin: 30px 20px;
+}
+
+.search-container input {
+    width: 90%;
+    max-width: 500px;
+    padding: 14px 18px;
+    border-radius: 30px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+}
+
+/* Contenedor tarjetas */
 .container {
     max-width: 1100px;
-    margin: -40px auto 40px auto;
+    margin: 20px auto 60px auto;
     padding: 20px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
+    gap: 25px;
 }
 
-/* ===== Tarjetas ===== */
+/* Tarjetas */
 .card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-radius: 18px;
+    padding: 30px 20px;
     text-align: center;
     text-decoration: none;
     color: #1f2937;
     font-weight: 600;
     font-size: 1.1rem;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
     transition: all 0.3s ease;
 }
 
 .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.4);
 }
 
-/* ===== Footer ===== */
+/* Footer */
 .footer {
     text-align: center;
-    padding: 20px;
-    font-size: 0.9rem;
-    color: #666;
+    padding: 30px;
+    color: white;
+    opacity: 0.8;
 }
 </style>
 </head>
 
 <body>
+<div class="overlay">
 
-<div class="banner">
-    <h1>Marble Artemisa</h1>
-    <p>Manual de Procedimientos Operativos (SOP)</p>
+<div class="navbar">
+    ARTEMISA MARBLE & CABINETS
 </div>
 
-<div class="container">
+<div class="banner">
+    <h1>Manual Corporativo de SOP</h1>
+    <p>830 W 19TH ST, HIALEAH, FL 33010</p>
+    <p>Tel: 305-884-1223</p>
+</div>
+
+<div class="search-container">
+    <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Buscar departamento...">
+</div>
+
+<div class="container" id="cardContainer">
     <a href="comercial" class="card">📄 Comercial</a>
     <a href="produccion" class="card">⚙️ Producción</a>
     <a href="instalacion" class="card">🔧 Instalación</a>
@@ -88,8 +129,26 @@ body {
 </div>
 
 <div class="footer">
-    © 2026 Marble Artemisa - Sistema Interno de Procedimientos
+    © 2026 ARTEMISA MARBLE & CABINETS | 830 W 19TH ST, HIALEAH, FL 33010 | Tel: 305-884-1223
 </div>
+
+</div>
+
+<script>
+function filterCards() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+        let text = card.textContent.toLowerCase();
+        if (text.includes(input)) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+</script>
 
 </body>
 </html>
