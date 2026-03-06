@@ -1,1 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Instalación | ARTEMISA SOP</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+/* ===== BASE ===== */
+
+body{
+margin:0;
+font-family:'Segoe UI',Arial,sans-serif;
+background:url('/sop-site/kitchen15.jpeg') center/cover no-repeat;
+}
+
+.overlay{
+background:rgba(0,0,0,0.35);
+min-height:100vh;
+}
+
+/* ===== NAVBAR ===== */
+
+.navbar{
+position:sticky;
+top:0;
+background:rgba(0,0,0,0.75);
+backdrop-filter:blur(10px);
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px 25px;
+color:white;
+z-index:1000;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:bold;
+}
+
+.logo img{
+height:38px;
+}
+
+.menu{
+display:flex;
+gap:25px;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+font-weight:600;
+transition:0.3s;
+}
+
+.menu a:hover{
+color:#00aaff;
+}
+
+.menu-toggle{
+display:none;
+font-size:26px;
+cursor:pointer;
+}
+
+/* MOBILE MENU */
+
+.mobile-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+opacity:0;
+visibility:hidden;
+transition:0.3s;
+z-index:900;
+}
+
+.mobile-overlay.show{
+opacity:1;
+visibility:visible;
+}
+
+@media(max-width:768px){
+
+.menu{
+position:fixed;
+top:0;
+right:-260px;
+height:100%;
+width:260px;
+background:#0b1c2c;
+flex-direction:column;
+padding-top:80px;
+gap:20px;
+transition:0.35s;
+}
+
+.menu.show{
+right:0;
+}
+
+.menu a{
+padding:12px 25px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.menu-toggle{
+display:block;
+}
+
+}
+
+/* ===== BANNER ===== */
+
+.banner{
+text-align:center;
+padding:60px 20px 20px;
+color:white;
+}
+
+.banner h1{
+font-size:2.4rem;
+margin:0;
+}
+
+.banner p{
+margin:5px 0;
+opacity:0.9;
+}
+
+.home-btn{
+display:inline-block;
+margin-top:18px;
+padding:10px 25px;
+border-radius:25px;
+background:linear-gradient(135deg,#0072C6,#005a9e);
+color:white;
+text-decoration:none;
+font-weight:bold;
+transition:.3s;
+}
+
+.home-btn:hover{
+transform:scale(1.05);
+}
+
+/* ===== BUSCADOR ===== */
+
+.search-container{
+text-align:center;
+margin:30px 20px;
+}
+
+.search-container input{
+width:90%;
+max-width:450px;
+padding:14px 18px;
+border-radius:30px;
+border:none;
+font-size:1rem;
+}
+
+/* ===== TARJETAS ===== */
+
+.container{
+max-width:900px;
+margin:40px auto 60px auto;
+padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:25px;
+}
+
+.card{
+background:rgba(255,255,255,0.95);
+border-radius:18px;
+padding:28px 20px;
+text-align:center;
+text-decoration:none;
+color:#1f2937;
+font-weight:600;
+font-size:1.05rem;
+box-shadow:0 15px 35px rgba(0,0,0,0.35);
+transition:all .4s;
+opacity:0;
+transform:translateY(40px);
+}
+
+.card i{
+font-size:30px;
+margin-bottom:10px;
+display:block;
+color:#005a9e;
+}
+
+.card.show{
+opacity:1;
+transform:translateY(0);
+}
+
+.card:hover{
+transform:translateY(-10px);
+box-shadow:0 25px 45px rgba(0,0,0,0.45);
+}
+
+/* ===== FOOTER ===== */
+
+.footer{
+text-align:center;
+padding:25px;
+background:#003366;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="overlay">
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+<div class="logo">
+<img src="/sop-site/logo.png">
+<span>ARTEMISA SOP</span>
+</div>
+
+<div class="menu-toggle">
+<i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="menu">
+
+<a href="/sop-site/">Inicio</a>
+
+<a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+
+<a href="/sop-site/registrar-sop/">Registrar SOP</a>
+
+</div>
+
+</div>
+
+<div class="mobile-overlay"></div>
+
+<!-- BANNER -->
+
+<div class="banner">
+
+<h1>Departamento de Instalación</h1>
+
+<p>Procedimientos Operativos Estándar (SOP)</p>
+
+<a href="/sop-site/index.html" class="home-btn">⬅ Volver al Portal SOP</a>
+
+</div>
+
+<!-- BUSCADOR -->
+
+<div class="search-container">
+
+<input type="text" id="searchInput" placeholder="Buscar SOP de instalación..." onkeyup="filterCards()">
+
+</div>
+
+<!-- TARJETAS SOP -->
+
+<div class="container">
+
+<a href="SOP DE COORDINACION Y CONTROL DE INSTALACIONES 1-0.html" class="card">
+
+<i class="fa-solid fa-clipboard-check"></i>
+
+Coordinación y Control de Instalaciones
+
+</a>
+
+<a href="SOP INSTALACION CABINETS.html" class="card">
+
+<i class="fa-solid fa-screwdriver-wrench"></i>
+
+Instalación Cabinets
+
+</a>
+
+<a href="SOP INSTALACION STONE.html" class="card">
+
+<i class="fa-solid fa-mountain"></i>
+
+Instalación Stone
+
+</a>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+
+© 2026 ARTEMISA MARBLE & CABINETS
+
+</div>
+
+</div>
+
+<script>
+
+/* BUSCADOR */
+
+function filterCards(){
+
+let input=document.getElementById("searchInput").value.toLowerCase();
+
+document.querySelectorAll(".card").forEach(card=>{
+
+let text=card.textContent.toLowerCase();
+
+card.style.display=text.includes(input) ? "" : "none";
+
+});
+
+}
+
+/* ANIMACION TARJETAS */
+
+const observer=new IntersectionObserver(entries=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+entry.target.classList.add("show");
+
+}
+
+});
+
+});
+
+document.querySelectorAll(".card").forEach(card=>observer.observe(card));
+
+/* MENU MOBILE */
+
+const toggle=document.querySelector(".menu-toggle");
+
+const menu=document.querySelector(".menu");
+
+const overlay=document.querySelector(".mobile-overlay");
+
+toggle.onclick=()=>{
+
+menu.classList.toggle("show");
+
+overlay.classList.toggle("show");
+
+}
+
+overlay.onclick=()=>{
+
+menu.classList.remove("show");
+
+overlay.classList.remove("show");
+
+}
+
+document.querySelectorAll(".menu a").forEach(link=>{
+
+link.onclick=()=>{
+
+menu.classList.remove("show");
+
+overlay.classList.remove("show");
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
