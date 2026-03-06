@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
+<title>Registrar SOP - ARTEMISA MARBLE & CABINETS V1</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
@@ -161,14 +161,14 @@ guardar()
 renderTabla()
 }
 
-// Autocompleta departamento al seleccionar empleado
+// Autocompleta departamento
 document.getElementById("employee").addEventListener("change", function(){
   let datos = this.value.split("|");
   let departamento = datos[3] || "";
   document.getElementById("departamento").value = departamento;
 })
 
-// Convierte archivos a Base64 para EmailJS
+// Archivos a Base64
 function archivosA_Base64(files){
   return Promise.all(Array.from(files).map(file=>{
     return new Promise((resolve,reject)=>{
@@ -205,14 +205,13 @@ guardar()
 renderTabla()
 this.reset()
 
-// Adjuntos
 let archivosInput = document.getElementById("archivos")
 let archivosBase64 = await archivosA_Base64(archivosInput.files)
 
-// Envío EmailJS
 emailjs.send("service_vkt5xuo","template_vc7447e",{
 employee:nombre,
 department:document.getElementById("departamento").value || departamentoEmpleado,
+cargo:cargo,
 objective:document.getElementById("objetivo").value,
 areas:document.getElementById("areas").value,
 summary:document.getElementById("resumen").value,
