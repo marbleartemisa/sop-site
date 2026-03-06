@@ -3,280 +3,349 @@
 <head>
 
 <meta charset="UTF-8">
-<title>SOP Artemisa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
-
+/* ===== FONDO ===== */
 body{
-font-family:Segoe UI;
 margin:0;
-background:#f5f5f5;
+font-family:'Segoe UI',Arial,sans-serif;
+background:url('/sop-site/kitchen15.jpeg') no-repeat center top;
+background-size:cover;
+}
+.overlay{
+background:rgba(0,0,0,0.25);
+min-height:100vh;
 }
 
-/* HEADER */
-
-.header{
-background:#111;
+/* ===== NAVBAR ===== */
+.navbar{
+position:sticky;
+top:0;
+background:rgba(0,0,0,0.65);
+backdrop-filter:blur(8px);
+padding:10px 30px;
 color:white;
-padding:15px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:999;
+font-family:'Nuevo','Segoe UI',Arial;
+}
+.logo{
 display:flex;
 align-items:center;
+gap:10px;
 }
-
-.hamburger{
-font-size:24px;
-cursor:pointer;
-margin-right:20px;
+.logo img{
+height:40px;
 }
-
-/* SIDEBAR */
-
-.sidebar{
-position:fixed;
-left:-250px;
-top:0;
-width:250px;
-height:100%;
-background:#222;
+.menu{
+display:flex;
+gap:25px;
+}
+.menu a{
 color:white;
-padding:20px;
+text-decoration:none;
+font-weight:bold;
 transition:.3s;
 }
-
-.sidebar a{
-display:block;
-color:white;
-padding:10px;
-text-decoration:none;
+.menu a:hover{
+color:#00aaff;
+transform:scale(1.05);
 }
-
-.sidebar.open{
-left:0;
-}
-
-/* GRID */
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
-padding:30px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 2px 6px rgba(0,0,0,.2);
+.menu-toggle{
+display:none;
+font-size:1.6rem;
 cursor:pointer;
 }
 
-.card:hover{
+/* ===== FORM ===== */
+.container{
+max-width:900px;
+margin:50px auto;
+background:rgba(255,255,255,0.9);
+backdrop-filter:blur(10px);
+padding:30px;
+border-radius:18px;
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
+}
+h1{
+text-align:center;
+margin-bottom:25px;
+color:#003366;
+}
+input,textarea,select{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+border:1px solid #ccc;
+font-size:1rem;
+}
+button{
+padding:12px;
+border:none;
+border-radius:30px;
+background:linear-gradient(135deg,#0072C6,#005a9e);
+color:white;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+button:hover{
 transform:scale(1.05);
 }
 
-/* FORM */
-
-.form-section{
-background:white;
-margin:30px;
-padding:25px;
-border-radius:10px;
-box-shadow:0 2px 6px rgba(0,0,0,.2);
+/* ===== GRID ===== */
+.grid-container{
+max-width:1100px;
+margin:40px auto;
+background:rgba(255,255,255,0.9);
+backdrop-filter:blur(10px);
+padding:30px;
+border-radius:18px;
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
 }
-
-input,select,textarea{
-
+table{
 width:100%;
+border-collapse:collapse;
+}
+th,td{
 padding:10px;
-margin-top:8px;
-margin-bottom:18px;
-border:1px solid #ccc;
-border-radius:6px;
-
+border-bottom:1px solid #ddd;
+text-align:left;
 }
-
-button{
-
-background:#007bff;
+th{
+background:#003366;
 color:white;
-border:none;
-padding:12px 20px;
-border-radius:6px;
-cursor:pointer;
-
+}
+.estado{
+padding:6px 12px;
+border-radius:20px;
+font-size:.8rem;
+font-weight:bold;
+}
+.pendiente{
+background:#fff3cd;
+color:#856404;
+}
+.tramite{
+background:#cce5ff;
+color:#004085;
+}
+.rechazado{
+background:#f8d7da;
+color:#721c24;
+}
+.aprobado{
+background:#d4edda;
+color:#155724;
 }
 
-button:hover{
-background:#0056b3;
+/* ===== FOOTER ===== */
+.footer{
+text-align:center;
+padding:30px;
+color:white;
+background:#003366;
+margin-top:50px;
 }
 
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+.menu{
+display:none;
+flex-direction:column;
+background:rgba(0,0,0,0.9);
+position:absolute;
+top:60px;
+right:0;
+width:200px;
+padding:20px;
+border-radius:10px 0 0 10px;
+}
+.menu.show{
+display:flex;
+}
+.menu-toggle{
+display:block;
+}
+}
 </style>
-
 </head>
 
 <body>
+<div class="overlay">
 
-<div class="header">
-
-<div class="hamburger" onclick="toggleMenu()">☰</div>
-
-<h2>SOP Artemis Marble</h2>
-
+<!-- NAVBAR -->
+<div class="navbar">
+<div class="logo">
+<img src="/sop-site/logo.png">
+<span>ARTEMISA MARBLE & CABINETS</span>
+</div>
+<div class="menu-toggle" onclick="toggleMenu()">
+<i class="fa-solid fa-bars"></i>
+</div>
+<div class="menu">
+<a href="/sop-site/">Inicio</a>
+<a href="/sop-site/registrar-sop/">Registrar SOP</a>
+<a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+</div>
 </div>
 
-
-<div class="sidebar" id="menu">
-
-<h3>Menú</h3>
-
-<a href="#">Inicio</a>
-<a href="#">SOP Comercial</a>
-<a href="#">SOP Producción</a>
-<a href="#">SOP Administración</a>
-
-</div>
-
-
-<div class="grid">
-
-<div class="card">Cotización de Ventas</div>
-<div class="card">Proceso de Medición</div>
-<div class="card">Shopdrawing</div>
-<div class="card">Producción Stone</div>
-
-</div>
-
-
-<div class="form-section">
-
-<h2>Solicitar Nuevo SOP</h2>
-
+<!-- FORMULARIO -->
+<div class="container">
+<h1>Registrar Solicitud de SOP</h1>
 <form id="sopForm">
 
 <label>Empleado</label>
-
-<select id="employee">
-
-<option value="">Seleccione</option>
-
-<option value="Damian Molina">Damian Molina</option>
-<option value="Carlos Herrera">Carlos Herrera</option>
-<option value="Jenny Perez">Jenny Perez</option>
-<option value="Alberto Molina">Alberto Molina</option>
-<option value="Gabriel Batista">Gabriel Batista</option>
-<option value="Yozusi Urdaneta">Yozusi Urdaneta</option>
-<option value="Yoandry Perez">Yoandry Perez</option>
-<option value="Wendy Romanach">Wendy Romanach</option>
-<option value="Rolando Diaz">Rolando Diaz</option>
-<option value="Krishna Camila Rojas">Krishna Camila Rojas</option>
-<option value="Gregorio Abreu">Gregorio Abreu</option>
-<option value="Juan Pablo Molina">Juan Pablo Molina</option>
-<option value="Kevin Pastor">Kevin Pastor</option>
-<option value="Eliana Pineda">Eliana Pineda</option>
-<option value="Otro">Otro</option>
-
+<select id="employee" required>
+<option value="">Seleccione empleado</option>
+<option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
+<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+<option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
+<option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+<option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+<option value="Otros|otros|otros|otros">Otros</option>
 </select>
 
+<input type="text" id="departamento" placeholder="Área / Departamento" required>
+<input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
+<input type="text" id="areas" placeholder="Áreas o roles involucrados">
+<textarea id="resumen" rows="4" placeholder="Resumen de instrucciones"></textarea>
 
-<label>Departamento</label>
-
-<select id="department">
-
-<option>Ventas</option>
-<option>Comercial</option>
-<option>Diseño</option>
-<option>Medida</option>
-<option>Producción</option>
-<option>Administración</option>
-<option>Control</option>
-
-</select>
-
-
-<label>Objetivo del SOP</label>
-
-<input id="objective" required>
-
-
-<label>Áreas involucradas</label>
-
-<input id="areas">
-
-
-<label>Resumen</label>
-
-<textarea id="summary" rows="5"></textarea>
-
-
-<button type="submit">Enviar Solicitud</button>
-
+<button type="submit">Registrar Solicitud</button>
 </form>
-
 </div>
 
+<!-- GRID -->
+<div class="grid-container">
+<h2>Solicitudes SOP</h2>
+<table>
+<thead>
+<tr>
+<th>Empleado</th>
+<th>Departamento</th>
+<th>Objetivo</th>
+<th>Áreas</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tablaSOP"></tbody>
+</table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+© 2026 ARTEMISA MARBLE & CABINETS
+</div>
+</div>
 
 <script>
-
-emailjs.init("iR8ieJnOkI4_sr8TH");
-
-
+/* MENU MOVIL */
 function toggleMenu(){
-
-document.getElementById("menu").classList.toggle("open")
-
+document.querySelector('.menu').classList.toggle('show')
 }
 
+/* SISTEMA SOP */
+emailjs.init("iR8ieJnOkI4_sr8TH"); // tu User ID
+
+let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
+
+function guardar(){
+localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))
+}
+
+function renderTabla(){
+const tabla=document.getElementById("tablaSOP")
+tabla.innerHTML=""
+solicitudes.forEach((sop,index)=>{
+if(sop.estado==="Publicado") return
+let estadoClass=""
+switch(sop.estado){
+case "Pendiente": estadoClass="pendiente"; break;
+case "Trámite": estadoClass="tramite"; break;
+case "Rechazado": estadoClass="rechazado"; break;
+case "Aprobado": estadoClass="aprobado"; break;
+default: estadoClass="pendiente";
+}
+let fila=document.createElement("tr")
+fila.innerHTML=`
+<td>${sop.empleado}</td>
+<td>${sop.departamento}</td>
+<td>${sop.objetivo}</td>
+<td>${sop.areas}</td>
+<td><span class="estado ${estadoClass}">${sop.estado}</span></td>
+<td>
+<button onclick="cambiarEstado(${index},'Trámite')"><i class="fa fa-spinner"></i></button>
+<button onclick="cambiarEstado(${index},'Rechazado')"><i class="fa fa-times"></i></button>
+<button onclick="cambiarEstado(${index},'Aprobado')"><i class="fa fa-check"></i></button>
+</td>
+`
+tabla.appendChild(fila)
+})
+}
+
+function cambiarEstado(i,nuevoEstado){
+solicitudes[i].estado=nuevoEstado
+guardar()
+renderTabla()
+}
 
 document.getElementById("sopForm").addEventListener("submit",function(e){
-
 e.preventDefault()
+let datosEmpleado = document.getElementById("employee").value.split("|")
+let nombre = datosEmpleado[0]
+let correo = datosEmpleado[1]
+let cargo = datosEmpleado[2]
+let departamentoEmpleado = datosEmpleado[3]
 
-const employee=document.getElementById("employee").value
-const department=document.getElementById("department").value
-const objective=document.getElementById("objective").value
-const areas=document.getElementById("areas").value
-const summary=document.getElementById("summary").value
-
-const templateParams={
-
-employee:employee,
-department:department,
-objective:objective,
-areas:areas,
-summary:summary,
-date:new Date().toLocaleString()
-
+let nuevo={
+empleado:nombre,
+correo:correo,
+cargo:cargo,
+departamento:document.getElementById("departamento").value,
+objetivo:document.getElementById("objetivo").value,
+areas:document.getElementById("areas").value,
+resumen:document.getElementById("resumen").value,
+estado:"Pendiente"
 }
+solicitudes.push(nuevo)
+guardar()
+renderTabla()
+this.reset()
 
-
-emailjs.send(
-"service_vkt5xuo",
-"template_vc7447e",
-templateParams
-)
-
-.then(function(){
-
-alert("Solicitud enviada correctamente")
-
-document.getElementById("sopForm").reset()
-
+// ENVIO EMAIL
+emailjs.send("service_vkt5xuo","template_vc7447e",{
+employee:nombre,
+department:document.getElementById("departamento").value,
+objective:document.getElementById("objetivo").value,
+areas:document.getElementById("areas").value,
+summary:document.getElementById("resumen").value,
+date:new Date().toLocaleString()
+})
+.then(()=>{alert("Solicitud enviada correctamente")})
+.catch((error)=>{console.error(error); alert("Error enviando correo")})
 })
 
-.catch(function(error){
-
-console.log(error)
-
-alert("Error enviando correo")
-
-})
-
-})
-
+renderTabla()
 </script>
-
 </body>
 </html>
