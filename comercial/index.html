@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -8,154 +10,206 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+<link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
+
 <style>
 
 body{
 margin:0;
 font-family:'Segoe UI',Arial,sans-serif;
-background:#f4f6f9;
+background:url('/sop-site/kitchen15.jpeg') no-repeat center top;
+background-size:cover;
+}
+
+.overlay{
+background:rgba(0,0,0,0.25);
+min-height:100vh;
 }
 
 /* NAVBAR */
+
 .navbar{
 position:sticky;
 top:0;
-background:#003366;
-padding:12px 30px;
+background:rgba(0,0,0,0.65);
+backdrop-filter:blur(8px);
+padding:10px 30px;
 color:white;
 font-weight:bold;
+font-family:'Nuevo','Segoe UI',Arial;
 display:flex;
 justify-content:space-between;
 align-items:center;
 z-index:999;
 }
 
-.navbar a{
-color:white;
-text-decoration:none;
-margin-left:20px;
-font-weight:600;
-}
-
-.navbar a:hover{
-opacity:0.8;
-}
-
-
-/* BANNER CON FOTO */
-.banner{
-position:relative;
-height:260px;
+.logo{
 display:flex;
 align-items:center;
-justify-content:center;
-text-align:center;
-color:white;
-overflow:hidden;
+gap:10px;
 }
 
-.banner img{
-position:absolute;
-width:100%;
-height:100%;
-object-fit:cover;
-filter:brightness(45%);
+.logo img{
+height:40px;
 }
 
-.banner-content{
-position:relative;
-z-index:2;
+.menu{
+display:flex;
+gap:20px;
 }
 
-.banner h1{
-margin:0;
-font-size:2.2rem;
-}
-
-.banner p{
-margin:5px 0;
-opacity:0.9;
-}
-.banner h1{
-margin:0;
-font-size:2.2rem;
-}
-
-.banner p{
-margin:5px 0;
-opacity:0.9;
-}
-
-/* BOTON HOME */
-.home-btn{
-display:inline-block;
-margin-top:15px;
-padding:10px 25px;
-border-radius:25px;
-background:#003366;
+.menu a{
 color:white;
 text-decoration:none;
 font-weight:bold;
+transition:.3s;
+}
+
+.menu a:hover{
+color:#00aaff;
+transform:scale(1.05);
+}
+
+.menu-toggle{
+display:none;
+font-size:1.5rem;
+cursor:pointer;
+}
+
+/* BANNER */
+
+.banner{
+text-align:center;
+padding:60px 20px 20px 20px;
+color:white;
+}
+
+.banner h1{
+margin:0;
+font-size:2.6rem;
+}
+
+.banner p{
+margin:6px 0;
+font-size:1.1rem;
+opacity:0.9;
+}
+
+.cta-btn{
+display:inline-block;
+margin-top:20px;
+padding:12px 28px;
+border-radius:30px;
+background:linear-gradient(135deg,#0072C6,#005a9e);
+color:white;
+text-decoration:none;
+font-weight:bold;
+transition:.3s;
+}
+
+.cta-btn:hover{
+transform:scale(1.05);
 }
 
 /* BUSCADOR */
+
 .search-container{
 text-align:center;
-margin:30px 0;
+margin:30px 20px;
 }
 
 .search-container input{
 width:90%;
-max-width:450px;
-padding:12px 18px;
+max-width:500px;
+padding:14px 18px;
 border-radius:30px;
-border:1px solid #ccc;
+border:none;
 font-size:1rem;
 outline:none;
 }
 
-/* CONTENEDOR SOP */
+/* TARJETAS */
+
 .container{
-max-width:900px;
-margin:auto;
-padding:10px;
+max-width:1100px;
+margin:40px auto 60px auto;
+padding:20px;
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-gap:20px;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
 }
 
-/* TARJETAS */
 .card{
-background:white;
-border-radius:15px;
-padding:22px;
+background:rgba(255,255,255,0.9);
+backdrop-filter:blur(10px);
+border-radius:18px;
+padding:30px 20px;
 text-align:center;
 text-decoration:none;
 color:#1f2937;
 font-weight:600;
-box-shadow:0 10px 25px rgba(0,0,0,0.15);
-transition:0.3s;
+font-size:1.1rem;
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
+transition:all .4s;
+opacity:0;
+transform:translateY(30px);
 }
 
 .card i{
-font-size:24px;
+font-size:28px;
 margin-bottom:10px;
 display:block;
 color:#005a9e;
 }
 
+.card.show{
+opacity:1;
+transform:translateY(0);
+}
+
 .card:hover{
-transform:translateY(-5px);
-box-shadow:0 15px 35px rgba(0,0,0,0.25);
+transform:translateY(-8px);
+box-shadow:0 20px 45px rgba(0,0,0,0.4);
 }
 
 /* FOOTER */
+
 .footer{
 text-align:center;
-margin-top:60px;
-padding:25px;
-background:#003366;
+padding:30px;
 color:white;
+opacity:0.9;
+background:#003366;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+.banner h1{ font-size:1.8rem; }
+.banner p{ font-size:0.9rem; }
+
+.menu{
+display:none;
+flex-direction:column;
+background:rgba(0,0,0,0.85);
+position:absolute;
+top:60px;
+right:0;
+width:200px;
+padding:20px;
+border-radius:10px 0 0 10px;
+}
+
+.menu.show{
+display:flex;
+}
+
+.menu-toggle{
+display:block;
+color:white;
+}
+
 }
 
 </style>
@@ -163,50 +217,57 @@ color:white;
 
 <body>
 
-<!-- NAVBAR GLOBAL -->
+<div class="overlay">
+
+<!-- NAVBAR -->
+
 <div class="navbar">
 
-<div>
-ARTEMISA SOP
+<div class="logo">
+<img src="/sop-site/logo.png">
+<span>ARTEMISA MARBLE & CABINETS</span>
 </div>
 
-<div>
+<div class="menu-toggle" onclick="toggleMenu()">
+<i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="menu">
+
 <a href="/sop-site/">Inicio</a>
-<a href="/sop-site/biblioteca/">Biblioteca SOP</a>
 <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+<a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+
 </div>
 
 </div>
 
 <!-- BANNER -->
+
 <div class="banner">
 
-<img src="../Kitchen.jpg">
-
-<div class="banner-content">
-
 <h1>Departamento Comercial</h1>
+
 <p>Procedimientos Operativos Estándar</p>
 
-<a href="/sop-site/" class="home-btn">
-⬅ Volver al Menú Principal
-</a>
-
-</div>
+<a href="/sop-site/" class="cta-btn">Volver al Menú Principal</a>
 
 </div>
 
 <!-- BUSCADOR -->
+
 <div class="search-container">
 
-<input type="text"
+<input
+type="text"
 id="searchInput"
-onkeyup="filterCards()"
-placeholder="Buscar SOP del departamento comercial">
+placeholder="Buscar SOP del departamento comercial"
+onkeyup="filterCards()">
 
 </div>
 
-<!-- CONTENEDOR SOP -->
+<!-- TARJETAS -->
+
 <div class="container" id="cardContainer">
 
 <a href="SOP PARA COTIZACIÓN DE VENTAS rev 1-.html" class="card">
@@ -222,14 +283,18 @@ Sales Consultant
 </div>
 
 <!-- FOOTER -->
+
 <div class="footer">
 
-ARTEMISA MARBLE & CABINETS  
-830 W 19TH ST HIALEAH FL  
+© 2026 ARTEMISA MARBLE & CABINETS
+
+</div>
 
 </div>
 
 <script>
+
+/* BUSCADOR */
 
 function filterCards(){
 
@@ -241,10 +306,30 @@ cards.forEach(card=>{
 
 let text=card.textContent.toLowerCase()
 
-card.style.display=text.includes(input)?"block":"none"
+card.style.display=text.includes(input)?"":"none"
 
 })
 
+}
+
+/* ANIMACION TARJETAS */
+
+const observer=new IntersectionObserver(entries=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
+entry.target.classList.add("show")
+}
+})
+})
+
+document.querySelectorAll(".card").forEach(card=>{
+observer.observe(card)
+})
+
+/* MENU HAMBURGUESA */
+
+function toggleMenu(){
+document.querySelector('.menu').classList.toggle('show')
 }
 
 </script>
