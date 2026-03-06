@@ -180,7 +180,7 @@ function enviarCorreo(attachmentsList){
     attachments: attachmentsList // EmailJS lo tomará como attachments
   };
 
-  emailjs.send("service_xrmg6t8","template_vc7447e",templateParams)
+  emailjs.send("service_vkt5xuo","template_vc7447e",templateParams)
     .then(res=>{alert("Solicitud registrada y correo enviado con éxito!");})
     .catch(err=>{alert("Error enviando correo: "+err);});
 }
@@ -190,4 +190,5 @@ function enviarCorreo(attachmentsList){
 renderTabla();
 </script>
 </body>
+
 </html>
