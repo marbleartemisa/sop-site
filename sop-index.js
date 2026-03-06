@@ -48,7 +48,7 @@ url:"/sop-site/maquinarias/SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING"
 title:"Calibración Edgebander",
 department:"Maquinarias",
 keywords:"edgebander calibracion contadores canteadora",
-url:"/sop-site/maquinarias/SOP–CALIBRAR-EDGEBANDING"
+url:"/sop-site/maquinarias/SOP-CALIBRAR-EDGEBANDING"
 },
 
 {
@@ -59,3 +59,41 @@ url:"/sop-site/vehiculos/SOP-CONDUCCION-VEHICULOS"
 }
 
 ]
+
+/* ===== BUSQUEDA GLOBAL ===== */
+
+function searchSOP(){
+
+let input=document.getElementById("searchInput").value.toLowerCase()
+
+let results=document.getElementById("searchResults")
+
+results.innerHTML=""
+
+if(input.length<2) return
+
+let matches=SOP_INDEX.filter(sop=>
+
+sop.title.toLowerCase().includes(input) ||
+sop.keywords.toLowerCase().includes(input) ||
+sop.department.toLowerCase().includes(input)
+
+)
+
+matches.forEach(sop=>{
+
+results.innerHTML+=`
+
+<a href="${sop.url}" class="result-card">
+
+<strong>${sop.title}</strong>
+
+<span>${sop.department}</span>
+
+</a>
+
+`
+
+})
+
+}
