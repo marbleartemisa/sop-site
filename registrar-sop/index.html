@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
@@ -88,6 +87,10 @@ margin:8px 0;
 border-radius:10px;
 border:1px solid #ccc;
 font-size:1rem;
+height:46px;
+}
+textarea{
+height:auto;
 }
 button{
 padding:12px;
@@ -132,22 +135,10 @@ border-radius:20px;
 font-size:.8rem;
 font-weight:bold;
 }
-.pendiente{
-background:#fff3cd;
-color:#856404;
-}
-.tramite{
-background:#cce5ff;
-color:#004085;
-}
-.rechazado{
-background:#f8d7da;
-color:#721c24;
-}
-.aprobado{
-background:#d4edda;
-color:#155724;
-}
+.pendiente{background:#fff3cd;color:#856404;}
+.tramite{background:#cce5ff;color:#004085;}
+.rechazado{background:#f8d7da;color:#721c24;}
+.aprobado{background:#d4edda;color:#155724;}
 
 /* ===== FOOTER ===== */
 .footer{
@@ -203,7 +194,7 @@ display:block;
 <!-- FORMULARIO -->
 <div class="container">
 <h1>Registrar Solicitud de SOP</h1>
-<form id="sopForm">
+<form id="sopForm" enctype="multipart/form-data">
 
 <label>Empleado</label>
 <select id="employee" required>
@@ -229,6 +220,8 @@ display:block;
 <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
 <input type="text" id="areas" placeholder="Áreas o roles involucrados">
 <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones"></textarea>
+<label>Adjuntar archivos (PDF o imágenes)</label>
+<input type="file" id="archivos" multiple>
 
 <button type="submit">Registrar Solicitud</button>
 </form>
@@ -245,6 +238,7 @@ display:block;
 <th>Objetivo</th>
 <th>Áreas</th>
 <th>Estado</th>
+<th>Fecha / Hora</th>
 <th>Acciones</th>
 </tr>
 </thead>
@@ -259,19 +253,15 @@ display:block;
 </div>
 
 <script>
-/* MENU MOVIL */
-function toggleMenu(){
-document.querySelector('.menu').classList.toggle('show')
-}
+// MENU MOVIL
+function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 
-/* SISTEMA SOP */
+// SISTEMA SOP
 emailjs.init("iR8ieJnOkI4_sr8TH"); // tu User ID
 
 let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
 
-function guardar(){
-localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))
-}
+function guardar(){localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))}
 
 function renderTabla(){
 const tabla=document.getElementById("tablaSOP")
@@ -293,6 +283,7 @@ fila.innerHTML=`
 <td>${sop.objetivo}</td>
 <td>${sop.areas}</td>
 <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
+<td>${sop.fecha}</td>
 <td>
 <button onclick="cambiarEstado(${index},'Trámite')"><i class="fa fa-spinner"></i></button>
 <button onclick="cambiarEstado(${index},'Rechazado')"><i class="fa fa-times"></i></button>
@@ -309,6 +300,12 @@ guardar()
 renderTabla()
 }
 
+document.getElementById("employee").addEventListener("change", function(){
+  let datos = this.value.split("|");
+  let departamento = datos[3] || "";
+  document.getElementById("departamento").value = departamento;
+})
+
 document.getElementById("sopForm").addEventListener("submit",function(e){
 e.preventDefault()
 let datosEmpleado = document.getElementById("employee").value.split("|")
@@ -317,6 +314,7 @@ let correo = datosEmpleado[1]
 let cargo = datosEmpleado[2]
 let departamentoEmpleado = datosEmpleado[3]
 
+let fechaActual = new Date().toLocaleString()
 let nuevo={
 empleado:nombre,
 correo:correo,
@@ -325,27 +323,40 @@ departamento:document.getElementById("departamento").value,
 objetivo:document.getElementById("objetivo").value,
 areas:document.getElementById("areas").value,
 resumen:document.getElementById("resumen").value,
-estado:"Pendiente"
+estado:"Pendiente",
+fecha: fechaActual
 }
 solicitudes.push(nuevo)
 guardar()
 renderTabla()
 this.reset()
 
-// ENVIO EMAIL
+// ENVIO EMAIL CON ARCHIVOS
+let archivosInput = document.getElementById("archivos")
+let archivos = archivosInput.files
+
+let formData = new FormData()
+for(let i=0;i<archivos.length;i++){
+  formData.append("file[]",archivos[i])
+}
+
 emailjs.send("service_vkt5xuo","template_vc7447e",{
 employee:nombre,
 department:document.getElementById("departamento").value,
 objective:document.getElementById("objetivo").value,
 areas:document.getElementById("areas").value,
 summary:document.getElementById("resumen").value,
-date:new Date().toLocaleString()
+date: fechaActual
+}).then(()=>{
+  alert("Solicitud enviada correctamente")
+}).catch((error)=>{
+  console.error(error)
+  alert("Error enviando correo")
 })
-.then(()=>{alert("Solicitud enviada correctamente")})
-.catch((error)=>{console.error(error); alert("Error enviando correo")})
 })
 
 renderTabla()
 </script>
+
 </body>
 </html>
