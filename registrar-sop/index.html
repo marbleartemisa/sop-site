@@ -60,7 +60,7 @@ th{background:#003366;color:white;}
 <!-- FORMULARIO -->
 <div class="container">
 <h1>Registrar Solicitud de SOP</h1>
-<form id="sopForm" enctype="multipart/form-data">
+<form id="sopForm">
 <input type="text" id="empleado" placeholder="Nombre del empleado" required>
 <input type="text" id="departamento" placeholder="Área / Departamento" required>
 <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
@@ -124,16 +124,10 @@ tabla.appendChild(fila);
 function cambiarEstado(i,estado){solicitudes[i].estado=estado; guardar(); renderTabla();}
 
 // EmailJS
-emailjs.init("TU_USER_ID_EMAILJS"); // reemplaza con tu User ID
+emailjs.init("TU_USER_ID_EMAILJS"); // reemplaza con tu User ID de EmailJS
+
 document.getElementById("sopForm").addEventListener("submit",function(e){
 e.preventDefault();
-let archivosInput = document.getElementById("archivos");
-let archivosHTML = "";
-if(archivosInput.files.length>0){
-  for(let i=0;i<archivosInput.files.length;i++){
-    archivosHTML += `<p>${archivosInput.files[i].name}</p>`;
-  }
-}
 let nuevo={
 empleado:empleado.value,
 departamento:departamento.value,
@@ -147,19 +141,52 @@ guardar();
 renderTabla();
 this.reset();
 
-// Enviar correo
-let templateParams={
-  empleado:nuevo.empleado,
-  departamento:nuevo.departamento,
-  objetivo:nuevo.objetivo,
-  areas:nuevo.areas,
-  resumen:nuevo.resumen,
-  archivosHTML:archivosHTML
-};
-emailjs.send("service_xrmg6t8","template_vc7447e",templateParams)
-.then(res=>{alert("Solicitud registrada y correo enviado con éxito!");})
-.catch(err=>{alert("Error enviando correo: "+err);});
+// Leer archivos y enviar correo con base64 + nombres
+let archivosInput = document.getElementById("archivos");
+let attachments = [];
+
+if(archivosInput.files.length>0){
+  let filesProcessed = 0;
+  for(let i=0;i<archivosInput.files.length;i++){
+    let file = archivosInput.files[i];
+    let reader = new FileReader();
+    reader.onload = function(e){
+      attachments.push({name:file.name, data:e.target.result.split(',')[1]});
+      filesProcessed++;
+      if(filesProcessed === archivosInput.files.length){
+        enviarCorreo(attachments);
+      }
+    }
+    reader.readAsDataURL(file);
+  }
+}else{
+  enviarCorreo([]);
+}
+
+function enviarCorreo(attachmentsList){
+  // Generar HTML de los archivos para mostrar en el email
+  let archivosHTML = "";
+  attachmentsList.forEach(f=>{
+    archivosHTML += `<p><strong>${f.name}</strong></p>`;
+  });
+
+  let templateParams={
+    empleado:nuevo.empleado,
+    departamento:nuevo.departamento,
+    objetivo:nuevo.objetivo,
+    areas:nuevo.areas,
+    resumen:nuevo.resumen,
+    archivosHTML:archivosHTML,
+    attachments: attachmentsList // EmailJS lo tomará como attachments
+  };
+
+  emailjs.send("service_xrmg6t8","template_vc7447e",templateParams)
+    .then(res=>{alert("Solicitud registrada y correo enviado con éxito!");})
+    .catch(err=>{alert("Error enviando correo: "+err);});
+}
+
 });
+
 renderTabla();
 </script>
 </body>
