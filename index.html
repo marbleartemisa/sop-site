@@ -5,25 +5,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ARTEMISA MARBLE & CABINETS - SOP</title>
+<title>ARTEMISA SOP</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
-
 <style>
 
-/* ===== FONDO ===== */
+/* ===== BASE ===== */
 
 body{
 margin:0;
 font-family:'Segoe UI',Arial,sans-serif;
-background:url('/sop-site/kitchen15.jpeg') no-repeat center top;
-background-size:cover;
+background:url('/sop-site/kitchen15.jpeg') center/cover no-repeat;
 }
 
 .overlay{
-background:rgba(0,0,0,0.25);
+background:rgba(0,0,0,0.35);
 min-height:100vh;
 }
 
@@ -32,43 +29,41 @@ min-height:100vh;
 .navbar{
 position:sticky;
 top:0;
-background:rgba(0,0,0,0.65);
-backdrop-filter:blur(8px);
-padding:10px 30px;
-color:white;
-font-weight:bold;
-font-family:'Nuevo','Segoe UI',Arial,sans-serif;
+background:rgba(0,0,0,0.75);
+backdrop-filter:blur(10px);
 display:flex;
 justify-content:space-between;
 align-items:center;
-z-index:999;
+padding:12px 25px;
+color:white;
+z-index:1000;
 }
 
 .logo{
 display:flex;
 align-items:center;
 gap:10px;
+font-weight:bold;
 }
 
 .logo img{
-height:40px;
+height:38px;
 }
 
 .menu{
 display:flex;
-gap:20px;
+gap:25px;
 }
 
 .menu a{
 color:white;
 text-decoration:none;
-font-weight:bold;
+font-weight:600;
 transition:0.3s;
 }
 
 .menu a:hover{
 color:#00aaff;
-transform:scale(1.05);
 }
 
 .menu-toggle{
@@ -77,28 +72,77 @@ font-size:26px;
 cursor:pointer;
 }
 
+/* ===== MOBILE MENU ===== */
+
+.mobile-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+opacity:0;
+visibility:hidden;
+transition:0.3s;
+z-index:900;
+}
+
+.mobile-overlay.show{
+opacity:1;
+visibility:visible;
+}
+
+@media(max-width:768px){
+
+.menu{
+position:fixed;
+top:0;
+right:-260px;
+height:100%;
+width:260px;
+background:#0b1c2c;
+flex-direction:column;
+padding-top:80px;
+gap:20px;
+transition:0.35s;
+}
+
+.menu.show{
+right:0;
+}
+
+.menu a{
+padding:12px 25px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.menu-toggle{
+display:block;
+}
+
+}
+
 /* ===== BANNER ===== */
 
 .banner{
 text-align:center;
-padding:60px 20px 20px 20px;
+padding:70px 20px 30px;
 color:white;
 }
 
 .banner h1{
-margin:0;
 font-size:2.6rem;
+margin:0;
 }
 
 .banner p{
 margin:6px 0;
-font-size:1.1rem;
 opacity:0.9;
 }
 
 .cta-btn{
-display:inline-block;
 margin-top:20px;
+display:inline-block;
 padding:12px 28px;
 border-radius:30px;
 background:linear-gradient(135deg,#0072C6,#005a9e);
@@ -112,28 +156,27 @@ transition:.3s;
 transform:scale(1.05);
 }
 
-/* ===== BUSCADOR ===== */
+/* ===== SEARCH ===== */
 
 .search-container{
 text-align:center;
-margin:30px 20px;
+margin:35px 20px;
 }
 
 .search-container input{
 width:90%;
-max-width:500px;
-padding:14px 18px;
-border-radius:30px;
+max-width:520px;
+padding:15px 20px;
+border-radius:40px;
 border:none;
 font-size:1rem;
-outline:none;
 }
 
-/* ===== TARJETAS ===== */
+/* ===== CARDS ===== */
 
 .container{
 max-width:1100px;
-margin:40px auto 60px auto;
+margin:40px auto;
 padding:20px;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -141,8 +184,7 @@ gap:25px;
 }
 
 .card{
-background:rgba(255,255,255,0.9);
-backdrop-filter:blur(10px);
+background:rgba(255,255,255,0.95);
 border-radius:18px;
 padding:30px 20px;
 text-align:center;
@@ -150,15 +192,15 @@ text-decoration:none;
 color:#1f2937;
 font-weight:600;
 font-size:1.1rem;
-box-shadow:0 15px 35px rgba(0,0,0,0.3);
+box-shadow:0 15px 35px rgba(0,0,0,0.35);
 transition:all .4s;
 opacity:0;
-transform:translateY(30px);
+transform:translateY(40px);
 }
 
 .card i{
-font-size:28px;
-margin-bottom:10px;
+font-size:30px;
+margin-bottom:12px;
 display:block;
 color:#005a9e;
 }
@@ -169,106 +211,22 @@ transform:translateY(0);
 }
 
 .card:hover{
-transform:translateY(-8px);
-box-shadow:0 20px 45px rgba(0,0,0,0.4);
-}
-
-/* ===== VIDEOS ===== */
-
-.video-section{
-max-width:1100px;
-margin:40px auto;
-padding:0 20px;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:20px;
-}
-
-.video-section iframe,
-.video-section video{
-width:100%;
-height:200px;
-border-radius:15px;
-border:none;
-object-fit:cover;
-}
-
-/* ===== CARRUSEL ===== */
-
-.carousel{
-width:100%;
-max-width:700px;
-margin:40px auto;
-overflow:hidden;
-border-radius:15px;
-box-shadow:0 10px 25px rgba(0,0,0,0.3);
-}
-
-.slides{
-display:flex;
-animation:scroll 45s linear infinite;
-}
-
-.slides img{
-width:220px;
-height:160px;
-object-fit:cover;
-margin-right:12px;
-border-radius:10px;
-flex-shrink:0;
-}
-
-@keyframes scroll{
-0%{transform:translateX(0);}
-100%{transform:translateX(-50%);}
+transform:translateY(-10px);
+box-shadow:0 25px 45px rgba(0,0,0,0.45);
 }
 
 /* ===== FOOTER ===== */
 
 .footer{
 text-align:center;
-padding:30px;
-color:white;
-opacity:0.9;
+padding:25px;
 background:#003366;
-}
-
-/* ===== RESPONSIVE ===== */
-
-@media(max-width:768px){
-
-.banner h1{font-size:1.8rem;}
-
-.banner p{font-size:0.9rem;}
-
-.menu{
-display:none;
-flex-direction:column;
-background:rgba(0,0,0,0.9);
-position:absolute;
-top:60px;
-right:0;
-width:220px;
-padding:20px;
-border-radius:10px 0 0 10px;
-}
-
-.menu a{
-padding:12px 0;
-border-bottom:1px solid rgba(255,255,255,0.2);
-}
-
-.menu.show{
-display:flex;
-}
-
-.menu-toggle{
-display:block;
-}
-
+color:white;
+margin-top:50px;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -281,14 +239,14 @@ display:block;
 
 <div class="logo">
 <img src="/sop-site/logo.png">
-<span>ARTEMISA MARBLE & CABINETS</span>
+<span>ARTEMISA SOP</span>
 </div>
 
 <div class="menu-toggle">
 <i class="fa-solid fa-bars"></i>
 </div>
 
-<div class="menu" id="menu">
+<div class="menu">
 
 <a href="/sop-site/">Inicio</a>
 
@@ -300,21 +258,19 @@ display:block;
 
 </div>
 
+<div class="mobile-overlay"></div>
+
 <!-- BANNER -->
 
 <div class="banner">
 
-<h1>BIENVENIDO AL PORTAL DE PROCEDIMIENTOS OPERATIVOS ESTÁNDAR</h1>
-
-<p>(SOP)</p>
+<h1>PORTAL DE PROCEDIMIENTOS</h1>
 
 <p>ARTEMISA MARBLE & CABINETS</p>
 
-<p>830 W 19TH ST, HIALEAH FL</p>
+<p>SOP - Standard Operating Procedures</p>
 
-<p>Tel: 305-884-1223</p>
-
-<a href="#cardContainer" class="cta-btn">Ver SOP</a>
+<a href="#cards" class="cta-btn">Ver Departamentos</a>
 
 </div>
 
@@ -328,7 +284,7 @@ display:block;
 
 <!-- TARJETAS -->
 
-<div class="container" id="cardContainer">
+<div class="container" id="cards">
 
 <a href="/sop-site/comercial/index.html" class="card"><i class="fa-solid fa-chart-line"></i>Comercial</a>
 
@@ -358,15 +314,13 @@ display:block;
 
 <script>
 
-/* BUSCADOR */
+/* ===== BUSCADOR ===== */
 
 function filterCards(){
 
 let input=document.getElementById("searchInput").value.toLowerCase();
 
-let cards=document.querySelectorAll(".card");
-
-cards.forEach(card=>{
+document.querySelectorAll(".card").forEach(card=>{
 
 let text=card.textContent.toLowerCase();
 
@@ -376,7 +330,7 @@ card.style.display=text.includes(input) ? "" : "none";
 
 }
 
-/* ANIMACION TARJETAS */
+/* ===== ANIMACION CARDS ===== */
 
 const observer=new IntersectionObserver(entries=>{
 
@@ -392,21 +346,43 @@ entry.target.classList.add("show");
 
 });
 
-document.querySelectorAll(".card").forEach(card=>{
+document.querySelectorAll(".card").forEach(card=>observer.observe(card));
 
-observer.observe(card);
-
-});
-
-/* MENU HAMBURGUESA */
+/* ===== MENU MOBILE ===== */
 
 const toggle=document.querySelector(".menu-toggle");
 
 const menu=document.querySelector(".menu");
 
-toggle.addEventListener("click",function(){
+const overlay=document.querySelector(".mobile-overlay");
+
+toggle.onclick=()=>{
 
 menu.classList.toggle("show");
+
+overlay.classList.toggle("show");
+
+}
+
+overlay.onclick=()=>{
+
+menu.classList.remove("show");
+
+overlay.classList.remove("show");
+
+}
+
+/* cerrar menu al tocar link */
+
+document.querySelectorAll(".menu a").forEach(link=>{
+
+link.onclick=()=>{
+
+menu.classList.remove("show");
+
+overlay.classList.remove("show");
+
+}
 
 });
 
