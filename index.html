@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -17,30 +17,11 @@ body {
   background: url('/sop-site/kitchen15.jpeg') no-repeat center top;
   background-size: cover;
 }
-.overlay {
-  background: rgba(0,0,0,0.25);
-  min-height: 100vh;
-}
+.overlay { background: rgba(0,0,0,0.25); min-height: 100vh; }
 
 /* NAVBAR */
-.navbar {
-  position: sticky;
-  top: 0;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(8px);
-  padding: 10px 30px;
-  color: white;
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 999;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.navbar { position: sticky; top: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); padding: 10px 30px; color: white; font-weight: bold; display: flex; justify-content: space-between; align-items: center; z-index: 999; }
+.logo { display: flex; align-items: center; gap: 10px; }
 .logo img { height: 40px; }
 .menu { display: flex; gap: 25px; }
 .menu a { color: white; text-decoration: none; font-weight: bold; transition: .3s; }
@@ -48,69 +29,21 @@ body {
 .menu-toggle { display: none; font-size: 1.6rem; cursor: pointer; }
 
 /* BANNER */
-.banner {
-  text-align: center;
-  padding: 40px 20px 20px 20px;
-  color: white;
-}
+.banner { text-align: center; padding: 40px 20px 20px 20px; color: white; }
 .banner h1 { margin:0; font-size:2.2rem; }
 .banner p { margin:4px 0; opacity:0.9; }
-.cta-btn {
-  display:inline-block;
-  margin-top:15px;
-  padding:10px 25px;
-  border-radius:30px;
-  background:linear-gradient(135deg,#0072C6,#005a9e);
-  color:white;
-  text-decoration:none;
-  font-weight:bold;
-  transition:.3s;
-}
+.cta-btn { display:inline-block; margin-top:15px; padding:10px 25px; border-radius:30px; background:linear-gradient(135deg,#0072C6,#005a9e); color:white; text-decoration:none; font-weight:bold; transition:.3s; }
 .cta-btn:hover { transform:scale(1.05); }
 
 /* BUSCADOR Y FILTROS */
-.search-container{
-  max-width:950px;
-  margin:30px auto;
-  padding:0 20px;
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-}
-.search-container input, .search-container select {
-  width:100%;
-  padding:12px 15px;
-  border-radius:30px;
-  border:none;
-  font-size:1rem;
-  box-shadow:0 8px 20px rgba(0,0,0,0.25);
-  outline:none;
-}
+.search-container { max-width:950px; margin:30px auto; padding:0 20px; display:flex; flex-direction:column; gap:15px; }
+.search-container input, .search-container select { width:100%; padding:12px 15px; border-radius:30px; border:none; font-size:1rem; box-shadow:0 8px 20px rgba(0,0,0,0.25); outline:none; }
 .search-filters { display:flex; gap:10px; flex-wrap:wrap; }
 .search-filters select { flex:1; }
 
 /* TARJETAS SOP */
-.sop-container {
-  max-width:1100px;
-  margin:30px auto 60px auto;
-  padding:0 20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:20px;
-}
-.sop-card {
-  background: rgba(255,255,255,0.95);
-  border-radius:15px;
-  padding:20px;
-  text-decoration:none;
-  color:#1f2937;
-  font-weight:600;
-  box-shadow:0 10px 25px rgba(0,0,0,0.25);
-  transition:.3s;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
+.sop-container { max-width:1100px; margin:30px auto 60px auto; padding:0 20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+.sop-card { background: rgba(255,255,255,0.95); border-radius:15px; padding:20px; text-decoration:none; color:#1f2937; font-weight:600; box-shadow:0 10px 25px rgba(0,0,0,0.25); transition:.3s; display:flex; flex-direction:column; gap:8px; }
 .sop-card:hover { transform:translateY(-5px); box-shadow:0 15px 30px rgba(0,0,0,0.35); }
 .sop-card .dept { font-size:0.85rem; color:#555; }
 .sop-card .desc { font-size:0.9rem; color:#333; }
@@ -118,51 +51,47 @@ body {
 .sop-card .link:hover { text-decoration:underline; }
 
 /* VIDEOS */
-.video-section {
-  max-width:1100px;
-  margin:40px auto;
-  padding:0 20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:20px;
-}
-.video-section iframe, .video-section video {
-  width:100%;
-  height:200px;
-  border-radius:15px;
-  border:none;
-  object-fit:cover;
-}
+.video-section { max-width:1100px; margin:40px auto; padding:0 20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; }
+.video-section iframe, .video-section video { width:100%; height:200px; border-radius:15px; border:none; object-fit:cover; }
 
-/* CARRUSEL */
-.carousel-container-premium {
-  max-width:900px;
-  margin:50px auto;
-  position:relative;
-  overflow:hidden;
-  border-radius:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.35);
-}
-.carousel-track-premium { display:flex; gap:15px; scroll-behavior:smooth; overflow-x:auto; padding:10px; }
-.carousel-track-premium::-webkit-scrollbar { display:none; }
-.carousel-slide-premium { flex:0 0 auto; width:300px; border-radius:10px; }
-.carousel-slide-premium img { width:100%; height:180px; object-fit:cover; border-radius:10px; }
 
+  <!-- CARRUSEL PREMIUM -->
+  <div class="carousel-container-premium">
+    <button class="carousel-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="carousel-track-premium">
+      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
+      <!-- duplicado para loop -->
+      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
+    </div>
+    <button class="carousel-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
 /* FOOTER */
-.footer {
-  text-align:center;
-  padding:30px;
-  color:white;
-  background:#003366;
-}
+.footer { text-align:center; padding:30px; color:white; background:#003366; }
 
 /* RESPONSIVE */
-@media(max-width:768px){
-  .menu { display:none; flex-direction:column; background:rgba(0,0,0,0.9); position:absolute; top:60px; right:0; width:200px; padding:20px; border-radius:10px 0 0 10px; }
-  .menu.show { display:flex; }
-  .menu-toggle { display:block; }
-  .banner h1 { font-size:1.6rem; }
-}
+@media(max-width:768px){ .menu { display:none; flex-direction:column; background:rgba(0,0,0,0.9); position:absolute; top:60px; right:0; width:200px; padding:20px; border-radius:10px 0 0 10px; } .menu.show { display:flex; } .menu-toggle { display:block; } .banner h1 { font-size:1.6rem; } }
 </style>
 </head>
 <body>
@@ -231,69 +160,70 @@ body {
 </div>
 
 <!-- FOOTER -->
-<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS Rev 1.2</div>
+<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS Rev 1.3</div>
 
 </div>
 
-<script src="/sop-site/sop-index.js"></script>
 <script>
-/* Menu móvil */
-function toggleMenu(){document.querySelector('.menu').classList.toggle('show');}
+// ===== MENU MÓVIL =====
+function toggleMenu() {
+  document.querySelector('.menu').classList.toggle('show');
+}
 
-/* Datos SOP: mantener tu estructura */
-const SOP_INDEX = [
-  {title:"Cotización de Ventas", department:"Comercial", keywords:"ventas cotizacion sales consultor presupuesto", url:"/sop-site/comercial/SOP-PARA-COTIZACIÓN-VENTAS", desc:"Procedimiento para cotizaciones y gestión de clientes"},
-  {title:"Sales Consultant", department:"Comercial", keywords:"ventas consultor clientes proceso ventas", url:"/sop-site/comercial/SOP-SALES-CONSULTANT", desc:"Guía para el consultor de ventas"},
-  {title:"SOP Compra Slabs", department:"Administración", keywords:"compra slabs piedra marmol granito", url:"/sop-site/administracion/SOP-COMPRA-SLABS", desc:"Proceso de adquisición de slabs"},
-  {title:"SOP Recepción Sink", department:"Administración", keywords:"recepcion sink cocina", url:"/sop-site/administracion/SOP-RECEPCION-SINK", desc:"Recepción y control de fregaderos"},
-  {title:"SOP Ecopower", department:"Ecopowertech", keywords:"led iluminación accesorios control remoto", url:"/sop-site/ecopower/SOP-ECOPOWER", desc:"Procedimientos para integración con Ecopower"},
-  /* ... añade todos los SOP aquí ... */
-];
+// ===== VARIABLE GLOBAL PARA SOP =====
+let SOP_INDEX = [];
 
-/* Función para renderizar SOP */
-function renderSOP(){
+// ===== CARGAR JSON DINÁMICAMENTE =====
+fetch('/sop-site/SOP_INDEX.json')
+  .then(res => res.json())
+  .then(data => {
+    SOP_INDEX = data;
+    renderSOP(); // renderizar todas las tarjetas al cargar
+  })
+  .catch(err => console.error("Error cargando SOP_INDEX.json:", err));
+
+// ===== FUNCION RENDERIZAR SOP =====
+function renderSOP(filteredSOP) {
   const container = document.getElementById("sopContainer");
   container.innerHTML = "";
-  SOP_INDEX.forEach(sop=>{
+  
+  const list = filteredSOP || SOP_INDEX;
+
+  list.forEach(sop => {
     const card = document.createElement("a");
     card.href = sop.url;
     card.className = "sop-card";
     card.innerHTML = `
       <strong>${sop.title}</strong>
       <div class="dept">${sop.department}</div>
-      <div class="desc">${sop.desc}</div>
+      <div class="desc">${sop.desc || ''}</div>
       <div class="link">Ver SOP <i class="fa-solid fa-arrow-right"></i></div>
     `;
     container.appendChild(card);
   });
+
+  if(list.length === 0) {
+    container.innerHTML = "<p style='text-align:center;color:white;'>No se encontraron SOP.</p>";
+  }
 }
 
-/* Filtrado por búsqueda y departamento */
-function filterSOP(){
+// ===== FUNCION FILTRO Y BUSQUEDA =====
+function filterSOP() {
   const search = document.getElementById("searchInput").value.toLowerCase();
   const dept = document.getElementById("deptFilter").value;
-  const container = document.getElementById("sopContainer");
-  container.innerHTML = "";
-  SOP_INDEX.forEach(sop=>{
-    const matchSearch = sop.title.toLowerCase().includes(search) || sop.keywords.toLowerCase().includes(search);
-    const matchDept = dept === "" || sop.department === dept;
-    if(matchSearch && matchDept){
-      const card = document.createElement("a");
-      card.href = sop.url;
-      card.className = "sop-card";
-      card.innerHTML = `
-        <strong>${sop.title}</strong>
-        <div class="dept">${sop.department}</div>
-        <div class="desc">${sop.desc}</div>
-        <div class="link">Ver SOP <i class="fa-solid fa-arrow-right"></i></div>
-      `;
-      container.appendChild(card);
-    }
-  });
-}
 
-/* Inicializar */
-renderSOP();
+  const filtered = SOP_INDEX.filter(sop => {
+    const matchDept = dept === "" || sop.department === dept;
+    const matchSearch = 
+      sop.title.toLowerCase().includes(search) ||
+      sop.keywords.toLowerCase().includes(search) ||
+      (sop.desc && sop.desc.toLowerCase().includes(search));
+
+    return matchDept && matchSearch;
+  });
+
+  renderSOP(filtered);
+}
 </script>
 </body>
 </html>
