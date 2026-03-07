@@ -41,18 +41,13 @@ body {
 .search-filters { display:flex; gap:10px; flex-wrap:wrap; }
 .search-filters select { flex:1; }
 
-/* CARRUSELES DE DEPARTAMENTO */
-.department-carrusel { max-width:1100px; margin:30px auto; }
-.department-title { font-size:1.3rem; font-weight:bold; color:white; margin:10px 0; }
-.carrusel-track { display:flex; gap:15px; overflow-x:auto; scroll-behavior:smooth; padding-bottom:10px; }
-.carrusel-track::-webkit-scrollbar { display:none; }
-
 /* TARJETAS SOP */
-.sop-card { flex:0 0 250px; background: rgba(255,255,255,0.95); border-radius:15px; padding:20px; text-decoration:none; color:#1f2937; font-weight:600; box-shadow:0 10px 25px rgba(0,0,0,0.25); display:flex; flex-direction:column; gap:8px; transition:.3s; }
+.sop-container { max-width:1100px; margin:30px auto 60px auto; padding:0 20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+.sop-card { background: rgba(255,255,255,0.95); border-radius:15px; padding:20px; text-decoration:none; color:#1f2937; font-weight:600; box-shadow:0 10px 25px rgba(0,0,0,0.25); transition:.3s; display:flex; flex-direction:column; gap:8px; }
 .sop-card:hover { transform:translateY(-5px); box-shadow:0 15px 30px rgba(0,0,0,0.35); }
 .sop-card .dept { font-size:0.85rem; color:#555; }
 .sop-card .desc { font-size:0.9rem; color:#333; }
-.sop-card .link { margin-top:auto; text-decoration:none; color:#005a9e; font-weight:bold; }
+.sop-card .link { margin-top:auto; text-decoration:none; color:#005a9e; font-weight:bold; transition:.3s; }
 .sop-card .link:hover { text-decoration:underline; }
 
 /* VIDEOS */
@@ -68,17 +63,15 @@ body {
 .carousel-btn.prev { left:10px; }
 .carousel-btn.next { right:10px; }
 
-
-
 /* FOOTER */
 .footer { text-align:center; padding:30px; color:white; background:#003366; }
 
 /* RESPONSIVE */
-@media(max-width:768px){
-  .menu { display:none; flex-direction:column; background:rgba(0,0,0,0.9); position:absolute; top:60px; right:0; width:200px; padding:20px; border-radius:10px 0 0 10px; }
-  .menu.show { display:flex; }
-  .menu-toggle { display:block; }
-  .banner h1 { font-size:1.6rem; }
+@media(max-width:768px){ 
+  .menu { display:none; flex-direction:column; background:rgba(0,0,0,0.9); position:absolute; top:60px; right:0; width:200px; padding:20px; border-radius:10px 0 0 10px; } 
+  .menu.show { display:flex; } 
+  .menu-toggle { display:block; } 
+  .banner h1 { font-size:1.6rem; } 
 }
 </style>
 </head>
@@ -103,21 +96,29 @@ body {
 <div class="banner">
   <h1>Biblioteca de Procedimientos Operativos Estándar (SOP)</h1>
   <p>ARTEMISA MARBLE & CABINETS</p>
-  <a href="#sopCarruselesContainer" class="cta-btn">Ver SOP</a>
+  <a href="#sopContainer" class="cta-btn">Ver SOP</a>
 </div>
 
 <!-- BUSCADOR Y FILTROS -->
 <div class="search-container">
-  <input type="text" id="searchInput" placeholder="Buscar por título o palabra clave..." onkeyup="filterSOP()">
+  <input type="text" id="searchInput" placeholder="Buscar por título, departamento o palabra clave..." onkeyup="filterSOP()">
   <div class="search-filters">
     <select id="deptFilter" onchange="filterSOP()">
       <option value="">Todos los departamentos</option>
+      <option value="Comercial">Comercial</option>
+      <option value="Producción">Producción</option>
+      <option value="Instalación">Instalación</option>
+      <option value="Administración">Administración</option>
+      <option value="Maquinarias">Maquinarias</option>
+      <option value="Vehículos">Vehículos</option>
+      <option value="Houzz Pro">Houzz Pro</option>
+      <option value="Ecopowertech">Ecopowertech</option>
     </select>
   </div>
 </div>
 
-<!-- CARRUSELES SOP -->
-<div id="sopCarruselesContainer"></div>
+<!-- TARJETAS SOP -->
+<div class="sop-container" id="sopContainer"></div>
 
 <!-- VIDEOS -->
 <div class="video-section">
@@ -143,98 +144,66 @@ body {
   <button class="carousel-btn next"><i class="fa-solid fa-chevron-right"></i></button>
 </div>
 
-
 <!-- FOOTER -->
-<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS Rev 1.4</div>
+<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS Rev 1.3</div>
 
 </div>
 
 <script>
 // ===== MENU MÓVIL =====
-function toggleMenu() {
-  document.querySelector('.menu').classList.toggle('show');
-}
+function toggleMenu() { document.querySelector('.menu').classList.toggle('show'); }
 
-// ===== SOP DINÁMICO =====
+// ===== VARIABLE GLOBAL PARA SOP =====
 let SOP_INDEX = [];
 
-// ===== Cargar JSON =====
+// ===== CARGAR JSON DINÁMICAMENTE =====
 fetch('/sop-site/SOP_INDEX.json')
   .then(res => res.json())
-  .then(data => {
-    SOP_INDEX = data;
-    fillDeptFilter();
-    renderCarruseles();
-  })
+  .then(data => { SOP_INDEX = data; renderSOP(); })
   .catch(err => console.error("Error cargando SOP_INDEX.json:", err));
 
-// ===== Llenar select de departamentos =====
-function fillDeptFilter() {
-  const deptSet = new Set(SOP_INDEX.map(s => s.department).filter(d => d));
-  const select = document.getElementById('deptFilter');
-  deptSet.forEach(d => {
-    const opt = document.createElement('option');
-    opt.value = d;
-    opt.textContent = d;
-    select.appendChild(opt);
-  });
-}
-
-// ===== Renderizar carruseles por departamento =====
-function renderCarruseles(filtered = null) {
-  const container = document.getElementById('sopCarruselesContainer');
+// ===== FUNCION RENDERIZAR SOP =====
+function renderSOP(filteredSOP) {
+  const container = document.getElementById("sopContainer");
   container.innerHTML = "";
-  const list = filtered || SOP_INDEX;
+  
+  const list = filteredSOP || SOP_INDEX;
 
-  const depts = {};
   list.forEach(sop => {
-    if(!depts[sop.department]) depts[sop.department] = [];
-    depts[sop.department].push(sop);
+    const card = document.createElement("a");
+    card.href = sop.url;
+    card.className = "sop-card";
+    card.innerHTML = `
+      <strong>${sop.title}</strong>
+      <div class="dept">${sop.department}</div>
+      <div class="desc">${sop.desc || ''}</div>
+      <div class="link">Ver SOP <i class="fa-solid fa-arrow-right"></i></div>
+    `;
+    container.appendChild(card);
   });
 
-  for(const dept in depts){
-    const deptDiv = document.createElement('div');
-    deptDiv.className = 'department-carrusel';
-    
-    const title = document.createElement('div');
-    title.className = 'department-title';
-    title.textContent = dept;
-    
-    const track = document.createElement('div');
-    track.className = 'carrusel-track';
-
-    depts[dept].forEach(sop => {
-      const card = document.createElement('a');
-      card.href = sop.url;
-      card.className = 'sop-card';
-      card.innerHTML = `
-        <strong>${sop.title}</strong>
-        <div class="dept">${sop.department}</div>
-        <div class="desc">${sop.desc || ''}</div>
-        <div class="link">Ver SOP <i class="fa-solid fa-arrow-right"></i></div>
-      `;
-      track.appendChild(card);
-    });
-
-    deptDiv.appendChild(title);
-    deptDiv.appendChild(track);
-    container.appendChild(deptDiv);
+  if(list.length === 0) {
+    container.innerHTML = "<p style='text-align:center;color:white;'>No se encontraron SOP.</p>";
   }
 }
 
-// ===== Filtrar SOP =====
+// ===== FUNCION FILTRO Y BUSQUEDA =====
 function filterSOP() {
   const search = document.getElementById("searchInput").value.toLowerCase();
   const dept = document.getElementById("deptFilter").value;
 
   const filtered = SOP_INDEX.filter(sop => {
     const matchDept = dept === "" || sop.department === dept;
-    const matchSearch =
+    const matchSearch = 
       sop.title.toLowerCase().includes(search) ||
       sop.keywords.toLowerCase().includes(search) ||
       (sop.desc && sop.desc.toLowerCase().includes(search));
+
     return matchDept && matchSearch;
   });
+
+  renderSOP(filtered);
+}
 
 // ===== CARRUSEL PREMIUM =====
 const track = document.querySelector('.carousel-track-premium');
@@ -246,9 +215,9 @@ prevBtn.addEventListener('click', () => {
   track.scrollBy({ left: -slideWidth, behavior: 'smooth' });
 });
 
-
-  renderCarruseles(filtered);
-}
+nextBtn.addEventListener('click', () => {
+  track.scrollBy({ left: slideWidth, behavior: 'smooth' });
+});
 </script>
 </body>
 </html>
