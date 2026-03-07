@@ -209,7 +209,8 @@ border-radius:15px;
 .carousel-track-premium{
 display:flex;
 gap:15px;
-transition:transform .5s;
+overflow-x:auto;
+scroll-behavior:smooth;
 }
 
 .carousel-slide-premium{
@@ -451,10 +452,14 @@ vehiculos:"🚚",
 function getAreaFromURL(url){
 
 let parts=url.split("/");
-return parts[2]||"general";
 
+if(parts.length>3){
+return parts[3].toLowerCase();
 }
 
+return "general";
+
+}
 function formatArea(area){
 
 return area
@@ -492,10 +497,8 @@ const container=document.getElementById("sopContainer");
 const list=filtered||SOP_INDEX;
 
 if(list.length===0){
-
 container.innerHTML="<p style='color:white;text-align:center'>No se encontraron SOP</p>";
 return;
-
 }
 
 let html=`
@@ -509,7 +512,7 @@ Mostrando <strong>${list.length}</strong> SOP
 <thead>
 <tr>
 <th onclick="sortTable('title')">SOP</th>
-<th onclick="sortTable('url')">Área</th>
+<th>Área</th>
 <th></th>
 </tr>
 </thead>
@@ -519,15 +522,19 @@ Mostrando <strong>${list.length}</strong> SOP
 
 list.forEach(sop=>{
 
-let area=getAreaFromURL(sop.url);
+const area=getAreaFromURL(sop.url);
 
 html+=`
 
 <tr>
 
-<td><strong>${sop.title}</strong></td>
+<td>
+<strong>${sop.title}</strong>
+</td>
 
-<td>${getAreaIcon(area)} ${formatArea(area)}</td>
+<td>
+${getAreaIcon(area)} ${formatArea(area)}
+</td>
 
 <td>
 <a class="sop-link" href="${sop.url}">
@@ -663,17 +670,35 @@ const nextBtn=document.querySelector('.next');
 
 if(!track) return;
 
-nextBtn.addEventListener('click',()=>{
+const slideWidth=265;
 
-track.scrollBy({left:260,behavior:'smooth'});
+/* botones */
 
-});
+nextBtn.onclick=function(){
 
-prevBtn.addEventListener('click',()=>{
+track.scrollLeft+=slideWidth;
 
-track.scrollBy({left:-260,behavior:'smooth'});
+};
 
-});
+prevBtn.onclick=function(){
+
+track.scrollLeft-=slideWidth;
+
+};
+
+/* auto carrusel */
+
+setInterval(function(){
+
+track.scrollLeft+=slideWidth;
+
+if(track.scrollLeft>=track.scrollWidth-track.clientWidth){
+
+track.scrollLeft=0;
+
+}
+
+},4000);
 
 });
 
@@ -681,4 +706,3 @@ track.scrollBy({left:-260,behavior:'smooth'});
 
 </body>
 </html>
-
