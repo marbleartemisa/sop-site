@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARTEMISA MARBLE & CABINETS - SOP</title>
+<title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP</title>
+
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <!-- Fuente -->
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 
 <style>
-/* ===== FONDO ===== */
 body {
   margin: 0;
   font-family:'Segoe UI', Arial, sans-serif;
@@ -22,7 +22,7 @@ body {
   min-height: 100vh;
 }
 
-/* ===== NAVBAR ===== */
+/* NAVBAR */
 .navbar {
   position: sticky;
   top: 0;
@@ -35,405 +35,265 @@ body {
   justify-content: space-between;
   align-items: center;
   z-index: 999;
-  font-family: 'Nuevo','Segoe UI',Arial;
 }
 .logo {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.logo img {
-  height: 40px;
-}
-.menu {
-  display: flex;
-  gap: 25px;
-}
-.menu a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  transition: .3s;
-}
-.menu a:hover {
-  color: #00aaff;
-  transform: scale(1.05);
-}
-.menu-toggle {
-  display: none;
-  font-size: 1.6rem;
-  cursor: pointer;
-}
+.logo img { height: 40px; }
+.menu { display: flex; gap: 25px; }
+.menu a { color: white; text-decoration: none; font-weight: bold; transition: .3s; }
+.menu a:hover { color: #00aaff; transform: scale(1.05); }
+.menu-toggle { display: none; font-size: 1.6rem; cursor: pointer; }
 
-/* ===== BANNER ===== */
+/* BANNER */
 .banner {
   text-align: center;
-  padding: 60px 20px 20px 20px;
+  padding: 40px 20px 20px 20px;
   color: white;
 }
-.banner h1 {
-  margin: 0;
-  font-size: 2.6rem;
-}
-.banner p {
-  margin: 6px 0;
-  font-size: 1.1rem;
-  opacity: 0.9;
-}
+.banner h1 { margin:0; font-size:2.2rem; }
+.banner p { margin:4px 0; opacity:0.9; }
 .cta-btn {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 12px 28px;
-  border-radius: 30px;
-  background: linear-gradient(135deg,#0072C6,#005a9e);
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  transition: .3s;
+  display:inline-block;
+  margin-top:15px;
+  padding:10px 25px;
+  border-radius:30px;
+  background:linear-gradient(135deg,#0072C6,#005a9e);
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  transition:.3s;
 }
-.cta-btn:hover {
-  transform: scale(1.05);
-}
+.cta-btn:hover { transform:scale(1.05); }
 
-/* ===== TARJETAS ===== */
-.container {
-  max-width: 1100px;
-  margin: 40px auto 60px auto;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-  gap: 25px;
-}
-.card {
-  background: rgba(255,255,255,0.9);
-  backdrop-filter: blur(10px);
-  border-radius: 18px;
-  padding: 30px 20px;
-  text-align: center;
-  text-decoration: none;
-  color: #1f2937;
-  font-weight: 600;
-  font-size: 1.1rem;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-  transition: .4s;
-  opacity: 0;
-  transform: translateY(30px);
-}
-.card i {
-  font-size: 28px;
-  margin-bottom: 10px;
-  display: block;
-  color: #005a9e;
-}
-.card.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 45px rgba(0,0,0,0.4);
-}
-
-/* ===== VIDEOS ===== */
-.video-section {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
-  gap: 20px;
-}
-.video-section iframe,
-.video-section video {
-  width: 100%;
-  height: 200px;
-  border-radius: 15px;
-  border: none;
-  object-fit: cover;
-}
-
-/* ===== CARRUSEL PREMIUM LOOP INFINITO CON FLECHAS ===== */
-.carousel-container-premium {
-  max-width: 900px;
-  margin: 50px auto;
-  position: relative;
-  overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-}
-.carousel-track-premium {
-  display: flex;
-  gap: 15px;
-  animation: slide-loop 40s linear infinite;
-  width: max-content; /* FIX: evita que ocupe toda la pantalla */
-}
-.carousel-slide-premium {
-  flex: 0 0 calc(33.333% - 10px);
-}
-.carousel-slide-premium img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  transition: transform .3s;
-}
-.carousel-slide-premium img:hover {
-  transform: scale(1.05);
-}
-.carousel-container-premium:hover .carousel-track-premium {
-  animation-play-state: paused;
-}
-/* FLECHAS */
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
-  border: none;
-  color: white;
-  font-size: 1.8rem;
-  padding: 10px 15px;
-  cursor: pointer;
-  border-radius: 50%;
-  z-index: 10;
-  transition: background .3s;
-}
-.carousel-btn:hover {
-  background: rgba(0,0,0,0.8);
-}
-.carousel-btn.prev { left: 10px; }
-.carousel-btn.next { right: 10px; }
-
-@keyframes slide-loop {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* ===== FOOTER ===== */
-.footer {
-  text-align: center;
-  padding: 30px;
-  color: white;
-  background: #003366;
-}
-
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-  .menu {
-    display: none;
-    flex-direction: column;
-    background: rgba(0,0,0,0.9);
-    position: absolute;
-    top: 60px;
-    right: 0;
-    width: 200px;
-    padding: 20px;
-    border-radius: 10px 0 0 10px;
-  }
-  .menu.show { display: flex; }
-  .menu-toggle { display: block; }
-  .banner h1 { font-size: 1.8rem; }
-  .carousel-slide-premium { flex: 0 0 calc(50% - 10px); }
-  .carousel-slide-premium img { height: 140px; }
-}
-@media(max-width:480px){
-  .carousel-slide-premium { flex: 0 0 100%; }
-  .carousel-slide-premium img { height: 180px; }
-}
-
-/* ===== BUSCADOR ===== */
+/* BUSCADOR Y FILTROS */
 .search-container{
-  max-width:900px;
+  max-width:950px;
   margin:30px auto;
   padding:0 20px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
 }
-.search-container input{
+.search-container input, .search-container select {
   width:100%;
-  padding:14px;
+  padding:12px 15px;
   border-radius:30px;
   border:none;
   font-size:1rem;
   box-shadow:0 8px 20px rgba(0,0,0,0.25);
   outline:none;
 }
+.search-filters { display:flex; gap:10px; flex-wrap:wrap; }
+.search-filters select { flex:1; }
 
-/* RESULTADOS BUSQUEDA GLOBAL */
-.search-results {
-  max-width: 900px;
-  margin: 20px auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-  gap: 15px;
+/* TARJETAS SOP */
+.sop-container {
+  max-width:1100px;
+  margin:30px auto 60px auto;
+  padding:0 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px;
 }
-.result-card {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  text-decoration: none;
-  color: #1f2937;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  transition: .3s;
-  display: block;
+.sop-card {
+  background: rgba(255,255,255,0.95);
+  border-radius:15px;
+  padding:20px;
+  text-decoration:none;
+  color:#1f2937;
+  font-weight:600;
+  box-shadow:0 10px 25px rgba(0,0,0,0.25);
+  transition:.3s;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
-.result-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+.sop-card:hover { transform:translateY(-5px); box-shadow:0 15px 30px rgba(0,0,0,0.35); }
+.sop-card .dept { font-size:0.85rem; color:#555; }
+.sop-card .desc { font-size:0.9rem; color:#333; }
+.sop-card .link { margin-top:auto; text-decoration:none; color:#005a9e; font-weight:bold; transition:.3s; }
+.sop-card .link:hover { text-decoration:underline; }
+
+/* VIDEOS */
+.video-section {
+  max-width:1100px;
+  margin:40px auto;
+  padding:0 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
 }
-.result-card span {
-  display: block;
-  font-size: .8rem;
-  opacity: .7;
-  margin-top: 5px;
+.video-section iframe, .video-section video {
+  width:100%;
+  height:200px;
+  border-radius:15px;
+  border:none;
+  object-fit:cover;
+}
+
+/* CARRUSEL */
+.carousel-container-premium {
+  max-width:900px;
+  margin:50px auto;
+  position:relative;
+  overflow:hidden;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.35);
+}
+.carousel-track-premium { display:flex; gap:15px; scroll-behavior:smooth; overflow-x:auto; padding:10px; }
+.carousel-track-premium::-webkit-scrollbar { display:none; }
+.carousel-slide-premium { flex:0 0 auto; width:300px; border-radius:10px; }
+.carousel-slide-premium img { width:100%; height:180px; object-fit:cover; border-radius:10px; }
+
+/* FOOTER */
+.footer {
+  text-align:center;
+  padding:30px;
+  color:white;
+  background:#003366;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .menu { display:none; flex-direction:column; background:rgba(0,0,0,0.9); position:absolute; top:60px; right:0; width:200px; padding:20px; border-radius:10px 0 0 10px; }
+  .menu.show { display:flex; }
+  .menu-toggle { display:block; }
+  .banner h1 { font-size:1.6rem; }
 }
 </style>
 </head>
-
 <body>
 <div class="overlay">
 
-  <!-- NAVBAR -->
-  <div class="navbar">
-    <div class="logo">
-      <img src="/sop-site/logo.png" alt="Logo Artemisa">
-      <span>ARTEMISA MARBLE & CABINETS</span>
-    </div>
-    <div class="menu-toggle" onclick="toggleMenu()">
-      <i class="fa-solid fa-bars"></i>
-    </div>
-    <div class="menu">
-      <a href="/sop-site/">Inicio</a>
-      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-      <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
-    </div>
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <img src="/sop-site/logo.png" alt="Logo Artemisa">
+    <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
+  <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+  <div class="menu">
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+  </div>
+</div>
 
-  <!-- BANNER -->
-  <div class="banner">
-    <h1>BIENVENIDO AL PORTAL DE PROCEDIMIENTOS OPERATIVOS ESTÁNDAR</h1>
-    <p>(SOP)</p>
-    <p>ARTEMISA MARBLE & CABINETS</p>
-    <p>830 W 19TH ST, HIALEAH, FL</p>
-    <a href="#cardContainer" class="cta-btn">Ver Departamentos</a>
-  </div>
+<!-- BANNER -->
+<div class="banner">
+  <h1>Biblioteca de Procedimientos Operativos Estándar (SOP)</h1>
+  <p>ARTEMISA MARBLE & CABINETS</p>
+  <a href="#sopContainer" class="cta-btn">Ver SOP</a>
+</div>
 
-  <!-- BUSCADOR -->
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Buscar SOP, máquina o proceso..." onkeyup="searchSOP(); filterCards();">
-    <div id="searchResults" class="search-results"></div>
+<!-- BUSCADOR Y FILTROS -->
+<div class="search-container">
+  <input type="text" id="searchInput" placeholder="Buscar por título, departamento o palabra clave..." onkeyup="filterSOP()">
+  <div class="search-filters">
+    <select id="deptFilter" onchange="filterSOP()">
+      <option value="">Todos los departamentos</option>
+      <option value="Comercial">Comercial</option>
+      <option value="Producción">Producción</option>
+      <option value="Instalación">Instalación</option>
+      <option value="Administración">Administración</option>
+      <option value="Maquinarias">Maquinarias</option>
+      <option value="Vehículos">Vehículos</option>
+      <option value="Houzz Pro">Houzz Pro</option>
+      <option value="Ecopowertech">Ecopowertech</option>
+    </select>
   </div>
+</div>
 
-  <!-- DEPARTAMENTOS -->
-  <div class="container" id="cardContainer">
-    <a href="/sop-site/comercial/index.html" class="card"><i class="fa-solid fa-chart-line"></i>Comercial</a>
-    <a href="/sop-site/produccion/index.html" class="card"><i class="fa-solid fa-industry"></i>Producción</a>
-    <a href="/sop-site/instalacion/index.html" class="card"><i class="fa-solid fa-screwdriver-wrench"></i>Instalación</a>
-    <a href="/sop-site/administracion/index.html" class="card"><i class="fa-solid fa-briefcase"></i>Administración</a>
-    <a href="/sop-site/maquinarias/index.html" class="card"><i class="fa-solid fa-gears"></i>Maquinarias</a>
-    <a href="/sop-site/vehiculos/index.html" class="card"><i class="fa-solid fa-truck"></i>Vehículos</a>
-    <a href="/sop-site/houzz-pro/index.html" class="card"><i class="fa-solid fa-house"></i>Houzz Pro</a>
-    <a href="/sop-site/ecopower/index.html" class="card"><i class="fa-solid fa-lightbulb"></i>Ecopowertech</a>
-  </div>
+<!-- TARJETAS SOP -->
+<div class="sop-container" id="sopContainer"></div>
 
-  <!-- VIDEOS -->
-  <div class="video-section">
-    <video autoplay muted loop playsinline>
-      <source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
-    </video>
-    <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
-    <video autoplay muted loop playsinline>
-      <source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
-    </video>
-  </div>
+<!-- VIDEOS -->
+<div class="video-section">
+  <video autoplay muted loop playsinline>
+    <source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
+  </video>
+  <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
+  <video autoplay muted loop playsinline>
+    <source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
+  </video>
+</div>
 
-  <!-- CARRUSEL PREMIUM -->
-  <div class="carousel-container-premium">
-    <button class="carousel-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
-    <div class="carousel-track-premium">
-      <!-- tus imágenes aquí -->
-      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
-      <!-- duplicados para loop -->
-    </div>
-    <button class="carousel-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+<!-- CARRUSEL PREMIUM -->
+<div class="carousel-container-premium">
+  <div class="carousel-track-premium">
+    <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
+    <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
+    <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
   </div>
+</div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    © 2026 ARTEMISA MARBLE & CABINETS   Rev 1.1
-  </div>
+<!-- FOOTER -->
+<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS Rev 1.2</div>
 
 </div>
 
 <script src="/sop-site/sop-index.js"></script>
 <script>
-  // Búsqueda SOP
-  function searchSOP() {
-    let input = document.getElementById("searchInput").value.toLowerCase();
-    let results = document.getElementById("searchResults");
-    results.innerHTML = "";
-    if(input.length < 2) return;
-    if(typeof SOP_INDEX === "undefined") return;
-    let matches = SOP_INDEX.filter(sop =>
-      sop.title.toLowerCase().includes(input) ||
-      sop.keywords.toLowerCase().includes(input) ||
-      sop.department.toLowerCase().includes(input)
-    );
-    matches.forEach(sop => {
-      results.innerHTML += `
-        <a href="${sop.url}" class="result-card">
-          <strong>${sop.title}</strong>
-          <span>${sop.department}</span>
-        </a>
+/* Menu móvil */
+function toggleMenu(){document.querySelector('.menu').classList.toggle('show');}
+
+/* Datos SOP: mantener tu estructura */
+const SOP_INDEX = [
+  {title:"Cotización de Ventas", department:"Comercial", keywords:"ventas cotizacion sales consultor presupuesto", url:"/sop-site/comercial/SOP-PARA-COTIZACIÓN-VENTAS", desc:"Procedimiento para cotizaciones y gestión de clientes"},
+  {title:"Sales Consultant", department:"Comercial", keywords:"ventas consultor clientes proceso ventas", url:"/sop-site/comercial/SOP-SALES-CONSULTANT", desc:"Guía para el consultor de ventas"},
+  {title:"SOP Compra Slabs", department:"Administración", keywords:"compra slabs piedra marmol granito", url:"/sop-site/administracion/SOP-COMPRA-SLABS", desc:"Proceso de adquisición de slabs"},
+  {title:"SOP Recepción Sink", department:"Administración", keywords:"recepcion sink cocina", url:"/sop-site/administracion/SOP-RECEPCION-SINK", desc:"Recepción y control de fregaderos"},
+  {title:"SOP Ecopower", department:"Ecopowertech", keywords:"led iluminación accesorios control remoto", url:"/sop-site/ecopower/SOP-ECOPOWER", desc:"Procedimientos para integración con Ecopower"},
+  /* ... añade todos los SOP aquí ... */
+];
+
+/* Función para renderizar SOP */
+function renderSOP(){
+  const container = document.getElementById("sopContainer");
+  container.innerHTML = "";
+  SOP_INDEX.forEach(sop=>{
+    const card = document.createElement("a");
+    card.href = sop.url;
+    card.className = "sop-card";
+    card.innerHTML = `
+      <strong>${sop.title}</strong>
+      <div class="dept">${sop.department}</div>
+      <div class="desc">${sop.desc}</div>
+      <div class="link">Ver SOP <i class="fa-solid fa-arrow-right"></i></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* Filtrado por búsqueda y departamento */
+function filterSOP(){
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const dept = document.getElementById("deptFilter").value;
+  const container = document.getElementById("sopContainer");
+  container.innerHTML = "";
+  SOP_INDEX.forEach(sop=>{
+    const matchSearch = sop.title.toLowerCase().includes(search) || sop.keywords.toLowerCase().includes(search);
+    const matchDept = dept === "" || sop.department === dept;
+    if(matchSearch && matchDept){
+      const card = document.createElement("a");
+      card.href = sop.url;
+      card.className = "sop-card";
+      card.innerHTML = `
+        <strong>${sop.title}</strong>
+        <div class="dept">${sop.department}</div>
+        <div class="desc">${sop.desc}</div>
+        <div class="link">Ver SOP <i class="fa-solid fa-arrow-right"></i></div>
       `;
-    });
-  }
-
-  // Filtrar tarjetas
-  function filterCards() {
-    let input = document.getElementById("searchInput").value.toLowerCase();
-    let cards = document.querySelectorAll(".card");
-    cards.forEach(card => {
-      let text = card.textContent.toLowerCase();
-      card.style.display = text.includes(input) ? "" : "none";
-    });
-  }
-
-  // Animación tarjetas
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting) entry.target.classList.add("show");
-    });
+      container.appendChild(card);
+    }
   });
-  document.querySelectorAll(".card").forEach(card => observer.observe(card));
+}
 
-  // Menu móvil
-  function toggleMenu() {
-    document.querySelector('.menu').classList.toggle('show');
-  }
-
-  // Carrusel Premium con flechas
-  const track = document.querySelector('.carousel-track-premium');
-  const slides = document.querySelectorAll('.carousel-slide-premium');
-  const btnNext = document.querySelector('.carousel-btn.next');
-  const btnPrev = document.querySelector('.carousel-btn.prev');
-
-  let scrollAmount = 0;
-  const slideWidth = slides[0].offsetWidth + 15;
-
-  btnNext.addEventListener('click', () => {
-    scrollAmount += slideWidth;
-    if(scrollAmount >= track.scrollWidth / 2) scrollAmount = 0;
-    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-  });
-
-  btnPrev.addEventListener('click', () => {
-    scrollAmount -= slideWidth;
-    if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2;
-    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-  });
+/* Inicializar */
+renderSOP();
 </script>
-
 </body>
-
 </html>
