@@ -209,8 +209,7 @@ border-radius:15px;
 .carousel-track-premium{
 display:flex;
 gap:15px;
-overflow-x:auto;
-scroll-behavior:smooth;
+transition:transform .5s;
 }
 
 .carousel-slide-premium{
@@ -385,36 +384,6 @@ onkeyup="filterSOP()">
 <img src="/sop-site/IHCH5272.JPG">
 </div>
 
-<div class="carousel-slide-premium">
-<img src="/sop-site/wall1.jpg">
-</div>
-
-
-<div class="carousel-slide-premium">
-<img src="/sop-site/IMG_4646.jpg">
-</div>
-
-<div class="carousel-slide-premium">
-<img src="/sop-site/Kitchen.jpg">
-</div>
-
-<div class="carousel-slide-premium">
-<img src="/sop-site/HOPE1380.JPG">
-</div>
-
-<div class="carousel-slide-premium">
-<img src="/sop-site/JXUQ9396.JPG">
-</div>
-
-<div class="carousel-slide-premium">
-<img src="/sop-site/POHQ5752.JPG">
-</div>
-
-<div class="carousel-slide-premium">
-<img src="/sop-site/wall2.jpg">
-</div>
-
-
 </div>
 
 <button class="carousel-btn next">
@@ -437,43 +406,6 @@ function toggleMenu(){
 document.querySelector('.menu').classList.toggle('show');
 }
 
-/* ICONOS POR AREA */
-
-const AREA_ICONS={
-administracion:"📊",
-comercial:"💼",
-produccion:"🏭",
-instalacion:"🔧",
-maquinarias:"⚙️",
-vehiculos:"🚚",
-"houzz-pro":"🏠"
-};
-
-function getAreaFromURL(url){
-
-let parts=url.split("/");
-
-if(parts.length>3){
-return parts[3].toLowerCase();
-}
-
-return "general";
-
-}
-function formatArea(area){
-
-return area
-.replace("-"," ")
-.replace(/\b\w/g,l=>l.toUpperCase());
-
-}
-
-function getAreaIcon(area){
-
-return AREA_ICONS[area]||"📁";
-
-}
-
 /* SOP DATA */
 
 let SOP_INDEX=[];
@@ -481,14 +413,11 @@ let SOP_INDEX=[];
 fetch('/sop-site/SOP_INDEX.json')
 .then(res=>res.json())
 .then(data=>{
-
 SOP_INDEX=data;
-
 renderSOP();
-
 });
 
-/* RENDER TABLA */
+/* RENDER */
 
 function renderSOP(filtered){
 
@@ -510,11 +439,16 @@ Mostrando <strong>${list.length}</strong> SOP
 <table class="sop-table">
 
 <thead>
+
 <tr>
+
 <th onclick="sortTable('title')">SOP</th>
-<th>Área</th>
+<th onclick="sortTable('department')">Departamento</th>
+<th>Descripción</th>
 <th></th>
+
 </tr>
+
 </thead>
 
 <tbody>
@@ -522,19 +456,15 @@ Mostrando <strong>${list.length}</strong> SOP
 
 list.forEach(sop=>{
 
-const area=getAreaFromURL(sop.url);
-
 html+=`
 
 <tr>
 
-<td>
-<strong>${sop.title}</strong>
-</td>
+<td><strong>${sop.title}</strong></td>
 
-<td>
-${getAreaIcon(area)} ${formatArea(area)}
-</td>
+<td>${sop.department}</td>
+
+<td>${sop.desc||""}</td>
 
 <td>
 <a class="sop-link" href="${sop.url}">
@@ -554,94 +484,32 @@ container.innerHTML=html;
 
 }
 
-/* BUSQUEDA NORMAL */
+/* SEARCH */
 
 function filterSOP(){
 
 const search=document.getElementById("searchInput").value.toLowerCase();
 
-const filtered=SOP_INDEX.filter(sop=>
+const dept=document.getElementById("deptFilter").value;
 
+const filtered=SOP_INDEX.filter(sop=>{
+
+const matchDept=dept===""||sop.department===dept;
+
+const matchSearch=
 sop.title.toLowerCase().includes(search)||
-(sop.keywords && sop.keywords.toLowerCase().includes(search))
+sop.keywords.toLowerCase().includes(search)||
+(sop.desc && sop.desc.toLowerCase().includes(search));
 
-);
+return matchDept && matchSearch;
+
+});
 
 renderSOP(filtered);
 
 }
 
-/* BUSQUEDA PREDICTIVA */
-
-document.getElementById("searchInput").addEventListener("input",function(){
-
-const value=this.value.toLowerCase();
-
-if(value.length<2){
-
-removeSuggestions();
-return;
-
-}
-
-const matches=SOP_INDEX.filter(sop=>
-sop.title.toLowerCase().includes(value)
-).slice(0,5);
-
-showSuggestions(matches);
-
-});
-
-function showSuggestions(list){
-
-let box=document.getElementById("suggestions");
-
-if(!box){
-
-box=document.createElement("div");
-box.id="suggestions";
-box.style.background="white";
-box.style.maxWidth="950px";
-box.style.margin="auto";
-box.style.borderRadius="10px";
-box.style.boxShadow="0 5px 15px rgba(0,0,0,.2)";
-
-document.querySelector(".search-container").appendChild(box);
-
-}
-
-box.innerHTML="";
-
-list.forEach(s=>{
-
-let item=document.createElement("div");
-
-item.style.padding="10px";
-item.style.cursor="pointer";
-
-item.innerHTML=s.title;
-
-item.onclick=function(){
-
-window.location=s.url;
-
-};
-
-box.appendChild(item);
-
-});
-
-}
-
-function removeSuggestions(){
-
-let box=document.getElementById("suggestions");
-
-if(box) box.innerHTML="";
-
-}
-
-/* ORDENAR */
+/* SORT */
 
 function sortTable(field){
 
@@ -660,46 +528,18 @@ renderSOP();
 
 }
 
-/* CARRUSEL CORREGIDO */
-
-window.addEventListener("load",function(){
+/* CAROUSEL */
 
 const track=document.querySelector('.carousel-track-premium');
 const prevBtn=document.querySelector('.prev');
 const nextBtn=document.querySelector('.next');
 
-if(!track) return;
+nextBtn.addEventListener('click',()=>{
+track.scrollBy({left:260,behavior:'smooth'});
+});
 
-const slideWidth=265;
-
-/* botones */
-
-nextBtn.onclick=function(){
-
-track.scrollLeft+=slideWidth;
-
-};
-
-prevBtn.onclick=function(){
-
-track.scrollLeft-=slideWidth;
-
-};
-
-/* auto carrusel */
-
-setInterval(function(){
-
-track.scrollLeft+=slideWidth;
-
-if(track.scrollLeft>=track.scrollWidth-track.clientWidth){
-
-track.scrollLeft=0;
-
-}
-
-},4000);
-
+prevBtn.addEventListener('click',()=>{
+track.scrollBy({left:-260,behavior:'smooth'});
 });
 
 </script>
