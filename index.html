@@ -167,13 +167,18 @@ background:#f1f5f9;
 }
 
 .sop-link{
-color:#005a9e;
+background:#0072C6;
+color:white;
+padding:6px 14px;
+border-radius:20px;
 font-weight:bold;
 text-decoration:none;
+font-size:.85rem;
+display:inline-block;
 }
 
 .sop-link:hover{
-text-decoration:underline;
+background:#005a9e;
 }
 
 /* VIDEOS */
@@ -448,8 +453,8 @@ Mostrando <strong>${list.length}</strong> SOP
 
 <th onclick="sortTable('title')">SOP</th>
 <th onclick="sortTable('department')">Departamento</th>
-<th>Descripción</th>
-<th></th>
+<th>Objetivo</th>
+<th>Acción</th>
 
 </tr>
 
@@ -464,15 +469,15 @@ html+=`
 
 <tr>
 
-<td><strong>${sop.title}</strong></td>
+<td>${sop.title}</td>
 
 <td>${sop.department}</td>
 
-<td>${sop.desc||""}</td>
+<td>${sop.desc || ""}</td>
 
 <td>
 <a class="sop-link" href="${sop.url}">
-Ver <i class="fa-solid fa-arrow-right"></i>
+Ver
 </a>
 </td>
 
