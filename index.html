@@ -8,278 +8,183 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-
+/* ===== BODY ===== */
 body{
-margin:0;
-font-family:'Segoe UI',Arial,sans-serif;
-background:url('/sop-site/kitchen15.jpeg') no-repeat center top;
-background-size:cover;
+    margin:0;
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:url('/sop-site/kitchen15.jpeg') no-repeat center top;
+    background-size:cover;
+    color:#333;
 }
 
 .overlay{
-background:rgba(0,0,0,0.25);
-min-height:100vh;
+    background:rgba(0,0,0,0.25);
+    min-height:100vh;
 }
 
-/* NAVBAR */
-
+/* ===== NAVBAR ===== */
 .navbar{
-position:sticky;
-top:0;
-background:rgba(0,0,0,0.65);
-backdrop-filter:blur(8px);
-padding:10px 30px;
-color:white;
-font-weight:bold;
-display:flex;
-justify-content:space-between;
-align-items:center;
-z-index:999;
+    position:sticky;
+    top:0;
+    background:rgba(0,0,0,0.65);
+    backdrop-filter:blur(8px);
+    padding:10px 30px;
+    color:white;
+    font-weight:bold;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:999;
 }
 
 .logo{
-display:flex;
-align-items:center;
-gap:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
-
 .logo img{
-height:40px;
+    height:40px;
 }
 
 .menu{
-display:flex;
-gap:25px;
+    display:flex;
+    gap:25px;
 }
-
 .menu a{
-color:white;
-text-decoration:none;
-font-weight:bold;
-transition:.3s;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+    transition:.3s;
 }
-
 .menu a:hover{
-color:#00aaff;
+    color:#00aaff;
 }
-
 .menu-toggle{
-display:none;
-font-size:1.6rem;
-cursor:pointer;
+    display:none;
+    font-size:1.6rem;
+    cursor:pointer;
 }
 
-/* BANNER */
-
+/* ===== BANNER ===== */
 .banner{
-text-align:center;
-padding:40px 20px 20px 20px;
-color:white;
+    text-align:center;
+    padding:40px 20px 20px 20px;
+    color:white;
 }
-
 .banner h1{
-margin:0;
-font-size:2.2rem;
+    margin:0;
+    font-size:2.2rem;
 }
-
 .banner p{
-margin:4px 0;
-opacity:0.9;
+    margin:4px 0;
+    opacity:0.9;
 }
-
 .cta-btn{
-display:inline-block;
-margin-top:15px;
-padding:10px 25px;
-border-radius:30px;
-background:linear-gradient(135deg,#0072C6,#005a9e);
-color:white;
-text-decoration:none;
-font-weight:bold;
+    display:inline-block;
+    margin-top:15px;
+    padding:10px 25px;
+    border-radius:30px;
+    background:linear-gradient(135deg,#0072C6,#005a9e);
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+    transition:.3s;
 }
-
 .cta-btn:hover{
-transform:scale(1.05);
+    transform:scale(1.05);
 }
 
-/* BUSCADOR */
-
+/* ===== BUSCADOR ===== */
 .search-container{
-max-width:950px;
-margin:30px auto;
-padding:0 20px;
-display:flex;
-flex-direction:column;
-gap:15px;
+    max-width:950px;
+    margin:30px auto;
+    padding:0 20px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
 }
-
 .search-container input,
 .search-container select{
-width:100%;
-padding:12px 15px;
-border-radius:30px;
-border:none;
-font-size:1rem;
-box-shadow:0 8px 20px rgba(0,0,0,0.25);
-outline:none;
+    width:100%;
+    padding:12px 15px;
+    border-radius:30px;
+    border:none;
+    font-size:1rem;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    outline:none;
 }
 
-/* TABLA SOP */
-
+/* ===== TABLA SOP ===== */
 .sop-container{
-max-width:1100px;
-margin:20px auto 60px auto;
-padding:0 20px;
+    max-width:1100px;
+    margin:20px auto 60px auto;
+    padding:0 20px;
 }
 
 .sop-info{
-color:white;
-margin-bottom:10px;
-font-size:.9rem;
+    color:white;
+    margin-bottom:10px;
+    font-size:.9rem;
 }
 
 .sop-table{
-width:100%;
-border-collapse:collapse;
-background:rgba(255,255,255,0.96);
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 10px 25px rgba(0,0,0,0.25);
+    width:100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    background: #f8f9fa;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
-
+.sop-table th, .sop-table td{
+    padding: 12px 15px;
+    font-size:0.95rem;
+    text-align:left;
+}
 .sop-table th{
-background:#003366;
-color:white;
-padding:14px;
-text-align:left;
-cursor:pointer;
-font-size:.9rem;
+    background-color:#004080;
+    color:#fff;
+    font-weight:600;
 }
-
-.sop-table td{
-padding:12px 14px;
-border-bottom:1px solid #e5e7eb;
-font-size:.9rem;
+.sop-table tr{
+    transition: background 0.3s;
 }
-
 .sop-table tr:hover{
-background:#f1f5f9;
+    background-color:#e6f0ff;
 }
-
-.sop-link{
-color:#005a9e;
-font-weight:bold;
-text-decoration:none;
-}
-
-.sop-link:hover{
-text-decoration:underline;
-}
-
 .sop-btn{
-display:inline-flex;
-align-items:center;
-gap:6px;
-padding:6px 14px;
-border-radius:20px;
-background:linear-gradient(135deg,#0072C6,#005a9e);
-color:white;
-font-size:.85rem;
-font-weight:bold;
-text-decoration:none;
-transition:.25s;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 14px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#0072C6,#005a9e);
+    color:white;
+    font-size:0.85rem;
+    font-weight:600;
+    text-decoration:none;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
-
+.sop-btn i{
+    transition: transform 0.3s;
+}
 .sop-btn:hover{
-transform:scale(1.05);
-box-shadow:0 6px 15px rgba(0,0,0,0.25);
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
-
-/* VIDEOS */
-
-.video-section{
-max-width:1100px;
-margin:40px auto;
-padding:0 20px;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:20px;
-}
-
-.video-section iframe,
-.video-section video{
-width:100%;
-height:200px;
-border-radius:15px;
-object-fit:cover;
-border:none;
-}
-
-/* ===== CARRUSEL PREMIUM LOOP INFINITO CON FLECHAS ===== */
-.carousel-container-premium {
-  max-width: 900px;
-  margin: 50px auto;
-  position: relative;
-  overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-}
-.carousel-track-premium {
-  display: flex;
-  gap: 15px;
-}
-.carousel-slide-premium {
-  flex: 0 0 calc(33.333% - 10px);
-}
-.carousel-slide-premium img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  transition: transform .3s;
-}
-.carousel-slide-premium img:hover {
-  transform: scale(1.05);
-}
-.carousel-container-premium:hover .carousel-track-premium {
-  animation-play-state: paused;
-}
-/* FLECHAS */
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
-  border: none;
-  color: white;
-  font-size: 1.8rem;
-  padding: 10px 15px;
-  cursor: pointer;
-  border-radius: 50%;
-  z-index: 10;
-  transition: background .3s;
-}
-.carousel-btn:hover {
-  background: rgba(0,0,0,0.8);
-}
-.carousel-btn.prev { left: 10px; }
-.carousel-btn.next { right: 10px; }
-
-@keyframes slide-loop {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+.sop-btn:hover i{
+    transform: rotate(20deg) scale(1.2);
 }
 
 .dept-badge{
-display:inline-flex;
-align-items:center;
-gap:6px;
-padding:4px 10px;
-border-radius:14px;
-font-size:.8rem;
-font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:4px 10px;
+    border-radius:12px;
+    font-size:0.85rem;
+    font-weight:500;
 }
-
 .dept-produccion{background:#e0f2fe;color:#0369a1;}
 .dept-administracion{background:#ede9fe;color:#5b21b6;}
 .dept-comercial{background:#dcfce7;color:#166534;}
@@ -289,407 +194,313 @@ font-weight:600;
 .dept-ecopower{background:#cffafe;color:#0e7490;}
 .dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
 
-/* RESPONSIVE */
+/* ===== VIDEOS ===== */
+.video-section{
+    max-width:1100px;
+    margin:40px auto;
+    padding:0 20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+}
+.video-section iframe,
+.video-section video{
+    width:100%;
+    height:200px;
+    border-radius:15px;
+    object-fit:cover;
+    border:none;
+}
 
+/* ===== CARRUSEL ===== */
+.carousel-container-premium{
+    max-width:900px;
+    margin:50px auto;
+    position:relative;
+    overflow:hidden;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.35);
+}
+.carousel-track-premium{
+    display:flex;
+    gap:15px;
+}
+.carousel-slide-premium{
+    flex:0 0 calc(33.333% - 10px);
+}
+.carousel-slide-premium img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    border-radius:10px;
+    transition:transform .3s;
+}
+.carousel-slide-premium img:hover{
+    transform:scale(1.05);
+}
+.carousel-btn{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    border:none;
+    color:white;
+    font-size:1.8rem;
+    padding:10px 15px;
+    cursor:pointer;
+    border-radius:50%;
+    z-index:10;
+    transition: background .3s;
+}
+.carousel-btn:hover{
+    background: rgba(0,0,0,0.8);
+}
+.carousel-btn.prev{ left:10px; }
+.carousel-btn.next{ right:10px; }
+
+/* ===== RESPONSIVE ===== */
 @media(max-width:768px){
-
-.menu{
-display:none;
-flex-direction:column;
-background:rgba(0,0,0,0.9);
-position:absolute;
-top:60px;
-right:0;
-width:200px;
-padding:20px;
+    .menu{
+        display:none;
+        flex-direction:column;
+        background:rgba(0,0,0,0.9);
+        position:absolute;
+        top:60px;
+        right:0;
+        width:200px;
+        padding:20px;
+    }
+    .menu.show{ display:flex; }
+    .menu-toggle{ display:block; }
 }
-
-.menu.show{
-display:flex;
-}
-
-.menu-toggle{
-display:block;
-}
-
-}
-
 </style>
 </head>
 
 <body>
-
 <div class="overlay">
 
 <!-- NAVBAR -->
-
 <div class="navbar">
-
-<div class="logo">
-<img src="/sop-site/logo.png">
-<span>ARTEMISA MARBLE & CABINETS</span>
-</div>
-
-<div class="menu-toggle" onclick="toggleMenu()">
-<i class="fa-solid fa-bars"></i>
-</div>
-
-<div class="menu">
-<a href="/sop-site/">Inicio</a>
-<a href="/sop-site/registrar-sop/">Registrar SOP</a>
-<a href="/sop-site/biblioteca/">Biblioteca SOP</a>
-</div>
-
+    <div class="logo">
+        <img src="/sop-site/logo.png" alt="Logo">
+        <span>ARTEMISA MARBLE & CABINETS</span>
+    </div>
+    <div class="menu-toggle" onclick="toggleMenu()">
+        <i class="fa-solid fa-bars"></i>
+    </div>
+    <div class="menu">
+        <a href="/sop-site/">Inicio</a>
+        <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+        <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+    </div>
 </div>
 
 <!-- BANNER -->
-
 <div class="banner">
-<h1>Biblioteca de Procedimientos Operativos Estándar</h1>
-<p>ARTEMISA MARBLE & CABINETS</p>
-<a href="#sopContainer" class="cta-btn">Ver SOP</a>
+    <h1>Biblioteca de Procedimientos Operativos Estándar</h1>
+    <p>ARTEMISA MARBLE & CABINETS</p>
+    <a href="#sopContainer" class="cta-btn">Ver SOP</a>
 </div>
 
 <!-- BUSCADOR -->
-
 <div class="search-container">
-
-<input
-type="text"
-id="searchInput"
-placeholder="Buscar SOP..."
-onkeyup="filterSOP()">
-
-<select id="deptFilter" onchange="filterSOP()">
-
-<option value="">Todos los departamentos</option>
-<option value="Comercial">Comercial</option>
-<option value="Producción">Producción</option>
-<option value="Instalación">Instalación</option>
-<option value="Administración">Administración</option>
-<option value="Maquinarias">Maquinarias</option>
-<option value="Vehículos">Vehículos</option>
-<option value="Houzz Pro">Houzz Pro</option>
-<option value="Ecopowertech">Ecopowertech</option>
-
-</select>
-
+    <input type="text" id="searchInput" placeholder="Buscar SOP..." onkeyup="filterSOP()">
+    <select id="deptFilter" onchange="filterSOP()">
+        <option value="">Todos los departamentos</option>
+        <option value="comercial">Comercial</option>
+        <option value="produccion">Producción</option>
+        <option value="instalacion">Instalación</option>
+        <option value="administracion">Administración</option>
+        <option value="maquinarias">Maquinarias</option>
+        <option value="vehiculos">Vehículos</option>
+        <option value="houzz-pro">Houzz Pro</option>
+        <option value="ecopower">Ecopowertech</option>
+    </select>
 </div>
 
-<!-- SOP TABLE -->
-
+<!-- TABLA SOP -->
 <div class="sop-container" id="sopContainer"></div>
 
 <!-- VIDEOS -->
-
 <div class="video-section">
-
-<video autoplay muted loop playsinline>
-<source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
-</video>
-
-<iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
-
-<video autoplay muted loop playsinline>
-<source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
-</video>
-
+    <video autoplay muted loop playsinline>
+        <source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
+    </video>
+    <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
+    <video autoplay muted loop playsinline>
+        <source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
+    </video>
 </div>
 
- <!-- CARRUSEL PREMIUM -->
-  <div class="carousel-container-premium">
+<!-- CARRUSEL PREMIUM -->
+<div class="carousel-container-premium">
     <button class="carousel-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
     <div class="carousel-track-premium">
-      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
-      <!-- duplicado para loop -->
-      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
+        <!-- Slides duplicadas para loop -->
+        <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2"></div>
+        <!-- duplicado para loop -->
+        <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2"></div>
     </div>
     <button class="carousel-btn next"><i class="fa-solid fa-chevron-right"></i></button>
-  </div>
-
-
 </div>
 
-<div class="footer">
-© 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
+<!-- FOOTER -->
+<div class="footer" style="text-align:center; color:white; margin:30px 0;">
+    © 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
 </div>
-
 </div>
 
 <script>
-
-/* MENU */
-
+/* ===== MENU ===== */
 function toggleMenu(){
-document.querySelector('.menu').classList.toggle('show');
+    document.querySelector('.menu').classList.toggle('show');
 }
 
-/* SOP DATA */
-
-let SOP_INDEX=[];
-
+/* ===== SOP DATA ===== */
+let SOP_INDEX = [];
 fetch('SOP_INDEX.json')
-.then(res=>res.json())
-.then(data=>{
-SOP_INDEX=data;
-sortByDepartment();
-renderSOP();
+.then(res => res.json())
+.then(data => {
+    SOP_INDEX = data;
+    sortByDepartment();
+    renderSOP();
 })
-.catch(err=>{
-console.error("Error cargando SOP:",err);
-});
-
+.catch(err => console.error("Error cargando SOP:", err));
 
 function sortByDepartment(){
-
-SOP_INDEX.sort((a,b)=>{
-
-if(a.department < b.department) return -1;
-if(a.department > b.department) return 1;
-
-let A=(a.title||"").toLowerCase();
-let B=(b.title||"").toLowerCase();
-
-if(A<B) return -1;
-if(A>B) return 1;
-
-return 0;
-
-});
-
+    SOP_INDEX.sort((a,b) => {
+        if(a.department < b.department) return -1;
+        if(a.department > b.department) return 1;
+        let A = (a.title||"").toLowerCase();
+        let B = (b.title||"").toLowerCase();
+        if(A < B) return -1;
+        if(A > B) return 1;
+        return 0;
+    });
 }
-
-/* RENDER */
 
 function renderSOP(filtered){
-
-const container=document.getElementById("sopContainer");
-
-const list=filtered||SOP_INDEX;
-
-if(list.length===0){
-container.innerHTML="<p style='color:white;text-align:center'>No se encontraron SOP</p>";
-return;
+    const container = document.getElementById("sopContainer");
+    const list = filtered || SOP_INDEX;
+    if(list.length === 0){
+        container.innerHTML = "<p style='color:white;text-align:center'>No se encontraron SOP</p>";
+        return;
+    }
+    let html = `<div class="sop-info">Mostrando <strong>${list.length}</strong> SOP</div>
+    <table class="sop-table">
+    <thead>
+        <tr>
+            <th onclick="sortTable('title')">SOP</th>
+            <th onclick="sortTable('department')">Departamento</th>
+            <th>Objetivo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>`;
+    list.forEach(sop => {
+        html += `<tr>
+            <td>${sop.title || sop.department.replaceAll("-", " ")}</td>
+            <td>${getDepartmentBadge(sop.department)}</td>
+            <td>${sop.objective || "<em>Sin objetivo</em>"}</td>
+            <td><a class="sop-btn" href="${sop.url}" target="_blank"><i class="fa-solid fa-eye"></i> Ver</a></td>
+        </tr>`;
+    });
+    html += `</tbody></table>`;
+    container.innerHTML = html;
 }
-
-let html=`
-
-<div class="sop-info">
-Mostrando <strong>${list.length}</strong> SOP
-</div>
-
-<table class="sop-table">
-
-<thead>
-
-<tr>
-
-<th onclick="sortTable('title')">SOP</th>
-<th onclick="sortTable('department')">Departamento</th>
-<th>Objetivo</th>
-<th></th>
-
-</tr>
-
-</thead>
-
-<tbody>
-`;
-
-list.forEach(sop=>{
-
-html+=`
-
-<tr>
-
-<td><strong>${sop.title || sop.department.replaceAll("-", " ")}</strong></td>
-
-<td>${getDepartmentBadge(sop.department)}</td>
-
-<td>${sop.objective || ""}</td>
-
-<td>
-<a class="sop-btn" href="${sop.url}">
-<i class="fa-solid fa-eye"></i> Ver
-</a>
-</td>
-
-</tr>
-
-`;
-
-});
-
-html+=`</tbody></table>`;
-
-container.innerHTML=html;
-
-}
-
-/*FUNCION DETECTA NOMBRE DE SOP*/
 
 function getDepartmentBadge(dep){
-
-const map={
-
-produccion:{
-name:"Producción",
-icon:"fa-industry"
-},
-
-administracion:{
-name:"Administración",
-icon:"fa-building"
-},
-
-comercial:{
-name:"Comercial",
-icon:"fa-chart-line"
-},
-
-instalacion:{
-name:"Instalación",
-icon:"fa-screwdriver-wrench"
-},
-
-maquinarias:{
-name:"Maquinarias",
-icon:"fa-gears"
-},
-
-vehiculos:{
-name:"Vehículos",
-icon:"fa-truck"
-},
-
-ecopower:{
-name:"Ecopowertech",
-icon:"fa-bolt"
-},
-
-"houzz-pro":{
-name:"Houzz Pro",
-icon:"fa-house"
+    const map = {
+        produccion:{name:"Producción",icon:"fa-industry"},
+        administracion:{name:"Administración",icon:"fa-building"},
+        comercial:{name:"Comercial",icon:"fa-chart-line"},
+        instalacion:{name:"Instalación",icon:"fa-screwdriver-wrench"},
+        maquinarias:{name:"Maquinarias",icon:"fa-gears"},
+        vehiculos:{name:"Vehículos",icon:"fa-truck"},
+        ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
+        "houzz-pro":{name:"Houzz Pro",icon:"fa-house"}
+    };
+    const d = map[dep];
+    if(!d) return dep;
+    return `<span class="dept-badge dept-${dep}"><i class="fa-solid ${d.icon}"></i> ${d.name}</span>`;
 }
 
-};
-
-const d=map[dep];
-
-if(!d) return dep;
-
-return `
-<span class="dept-badge dept-${dep}">
-<i class="fa-solid ${d.icon}"></i>
-${d.name}
-</span>
-`;
-
-}
 /* SEARCH */
-
 function filterSOP(){
-
-const search=document.getElementById("searchInput").value.toLowerCase();
-
-const dept=document.getElementById("deptFilter").value;
-
-const filtered=SOP_INDEX.filter(sop=>{
-
-const matchDept=dept===""||sop.department===dept;
-
-const matchSearch =
-(sop.title || "").toLowerCase().includes(search) ||
-(sop.keywords || "").toLowerCase().includes(search) ||
-(sop.desc || "").toLowerCase().includes(search);
-
-return matchDept && matchSearch;
-
-});
-
-renderSOP(filtered);
-
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const dept = document.getElementById("deptFilter").value;
+    const filtered = SOP_INDEX.filter(sop=>{
+        const matchDept = dept==="" || sop.department===dept;
+        const matchSearch = (sop.title||"").toLowerCase().includes(search) ||
+                            (sop.keywords||"").toLowerCase().includes(search) ||
+                            (sop.objective||"").toLowerCase().includes(search);
+        return matchDept && matchSearch;
+    });
+    sortByDepartment();
+    renderSOP(filtered);
 }
 
-/* SORT */
-
+/* SORT TABLE */
 function sortTable(field){
-
-SOP_INDEX.sort((a,b)=>{
-
-let A=(a[field]||"").toLowerCase();
-let B=(b[field]||"").toLowerCase();
-
-if(A<B) return -1;
-if(A>B) return 1;
-return 0;
-
-});
-
-renderSOP();
-
+    SOP_INDEX.sort((a,b)=>{
+        let A = (a[field]||"").toLowerCase();
+        let B = (b[field]||"").toLowerCase();
+        if(A<B) return -1;
+        if(A>B) return 1;
+        return 0;
+    });
+    renderSOP();
 }
- // Carrusel Premium con flechas
-  const track = document.querySelector('.carousel-track-premium');
-  const slides = document.querySelectorAll('.carousel-slide-premium');
-  const btnNext = document.querySelector('.carousel-btn.next');
-  const btnPrev = document.querySelector('.carousel-btn.prev');
 
-  let scrollAmount = 0;
-  const slideWidth = slides[0].offsetWidth + 15;
+/* CARRUSEL PREMIUM */
+const track = document.querySelector('.carousel-track-premium');
+const slides = document.querySelectorAll('.carousel-slide-premium');
+const btnNext = document.querySelector('.carousel-btn.next');
+const btnPrev = document.querySelector('.carousel-btn.prev');
 
-  btnNext.addEventListener('click', () => {
+let scrollAmount = 0;
+const slideWidth = slides[0].offsetWidth + 15;
+
+btnNext.addEventListener('click', () => {
     scrollAmount += slideWidth;
     if(scrollAmount >= track.scrollWidth / 2) scrollAmount = 0;
     track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-  });
-
-  btnPrev.addEventListener('click', () => {
-    scrollAmount -= slideWidth;
-    if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2;
-    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-  });
-  btnPrev.addEventListener('click', () => {
-    scrollAmount -= slideWidth;
-    if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2;
-    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-  });
-
-setInterval(()=>{
-scrollAmount += slideWidth;
-
-if(scrollAmount >= track.scrollWidth/2){
-scrollAmount = 0;
-}
-
-track.scrollTo({
-left:scrollAmount,
-behavior:'smooth'
 });
 
-},3000);
+btnPrev.addEventListener('click', () => {
+    scrollAmount -= slideWidth;
+    if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2;
+    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+});
+
+// autoplay loop
+setInterval(() => {
+    scrollAmount += slideWidth;
+    if(scrollAmount >= track.scrollWidth / 2) scrollAmount = 0;
+    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+}, 3000);
 </script>
 
 </body>
