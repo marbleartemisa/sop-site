@@ -487,20 +487,18 @@ container.innerHTML=html;
 
 /*FUNCION DETECTA NOMBRE DE SOP*/
 
-function getDepartmentArea(name){
-
-name=name.toLowerCase();
-
-if(name.includes("ventas") || name.includes("sales") || name.includes("cotizacion")) return "Comercial";
-if(name.includes("instalacion")) return "Instalación";
-if(name.includes("carpinteria") || name.includes("produccion")) return "Producción";
-if(name.includes("compra") || name.includes("recepcion")) return "Administración";
-if(name.includes("vehiculo")) return "Vehículos";
-if(name.includes("maq") || name.includes("trimming")) return "Maquinarias";
-if(name.includes("houzz")) return "Houzz Pro";
-if(name.includes("eco")) return "Ecopowertech";
-
-return "General";
+function getDepartmentName(dep){
+  const map = {
+    produccion: "Producción",
+    administracion: "Administración",
+    comercial: "Comercial",
+    instalacion: "Instalación",
+    maquinarias: "Maquinarias",
+    vehiculos: "Vehículos",
+    ecopower: "EcoPower",
+    "houzz-pro": "Houzz Pro"
+  };
+  return map[dep] || dep;
 }
 
 /* SEARCH */
