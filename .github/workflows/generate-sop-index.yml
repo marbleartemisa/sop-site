@@ -1,10 +1,10 @@
 name: Update SOP Index
 
 on:
-  workflow_dispatch:   # Se puede ejecutar manualmente
+  workflow_dispatch:   # Ejecutar manualmente
   push:
     paths:
-      - '**/*.html'   # Se ejecuta si cambian archivos HTML de SOPs
+      - '**/*.html'   # Ejecuta si cambian archivos HTML de SOPs
 
 permissions:
   contents: write
@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       # 1️⃣ Clonar el repositorio
       - name: Checkout repository
@@ -41,7 +42,9 @@ jobs:
                   url="$dir/index.html"
                   department="$area"
 
-                  # Capturar objective automáticamente del index.html
+                  # -------------------------------
+                  # Capturar objective correctamente
+                  # -------------------------------
                   objective=$(awk '
                     BEGIN {obj=""; capture=0}
                     {
