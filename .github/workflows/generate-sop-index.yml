@@ -1,53 +1,46 @@
-name: Update SOP Index
+name: Generate SOP Index
 
-# Se ejecuta manualmente o cuando cambian archivos HTML de SOPs
 on:
-  workflow_dispatch:
   push:
-    paths:
-      - '**/*.html'
+    branches:
+      - main
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      # 1️⃣ Clonar el repositorio
-      - uses: actions/checkout@v3
 
-      # 2️⃣ Generar SOP_INDEX.json
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
       - name: Generate SOP_INDEX.json
-        run: |-
+        run: |
           echo "[]" > SOP_INDEX.json
 
           for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
             if [ -d "$area" ]; then
               for dir in "$area"/SOP-*; do
                 if [ -d "$dir" ]; then
+                  
                   sopname=$(basename "$dir")
-                  title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
-                  keywords=$(echo "$title" | tr '[:upper:]' '[:lower:]')
+                  title=$(echo $sopname | sed 's/SOP-//' | tr '-' ' ')
+                  keywords=$(echo $title | tr 'A-Z' 'a-z')
                   url="$dir/index.html"
-                  department="$area"
+                  department=$area
+                  
+                  objective=$(grep -i 'meta name="objective"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/')
 
-                  # Extraer objective automáticamente del index.html
-                  objective=$(awk '
-                    BEGIN {obj=""; capture=0}
-                    {
-                      if ($0 ~ /[0-9]+\. *Objetivo/) {capture=1; next}
-                      if (capture && $0 ~ /^[0-9]+\. /) {capture=0; exit}
-                      if (capture) {
-                        line=$0
-                        gsub(/<[^>]*>/,"",line)
-                        gsub(/^[ \t]+|[ \t]+$/,"",line)
-                        if (length(line) > 0) obj = obj " " line
-                      }
-                    }
-                    END {gsub(/^[ \t]+|[ \t]+$/,"",obj); print obj}
-                  ' "$dir/index.html")
-
-                  [ -z "$objective" ] && objective=""
-
-                  # Agregar al JSON usando jq
                   jq --arg title "$title" \
                      --arg department "$department" \
                      --arg keywords "$keywords" \
@@ -61,11 +54,10 @@ jobs:
             fi
           done
 
-      # 3️⃣ Hacer commit solo si hay cambios
-      - name: Commit and push SOP_INDEX.json
+      - name: Commit changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
           git add SOP_INDEX.json
-          git diff --cached --quiet || git commit -m "Update SOP_INDEX.json"
-          git push || echo "Nothing to push"
+          git commit -m "Auto update SOP index" || echo "No changes"
+          git push
