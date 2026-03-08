@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -26,37 +27,80 @@ jobs:
 
       - name: Generate SOP_INDEX.json
         run: |
+
           echo "[]" > SOP_INDEX.json
 
           for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
+
             if [ -d "$area" ]; then
+
               for dir in "$area"/SOP-*; do
+
                 if [ -d "$dir" ]; then
+
+                  file="$dir/index.html"
+
                   sopname=$(basename "$dir")
                   title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
                   keywords=$(echo "$title" | tr '[:upper:]' '[:lower:]')
-                  url="$dir/index.html"
                   department=$area
+                  url="$dir/index.html"
 
-                  # Extraer objective de forma robusta
-                  objective=$(grep -i '<meta name=["'\'']?objective["'\'']? ' "$dir/index.html" \
-                    | sed -E 's/.*content=["'\'']([^"'\'']+)["'\''].*/\1/' \
-                    | tr -d '\r\n')
+                  # objective
+                  objective=$(grep -i 'meta.*name=["'\'']objective["'\'']' "$file" \
+                    | sed -n 's/.*content=["'\'']\([^"'\'']*\)["'\''].*/\1/p' \
+                    | head -n 1 | tr -d '\r\n')
 
-                  # Asegurarse de que objective no sea nulo
+                  # version
+                  version=$(grep -i 'meta.*name=["'\'']version["'\'']' "$file" \
+                    | sed -n 's/.*content=["'\'']\([^"'\'']*\)["'\''].*/\1/p' \
+                    | head -n 1 | tr -d '\r\n')
+
+                  # author
+                  author=$(grep -i 'meta.*name=["'\'']author["'\'']' "$file" \
+                    | sed -n 's/.*content=["'\'']\([^"'\'']*\)["'\''].*/\1/p' \
+                    | head -n 1 | tr -d '\r\n')
+
+                  # date
+                  date=$(grep -i 'meta.*name=["'\'']date["'\'']' "$file" \
+                    | sed -n 's/.*content=["'\'']\([^"'\'']*\)["'\''].*/\1/p' \
+                    | head -n 1 | tr -d '\r\n')
+
+                  # defaults
                   [ -z "$objective" ] && objective=""
+                  [ -z "$version" ] && version=""
+                  [ -z "$author" ] && author=""
+                  [ -z "$date" ] && date=""
 
                   jq --arg title "$title" \
                      --arg department "$department" \
                      --arg keywords "$keywords" \
                      --arg objective "$objective" \
+                     --arg version "$version" \
+                     --arg author "$author" \
+                     --arg date "$date" \
                      --arg url "$url" \
-                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "objective": $objective, "url": $url}]' \
+                     '. += [{
+                        "title": $title,
+                        "department": $department,
+                        "keywords": $keywords,
+                        "objective": $objective,
+                        "version": $version,
+                        "author": $author,
+                        "date": $date,
+                        "url": $url
+                     }]' \
                      SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
+
                 fi
               done
             fi
           done
+
+      - name: Sort JSON
+        run: |
+          jq 'sort_by(.department,.title)' SOP_INDEX.json > tmp.json
+          mv tmp.json SOP_INDEX.json
 
       - name: Commit changes
         run: |
