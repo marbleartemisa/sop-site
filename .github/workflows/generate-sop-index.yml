@@ -23,26 +23,28 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Generate SOP_INDEX.json
-        run: |
-          echo "[]" > SOP_INDEX.json
-          for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
-            if [ -d "$area" ]; then
-              for dir in "$area"/SOP-*; do
-                if [ -d "$dir" ]; then
-                  department=$(basename "$dir")
-                  title=$(echo $department | sed 's/SOP-//' | tr '-' ' ')
-                  keywords=$(echo $title | tr 'A-Z' 'a-z')
-                  url="./$dir/index.html"
-                  jq --arg title "$title" \
-                     --arg department "$department" \
-                     --arg keywords "$keywords" \
-                     --arg url "$url" \
-                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "url": $url}]' \
-                     SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
-                fi
-              done
-            fi
-          done
+  run: |
+    echo "[]" > SOP_INDEX.json
+    for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
+      if [ -d "$area" ]; then
+        for dir in "$area"/SOP-*; do
+          if [ -d "$dir" ]; then
+            sopname=$(basename "$dir")
+            title=$(echo $sopname | sed 's/SOP-//' | tr '-' ' ')
+            keywords=$(echo $title | tr 'A-Z' 'a-z')
+            url="./$dir/index.html"
+            department=$area
+
+            jq --arg title "$title" \
+               --arg department "$department" \
+               --arg keywords "$keywords" \
+               --arg url "$url" \
+               '. += [{"title": $title, "department": $department, "keywords": $keywords, "url": $url}]' \
+               SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
+          fi
+        done
+      fi
+    done
 
       - name: Commit changes
         run: |
