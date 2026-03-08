@@ -208,7 +208,6 @@ border:none;
 .carousel-track-premium {
   display: flex;
   gap: 15px;
-  animation: slide-loop 40s linear infinite;
 }
 .carousel-slide-premium {
   flex: 0 0 calc(33.333% - 10px);
@@ -390,9 +389,7 @@ onkeyup="filterSOP()">
     </div>
     <button class="carousel-btn next"><i class="fa-solid fa-chevron-right"></i></button>
   </div>
-<button class="carousel-btn next">
-<i class="fa-solid fa-chevron-right"></i>
-</button>
+
 
 </div>
 
@@ -464,14 +461,14 @@ html+=`
 
 <tr>
 
-<td><strong>${sop.title}</strong></td>
+<td><strong>${sop.title || sop.department}</strong></td>
 
-<td>${sop.department}</td>
+<td>${getDepartmentArea(sop.department)}</td>
 
 <td>${sop.desc||""}</td>
 
 <td>
-<a class="sop-link" href="${sop.url}">
+<a class="sop-link" href="/sop-site/${sop.url}"
 Ver <i class="fa-solid fa-arrow-right"></i>
 </a>
 </td>
@@ -486,6 +483,24 @@ html+=`</tbody></table>`;
 
 container.innerHTML=html;
 
+}
+
+/*FUNCION DETECTA NOMBRE DE SOP*/
+
+function getDepartmentArea(name){
+
+name=name.toLowerCase();
+
+if(name.includes("ventas") || name.includes("sales") || name.includes("cotizacion")) return "Comercial";
+if(name.includes("instalacion")) return "Instalación";
+if(name.includes("carpinteria") || name.includes("produccion")) return "Producción";
+if(name.includes("compra") || name.includes("recepcion")) return "Administración";
+if(name.includes("vehiculo")) return "Vehículos";
+if(name.includes("maq") || name.includes("trimming")) return "Maquinarias";
+if(name.includes("houzz")) return "Houzz Pro";
+if(name.includes("eco")) return "Ecopowertech";
+
+return "General";
 }
 
 /* SEARCH */
@@ -557,7 +572,19 @@ renderSOP();
     track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
   });
 
+setInterval(()=>{
+scrollAmount += slideWidth;
 
+if(scrollAmount >= track.scrollWidth/2){
+scrollAmount = 0;
+}
+
+track.scrollTo({
+left:scrollAmount,
+behavior:'smooth'
+});
+
+},3000);
 </script>
 
 </body>
