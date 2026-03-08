@@ -1,47 +1,61 @@
-- name: Generate SOP_INDEX.json
-  run: |-
-    echo "[]" > SOP_INDEX.json
+name: Generate SOP Index
 
-    for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
-      if [ -d "$area" ]; then
-        for dir in "$area"/SOP-*; do
-          if [ -d "$dir" ]; then
-            sopname=$(basename "$dir")
-            title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
-            keywords=$(echo "$title" | tr '[:upper:]' '[:lower:]')
-            url="$dir/index.html"
-            department="$area"
+on:
+  push:
+    paths:
+      - '**/*.html'
+  workflow_dispatch:
 
-            # -------------------------------
-            # Extraer objective automáticamente
-            # -------------------------------
-            objective=$(awk '
-              BEGIN {obj=""; capture=0}
-              {
-                if ($0 ~ /[0-9]+\. *Objetivo/) {capture=1; next}
-                if (capture && $0 ~ /^[0-9]+\. /) {capture=0; exit}
-                if (capture) {
-                  line=$0
-                  gsub(/<[^>]*>/,"",line)
-                  gsub(/^[ \t]+|[ \t]+$/,"",line)
-                  if (length(line) > 0) obj = obj " " line
-                }
-              }
-              END {gsub(/^[ \t]+|[ \t]+$/,"",obj); print obj}
-            ' "$dir/index.html")
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-            [ -z "$objective" ] && objective=""
+      - name: Generate SOP_INDEX.json
+        run: |-
+          echo "[]" > SOP_INDEX.json
 
-            # Agregar al JSON
-            jq --arg title "$title" \
-               --arg department "$department" \
-               --arg keywords "$keywords" \
-               --arg objective "$objective" \
-               --arg url "$url" \
-               '. += [{"title": $title, "department": $department, "keywords": $keywords, "objective": $objective, "url": $url}]' \
-               SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
+          for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
+            if [ -d "$area" ]; then
+              for dir in "$area"/SOP-*; do
+                if [ -d "$dir" ]; then
+                  sopname=$(basename "$dir")
+                  title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
+                  keywords=$(echo "$title" | tr '[:upper:]' '[:lower:]')
+                  url="$dir/index.html"
+                  department="$area"
 
-          fi
-        done
-      fi
-    done
+                  # -------------------------------
+                  # Extraer objective automáticamente
+                  # -------------------------------
+                  objective=$(awk '
+                    BEGIN {obj=""; capture=0}
+                    {
+                      if ($0 ~ /[0-9]+\. *Objetivo/) {capture=1; next}
+                      if (capture && $0 ~ /^[0-9]+\. /) {capture=0; exit}
+                      if (capture) {
+                        line=$0
+                        gsub(/<[^>]*>/,"",line)
+                        gsub(/^[ \t]+|[ \t]+$/,"",line)
+                        if (length(line) > 0) obj = obj " " line
+                      }
+                    }
+                    END {gsub(/^[ \t]+|[ \t]+$/,"",obj); print obj}
+                  ' "$dir/index.html")
+
+                  [ -z "$objective" ] && objective=""
+
+                  # Agregar al JSON
+                  jq --arg title "$title" \
+                     --arg department "$department" \
+                     --arg keywords "$keywords" \
+                     --arg objective "$objective" \
+                     --arg url "$url" \
+                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "objective": $objective, "url": $url}]' \
+                     SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
+
+                fi
+              done
+            fi
+          done
