@@ -34,10 +34,17 @@ jobs:
                 if [ -d "$dir" ]; then
                   sopname=$(basename "$dir")
                   title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
-                  keywords=$(echo "$title" | tr 'A-Z' 'a-z')
+                  keywords=$(echo "$title" | tr '[:upper:]' '[:lower:]')
                   url="$dir/index.html"
-                  department="$area"
-                  objective=$(grep -i 'meta name="objective"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/')
+                  department=$area
+
+                  # Extraer objective de forma robusta
+                  objective=$(grep -i '<meta name=["'\'']?objective["'\'']? ' "$dir/index.html" \
+                    | sed -E 's/.*content=["'\'']([^"'\'']+)["'\''].*/\1/' \
+                    | tr -d '\r\n')
+
+                  # Asegurarse de que objective no sea nulo
+                  [ -z "$objective" ] && objective=""
 
                   jq --arg title "$title" \
                      --arg department "$department" \
