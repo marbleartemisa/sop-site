@@ -10,9 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Descargar el repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
+      # 2️⃣ Instalar jq para manejar JSON
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      # 3️⃣ Generar SOP_INDEX.json
       - name: Generate SOP_INDEX.json
         run: |
           echo "[]" > SOP_INDEX.json
@@ -21,8 +29,12 @@ jobs:
               for dir in "$area"/SOP-*; do
                 if [ -d "$dir" ]; then
                   department=$(basename "$dir")
+                  # Generar keywords a partir del nombre de la carpeta
                   keywords=$(echo $department | sed 's/SOP-//' | tr '-' ' ' | tr 'A-Z' 'a-z')
+                  # URL relativa al index.html del SOP
                   url="./$dir/index.html"
+
+                  # Agregar al JSON usando jq para evitar errores de formato
                   jq --arg title "" \
                      --arg department "$department" \
                      --arg keywords "$keywords" \
@@ -34,10 +46,13 @@ jobs:
             fi
           done
 
+      # 4️⃣ Commit y push automático usando GITHUB_TOKEN
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add SOP_INDEX.json
           git commit -m "Auto update SOP index" || echo "No changes"
-          git push
+          git push origin HEAD:main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
