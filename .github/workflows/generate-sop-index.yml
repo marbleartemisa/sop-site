@@ -1,10 +1,10 @@
 name: Update SOP Index
 
 on:
-  workflow_dispatch:   # Ejecutar manualmente
+  workflow_dispatch:
   push:
     paths:
-      - '**/*.html'   # Ejecuta si cambian archivos HTML de SOPs
+      - '**/*.html'
 
 permissions:
   contents: write
@@ -27,7 +27,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq
 
-      # 3️⃣ Generar SOP_INDEX.json
+      # 3️⃣ Generar SOP_INDEX.json sin objective
       - name: Generate SOP_INDEX.json
         run: |
           echo "[]" > SOP_INDEX.json
@@ -42,33 +42,12 @@ jobs:
                   url="$dir/index.html"
                   department="$area"
 
-                  # -------------------------------
-                  # Capturar objective correctamente
-                  # -------------------------------
-                  objective=$(awk '
-                    BEGIN {obj=""; capture=0}
-                    {
-                      if ($0 ~ /[0-9]+\. *Objetivo/) {capture=1; next}
-                      if (capture && $0 ~ /^[0-9]+\. /) {capture=0; exit}
-                      if (capture) {
-                        line=$0
-                        gsub(/<[^>]*>/,"",line)
-                        gsub(/^[ \t]+|[ \t]+$/,"",line)
-                        if (length(line) > 0) obj = obj " " line
-                      }
-                    }
-                    END {gsub(/^[ \t]+|[ \t]+$/,"",obj); print obj}
-                  ' "$dir/index.html")
-
-                  [ -z "$objective" ] && objective=""
-
-                  # Agregar al JSON
+                  # Agregar al JSON sin objective
                   jq --arg title "$title" \
                      --arg department "$department" \
                      --arg keywords "$keywords" \
-                     --arg objective "$objective" \
                      --arg url "$url" \
-                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "objective": $objective, "url": $url}]' \
+                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "url": $url}]' \
                      SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
                 fi
