@@ -432,9 +432,9 @@ function renderSOP(filtered){
 
 const container=document.getElementById("sopContainer");
 
-const list=filtered||SOP_INDEX;
+const list=filtered || SOP_INDEX;
 
-if(list.length===0){
+if(!list || list.length===0){
 container.innerHTML="<p style='color:white;text-align:center'>No se encontraron SOP</p>";
 return;
 }
@@ -450,12 +450,10 @@ Mostrando <strong>${list.length}</strong> SOP
 <thead>
 
 <tr>
-
 <th onclick="sortTable('department')">Departamento</th>
-<th onclick="sortTable('sop')">SOP</th>
+<th onclick="sortTable('title')">SOP</th>
 <th>Objetivo</th>
 <th>Acción</th>
-
 </tr>
 
 </thead>
@@ -465,24 +463,38 @@ Mostrando <strong>${list.length}</strong> SOP
 
 list.forEach(sop=>{
 
+const department = sop.department || "General";
+const title = sop.title || sop.sop || "Sin título";
+const objective = sop.desc || sop.objective || "";
+const url = sop.url || "#";
+
 html+=`
 
 <tr>
 
-<td>
-<i class="fa-solid ${getDeptIcon(sop.department)}"></i>
-${sop.department}
-</td>
+<td>${department}</td>
 
-<td><strong>${sop.sop}</strong></td>
+<td><strong>${title}</strong></td>
 
-<td>${sop.objective || ""}</td>
+<td>${objective}</td>
 
 <td>
-<a class="sop-link" href="${sop.url}">
+<a class="sop-link" href="${url}">
 Ver
 </a>
 </td>
+
+</tr>
+
+`;
+
+});
+
+html+=`</tbody></table>`;
+
+container.innerHTML=html;
+
+}
 
 </tr>
 
