@@ -1,111 +1,47 @@
-name: Generate SOP Index
+- name: Generate SOP_INDEX.json
+  run: |-
+    echo "[]" > SOP_INDEX.json
 
-on:
-  push:
-    branches:
-      - main
+    for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
+      if [ -d "$area" ]; then
+        for dir in "$area"/SOP-*; do
+          if [ -d "$dir" ]; then
+            sopname=$(basename "$dir")
+            title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
+            keywords=$(echo "$title" | tr '[:upper:]' '[:lower:]')
+            url="$dir/index.html"
+            department="$area"
 
-permissions:
-  contents: write
+            # -------------------------------
+            # Extraer objective automáticamente
+            # -------------------------------
+            objective=$(awk '
+              BEGIN {obj=""; capture=0}
+              {
+                if ($0 ~ /[0-9]+\. *Objetivo/) {capture=1; next}
+                if (capture && $0 ~ /^[0-9]+\. /) {capture=0; exit}
+                if (capture) {
+                  line=$0
+                  gsub(/<[^>]*>/,"",line)
+                  gsub(/^[ \t]+|[ \t]+$/,"",line)
+                  if (length(line) > 0) obj = obj " " line
+                }
+              }
+              END {gsub(/^[ \t]+|[ \t]+$/,"",obj); print obj}
+            ' "$dir/index.html")
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+            [ -z "$objective" ] && objective=""
 
-    steps:
+            # Agregar al JSON
+            jq --arg title "$title" \
+               --arg department "$department" \
+               --arg keywords "$keywords" \
+               --arg objective "$objective" \
+               --arg url "$url" \
+               '. += [{"title": $title, "department": $department, "keywords": $keywords, "objective": $objective, "url": $url}]' \
+               SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
-      - name: Install jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-
-      - name: Generate SOP_INDEX.json
-        run: |
-
-          echo "[]" > SOP_INDEX.json
-
-          for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
-
-            if [ -d "$area" ]; then
-
-              for dir in "$area"/SOP-*; do
-
-                if [ -d "$dir" ]; then
-
-                  file="$dir/index.html"
-
-                  sopname=$(basename "$dir")
-                  title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
-                  keywords=$(echo "$title" | tr '[:upper:]' '[:lower:]')
-                  department=$area
-                  url="$dir/index.html"
-
-                  # objective
-                  objective=$(grep -i 'meta.*name=["'\'']objective["'\'']' "$file" \
-                    | sed -n 's/.*content=["'\'']\([^"'\'']*\)["'\''].*/\1/p' \
-                    | head -n 1 | tr -d '\r\n')
-
-                  # version
-                  version=$(grep -i 'meta.*name=["'\'']version["'\'']' "$file" \
-                    | sed -n 's/.*content=["'\'']\([^"'\'']*\)["'\''].*/\1/p' \
-                    | head -n 1 | tr -d '\r\n')
-
-                  # author
-                  author=$(grep -i 'meta.*name=["'\'']author["'\'']' "$file" \
-                    | sed -n 's/.*content=["'\'']\([^"'\'']*\)["'\''].*/\1/p' \
-                    | head -n 1 | tr -d '\r\n')
-
-                  # date
-                  date=$(grep -i 'meta.*name=["'\'']date["'\'']' "$file" \
-                    | sed -n 's/.*content=["'\'']\([^"'\'']*\)["'\''].*/\1/p' \
-                    | head -n 1 | tr -d '\r\n')
-
-                  # defaults
-                  [ -z "$objective" ] && objective=""
-                  [ -z "$version" ] && version=""
-                  [ -z "$author" ] && author=""
-                  [ -z "$date" ] && date=""
-
-                  jq --arg title "$title" \
-                     --arg department "$department" \
-                     --arg keywords "$keywords" \
-                     --arg objective "$objective" \
-                     --arg version "$version" \
-                     --arg author "$author" \
-                     --arg date "$date" \
-                     --arg url "$url" \
-                     '. += [{
-                        "title": $title,
-                        "department": $department,
-                        "keywords": $keywords,
-                        "objective": $objective,
-                        "version": $version,
-                        "author": $author,
-                        "date": $date,
-                        "url": $url
-                     }]' \
-                     SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
-
-                fi
-              done
-            fi
-          done
-
-      - name: Sort JSON
-        run: |
-          jq 'sort_by(.department,.title)' SOP_INDEX.json > tmp.json
-          mv tmp.json SOP_INDEX.json
-
-      - name: Commit changes
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git add SOP_INDEX.json
-          git commit -m "Auto update SOP index" || echo "No changes"
-          git push
+          fi
+        done
+      fi
+    done
