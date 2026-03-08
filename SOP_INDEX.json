@@ -89,4 +89,16 @@
     "keywords": "conduccion vehiculos",
     "url": "./vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
   }
+   {
+    "title": "ILUMINACION LINEAL",
+    "department": "ECOPOWERTECH",
+    "keywords": "iluminacion led",
+    "url": "./ecopower/ILUMINACION-LINEAL/index.html"
+  }
+     {
+    "title": "ILUMINACION STONE",
+    "department": "ECOPOWERTECH",
+    "keywords": "iluminacion stone",
+    "url": "./ecopower/ILUMINACION-PIEDRAS/index.html"
+  }
 ]
