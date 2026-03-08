@@ -1,10 +1,9 @@
-name: Update SOP Index
+name: Generate SOP Index
 
 on:
-  workflow_dispatch:
   push:
-    paths:
-      - '**/*.html'
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -14,20 +13,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Clonar el repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      # 2️⃣ Instalar jq
       - name: Install jq
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
 
-      # 3️⃣ Generar SOP_INDEX.json sin objective
       - name: Generate SOP_INDEX.json
         run: |
           echo "[]" > SOP_INDEX.json
@@ -36,18 +32,21 @@ jobs:
             if [ -d "$area" ]; then
               for dir in "$area"/SOP-*; do
                 if [ -d "$dir" ]; then
+                  
                   sopname=$(basename "$dir")
-                  title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
-                  keywords=$(echo "$title" | tr '[:upper:]' '[:lower:]')
+                  title=$(echo $sopname | sed 's/SOP-//' | tr '-' ' ')
+                  keywords=$(echo $title | tr 'A-Z' 'a-z')
                   url="$dir/index.html"
-                  department="$area"
+                  department=$area
+                  
+                  objective=$(grep -i 'meta name="objective"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/')
 
-                  # Agregar al JSON sin objective
                   jq --arg title "$title" \
                      --arg department "$department" \
                      --arg keywords "$keywords" \
+                     --arg objective "$objective" \
                      --arg url "$url" \
-                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "url": $url}]' \
+                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "objective": $objective, "url": $url}]' \
                      SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
                 fi
@@ -55,11 +54,10 @@ jobs:
             fi
           done
 
-      # 4️⃣ Commit y push solo si hay cambios
       - name: Commit changes
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add SOP_INDEX.json
-          git diff --cached --quiet || git commit -m "Auto update SOP_INDEX.json"
-          git push || echo "No changes to push"
+          git commit -m "Auto update SOP index" || echo "No changes"
+          git push
