@@ -1,0 +1,128 @@
+[
+  {
+    "title": "CARPINTERIA COMPRA STOCK",
+    "department": "SOP-CARPINTERIA-COMPRA-STOCK",
+    "keywords": "carpinteria compra stock",
+    "url": "./produccion/SOP-CARPINTERIA-COMPRA-STOCK/index.html"
+  },
+  {
+    "title": "COMPRA EDGEBANDING",
+    "department": "SOP-COMPRA-EDGEBANDING",
+    "keywords": "compra edgebanding",
+    "url": "./produccion/SOP-COMPRA-EDGEBANDING/index.html"
+  },
+  {
+    "title": "CUIDADO HERRAMIENTAS CARPINTERIA",
+    "department": "SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA",
+    "keywords": "cuidado herramientas carpinteria",
+    "url": "./produccion/SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/index.html"
+  },
+  {
+    "title": "NIVELES INICIALES",
+    "department": "SOP-NIVELES-INICIALES",
+    "keywords": "niveles iniciales",
+    "url": "./produccion/SOP-NIVELES-INICIALES/index.html"
+  },
+  {
+    "title": "COMPRA SLABS",
+    "department": "SOP-COMPRA-SLABS",
+    "keywords": "compra slabs",
+    "url": "./administracion/SOP-COMPRA-SLABS/index.html"
+  },
+  {
+    "title": "COMPRA SLABS.html",
+    "department": "SOP-COMPRA-SLABS.html",
+    "keywords": "compra slabs.html",
+    "url": "./administracion/SOP-COMPRA-SLABS.html/index.html"
+  },
+  {
+    "title": "RECEPCION SINK",
+    "department": "SOP-RECEPCION-SINK",
+    "keywords": "recepcion sink",
+    "url": "./administracion/SOP-RECEPCION-SINK/index.html"
+  },
+  {
+    "title": "RECEPCION SINK.html",
+    "department": "SOP-RECEPCION-SINK.html",
+    "keywords": "recepcion sink.html",
+    "url": "./administracion/SOP-RECEPCION-SINK.html/index.html"
+  },
+  {
+    "title": "USO FUNDAS DUST COLLECTOR",
+    "department": "SOP-USO-FUNDAS-DUST-COLLECTOR",
+    "keywords": "uso fundas dust collector",
+    "url": "./administracion/SOP-USO-FUNDAS-DUST-COLLECTOR/index.html"
+  },
+  {
+    "title": "USO FUNDAS DUST COLLECTOR.html",
+    "department": "SOP-USO-FUNDAS-DUST-COLLECTOR.html",
+    "keywords": "uso fundas dust collector.html",
+    "url": "./administracion/SOP-USO-FUNDAS-DUST-COLLECTOR.html/index.html"
+  },
+  {
+    "title": "PARA COTIZACIÓN VENTAS",
+    "department": "SOP-PARA-COTIZACIÓN-VENTAS",
+    "keywords": "para cotizaciÓn ventas",
+    "url": "./comercial/SOP-PARA-COTIZACIÓN-VENTAS/index.html"
+  },
+  {
+    "title": "SALES CONSULTANT",
+    "department": "SOP-SALES-CONSULTANT",
+    "keywords": "sales consultant",
+    "url": "./comercial/SOP-SALES-CONSULTANT/index.html"
+  },
+  {
+    "title": "TAKEOFF HOUZZPRO.html",
+    "department": "SOP-TAKEOFF-HOUZZPRO.html",
+    "keywords": "takeoff houzzpro.html",
+    "url": "./houzz-pro/SOP-TAKEOFF-HOUZZPRO.html/index.html"
+  },
+  {
+    "title": "COORDINACION CONTROL INSTALACIONES",
+    "department": "SOP-COORDINACION-CONTROL-INSTALACIONES",
+    "keywords": "coordinacion control instalaciones",
+    "url": "./instalacion/SOP-COORDINACION-CONTROL-INSTALACIONES/index.html"
+  },
+  {
+    "title": "COORDINACION CONTROL INSTALACIONES.html",
+    "department": "SOP-COORDINACION-CONTROL-INSTALACIONES.html",
+    "keywords": "coordinacion control instalaciones.html",
+    "url": "./instalacion/SOP-COORDINACION-CONTROL-INSTALACIONES.html/index.html"
+  },
+  {
+    "title": "INSTALACION CABINETS",
+    "department": "SOP-INSTALACION-CABINETS",
+    "keywords": "instalacion cabinets",
+    "url": "./instalacion/SOP-INSTALACION-CABINETS/index.html"
+  },
+  {
+    "title": "INSTALACION CABINETS.html",
+    "department": "SOP-INSTALACION-CABINETS.html",
+    "keywords": "instalacion cabinets.html",
+    "url": "./instalacion/SOP-INSTALACION-CABINETS.html/index.html"
+  },
+  {
+    "title": "INSTALACION STONE",
+    "department": "SOP-INSTALACION-STONE",
+    "keywords": "instalacion stone",
+    "url": "./instalacion/SOP-INSTALACION-STONE/index.html"
+  },
+  {
+    "title": "INSTALACION STONE.html",
+    "department": "SOP-INSTALACION-STONE.html",
+    "keywords": "instalacion stone.html",
+    "url": "./instalacion/SOP-INSTALACION-STONE.html/index.html"
+  },
+  {
+    "title": "MANTENIMIENTO PREVENTIVO TRIMMING",
+    "department": "SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING",
+    "keywords": "mantenimiento preventivo trimming",
+    "url": "./maquinarias/SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING/index.html"
+  },
+  {
+    "title": "CONDUCCION VEHICULOS",
+    "department": "SOP-CONDUCCION-VEHICULOS",
+    "keywords": "conduccion vehiculos",
+    "url": "./vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
+  }
+]
