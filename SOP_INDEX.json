@@ -11,31 +11,61 @@
     "keywords": "compra edgebanding",
     "url": "./produccion/SOP-COMPRA-EDGEBANDING/index.html"
   },
-   {
-    "title": "COMPRA SLABS",
-    "department": "SOP-COMPRA-SLABS",
-    "keywords": "compra slabs",
-    "url": "./administracion/SOP-COMPRA-SLABS/index.html"
-  },
-   {
-    "title": "COORDINACION CONTROL INSTALACIONES",
-    "department": "SOP-COORDINACION-CONTROL-INSTALACIONES",
-    "keywords": "coordinacion control instalaciones",
-    "url": "./instalacion/SOP-COORDINACION-CONTROL-INSTALACIONES/index.html"
-  },
-    {
-    "title": "CONDUCCION VEHICULOS",
-    "department": "SOP-CONDUCCION-VEHICULOS",
-    "keywords": "conduccion vehiculos",
-    "url": "./vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
-  },
   {
     "title": "CUIDADO HERRAMIENTAS CARPINTERIA",
     "department": "SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA",
     "keywords": "cuidado herramientas carpinteria",
     "url": "./produccion/SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/index.html"
   },
-   {
+  {
+    "title": "NIVELES INICIALES",
+    "department": "SOP-NIVELES-INICIALES",
+    "keywords": "niveles iniciales",
+    "url": "./produccion/SOP-NIVELES-INICIALES/index.html"
+  },
+  {
+    "title": "COMPRA SLABS",
+    "department": "SOP-COMPRA-SLABS",
+    "keywords": "compra slabs",
+    "url": "./administracion/SOP-COMPRA-SLABS/index.html"
+  },
+  {
+    "title": "RECEPCION SINK",
+    "department": "SOP-RECEPCION-SINK",
+    "keywords": "recepcion sink",
+    "url": "./administracion/SOP-RECEPCION-SINK/index.html"
+  },
+  {
+    "title": "USO FUNDAS DUST COLLECTOR",
+    "department": "SOP-USO-FUNDAS-DUST-COLLECTOR",
+    "keywords": "uso fundas dust collector",
+    "url": "./administracion/SOP-USO-FUNDAS-DUST-COLLECTOR/index.html"
+  },
+  {
+    "title": "PARA COTIZACIÓN VENTAS",
+    "department": "SOP-PARA-COTIZACIÓN-VENTAS",
+    "keywords": "para cotizaciÓn ventas",
+    "url": "./comercial/SOP-PARA-COTIZACIÓN-VENTAS/index.html"
+  },
+  {
+    "title": "SALES CONSULTANT",
+    "department": "SOP-SALES-CONSULTANT",
+    "keywords": "sales consultant",
+    "url": "./comercial/SOP-SALES-CONSULTANT/index.html"
+  },
+  {
+    "title": "TAKEOFF HOUZZPRO",
+    "department": "SOP-TAKEOFF-HOUZZPRO",
+    "keywords": "takeoff houzzpro",
+    "url": "./houzz-pro/SOP-TAKEOFF-HOUZZPRO/index.html"
+  },
+  {
+    "title": "COORDINACION CONTROL INSTALACIONES",
+    "department": "SOP-COORDINACION-CONTROL-INSTALACIONES",
+    "keywords": "coordinacion control instalaciones",
+    "url": "./instalacion/SOP-COORDINACION-CONTROL-INSTALACIONES/index.html"
+  },
+  {
     "title": "INSTALACION CABINETS",
     "department": "SOP-INSTALACION-CABINETS",
     "keywords": "instalacion cabinets",
@@ -54,39 +84,9 @@
     "url": "./maquinarias/SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING/index.html"
   },
   {
-    "title": "NIVELES INICIALES",
-    "department": "SOP-NIVELES-INICIALES",
-    "keywords": "niveles iniciales",
-    "url": "./produccion/SOP-NIVELES-INICIALES/index.html"
-  },
-   {
-    "title": "PARA COTIZACIÓN VENTAS",
-    "department": "SOP-PARA-COTIZACIÓN-VENTAS",
-    "keywords": "para cotizaciÓn ventas",
-    "url": "./comercial/SOP-PARA-COTIZACIÓN-VENTAS/index.html"
-  },
-  {
-    "title": "RECEPCION SINK",
-    "department": "SOP-RECEPCION-SINK",
-    "keywords": "recepcion sink",
-    "url": "./administracion/SOP-RECEPCION-SINK/index.html"
-  },
-    {
-    "title": "SALES CONSULTANT",
-    "department": "SOP-SALES-CONSULTANT",
-    "keywords": "sales consultant",
-    "url": "./comercial/SOP-SALES-CONSULTANT/index.html"
-  },
-    {
-    "title": "TAKEOFF HOUZZPRO",
-    "department": "SOP-TAKEOFF-HOUZZPRO",
-    "keywords": "takeoff houzzpro",
-    "url": "./houzz-pro/SOP-TAKEOFF-HOUZZPRO/index.html"
-  },
-  {
-    "title": "USO FUNDAS DUST COLLECTOR",
-    "department": "SOP-USO-FUNDAS-DUST-COLLECTOR",
-    "keywords": "uso fundas dust collector",
-    "url": "./administracion/SOP-USO-FUNDAS-DUST-COLLECTOR/index.html"
-  },
+    "title": "CONDUCCION VEHICULOS",
+    "department": "SOP-CONDUCCION-VEHICULOS",
+    "keywords": "conduccion vehiculos",
+    "url": "./vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
+  }
 ]
