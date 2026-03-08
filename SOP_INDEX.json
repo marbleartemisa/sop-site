@@ -1,37 +1,12 @@
 [
   {
-    "title": "CARPINTERIA COMPRA STOCK",
-    "department": "produccion",
-    "keywords": "carpinteria compra stock",
-    "objective": "",
-    "url": "produccion/SOP-CARPINTERIA-COMPRA-STOCK/index.html"
-  },
-  {
-    "title": "COMPRA EDGEBANDING",
-    "department": "produccion",
-    "keywords": "compra edgebanding",
-    "objective": "",
-    "url": "produccion/SOP-COMPRA-EDGEBANDING/index.html"
-  },
-  {
-    "title": "CUIDADO HERRAMIENTAS CARPINTERIA",
-    "department": "produccion",
-    "keywords": "cuidado herramientas carpinteria",
-    "objective": "",
-    "url": "produccion/SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/index.html"
-  },
-  {
-    "title": "POLITICA NIVELES",
-    "department": "produccion",
-    "keywords": "politica niveles",
-    "objective": "",
-    "url": "produccion/SOP-POLITICA-NIVELES/index.html"
-  },
-  {
     "title": "COMPRA SLABS",
     "department": "administracion",
     "keywords": "compra slabs",
     "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
     "url": "administracion/SOP-COMPRA-SLABS/index.html"
   },
   {
@@ -39,6 +14,9 @@
     "department": "administracion",
     "keywords": "recepcion sink",
     "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
     "url": "administracion/SOP-RECEPCION-SINK/index.html"
   },
   {
@@ -46,6 +24,9 @@
     "department": "administracion",
     "keywords": "uso fundas dust collector",
     "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
     "url": "administracion/SOP-USO-FUNDAS-DUST-COLLECTOR/index.html"
   },
   {
@@ -53,6 +34,9 @@
     "department": "comercial",
     "keywords": "para cotizaciÓn ventas",
     "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
     "url": "comercial/SOP-PARA-COTIZACIÓN-VENTAS/index.html"
   },
   {
@@ -60,55 +44,19 @@
     "department": "comercial",
     "keywords": "sales consultant",
     "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
     "url": "comercial/SOP-SALES-CONSULTANT/index.html"
-  },
-  {
-    "title": "TAKEOFF HOUZZPRO",
-    "department": "houzz-pro",
-    "keywords": "takeoff houzzpro",
-    "objective": "",
-    "url": "houzz-pro/SOP-TAKEOFF-HOUZZPRO/index.html"
-  },
-  {
-    "title": "COORDINACION CONTROL INSTALACIONES",
-    "department": "instalacion",
-    "keywords": "coordinacion control instalaciones",
-    "objective": "",
-    "url": "instalacion/SOP-COORDINACION-CONTROL-INSTALACIONES/index.html"
-  },
-  {
-    "title": "INSTALACION CABINETS",
-    "department": "instalacion",
-    "keywords": "instalacion cabinets",
-    "objective": "",
-    "url": "instalacion/SOP-INSTALACION-CABINETS/index.html"
-  },
-  {
-    "title": "INSTALACION STONE",
-    "department": "instalacion",
-    "keywords": "instalacion stone",
-    "objective": "",
-    "url": "instalacion/SOP-INSTALACION-STONE/index.html"
-  },
-  {
-    "title": "MANTENIMIENTO PREVENTIVO TRIMMING",
-    "department": "maquinarias",
-    "keywords": "mantenimiento preventivo trimming",
-    "objective": "",
-    "url": "maquinarias/SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING/index.html"
-  },
-  {
-    "title": "CONDUCCION VEHICULOS",
-    "department": "vehiculos",
-    "keywords": "conduccion vehiculos",
-    "objective": "",
-    "url": "vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
   },
   {
     "title": "ILUMINACION LINEAL",
     "department": "ecopower",
     "keywords": "iluminacion lineal",
     "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
     "url": "ecopower/SOP-ILUMINACION-LINEAL/index.html"
   },
   {
@@ -116,6 +64,109 @@
     "department": "ecopower",
     "keywords": "iluminacion piedras",
     "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
     "url": "ecopower/SOP-ILUMINACION-PIEDRAS/index.html"
+  },
+  {
+    "title": "TAKEOFF HOUZZPRO",
+    "department": "houzz-pro",
+    "keywords": "takeoff houzzpro",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "houzz-pro/SOP-TAKEOFF-HOUZZPRO/index.html"
+  },
+  {
+    "title": "COORDINACION CONTROL INSTALACIONES",
+    "department": "instalacion",
+    "keywords": "coordinacion control instalaciones",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "instalacion/SOP-COORDINACION-CONTROL-INSTALACIONES/index.html"
+  },
+  {
+    "title": "INSTALACION CABINETS",
+    "department": "instalacion",
+    "keywords": "instalacion cabinets",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "instalacion/SOP-INSTALACION-CABINETS/index.html"
+  },
+  {
+    "title": "INSTALACION STONE",
+    "department": "instalacion",
+    "keywords": "instalacion stone",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "instalacion/SOP-INSTALACION-STONE/index.html"
+  },
+  {
+    "title": "MANTENIMIENTO PREVENTIVO TRIMMING",
+    "department": "maquinarias",
+    "keywords": "mantenimiento preventivo trimming",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "maquinarias/SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING/index.html"
+  },
+  {
+    "title": "CARPINTERIA COMPRA STOCK",
+    "department": "produccion",
+    "keywords": "carpinteria compra stock",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "produccion/SOP-CARPINTERIA-COMPRA-STOCK/index.html"
+  },
+  {
+    "title": "COMPRA EDGEBANDING",
+    "department": "produccion",
+    "keywords": "compra edgebanding",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "produccion/SOP-COMPRA-EDGEBANDING/index.html"
+  },
+  {
+    "title": "CUIDADO HERRAMIENTAS CARPINTERIA",
+    "department": "produccion",
+    "keywords": "cuidado herramientas carpinteria",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "produccion/SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/index.html"
+  },
+  {
+    "title": "POLITICA NIVELES",
+    "department": "produccion",
+    "keywords": "politica niveles",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "produccion/SOP-POLITICA-NIVELES/index.html"
+  },
+  {
+    "title": "CONDUCCION VEHICULOS",
+    "department": "vehiculos",
+    "keywords": "conduccion vehiculos",
+    "objective": "",
+    "version": "",
+    "author": "",
+    "date": "",
+    "url": "vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
   }
 ]
