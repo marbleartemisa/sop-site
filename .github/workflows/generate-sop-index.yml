@@ -32,20 +32,20 @@ jobs:
             if [ -d "$area" ]; then
               for dir in "$area"/SOP-*; do
                 if [ -d "$dir" ]; then
-
                   sopname=$(basename "$dir")
-                  title=$(echo $sopname | sed 's/SOP-//' | tr '-' ' ')
-                  keywords=$(echo $title | tr 'A-Z' 'a-z')
-                  url="./$dir/index.html"
-                  department=$area
+                  title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
+                  keywords=$(echo "$title" | tr 'A-Z' 'a-z')
+                  url="$dir/index.html"
+                  department="$area"
+                  objective=$(grep -i 'meta name="objective"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/')
 
                   jq --arg title "$title" \
                      --arg department "$department" \
                      --arg keywords "$keywords" \
+                     --arg objective "$objective" \
                      --arg url "$url" \
-                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "url": $url}]' \
+                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "objective": $objective, "url": $url}]' \
                      SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
-
                 fi
               done
             fi
