@@ -30,12 +30,6 @@
     "url": "./administracion/SOP-COMPRA-SLABS/index.html"
   },
   {
-    "title": "COMPRA SLABS.html",
-    "department": "SOP-COMPRA-SLABS.html",
-    "keywords": "compra slabs.html",
-    "url": "./administracion/SOP-COMPRA-SLABS.html/index.html"
-  },
-  {
     "title": "RECEPCION SINK",
     "department": "SOP-RECEPCION-SINK",
     "keywords": "recepcion sink",
@@ -46,12 +40,6 @@
     "department": "SOP-USO-FUNDAS-DUST-COLLECTOR",
     "keywords": "uso fundas dust collector",
     "url": "./administracion/SOP-USO-FUNDAS-DUST-COLLECTOR/index.html"
-  },
-  {
-    "title": "USO FUNDAS DUST COLLECTOR.html",
-    "department": "SOP-USO-FUNDAS-DUST-COLLECTOR.html",
-    "keywords": "uso fundas dust collector.html",
-    "url": "./administracion/SOP-USO-FUNDAS-DUST-COLLECTOR.html/index.html"
   },
   {
     "title": "PARA COTIZACIÓN VENTAS",
