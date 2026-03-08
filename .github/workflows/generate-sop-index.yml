@@ -1,9 +1,6 @@
 name: Generate SOP Index
 
 on:
-  push:
-    paths:
-      - '**/*.html'
   workflow_dispatch:
 
 jobs:
@@ -26,9 +23,6 @@ jobs:
                   url="$dir/index.html"
                   department="$area"
 
-                  # -------------------------------
-                  # Extraer objective automáticamente
-                  # -------------------------------
                   objective=$(awk '
                     BEGIN {obj=""; capture=0}
                     {
@@ -46,7 +40,6 @@ jobs:
 
                   [ -z "$objective" ] && objective=""
 
-                  # Agregar al JSON
                   jq --arg title "$title" \
                      --arg department "$department" \
                      --arg keywords "$keywords" \
@@ -59,3 +52,11 @@ jobs:
               done
             fi
           done
+
+      - name: Commit and push SOP_INDEX.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add SOP_INDEX.json
+          git commit -m "Update SOP_INDEX.json"
+          git push
