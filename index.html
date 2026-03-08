@@ -176,6 +176,25 @@ text-decoration:none;
 text-decoration:underline;
 }
 
+.sop-btn{
+display:inline-flex;
+align-items:center;
+gap:6px;
+padding:6px 14px;
+border-radius:20px;
+background:linear-gradient(135deg,#0072C6,#005a9e);
+color:white;
+font-size:.85rem;
+font-weight:bold;
+text-decoration:none;
+transition:.25s;
+}
+
+.sop-btn:hover{
+transform:scale(1.05);
+box-shadow:0 6px 15px rgba(0,0,0,0.25);
+}
+
 /* VIDEOS */
 
 .video-section{
@@ -250,6 +269,26 @@ border:none;
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+
+.dept-badge{
+display:inline-flex;
+align-items:center;
+gap:6px;
+padding:4px 10px;
+border-radius:14px;
+font-size:.8rem;
+font-weight:600;
+}
+
+.dept-produccion{background:#e0f2fe;color:#0369a1;}
+.dept-administracion{background:#ede9fe;color:#5b21b6;}
+.dept-comercial{background:#dcfce7;color:#166534;}
+.dept-instalacion{background:#fef3c7;color:#92400e;}
+.dept-maquinarias{background:#fee2e2;color:#991b1b;}
+.dept-vehiculos{background:#e5e7eb;color:#374151;}
+.dept-ecopower{background:#cffafe;color:#0e7490;}
+.dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
+
 /* RESPONSIVE */
 
 @media(max-width:768px){
@@ -415,8 +454,32 @@ fetch('SOP_INDEX.json')
 .then(res=>res.json())
 .then(data=>{
 SOP_INDEX=data;
+sortByDepartment();
 renderSOP();
+})
+.catch(err=>{
+console.error("Error cargando SOP:",err);
 });
+
+
+function sortByDepartment(){
+
+SOP_INDEX.sort((a,b)=>{
+
+if(a.department < b.department) return -1;
+if(a.department > b.department) return 1;
+
+let A=(a.title||"").toLowerCase();
+let B=(b.title||"").toLowerCase();
+
+if(A<B) return -1;
+if(A>B) return 1;
+
+return 0;
+
+});
+
+}
 
 /* RENDER */
 
@@ -445,7 +508,7 @@ Mostrando <strong>${list.length}</strong> SOP
 
 <th onclick="sortTable('title')">SOP</th>
 <th onclick="sortTable('department')">Departamento</th>
-<th>Descripción</th>
+<th>Objetivo</th>
 <th></th>
 
 </tr>
@@ -463,13 +526,13 @@ html+=`
 
 <td><strong>${sop.title || sop.department.replaceAll("-", " ")}</strong></td>
 
-<td>${getDepartmentArea(sop.department)}</td>
+<td>${getDepartmentBadge(sop.department)}</td>
 
-<td>${sop.desc || ""}</td>
+<td>${sop.objective || ""}</td>
 
 <td>
-<a class="sop-link" href="/sop-site/${sop.url}">
-Ver <i class="fa-solid fa-arrow-right"></i>
+<a class="sop-btn" href="${sop.url}">
+<i class="fa-solid fa-eye"></i> Ver
 </a>
 </td>
 
@@ -487,20 +550,64 @@ container.innerHTML=html;
 
 /*FUNCION DETECTA NOMBRE DE SOP*/
 
-function getDepartmentName(dep){
-  const map = {
-    produccion: "Producción",
-    administracion: "Administración",
-    comercial: "Comercial",
-    instalacion: "Instalación",
-    maquinarias: "Maquinarias",
-    vehiculos: "Vehículos",
-    ecopower: "EcoPower",
-    "houzz-pro": "Houzz Pro"
-  };
-  return map[dep] || dep;
+function getDepartmentBadge(dep){
+
+const map={
+
+produccion:{
+name:"Producción",
+icon:"fa-industry"
+},
+
+administracion:{
+name:"Administración",
+icon:"fa-building"
+},
+
+comercial:{
+name:"Comercial",
+icon:"fa-chart-line"
+},
+
+instalacion:{
+name:"Instalación",
+icon:"fa-screwdriver-wrench"
+},
+
+maquinarias:{
+name:"Maquinarias",
+icon:"fa-gears"
+},
+
+vehiculos:{
+name:"Vehículos",
+icon:"fa-truck"
+},
+
+ecopower:{
+name:"Ecopowertech",
+icon:"fa-bolt"
+},
+
+"houzz-pro":{
+name:"Houzz Pro",
+icon:"fa-house"
 }
 
+};
+
+const d=map[dep];
+
+if(!d) return dep;
+
+return `
+<span class="dept-badge dept-${dep}">
+<i class="fa-solid ${d.icon}"></i>
+${d.name}
+</span>
+`;
+
+}
 /* SEARCH */
 
 function filterSOP(){
