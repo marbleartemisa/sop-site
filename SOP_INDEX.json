@@ -88,5 +88,17 @@
     "department": "SOP-CONDUCCION-VEHICULOS",
     "keywords": "conduccion vehiculos",
     "url": "./vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
+  },
+  {
+    "title": "ILUMINACION LINEAL",
+    "department": "SOP-ILUMINACION-LINEAL",
+    "keywords": "iluminacion lineal",
+    "url": "./ecopower/SOP-ILUMINACION-LINEAL/index.html"
+  },
+  {
+    "title": "ILUMINACION PIEDRAS",
+    "department": "SOP-ILUMINACION-PIEDRAS",
+    "keywords": "iluminacion piedras",
+    "url": "./ecopower/SOP-ILUMINACION-PIEDRAS/index.html"
   }
 ]
