@@ -1,24 +1,54 @@
-- name: Generate SOP_INDEX.json
-  run: |
-    echo "[]" > SOP_INDEX.json
-    for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
-      if [ -d "$area" ]; then
-        for dir in "$area"/SOP-*; do
-          if [ -d "$dir" ]; then
+name: Generate SOP Index
 
-            department=$(basename "$dir")
-            title=$(echo $department | sed 's/SOP-//' | tr '-' ' ')
-            keywords=$(echo $title | tr 'A-Z' 'a-z')
-            url="./$dir/index.html"
+on:
+  push:
+    branches:
+      - main
 
-            jq --arg title "$title" \
-               --arg department "$department" \
-               --arg keywords "$keywords" \
-               --arg url "$url" \
-               '. += [{"title": $title, "department": $department, "keywords": $keywords, "url": $url}]' \
-               SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-          fi
-        done
-      fi
-    done
+    steps:
+      # 1️⃣ Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      # 2️⃣ Instalar jq
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      # 3️⃣ Generar SOP_INDEX.json con títulos correctos
+      - name: Generate SOP_INDEX.json
+        run: |
+          echo "[]" > SOP_INDEX.json
+          for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
+            if [ -d "$area" ]; then
+              for dir in "$area"/SOP-*; do
+                if [ -d "$dir" ]; then
+                  department=$(basename "$dir")
+                  title=$(echo $department | sed 's/SOP-//' | tr '-' ' ')
+                  keywords=$(echo $title | tr 'A-Z' 'a-z')
+                  url="./$dir/index.html"
+                  jq --arg title "$title" \
+                     --arg department "$department" \
+                     --arg keywords "$keywords" \
+                     --arg url "$url" \
+                     '. += [{"title": $title, "department": $department, "keywords": $keywords, "url": $url}]' \
+                     SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
+                fi
+              done
+            fi
+          done
+
+      # 4️⃣ Commit y push automático
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add SOP_INDEX.json
+          git commit -m "Auto update SOP index" || echo "No changes"
+          git push
