@@ -451,8 +451,8 @@ Mostrando <strong>${list.length}</strong> SOP
 
 <tr>
 
-<th onclick="sortTable('title')">SOP</th>
 <th onclick="sortTable('department')">Departamento</th>
+<th onclick="sortTable('sop')">SOP</th>
 <th>Objetivo</th>
 <th>Acción</th>
 
@@ -469,11 +469,14 @@ html+=`
 
 <tr>
 
-<td>${sop.title}</td>
+<td>
+<i class="fa-solid ${getDeptIcon(sop.department)}"></i>
+${sop.department}
+</td>
 
-<td>${sop.department}</td>
+<td><strong>${sop.sop}</strong></td>
 
-<td>${sop.desc || ""}</td>
+<td>${sop.objective || ""}</td>
 
 <td>
 <a class="sop-link" href="${sop.url}">
@@ -506,9 +509,9 @@ const filtered=SOP_INDEX.filter(sop=>{
 const matchDept=dept===""||sop.department===dept;
 
 const matchSearch=
-sop.title.toLowerCase().includes(search)||
-sop.keywords.toLowerCase().includes(search)||
-(sop.desc && sop.desc.toLowerCase().includes(search));
+sop.sop.toLowerCase().includes(search) ||
+(sop.objective && sop.objective.toLowerCase().includes(search)) ||
+(sop.keywords && sop.keywords.toLowerCase().includes(search))
 
 return matchDept && matchSearch;
 
