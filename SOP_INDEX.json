@@ -88,11 +88,5 @@
     "department": "SOP-CONDUCCION-VEHICULOS",
     "keywords": "conduccion vehiculos",
     "url": "./vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
-  },
-  {
-    "title": "ECOPOWER",
-    "department": "SOP-ECOPOWER",
-    "keywords": "ecopower",
-    "url": "./ecopower/SOP-ECOPOWER/index.html"
   }
 ]
