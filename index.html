@@ -411,7 +411,7 @@ document.querySelector('.menu').classList.toggle('show');
 
 let SOP_INDEX=[];
 
-fetch('/sop-site/SOP_INDEX.json')
+fetch('SOP_INDEX.json')
 .then(res=>res.json())
 .then(data=>{
 SOP_INDEX=data;
@@ -461,14 +461,14 @@ html+=`
 
 <tr>
 
-<td><strong>${sop.title || sop.department}</strong></td>
+<td><strong>${sop.title || sop.department.replaceAll("-", " ")}</strong></td>
 
 <td>${getDepartmentArea(sop.department)}</td>
 
-<td>${sop.desc||""}</td>
+<td>${sop.desc || ""}</td>
 
 <td>
-<a class="sop-link" href="/sop-site/${sop.url}"
+<a class="sop-link" href="/sop-site/${sop.url}">
 Ver <i class="fa-solid fa-arrow-right"></i>
 </a>
 </td>
@@ -515,10 +515,10 @@ const filtered=SOP_INDEX.filter(sop=>{
 
 const matchDept=dept===""||sop.department===dept;
 
-const matchSearch=
-sop.title.toLowerCase().includes(search)||
-sop.keywords.toLowerCase().includes(search)||
-(sop.desc && sop.desc.toLowerCase().includes(search));
+const matchSearch =
+(sop.title || "").toLowerCase().includes(search) ||
+(sop.keywords || "").toLowerCase().includes(search) ||
+(sop.desc || "").toLowerCase().includes(search);
 
 return matchDept && matchSearch;
 
