@@ -452,21 +452,24 @@ function sortByDepartment(){
   });
 }
 
-/* RENDER TABLA + SCROLL SOLO SI HAY MÁS DE 20 FILAS */
-
+/* RENDER TABLA + SCROLL SOLO DESPUÉS DE 20 FILAS */
 function renderSOP(filtered) {
   const container = document.getElementById("sopContainer");
   const list = filtered || SOP_INDEX;
 
-  // altura estimada de una fila ~40px
-  const filaAltura = 40;
+  // Estimación de altura de fila
+  const filaAltura = 50; // ajusta según tu padding de td
   const maxFilasSinScroll = 20;
-  const maxHeight = (list.length > maxFilasSinScroll) ? filaAltura * maxFilasSinScroll : 'auto';
+  let wrapperStyle = "";
+
+  if(list.length > maxFilasSinScroll){
+    wrapperStyle = `style="max-height:${filaAltura * maxFilasSinScroll}px; overflow-y:auto;"`;
+  }
 
   let html = `<div class="sop-info">
     Mostrando <strong>${list.length}</strong> SOP
   </div>
-  <div class="table-wrapper" style="max-height:${maxHeight}px; overflow-y:auto;">
+  <div class="table-wrapper" ${wrapperStyle}>
     <table class="sop-table">
       <thead>
         <tr>
