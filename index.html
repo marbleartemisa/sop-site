@@ -150,15 +150,27 @@ box-shadow:0 12px 25px rgba(0,0,0,0.25);
 background:white;
 }
 
-.sop-table thead{
-background:linear-gradient(135deg,#003366,#005fa3);
+.table-wrapper {
+  max-height: 650px; /* ajusta según quieras 20 filas visibles */
+  overflow-y: auto;
+  border-radius: 14px;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.25);
 }
 
+.sop-table thead th {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg,#003366,#005fa3);
+  color: white;
+  z-index: 3;
+}
 .sop-table thead th{
 position: sticky;
 top: 0;
 z-index: 5;
 }
+
+
 
 .table-scroll{
 max-height:960px;
@@ -487,70 +499,51 @@ return 0;
 
 }
 
-/* RENDER TABLA */
+/* RENDER TABLA FIXED THEAD + SCROLL */
 
-function renderSOP(filtered){
+function renderSOP(filtered) {
+  const container = document.getElementById("sopContainer");
+  const list = filtered || SOP_INDEX;
 
-const container = document.getElementById("sopContainer");
+  let html = `
+    <div class="sop-info">
+      Mostrando <strong>${list.length}</strong> SOP
+    </div>
 
-const list = filtered || SOP_INDEX;
+    <div class="table-wrapper">
+      <table class="sop-table">
+        <thead>
+          <tr>
+            <th onclick="sortTable('department')">Departamento</th>
+            <th onclick="sortTable('title')">Procedimiento SOP</th>
+            <th style="width:120px"></th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
 
-let html = `
-<div class="sop-info">
-Mostrando <strong>${list.length}</strong> SOP
-</div>
+  list.forEach(sop => {
+    html += `
+      <tr>
+        <td>${getDepartmentBadge(sop.department)}</td>
+        <td><strong>${sop.title}</strong></td>
+        <td>
+          <a class="sop-btn" href="${sop.url}" target="_blank">
+            <i class="fa-solid fa-eye"></i> Ver
+          </a>
+        </td>
+      </tr>
+    `;
+  });
 
-<div class="table-scroll">
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
 
-<table class="sop-table">
-
-<thead>
-
-<tr>
-<th onclick="sortTable('department')">Departamento</th>
-<th onclick="sortTable('title')">Procedimiento SOP</th>
-<th style="width:120px"></th>
-</tr>
-
-</thead>
-
-<tbody>
-`;
-
-list.forEach(sop=>{
-
-html += `
-<tr>
-
-<td>
-${getDepartmentBadge(sop.department)}
-</td>
-
-<td>
-<strong>${sop.title}</strong>
-</td>
-
-<td>
-<a class="sop-btn" href="${sop.url}" target="_blank">
-<i class="fa-solid fa-eye"></i> Ver
-</a>
-</td>
-
-</tr>
-`;
-
-});
-
-html += `
-</tbody>
-</table>
-</div>
-`;
-
-container.innerHTML = html;
-
+  container.innerHTML = html;
 }
-
 /* BADGE */
 
 function getDepartmentBadge(dep){
