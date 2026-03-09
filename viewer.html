@@ -2,8 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Visor SOP - Artemisa</title>
+<title>Visor SOP Profesional - Artemisa</title>
 
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.12.313/pdf.min.js"></script>
 <style>
 body {
   margin: 0;
@@ -38,38 +40,32 @@ body {
   font-size: 14px;
 }
 
-/* Contenedor del iframe */
-.iframe-wrapper {
+/* Contenedor de páginas PDF */
+.pdf-container {
   width: 100%;
-  background: #e5e7eb;
-  padding: 2px; /* borde mínimo */
+  padding: 10px 0;
   display: flex;
-  justify-content: center;
-  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center; /* centra horizontalmente todas las páginas */
+  gap: 20px;
 }
 
-/* Estilo del iframe */
-.iframe-wrapper iframe {
-  width: 100%;
-  max-width: 1100px; /* ancho máximo del SOP */
-  height: 90vh;
-  border: 1px solid #ccc; /* borde muy fino */
+/* Cada canvas de página */
+.pdf-page {
+  border: 1px solid #ccc;
   border-radius: 4px;
-  overflow-y: auto; /* scroll vertical */
-  display: block;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  max-width: 95%;
 }
 
-/* Responsive para móviles */
+/* Responsive */
 @media (max-width: 768px) {
-  .iframe-wrapper iframe {
-    width: 100%;
-    max-width: 100%;
-    height: 80vh;
+  .pdf-page {
+    max-width: 95%;
   }
 }
 </style>
 </head>
-
 <body>
 
 <div class="viewer">
@@ -79,10 +75,8 @@ body {
     <a href="/sop-site/">⬅ Volver a Biblioteca</a>
   </div>
 
-  <!-- Iframe centrado -->
-  <div class="iframe-wrapper">
-    <iframe id="frame" scrolling="auto"></iframe>
-  </div>
+  <!-- Contenedor PDF -->
+  <div class="pdf-container" id="pdfContainer"></div>
 </div>
 
 <script>
@@ -90,12 +84,32 @@ body {
 const params = new URLSearchParams(window.location.search);
 const doc = params.get("doc");
 
-// Asigna el archivo al iframe
 if (doc) {
-  document.getElementById("frame").src = doc + "#view=FitH"; 
-  // "#view=FitH" ajusta la página al ancho del iframe si es PDF
+  const container = document.getElementById("pdfContainer");
+  const loadingTask = pdfjsLib.getDocument(doc);
+  loadingTask.promise.then(pdf => {
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      pdf.getPage(pageNum).then(page => {
+        const viewport = page.getViewport({ scale: 1.5 }); // escala inicial
+        const canvas = document.createElement("canvas");
+        canvas.className = "pdf-page";
+        const context = canvas.getContext("2d");
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = { canvasContext: context, viewport: viewport };
+        page.render(renderContext).promise.then(() => {
+          // opcional: se puede hacer algo después de renderizar
+        });
+
+        container.appendChild(canvas);
+      });
+    }
+  }).catch(err => {
+    container.innerHTML = "<p style='color:red;'>Error cargando el PDF: "+err.message+"</p>";
+  });
 } else {
-  document.getElementById("frame").src = "about:blank";
+  document.getElementById("pdfContainer").innerHTML = "<p style='color:red;'>No se indicó un PDF.</p>";
 }
 </script>
 
