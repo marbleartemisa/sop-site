@@ -562,11 +562,15 @@ function renderSOP(filtered) {
     dep = "carpinteria";
   }
 
+     if(dep === "instalacion"){
+    dep = "stone";
+  }
+
   const map = {
     carpinteria:{name:"Carpintería",icon:"fa-hammer"},
     administracion:{name:"Administración",icon:"fa-building"},
     comercial:{name:"Comercial",icon:"fa-chart-line"},
-    instalacion:{name:"Instalación",icon:"fa-screwdriver-wrench"},
+    stone:{name:"Stone",icon:"fa-screwdriver-wrench"},
     maquinarias:{name:"Maquinarias",icon:"fa-gears"},
     vehiculos:{name:"Vehículos",icon:"fa-truck"},
     ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
@@ -615,6 +619,7 @@ function sortTable(field){
 </script>
 </body>
 </html>
+
 
 
 
