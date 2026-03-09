@@ -241,38 +241,69 @@ body{
   border:none;
 }
 
-/* ===== CARRUSEL PREMIUM LOOP INFINITO CON FLECHAS ===== */
-.carousel-container-premium {
-  max-width: 900px;
-  margin: 50px auto;
-  position: relative;
-  overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-}
-.carousel-track-premium {
-  display: flex;
-  gap: 15px;
-  animation: slide-loop 40s linear infinite;
-}
-.carousel-slide-premium {
-  flex: 0 0 calc(33.333% - 10px);
-}
-.carousel-slide-premium img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  transition: transform .3s;
-}
-.carousel-slide-premium img:hover {
-  transform: scale(1.05);
-}
-.carousel-container-premium:hover .carousel-track-premium {
-  animation-play-state: paused;
+/* ===== CARRUSEL PREMIUM LOOP INFINITO (tipo Apple / Tesla) ===== */
+
+.carousel-container-premium{
+  max-width:1000px;
+  margin:60px auto;
+  overflow:hidden;
+  border-radius:16px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.35);
+  position:relative;
 }
 
+.carousel-track-premium{
+  display:flex;
+  gap:18px;
+  width:max-content;
+  animation:carouselMove 60s linear infinite;
+}
 
+.carousel-container-premium:hover .carousel-track-premium{
+  animation-play-state:paused;
+}
+
+.carousel-slide-premium{
+  flex:0 0 300px;
+}
+
+.carousel-slide-premium img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  border-radius:12px;
+  transition:transform .4s, box-shadow .4s;
+}
+
+.carousel-slide-premium img:hover{
+  transform:scale(1.06);
+  box-shadow:0 10px 25px rgba(0,0,0,0.35);
+}
+
+/* animación infinita */
+@keyframes carouselMove{
+  from{
+    transform:translateX(0);
+  }
+  to{
+    transform:translateX(-50%);
+  }
+}
+
+/* responsive */
+
+@media(max-width:768px){
+
+.carousel-slide-premium{
+  flex:0 0 240px;
+}
+
+.carousel-slide-premium img{
+  height:160px;
+}
+
+}
+  
 /* ===== BADGES ===== */
 .dept-badge{
   display:inline-flex;
@@ -568,34 +599,11 @@ function sortTable(field){
   renderSOP();
 }
 
- // Carrusel Premium con flechas
-  const track = document.querySelector('.carousel-track-premium');
-  const slides = document.querySelectorAll('.carousel-slide-premium');
-  const btnNext = document.querySelector('.carousel-btn.next');
-  const btnPrev = document.querySelector('.carousel-btn.prev');
 
-  let scrollAmount = 0;
-  const slideWidth = slides[0].offsetWidth + 15;
-
-  btnNext.addEventListener('click', () => {
-    scrollAmount += slideWidth;
-    if(scrollAmount >= track.scrollWidth / 2) scrollAmount = 0;
-    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-  });
-
-  btnPrev.addEventListener('click', () => {
-    scrollAmount -= slideWidth;
-    if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2;
-    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-  });
-  btnPrev.addEventListener('click', () => {
-    scrollAmount -= slideWidth;
-    if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2;
-    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-  });
 
 </script>
 </body>
 </html>
+
 
 
