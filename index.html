@@ -145,15 +145,11 @@ body{
 }
 
 /* tabla */
+/* ===== TABLA SOP CORREGIDA ===== */
 .sop-table{
   width:100%;
   border-collapse:collapse;
-}
-
-.sop-table thead{
-  display:table;
-  width:100%;
-  table-layout:fixed;
+  table-layout: fixed; /* columnas fijas */
 }
 
 .sop-table thead th{
@@ -164,10 +160,17 @@ body{
   font-size:0.9rem;
   letter-spacing:.3px;
   cursor:pointer;
+  text-align:left;
 }
+
+/* Asignamos anchos proporcionales a cada columna */
+.sop-table thead th:nth-child(1){ width: 20%; } /* Departamento */
+.sop-table thead th:nth-child(2){ width: 60%; } /* Procedimiento */
+.sop-table thead th:nth-child(3){ width: 20%; } /* Acción */
 
 .sop-table tbody{
   display:block;
+  max-height:700px; /* scroll solo si hay más filas */
   overflow-y:auto;
 }
 
@@ -181,8 +184,21 @@ body{
   padding:13px 16px;
   font-size:0.95rem;
   border-bottom:1px solid #f1f1f1;
+  box-sizing:border-box;
+  overflow-wrap: break-word;
 }
 
+/* Scrollbar */
+.sop-table tbody::-webkit-scrollbar{
+  width:10px;
+}
+
+.sop-table tbody::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:10px;
+}
+
+/* Hover */
 .sop-table tbody tr:hover{
   background:#f5f9ff;
   transform:scale(1.01);
@@ -191,7 +207,6 @@ body{
 .sop-table tbody tr:nth-child(even){
   background:#fafafa;
 }
-
 /* scrollbar */
 .sop-table tbody::-webkit-scrollbar{
   width:10px;
