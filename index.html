@@ -318,7 +318,7 @@ body{
     </select>
 </div>
 
-<!-- TABLA SOP -->
+<!-- ===== TABLA SOP MODIFICADA ===== -->
 <div class="sop-container" id="sopContainer"></div>
 
 <!-- VIDEOS -->
@@ -378,6 +378,10 @@ function toggleMenu(){
     document.querySelector('.menu').classList.toggle('show');
 }
 
+<!-- ===== TABLA SOP MODIFICADA ===== -->
+<div class="sop-container" id="sopContainer"></div>
+
+<script>
 /* ===== SOP DATA ===== */
 let SOP_INDEX = [];
 fetch('SOP_INDEX.json')
@@ -401,6 +405,7 @@ function sortByDepartment(){
     });
 }
 
+/* ===== RENDER TABLA SOP ===== */
 function renderSOP(filtered){
     const container = document.getElementById("sopContainer");
     const list = filtered || SOP_INDEX;
@@ -408,25 +413,26 @@ function renderSOP(filtered){
         container.innerHTML = "<p style='color:white;text-align:center'>No se encontraron SOP</p>";
         return;
     }
+
     let html = `<div class="sop-info">Mostrando <strong>${list.length}</strong> SOP</div>
     <table class="sop-table">
     <thead>
         <tr>
-            <th onclick="sortTable('title')">SOP</th>
             <th onclick="sortTable('department')">Departamento</th>
-            <th>Objetivo</th>
-            <th></th>
+            <th onclick="sortTable('title')">SOP</th>
+            <th>Acción</th>
         </tr>
     </thead>
     <tbody>`;
+    
     list.forEach(sop => {
         html += `<tr>
-            <td>${sop.title || sop.department.replaceAll("-", " ")}</td>
             <td>${getDepartmentBadge(sop.department)}</td>
-            <td>${sop.objective || "<em>Sin objetivo</em>"}</td>
+            <td>${sop.title || sop.department.replaceAll("-", " ")}</td>
             <td><a class="sop-btn" href="${sop.url}" target="_blank"><i class="fa-solid fa-eye"></i> Ver</a></td>
         </tr>`;
     });
+    
     html += `</tbody></table>`;
     container.innerHTML = html;
 }
@@ -447,22 +453,21 @@ function getDepartmentBadge(dep){
     return `<span class="dept-badge dept-${dep}"><i class="fa-solid ${d.icon}"></i> ${d.name}</span>`;
 }
 
-/* SEARCH */
+/* ===== SEARCH ===== */
 function filterSOP(){
     const search = document.getElementById("searchInput").value.toLowerCase();
     const dept = document.getElementById("deptFilter").value;
     const filtered = SOP_INDEX.filter(sop=>{
         const matchDept = dept==="" || sop.department===dept;
         const matchSearch = (sop.title||"").toLowerCase().includes(search) ||
-                            (sop.keywords||"").toLowerCase().includes(search) ||
-                            (sop.objective||"").toLowerCase().includes(search);
+                            (sop.keywords||"").toLowerCase().includes(search);
         return matchDept && matchSearch;
     });
     sortByDepartment();
     renderSOP(filtered);
 }
 
-/* SORT TABLE */
+/* ===== SORT TABLE ===== */
 function sortTable(field){
     SOP_INDEX.sort((a,b)=>{
         let A = (a[field]||"").toLowerCase();
