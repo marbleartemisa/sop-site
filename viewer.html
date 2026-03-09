@@ -2,9 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Visor SOP Profesional - Artemisa</title>
-
-<!-- PDF.js -->
+<title>Visor SOP - Artemisa</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.12.313/pdf.min.js"></script>
 <style>
 body {
@@ -13,7 +11,6 @@ body {
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-/* Contenedor principal */
 .viewer {
   max-width: 1200px;
   margin: 20px auto;
@@ -23,7 +20,6 @@ body {
   overflow: hidden;
 }
 
-/* Topbar */
 .topbar {
   background: #003366;
   color: white;
@@ -40,79 +36,90 @@ body {
   font-size: 14px;
 }
 
-/* Contenedor de páginas PDF */
 .pdf-container {
-  width: 100%;
-  padding: 10px 0;
   display: flex;
   flex-direction: column;
-  align-items: center; /* centra horizontalmente todas las páginas */
+  align-items: center;
   gap: 20px;
+  padding: 20px 10px;
 }
 
-/* Cada canvas de página */
 .pdf-page {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  width: 100%;
   max-width: 95%;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .pdf-page {
-    max-width: 95%;
-  }
+  height: auto;
 }
 </style>
 </head>
+
 <body>
 
 <div class="viewer">
-  <!-- Topbar -->
   <div class="topbar">
     <span>ARTEMISA MARBLE & CABINETS - SOP</span>
     <a href="/sop-site/">⬅ Volver a Biblioteca</a>
   </div>
 
-  <!-- Contenedor PDF -->
   <div class="pdf-container" id="pdfContainer"></div>
 </div>
 
 <script>
-// Configura el worker de PDF.js (necesario)
+// PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.12.313/pdf.worker.min.js';
 
 // Captura el parámetro "doc" de la URL
 const params = new URLSearchParams(window.location.search);
-const doc = params.get("doc");
+let doc = params.get("doc");
 
-if (doc) {
-  const container = document.getElementById("pdfContainer");
-  const loadingTask = pdfjsLib.getDocument(doc);
-
-  loadingTask.promise.then(pdf => {
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-      pdf.getPage(pageNum).then(page => {
-        const viewport = page.getViewport({ scale: 1.5 }); // escala inicial
-        const canvas = document.createElement("canvas");
-        canvas.className = "pdf-page";
-        const context = canvas.getContext("2d");
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        const renderContext = { canvasContext: context, viewport: viewport };
-        page.render(renderContext);
-
-        container.appendChild(canvas);
-      });
-    }
-  }).catch(err => {
-    container.innerHTML = "<p style='color:red;'>Error cargando el PDF: "+err.message+"</p>";
-  });
-} else {
-  document.getElementById("pdfContainer").innerHTML = "<p style='color:red;'>No se indicó un PDF.</p>";
+// PDF de prueba si no hay doc
+if (!doc) {
+  doc = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
 }
+
+const container = document.getElementById("pdfContainer");
+const loadingTask = pdfjsLib.getDocument(doc);
+
+loadingTask.promise.then(pdf => {
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+    pdf.getPage(pageNum).then(page => {
+      const viewport = page.getViewport({ scale: 1.5 });
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+
+      // Ajuste automático ancho al contenedor
+      const scale = Math.min((container.clientWidth * 0.95) / viewport.width, 1.5);
+      const scaledViewport = page.getViewport({ scale: scale });
+
+      canvas.width = scaledViewport.width;
+      canvas.height = scaledViewport.height;
+      canvas.className = "pdf-page";
+
+      page.render({ canvasContext: context, viewport: scaledViewport });
+      container.appendChild(canvas);
+    });
+  }
+}).catch(err => {
+  container.innerHTML = `<p style="color:red;">Error cargando el PDF: ${err.message}</p>`;
+});
+
+// Ajustar el canvas al redimensionar la ventana
+window.addEventListener('resize', () => {
+  const canvases = container.querySelectorAll('canvas');
+  canvases.forEach(canvas => {
+    const originalWidth = canvas.width;
+    const originalHeight = canvas.height;
+    const newWidth = Math.min(container.clientWidth * 0.95, originalWidth);
+    const newHeight = (originalHeight / originalWidth) * newWidth;
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+    const context = canvas.getContext("2d");
+    context.clearRect(0,0,newWidth,newHeight);
+    // Nota: Re-render de PDF.js para cada página es más preciso, pero este ajuste evita scroll horizontal
+  });
+});
 </script>
 
 </body>
