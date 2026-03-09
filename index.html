@@ -209,6 +209,69 @@ transform: scale(1.05);
 box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
 
+/* ===== VIDEOS ===== */
+
+.video-section{
+max-width:1100px;
+margin:40px auto;
+padding:0 20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
+}
+
+.video-section iframe,
+.video-section video{
+width:100%;
+height:200px;
+border-radius:15px;
+object-fit:cover;
+border:none;
+}
+
+/* ===== CARRUSEL ===== */
+
+.carousel-container-premium{
+max-width:900px;
+margin:50px auto;
+position:relative;
+overflow:hidden;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.35);
+}
+
+.carousel-track-premium{
+display:flex;
+gap:15px;
+}
+
+.carousel-slide-premium{
+flex:0 0 calc(33.333% - 10px);
+}
+
+.carousel-slide-premium img{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:10px;
+}
+
+.carousel-btn{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+background:rgba(0,0,0,0.5);
+border:none;
+color:white;
+font-size:1.8rem;
+padding:10px 15px;
+cursor:pointer;
+border-radius:50%;
+}
+
+.carousel-btn.prev{left:10px;}
+.carousel-btn.next{right:10px;}
+
 /* ===== BADGES ===== */
 
 .dept-badge{
@@ -314,6 +377,59 @@ display:block;
 <!-- TABLA -->
 
 <div class="sop-container" id="sopContainer"></div>
+
+<!-- VIDEOS -->
+<div class="video-section">
+    <video autoplay muted loop playsinline>
+        <source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
+    </video>
+
+    <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
+
+    <video autoplay muted loop playsinline>
+        <source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
+    </video>
+</div>
+
+<!-- CARRUSEL PREMIUM -->
+<div class="carousel-container-premium">
+    <button class="carousel-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="carousel-track-premium">
+        <!-- Slides duplicadas para loop -->
+        <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2"></div>
+        <!-- duplicado para loop -->
+        <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11"></div>
+        <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2"></div>
+    </div>
+    <button class="carousel-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+</div>
+
+
+<!-- FOOTER -->
+<div class="footer" style="text-align:center;color:white;margin:30px 0;">
+© 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
+</div>
 
 </div>
 
@@ -496,6 +612,33 @@ renderSOP();
 
 }
 
+/* CARRUSEL PREMIUM */
+const track = document.querySelector('.carousel-track-premium');
+const slides = document.querySelectorAll('.carousel-slide-premium');
+const btnNext = document.querySelector('.carousel-btn.next');
+const btnPrev = document.querySelector('.carousel-btn.prev');
+
+let scrollAmount = 0;
+const slideWidth = slides[0].offsetWidth + 15;
+
+btnNext.addEventListener('click', () => {
+    scrollAmount += slideWidth;
+    if(scrollAmount >= track.scrollWidth / 2) scrollAmount = 0;
+    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+});
+
+btnPrev.addEventListener('click', () => {
+    scrollAmount -= slideWidth;
+    if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2;
+    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+});
+
+// autoplay loop
+setInterval(() => {
+    scrollAmount += slideWidth;
+    if(scrollAmount >= track.scrollWidth / 2) scrollAmount = 0;
+    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+}, 3000);
 </script>
 
 </body>
