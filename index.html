@@ -144,39 +144,35 @@ font-size:.9rem;
 width:100%;
 border-collapse:separate;
 border-spacing:0;
+background:white;
+}
+
+.table-wrapper{
+max-height:650px;
+overflow-y:auto;
 border-radius:14px;
-overflow:hidden;
 box-shadow:0 12px 25px rgba(0,0,0,0.25);
 background:white;
 }
 
-.table-wrapper {
-  max-height: 650px; /* ajusta según quieras 20 filas visibles */
-  overflow-y: auto;
-  border-radius: 14px;
-  box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+.table-wrapper::-webkit-scrollbar{
+width:10px;
 }
 
-.sop-table thead th {
-  position: sticky;
-  top: 0;
-  background: linear-gradient(135deg,#003366,#005fa3);
-  color: white;
-  z-index: 3;
+.table-wrapper::-webkit-scrollbar-thumb{
+background:#cbd5e1;
+border-radius:10px;
 }
+
 .sop-table thead th{
-position: sticky;
-top: 0;
-z-index: 5;
+position:sticky;
+top:0;
+background:linear-gradient(135deg,#003366,#005fa3);
+color:white;
+z-index:10;
 }
 
 
-
-.table-scroll{
-max-height:960px;
-overflow-y:auto;
-border-radius:14px;
-}
 .sop-table th{
 color:white;
 padding:14px 16px;
@@ -186,14 +182,6 @@ letter-spacing:.3px;
 cursor:pointer;
 }
 
-.table-scroll::-webkit-scrollbar{
-width:8px;
-}
-
-.table-scroll::-webkit-scrollbar-thumb{
-background:#cbd5e1;
-border-radius:10px;
-}
 .sop-table td{
 padding:13px 16px;
 font-size:0.95rem;
