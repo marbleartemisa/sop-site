@@ -554,9 +554,16 @@ function renderSOP(filtered) {
 }
 
 /* BADGE */
-function getDepartmentBadge(dep){
+
+  function getDepartmentBadge(dep){
+
+  // Alias visual
+  if(dep === "produccion"){
+    dep = "carpinteria";
+  }
+
   const map = {
-    produccion:{name:"Producción",icon:"fa-industry"},
+    carpinteria:{name:"Carpintería",icon:"fa-hammer"},
     administracion:{name:"Administración",icon:"fa-building"},
     comercial:{name:"Comercial",icon:"fa-chart-line"},
     instalacion:{name:"Instalación",icon:"fa-screwdriver-wrench"},
@@ -565,9 +572,13 @@ function getDepartmentBadge(dep){
     ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
     "houzz-pro":{name:"Houzz Pro",icon:"fa-house"}
   };
+
   const d = map[dep];
   if(!d) return dep;
-  return `<span class="dept-badge dept-${dep}"><i class="fa-solid ${d.icon}"></i> ${d.name}</span>`;
+
+  return `<span class="dept-badge dept-${dep}">
+  <i class="fa-solid ${d.icon}"></i> ${d.name}
+  </span>`;
 }
 
 /* SEARCH */
@@ -604,6 +615,7 @@ function sortTable(field){
 </script>
 </body>
 </html>
+
 
 
 
