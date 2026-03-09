@@ -80,6 +80,9 @@ body {
 </div>
 
 <script>
+// Configura el worker de PDF.js (necesario)
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.12.313/pdf.worker.min.js';
+
 // Captura el parámetro "doc" de la URL
 const params = new URLSearchParams(window.location.search);
 const doc = params.get("doc");
@@ -87,6 +90,7 @@ const doc = params.get("doc");
 if (doc) {
   const container = document.getElementById("pdfContainer");
   const loadingTask = pdfjsLib.getDocument(doc);
+
   loadingTask.promise.then(pdf => {
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
       pdf.getPage(pageNum).then(page => {
@@ -98,9 +102,7 @@ if (doc) {
         canvas.width = viewport.width;
 
         const renderContext = { canvasContext: context, viewport: viewport };
-        page.render(renderContext).promise.then(() => {
-          // opcional: se puede hacer algo después de renderizar
-        });
+        page.render(renderContext);
 
         container.appendChild(canvas);
       });
