@@ -137,8 +137,9 @@ body{
 }
 
 /* contenedor */
+
 .table-wrapper{
-  max-height: 700px; /* ajusta según altura de 20 filas */
+  max-height: 1000px; /* 20 filas x 50px */
   overflow-y: auto;
   border-radius:14px;
   box-shadow:0 12px 25px rgba(0,0,0,0.25);
@@ -457,14 +458,11 @@ function renderSOP(filtered) {
   const container = document.getElementById("sopContainer");
   const list = filtered || SOP_INDEX;
 
-  // Estimación de altura de fila
-  const filaAltura = 50; // ajusta según tu padding de td
-  const maxFilasSinScroll = 20;
-  let wrapperStyle = "";
-
-  if(list.length > maxFilasSinScroll){
-    wrapperStyle = `style="max-height:${filaAltura * maxFilasSinScroll}px; overflow-y:auto;"`;
-  }
+  const maxVisibleRows = 20;
+  const rowHeight = 50; // aprox altura fila
+  const wrapperStyle = list.length > maxVisibleRows
+    ? `style="max-height:${rowHeight * maxVisibleRows}px; overflow-y:auto;"`
+    : "";
 
   let html = `<div class="sop-info">
     Mostrando <strong>${list.length}</strong> SOP
@@ -497,17 +495,6 @@ function renderSOP(filtered) {
 
   html+=`</tbody></table></div>`;
   container.innerHTML = html;
-}
-
-  // ===== SCROLL DINAMICO =====
-  const tbody = container.querySelector('tbody');
-  if(tbody.querySelector('tr')){
-    const rowHeight = tbody.querySelector('tr').offsetHeight;
-    const maxVisibleRows = 20;
-    const visibleHeight = rowHeight * Math.min(list.length, maxVisibleRows);
-    tbody.style.maxHeight = visibleHeight + 'px';
-    tbody.style.overflowY = list.length > maxVisibleRows ? 'auto' : 'visible';
-  }
 }
 
 /* BADGE */
