@@ -241,14 +241,37 @@ body{
   border:none;
 }
 
-/* ===== CARRUSEL PREMIUM ===== */
-.carousel-container-premium { max-width:900px; margin:50px auto; position:relative; overflow:hidden; border-radius:15px; }
-.carousel-track-premium { display:flex; gap:15px; transition: transform 0.5s ease; }
-.carousel-slide-premium { flex:0 0 auto; width:250px; border-radius:10px; }
-.carousel-slide-premium img { width:100%; height:150px; object-fit:cover; border-radius:10px; }
-.carousel-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); border:none; color:white; font-size:1.5rem; padding:10px; cursor:pointer; z-index:10; border-radius:50%; }
-.carousel-btn.prev { left:10px; }
-.carousel-btn.next { right:10px; }
+/* ===== CARRUSEL PREMIUM LOOP INFINITO CON FLECHAS ===== */
+.carousel-container-premium {
+  max-width: 900px;
+  margin: 50px auto;
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+}
+.carousel-track-premium {
+  display: flex;
+  gap: 15px;
+  animation: slide-loop 40s linear infinite;
+}
+.carousel-slide-premium {
+  flex: 0 0 calc(33.333% - 10px);
+}
+.carousel-slide-premium img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: transform .3s;
+}
+.carousel-slide-premium img:hover {
+  transform: scale(1.05);
+}
+.carousel-container-premium:hover .carousel-track-premium {
+  animation-play-state: paused;
+}
+
 
 /* ===== BADGES ===== */
 .dept-badge{
@@ -386,24 +409,38 @@ body{
 </div>
 
 <!-- CARRUSEL PREMIUM -->
-<div class="carousel-container-premium">
+  <div class="carousel-container-premium">
     <button class="carousel-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
     <div class="carousel-track-premium">
-        <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11"></div>
-        <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
+      <!-- duplicado para loop -->
+      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
     </div>
     <button class="carousel-btn next"><i class="fa-solid fa-chevron-right"></i></button>
-</div>
+  </div>
+
 
 <!-- FOOTER -->
 <div class="footer" style="text-align:center;color:white;margin:30px 0;">
@@ -531,21 +568,34 @@ function sortTable(field){
   renderSOP();
 }
 
-/* CARRUSEL PREMIUM */
-// ===== CARRUSEL PREMIUM =====
-const track = document.querySelector('.carousel-track-premium');
-const prevBtn = document.querySelector('.carousel-btn.prev');
-const nextBtn = document.querySelector('.carousel-btn.next');
-const slideWidth = document.querySelector('.carousel-slide-premium').offsetWidth + 15;
+ // Carrusel Premium con flechas
+  const track = document.querySelector('.carousel-track-premium');
+  const slides = document.querySelectorAll('.carousel-slide-premium');
+  const btnNext = document.querySelector('.carousel-btn.next');
+  const btnPrev = document.querySelector('.carousel-btn.prev');
 
-prevBtn.addEventListener('click', () => {
-  track.scrollBy({ left: -slideWidth, behavior: 'smooth' });
-});
+  let scrollAmount = 0;
+  const slideWidth = slides[0].offsetWidth + 15;
 
-nextBtn.addEventListener('click', () => {
-  track.scrollBy({ left: slideWidth, behavior: 'smooth' });
-});
+  btnNext.addEventListener('click', () => {
+    scrollAmount += slideWidth;
+    if(scrollAmount >= track.scrollWidth / 2) scrollAmount = 0;
+    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+  });
+
+  btnPrev.addEventListener('click', () => {
+    scrollAmount -= slideWidth;
+    if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2;
+    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+  });
+  btnPrev.addEventListener('click', () => {
+    scrollAmount -= slideWidth;
+    if(scrollAmount < 0) scrollAmount = track.scrollWidth / 2;
+    track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+  });
+
 </script>
 </body>
 </html>
+
 
