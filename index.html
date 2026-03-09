@@ -423,7 +423,7 @@ function renderSOP(filtered){
         html += `<tr>
             <td>${sop.title || sop.department.replaceAll("-", " ")}</td>
             <td>${getDepartmentBadge(sop.department)}</td>
-            <td>${sop.objective || "<em>Sin objetivo</em>"}</td>
+            <td>${sop.objective || "<em> </em>"}</td>
             <td><a class="sop-btn" href="${sop.url}" target="_blank"><i class="fa-solid fa-eye"></i> Ver</a></td>
         </tr>`;
     });
@@ -505,3 +505,4 @@ setInterval(() => {
 
 </body>
 </html>
+
