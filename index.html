@@ -177,6 +177,17 @@ cursor:pointer;
 display:block;
 max-height:650px;
 overflow-y:auto;
+padding-bottom:10px;
+}
+
+.sop-table tbody::after{
+content:"";
+display:block;
+height:15px;
+}
+
+.sop-table tbody tr:last-child td{
+border-bottom:none;
 }
 
 /* filas */
@@ -529,7 +540,9 @@ function renderSOP(filtered) {
         <td>${getDepartmentBadge(sop.department)}</td>
         <td><strong>${sop.title}</strong></td>
         <td>
-          <a class="sop-btn" href="${sop.url}" target="_blank">
+         <a class="sop-btn" href="/sop-site/viewer.html?doc=${sop.url}">
+<i class="fa-solid fa-eye"></i> Ver
+</a>
             <i class="fa-solid fa-eye"></i> Ver
           </a>
         </td>
