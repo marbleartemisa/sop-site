@@ -238,8 +238,8 @@ Documento SOP
 
 <div class="doc-nav">
 
-<div id="prevDoc">← SOP anterior</div>
-<div id="nextDoc">SOP siguiente →</div>
+<div id="prevDoc" onclick="prevSOP()" style="cursor:pointer;">← SOP anterior</div>
+<div id="nextDoc" onclick="nextSOP()" style="cursor:pointer;">SOP siguiente →</div>
 
 </div>
 
@@ -289,7 +289,53 @@ link.click();
 function printDoc(){
 document.getElementById("frame").contentWindow.print();
 }
+/* LISTA DE SOP EN ORDEN */
 
+const sopList = [
+
+"sops/SOP-VEN-01/index.html",
+"sops/SOP-VEN-02/index.html",
+"sops/SOP-VEN-03/index.html",
+"sops/SOP-VEN-04/index.html",
+"sops/SOP-CAR-01/index.html",
+"sops/SOP-MAQ-01/index.html",
+"sops/SOP-MAQ-02/index.html"
+
+];
+
+/* SOP ACTUAL */
+
+let currentIndex = sopList.indexOf(doc);
+
+/* ANTERIOR */
+
+function prevSOP(){
+
+if(currentIndex > 0){
+
+currentIndex--;
+
+window.location.href =
+`viewer.html?doc=${sopList[currentIndex]}`;
+
+}
+
+}
+
+/* SIGUIENTE */
+
+function nextSOP(){
+
+if(currentIndex < sopList.length - 1){
+
+currentIndex++;
+
+window.location.href =
+`viewer.html?doc=${sopList[currentIndex]}`;
+
+}
+
+}
 </script>
 
 </body>
