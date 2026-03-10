@@ -128,153 +128,118 @@ body{
 /* ===== TABLA SOP ===== */
 /* ===== SOP TABLE MODERN ===== */
 
-.sop-container{
-  max-width:1050px;
-  margin:30px auto 70px auto;
-  padding:0 20px;
+.sop-container {
+  max-width: 1050px;
+  margin: 40px auto 80px;
+  padding: 0 20px;
 }
 
-.sop-info{
-  color:white;
-  margin-bottom:12px;
-  font-size:.9rem;
-  opacity:.9;
+.sop-info {
+  color: #374151;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  opacity: 0.9;
 }
 
-/* contenedor */
-.table-wrapper{
-  border-radius:14px;
-  background:white;
-  box-shadow:0 20px 40px rgba(0,0,0,0.25);
-  max-height:650px;
-  overflow-y:auto;
-}
-
-/* tabla */
-.sop-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-/* header */
-
-.sop-table thead th{
-  position:sticky;
-  top:0;
-  background:#0f172a;
-  color:#cbd5e1;
-  text-align:left;
-  padding:16px 18px;
-  font-size:.8rem;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  font-weight:600;
-  z-index:2;
-}
-
-/* filas */
-
-.sop-table td{
-  padding:16px 18px;
-  border-bottom:1px solid #f1f5f9;
-  font-size:.95rem;
-  vertical-align:middle;
-}
-
-.sop-table tbody tr:hover{
-  background:#f8fafc;
+/* contenedor scroll */
+.table-wrapper {
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  max-height: 650px;
+  overflow-y: auto;
 }
 
 /* tabla */
-.sop-table{
-  width:100%;
-  border-collapse:collapse;
+.sop-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Inter', sans-serif;
 }
 
-/* header */
-.sop-table thead{
-  background:#0f172a;
-}
-
-.sop-table th{
-  text-align:left;
-  padding:16px 18px;
-  font-size:0.8rem;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  color:#cbd5e1;
-  font-weight:600;
-  position:sticky;
-  top:0;
-  background:#0f172a;
+/* cabecera */
+.sop-table thead th {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(90deg, #0f172a, #1e293b);
+  color: #f1f5f9;
+  text-align: left;
+  padding: 14px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  z-index: 2;
+  border-bottom: 2px solid #cbd5e1;
 }
 
 /* filas */
-
-.sop-table td{
-  padding:16px 18px;
-  border-bottom:1px solid #f1f5f9;
-  font-size:.95rem;
+.sop-table tbody tr {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-/* SOP title */
-
-.sop-title{
-  font-weight:600;
-  font-size:1rem;
-  color:#0f172a;
+.sop-table tbody tr:nth-child(even) {
+  background: #f9fafb;
 }
 
-/* hover */
-
-.sop-table tbody tr{
-  transition:all .2s ease;
+.sop-table tbody tr:hover {
+  background: #f0f4f8;
+  transform: translateX(2px);
 }
 
-.sop-table tbody tr:hover{
-  background:#f8fafc;
+/* celdas */
+.sop-table td {
+  padding: 14px 18px;
+  font-size: 0.95rem;
+  vertical-align: middle;
 }
 
-/* columnas */
-
-.sop-table td:last-child{
-  text-align:right;
+/* columna acción */
+.sop-table td:last-child {
+  text-align: right;
 }
 
-/* scrollbar */
-
-.table-scroll::-webkit-scrollbar{
-  width:8px;
+/* botones SOP */
+.sop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0072C6, #005a9e);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
-.table-scroll::-webkit-scrollbar-thumb{
-  background:#cbd5e1;
-  border-radius:8px;
-}
-/* Anchos de columna */
-.sop-table th:nth-child(1){ width: 20%; } 
-.sop-table th:nth-child(2){ width: 60%; } 
-.sop-table th:nth-child(3){ width: 20%; }
-
-/* Hover y filas pares */
-.sop-table tbody tr:hover{
-  background:#f5f9ff;
-  transform:scale(1.01);
+.sop-btn:hover {
+  background: linear-gradient(135deg, #005a9e, #003f6b);
+  transform: scale(1.03);
 }
 
-.sop-table tbody tr:nth-child(even){
-  background:#fafafa;
+/* badges */
+.dept-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.9;
+  transition: all 0.3s ease;
 }
 
-/* Scrollbar */
-.table-wrapper::-webkit-scrollbar{
-  width:10px;
-}
-.table-wrapper::-webkit-scrollbar-thumb{
-  background:#cbd5e1;
-  border-radius:10px;
+.dept-badge i {
+  font-size: 0.75rem;
 }
 
+.dept-badge:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
 /* ===== BOTON SOP ===== */
 .sop-btn{
   display:inline-flex;
@@ -708,4 +673,5 @@ function sortTable(field){
 </script>
 </body>
 </html>
+
 
