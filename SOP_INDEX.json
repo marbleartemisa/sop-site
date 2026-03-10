@@ -1,163 +1,186 @@
 [
   {
-    "title": "CARPINTERIA COMPRA STOCK",
-    "department": "produccion",
-    "keywords": "carpinteria compra stock",
-    "objective": "",
-    "url": "produccion/SOP-CARPINTERIA-COMPRA-STOCK/index.html"
-  },
-  {
-    "title": "COMPRA EDGEBANDING",
-    "department": "produccion",
-    "keywords": "compra edgebanding",
-    "objective": "",
-    "url": "produccion/SOP-COMPRA-EDGEBANDING/index.html"
-  },
-  {
-    "title": "CUIDADO HERRAMIENTAS CARPINTERIA",
-    "department": "produccion",
-    "keywords": "cuidado herramientas carpinteria",
-    "objective": "",
-    "url": "produccion/SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/index.html"
-  },
-  {
-    "title": "INSTALACION CABINETS",
-    "department": "produccion",
-    "keywords": "instalacion cabinets",
-    "objective": "",
-    "url": "produccion/SOP-INSTALACION-CABINETS/index.html"
-  },
-  {
-    "title": "POLITICA NIVELES",
-    "department": "produccion",
-    "keywords": "politica niveles",
-    "objective": "",
-    "url": "produccion/SOP-POLITICA-NIVELES/index.html"
-  },
-  {
-    "title": "RECEPCION MICAS",
-    "department": "produccion",
-    "keywords": "recepcion micas",
-    "objective": "",
-    "url": "produccion/SOP-RECEPCION-MICAS/index.html"
-  },
-  {
-    "title": "SUPERVISOR CARPINTERIA",
-    "department": "produccion",
-    "keywords": "supervisor carpinteria",
-    "objective": "",
-    "url": "produccion/SOP-SUPERVISOR-CARPINTERIA/index.html"
-  },
-  {
     "title": "COMPRA SLABS",
     "department": "administracion",
-    "keywords": "compra slabs",
+    "keywords": "compra slabs ",
     "objective": "",
+    "description": "",
     "url": "administracion/SOP-COMPRA-SLABS/index.html"
   },
   {
     "title": "RECEPCION SINK",
     "department": "administracion",
-    "keywords": "recepcion sink",
+    "keywords": "recepcion sink ",
     "objective": "",
+    "description": "",
     "url": "administracion/SOP-RECEPCION-SINK/index.html"
   },
   {
     "title": "USO FUNDAS DUST COLLECTOR",
     "department": "administracion",
-    "keywords": "uso fundas dust collector",
+    "keywords": "uso fundas dust collector ",
     "objective": "",
+    "description": "",
     "url": "administracion/SOP-USO-FUNDAS-DUST-COLLECTOR/index.html"
   },
   {
     "title": "COORDINACION CONTROL INSTALACIONES",
     "department": "comercial",
-    "keywords": "coordinacion control instalaciones",
+    "keywords": "coordinacion control instalaciones ",
     "objective": "",
+    "description": "",
     "url": "comercial/SOP-COORDINACION-CONTROL-INSTALACIONES/index.html"
   },
   {
     "title": "PARA COTIZACIÓN VENTAS",
     "department": "comercial",
-    "keywords": "para cotizaciÓn ventas",
+    "keywords": "para cotizaciÓn ventas ",
     "objective": "",
+    "description": "",
     "url": "comercial/SOP-PARA-COTIZACIÓN-VENTAS/index.html"
   },
   {
     "title": "SALES CONSULTANT",
     "department": "comercial",
-    "keywords": "sales consultant",
+    "keywords": "sales consultant ",
     "objective": "",
+    "description": "",
     "url": "comercial/SOP-SALES-CONSULTANT/index.html"
   },
   {
     "title": "SEGUIMIENTO CLIENTES",
     "department": "comercial",
-    "keywords": "seguimiento clientes",
+    "keywords": "seguimiento clientes ",
     "objective": "",
+    "description": "",
     "url": "comercial/SOP-SEGUIMIENTO-CLIENTES/index.html"
-  },
-  {
-    "title": "TAKEOFF HOUZZPRO",
-    "department": "houzz-pro",
-    "keywords": "takeoff houzzpro",
-    "objective": "",
-    "url": "houzz-pro/SOP-TAKEOFF-HOUZZPRO/index.html"
-  },
-  {
-    "title": "CUIDADO MANTAS",
-    "department": "instalacion",
-    "keywords": "cuidado mantas",
-    "objective": "",
-    "url": "instalacion/SOP-CUIDADO-MANTAS/index.html"
-  },
-  {
-    "title": "INSTALACION STONE",
-    "department": "instalacion",
-    "keywords": "instalacion stone",
-    "objective": "",
-    "url": "instalacion/SOP-INSTALACION-STONE/index.html"
-  },
-  {
-    "title": "CONTADORES MECANICOS EDGEBANDER",
-    "department": "maquinarias",
-    "keywords": "contadores mecanicos edgebander",
-    "objective": "",
-    "url": "maquinarias/SOP-CONTADORES-MECANICOS-EDGEBANDER/index.html"
-  },
-  {
-    "title": "MANTENIMIENTO PREVENTIVO TRIMMING",
-    "department": "maquinarias",
-    "keywords": "mantenimiento preventivo trimming",
-    "objective": "",
-    "url": "maquinarias/SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING/index.html"
-  },
-  {
-    "title": "USO SIERRA PENDULO",
-    "department": "maquinarias",
-    "keywords": "uso sierra pendulo",
-    "objective": "",
-    "url": "maquinarias/SOP-USO-SIERRA-PENDULO/index.html"
-  },
-  {
-    "title": "CONDUCCION VEHICULOS",
-    "department": "vehiculos",
-    "keywords": "conduccion vehiculos",
-    "objective": "",
-    "url": "vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
   },
   {
     "title": "ILUMINACION LINEAL",
     "department": "ecopower",
-    "keywords": "iluminacion lineal",
+    "keywords": "iluminacion lineal ",
     "objective": "",
+    "description": "",
     "url": "ecopower/SOP-ILUMINACION-LINEAL/index.html"
   },
   {
     "title": "ILUMINACION PIEDRAS",
     "department": "ecopower",
-    "keywords": "iluminacion piedras",
+    "keywords": "iluminacion piedras ",
     "objective": "",
+    "description": "",
     "url": "ecopower/SOP-ILUMINACION-PIEDRAS/index.html"
+  },
+  {
+    "title": "TAKEOFF HOUZZPRO",
+    "department": "houzz-pro",
+    "keywords": "takeoff houzzpro ",
+    "objective": "",
+    "description": "",
+    "url": "houzz-pro/SOP-TAKEOFF-HOUZZPRO/index.html"
+  },
+  {
+    "title": "CUIDADO MANTAS",
+    "department": "instalacion",
+    "keywords": "cuidado mantas ",
+    "objective": "",
+    "description": "",
+    "url": "instalacion/SOP-CUIDADO-MANTAS/index.html"
+  },
+  {
+    "title": "INSTALACION STONE",
+    "department": "instalacion",
+    "keywords": "instalacion stone ",
+    "objective": "",
+    "description": "",
+    "url": "instalacion/SOP-INSTALACION-STONE/index.html"
+  },
+  {
+    "title": "CONTADORES MECANICOS EDGEBANDER",
+    "department": "maquinarias",
+    "keywords": "contadores mecanicos edgebander ",
+    "objective": "",
+    "description": "",
+    "url": "maquinarias/SOP-CONTADORES-MECANICOS-EDGEBANDER/index.html"
+  },
+  {
+    "title": "MANTENIMIENTO PREVENTIVO TRIMMING",
+    "department": "maquinarias",
+    "keywords": "mantenimiento preventivo trimming ",
+    "objective": "",
+    "description": "",
+    "url": "maquinarias/SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING/index.html"
+  },
+  {
+    "title": "USO SIERRA PENDULO",
+    "department": "maquinarias",
+    "keywords": "uso sierra pendulo ",
+    "objective": "",
+    "description": "",
+    "url": "maquinarias/SOP-USO-SIERRA-PENDULO/index.html"
+  },
+  {
+    "title": "CARPINTERIA COMPRA STOCK",
+    "department": "produccion",
+    "keywords": "carpinteria compra stock ",
+    "objective": "",
+    "description": "",
+    "url": "produccion/SOP-CARPINTERIA-COMPRA-STOCK/index.html"
+  },
+  {
+    "title": "COMPRA EDGEBANDING",
+    "department": "produccion",
+    "keywords": "compra edgebanding ",
+    "objective": "",
+    "description": "",
+    "url": "produccion/SOP-COMPRA-EDGEBANDING/index.html"
+  },
+  {
+    "title": "CUIDADO HERRAMIENTAS CARPINTERIA",
+    "department": "produccion",
+    "keywords": "cuidado herramientas carpinteria ",
+    "objective": "",
+    "description": "",
+    "url": "produccion/SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/index.html"
+  },
+  {
+    "title": "INSTALACION CABINETS",
+    "department": "produccion",
+    "keywords": "instalacion cabinets ",
+    "objective": "",
+    "description": "",
+    "url": "produccion/SOP-INSTALACION-CABINETS/index.html"
+  },
+  {
+    "title": "POLITICA NIVELES",
+    "department": "produccion",
+    "keywords": "politica niveles ",
+    "objective": "",
+    "description": "",
+    "url": "produccion/SOP-POLITICA-NIVELES/index.html"
+  },
+  {
+    "title": "RECEPCION MICAS",
+    "department": "produccion",
+    "keywords": "recepcion micas ",
+    "objective": "",
+    "description": "",
+    "url": "produccion/SOP-RECEPCION-MICAS/index.html"
+  },
+  {
+    "title": "SUPERVISOR CARPINTERIA",
+    "department": "produccion",
+    "keywords": "supervisor carpinteria ",
+    "objective": "",
+    "description": "",
+    "url": "produccion/SOP-SUPERVISOR-CARPINTERIA/index.html"
+  },
+  {
+    "title": "CONDUCCION VEHICULOS",
+    "department": "vehiculos",
+    "keywords": "conduccion vehiculos ",
+    "objective": "",
+    "description": "",
+    "url": "vehiculos/SOP-CONDUCCION-VEHICULOS/index.html"
   }
 ]
