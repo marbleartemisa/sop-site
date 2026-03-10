@@ -249,7 +249,25 @@ width:8px;
 background:#cbd5e1;
 border-radius:10px;
 }
-  
+  /* fondo sólido tabla */
+
+.sop-table tbody tr{
+background:white;
+}
+
+.sop-table tbody tr:nth-child(even){
+background:#f8fafc;
+}
+
+.sop-table tbody tr:hover{
+background:#eef2f7;
+}
+
+/* asegurar fondo en celdas */
+
+.sop-table td{
+background:inherit;
+}
   
   /* ===== VIDEOS ===== */
 .video-section{
@@ -666,6 +684,7 @@ function sortTable(field){
 </script>
 </body>
 </html>
+
 
 
 
