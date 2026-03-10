@@ -5,7 +5,6 @@
 <title>Visor SOP - Artemisa</title>
 
 <style>
-
 body{
 margin:0;
 background:#f1f5f9;
@@ -13,7 +12,6 @@ font-family:"Segoe UI",Arial,sans-serif;
 }
 
 /* TOPBAR */
-
 .topbar{
 background:#0f172a;
 color:white;
@@ -44,7 +42,6 @@ background:#3b82f6;
 }
 
 /* HEADER DOCUMENTO */
-
 .doc-header{
 max-width:1100px;
 margin:20px auto;
@@ -80,7 +77,6 @@ background:#f3f4f6;
 }
 
 /* NAV SOP */
-
 .doc-nav{
 max-width:1100px;
 margin:auto;
@@ -92,7 +88,6 @@ color:#374151;
 }
 
 /* AREA DOCUMENTO */
-
 .doc-area{
 display:flex;
 justify-content:center;
@@ -104,8 +99,7 @@ width:100%;
 max-width:1100px;
 background:white;
 border-radius:10px;
-box-shadow:
-0 10px 30px rgba(0,0,0,.15),
+box-shadow:0 10px 30px rgba(0,0,0,.15),
 0 2px 8px rgba(0,0,0,.08);
 overflow:hidden;
 }
@@ -117,247 +111,107 @@ border:none;
 }
 
 /* RESPONSIVE */
-
 @media(max-width:768px){
-
 .doc-header{
 flex-direction:column;
 align-items:flex-start;
 gap:10px;
 }
-
 .doc-nav{
 flex-direction:column;
 gap:6px;
 }
-
 iframe{
 height:85vh;
 }
-
 }
-
-</style>
-
-<style id="sop-style">
-
-/* CONTENIDO SOP */
-
-iframe{
-background:white;
-}
-
-/* ESTILO DOCUMENTO */
-
-.sop-content{
-max-width:850px;
-margin:auto;
-padding:50px 60px;
-font-family: "Segoe UI", Arial, sans-serif;
-line-height:1.6;
-color:#1f2937;
-}
-
-/* TITULOS */
-
-h1{
-font-size:32px;
-margin-top:10px;
-margin-bottom:10px;
-color:#0f172a;
-}
-
-h2{
-margin-top:30px;
-font-size:22px;
-border-bottom:2px solid #e5e7eb;
-padding-bottom:6px;
-}
-
-h3{
-margin-top:20px;
-font-size:18px;
-}
-
-/* LISTAS */
-
-ul{
-padding-left:20px;
-}
-
-li{
-margin:6px 0;
-}
-
-/* ALERTAS */
-
-.alert{
-background:#fff7ed;
-border-left:5px solid #f97316;
-padding:14px;
-margin:20px 0;
-border-radius:6px;
-}
-
-.important{
-background:#fef2f2;
-border-left:5px solid #ef4444;
-padding:14px;
-margin:20px 0;
-border-radius:6px;
-}
-
-
 </style>
 </head>
 
 <body>
 
 <div class="topbar">
-
-<div class="brand">
-ARTEMISA MARBLE & CABINETS • SOP LIBRARY
-</div>
-
-<a class="back" href="/sop-site/">⬅ Biblioteca</a>
-
+  <div class="brand">ARTEMISA MARBLE & CABINETS • SOP LIBRARY</div>
+  <a class="back" href="/sop-site/">⬅ Biblioteca</a>
 </div>
 
 <div class="doc-header">
-
-<div class="doc-title" id="title">
-Documento SOP
-</div>
-
-<div class="doc-tools">
-
-<button class="tool" onclick="openNew()">Abrir</button>
-<button class="tool" onclick="downloadDoc()">Descargar</button>
-<button class="tool" onclick="printDoc()">Imprimir</button>
-
-</div>
-
+  <div class="doc-title" id="title">Documento SOP</div>
+  <div class="doc-tools">
+    <button class="tool" onclick="openNew()">Abrir</button>
+    <button class="tool" onclick="downloadDoc()">Descargar</button>
+    <button class="tool" onclick="printDoc()">Imprimir</button>
+  </div>
 </div>
 
 <div class="doc-nav">
-
-<div id="prevDoc" onclick="prevSOP()" style="cursor:pointer;">← SOP anterior</div>
-<div id="nextDoc" onclick="nextSOP()" style="cursor:pointer;">SOP siguiente →</div>
-
+  <div id="prevDoc" onclick="prevSOP()" style="cursor:pointer;">← SOP anterior</div>
+  <div id="nextDoc" onclick="nextSOP()" style="cursor:pointer;">SOP siguiente →</div>
 </div>
 
 <div class="doc-area">
-
-<div class="doc-frame">
-<iframe id="frame"></iframe>
-</div>
-
+  <div class="doc-frame">
+    <iframe id="frame"></iframe>
+  </div>
 </div>
 
 <script>
-
+// Obtener SOP desde URL
 const params = new URLSearchParams(window.location.search);
 const doc = params.get("doc");
 
-if(doc){
+// Mapa de departamentos legibles
+const deptMap = {
+  'produccion': 'Carpinteria',
+  'instalacion': 'Stone',
+  'administracion': 'Administracion',
+  'comercial': 'Comercial',
+  'houzz-pro': 'Houzz Pro',
+  'maquinarias': 'Maquinarias',
+  'vehiculos': 'Vehiculos',
+  'ecopower': 'Ecopower'
+};
 
-document.getElementById("frame").src = doc;
+// Cargar SOP_INDEX.json dinámicamente
+fetch('SOP_INDEX.json')
+  .then(res => res.json())
+  .then(data => {
 
-/* TITULO AUTOMATICO */
+    if(!doc) return;
 
-let name = doc.split("/").pop();
-name = name.replace(".html","").replace(/-/g," ");
+    // Buscar el SOP actual
+    const currentSOP = data.find(s => s.url === doc);
+    const frame = document.getElementById("frame");
+    frame.src = doc;
 
-document.getElementById("title").innerText = name.toUpperCase();
+    // Mostrar título con departamento
+    if(currentSOP){
+      document.getElementById("title").innerText =
+        `${deptMap[currentSOP.department] || currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
+    }
 
-}
+    // Generar lista de SOP para navegación
+    const sopList = data.map(s => s.url);
+    let currentIndex = sopList.indexOf(doc);
 
-/* ABRIR EN NUEVA PESTAÑA */
+    window.prevSOP = function(){
+      if(currentIndex > 0){
+        window.location.href = `viewer.html?doc=${sopList[currentIndex-1]}`;
+      }
+    }
 
-function openNew(){
-window.open(doc,"_blank");
-}
+    window.nextSOP = function(){
+      if(currentIndex < sopList.length - 1){
+        window.location.href = `viewer.html?doc=${sopList[currentIndex+1]}`;
+      }
+    }
 
-/* DESCARGAR */
+  });
 
-function downloadDoc(){
-const link=document.createElement("a");
-link.href=doc;
-link.download="";
-link.click();
-}
-
-/* IMPRIMIR */
-
-function printDoc(){
-document.getElementById("frame").contentWindow.print();
-}
-/* LISTA DE SOP EN ORDEN */
-
-
-const sopList = [
-
-"administracion/SOP-COMPRA-SLABS/index.html",
-"administracion/SOP-RECEPCION-SINK/index.html",
-"administracion/SOP-USO-FUNDAS-DUST-COLLECTOR/index.html",
-
-"comercial/SOP-PARA-COTIZACION-VENTAS/index.html",
-"comercial/SOP-SALES-CONSULTANT/index.html",
-"comercial/SOP-COORDINACION-CONTROL-INSTALACIONES/index.html",
-"comercial/SOP-SEGUIMIENTO-CLIENTES/index.html",
-
-"houzz-pro/SOP-TAKEOFF-HOUZZPRO/index.html",
-
-"instalacion/SOP-CUIDADO-MANTAS/index.html",
-"instalacion/SOP-INSTALACION-STONE/index.html",
-
-"maquinarias/SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING/index.html",
-"maquinarias/SOP-CALIBRAR-EDGEBANDING/index.html",
-"maquinarias/SOP-USO-SIERRA-PENDULO/index.html",
-
-"produccion/SOP-CARPINTERIA-COMPRA-STOCK/index.html",
-"produccion/SOP-COMPRA-EDGEBANDING/index.html",
-"produccion/SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/index.html",
-"produccion/SOP-INSTALACION-CABINETS/index.html",
-"produccion/SOP-POLITICA-NIVELES/index.html",
-"produccion/SOP-RECEPCION-MICAS/index.html",
-"produccion/SOP-SUPERVISOR-CARPINTERIA/index.html",
-
-"vehiculos/SOP-CONDUCCION-VEHICULOS/index.html",
-
-"ecopower/SOP-ILUMINACION-LINEAL/index.html",
-"ecopower/SOP-ILUMINACION-PIEDRAS/index.html"
-
-];
-
-let currentIndex = sopList.indexOf(doc);
-
-function prevSOP(){
-
-if(currentIndex > 0){
-
-currentIndex--;
-
-window.location.href =
-`viewer.html?doc=${sopList[currentIndex]}`;
-
-}
-
-}
-
-function nextSOP(){
-
-if(currentIndex < sopList.length - 1){
-
-currentIndex++;
-
-window.location.href =
-`viewer.html?doc=${sopList[currentIndex]}`;
-
-}
-
-}
-
+// Funciones de herramientas
+function openNew(){ if(doc) window.open(doc,"_blank"); }
+function downloadDoc(){ if(doc){ const a=document.createElement("a"); a.href=doc; a.download=""; a.click(); } }
+function printDoc(){ if(doc) document.getElementById("frame").contentWindow.print(); }
 </script>
 
 </body>
