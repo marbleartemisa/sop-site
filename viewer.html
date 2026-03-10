@@ -136,6 +136,9 @@ height:85vh;
 }
 
 }
+
+</style>
+
 <style id="sop-style">
 
 /* CONTENIDO SOP */
@@ -291,23 +294,43 @@ document.getElementById("frame").contentWindow.print();
 }
 /* LISTA DE SOP EN ORDEN */
 
+
 const sopList = [
 
-"sops/SOP-VEN-01/index.html",
-"sops/SOP-VEN-02/index.html",
-"sops/SOP-VEN-03/index.html",
-"sops/SOP-VEN-04/index.html",
-"sops/SOP-CAR-01/index.html",
-"sops/SOP-MAQ-01/index.html",
-"sops/SOP-MAQ-02/index.html"
+"administracion/SOP-COMPRA-SLABS/index.html",
+"administracion/SOP-RECEPCION-SINK/index.html",
+"administracion/SOP-USO-FUNDAS-DUST-COLLECTOR/index.html",
+
+"comercial/SOP-PARA-COTIZACION-VENTAS/index.html",
+"comercial/SOP-SALES-CONSULTANT/index.html",
+"comercial/SOP-COORDINACION-CONTROL-INSTALACIONES/index.html",
+"comercial/SOP-SEGUIMIENTO-CLIENTES/index.html",
+
+"houzz-pro/SOP-TAKEOFF-HOUZZPRO/index.html",
+
+"instalacion/SOP-CUIDADO-MANTAS/index.html",
+"instalacion/SOP-INSTALACION-STONE/index.html",
+
+"maquinarias/SOP-MANTENIMIENTO-PREVENTIVO-TRIMMING/index.html",
+"maquinarias/SOP-CALIBRAR-EDGEBANDING/index.html",
+"maquinarias/SOP-USO-SIERRA-PENDULO/index.html",
+
+"produccion/SOP-CARPINTERIA-COMPRA-STOCK/index.html",
+"produccion/SOP-COMPRA-EDGEBANDING/index.html",
+"produccion/SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/index.html",
+"produccion/SOP-INSTALACION-CABINETS/index.html",
+"produccion/SOP-POLITICA-NIVELES/index.html",
+"produccion/SOP-RECEPCION-MICAS/index.html",
+"produccion/SOP-SUPERVISOR-CARPINTERIA/index.html",
+
+"vehiculos/SOP-CONDUCCION-VEHICULOS/index.html",
+
+"ecopower/SOP-ILUMINACION-LINEAL/index.html",
+"ecopower/SOP-ILUMINACION-PIEDRAS/index.html"
 
 ];
 
-/* SOP ACTUAL */
-
 let currentIndex = sopList.indexOf(doc);
-
-/* ANTERIOR */
 
 function prevSOP(){
 
@@ -322,8 +345,6 @@ window.location.href =
 
 }
 
-/* SIGUIENTE */
-
 function nextSOP(){
 
 if(currentIndex < sopList.length - 1){
@@ -336,6 +357,7 @@ window.location.href =
 }
 
 }
+
 </script>
 
 </body>
