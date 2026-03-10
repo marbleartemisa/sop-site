@@ -29,7 +29,7 @@ jobs:
 
           echo "[]" > SOP_INDEX.json
 
-          for area in produccion administracion comercial houzz-pro instalacion maquinarias vehiculos ecopower; do
+          for area in produccion administracion comercial houzz-pro medidas instalacion maquinarias vehiculos ecopower; do
             if [ -d "$area" ]; then
               for dir in "$area"/SOP-*; do
                 if [ -d "$dir" ]; then
