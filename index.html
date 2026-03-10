@@ -126,6 +126,53 @@ body{
 }
 
 /* ===== SOP TABLE MODERN ===== */
+
+.dept-filter-bar{
+
+max-width:1050px;
+margin:20px auto;
+padding:0 20px;
+
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+
+}
+
+.dept-filter{
+
+padding:8px 16px;
+
+border-radius:20px;
+
+border:none;
+
+background:white;
+
+box-shadow:0 6px 14px rgba(0,0,0,0.15);
+
+font-size:.85rem;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.dept-filter:hover{
+
+transform:scale(1.05);
+
+}
+
+.dept-filter.active{
+
+background:#0072C6;
+
+color:white;
+
+}
+  
 .sop-info{
 background:white;
 padding:12px 18px;
@@ -480,6 +527,38 @@ background:inherit;
   </select>
 </div>
 
+  <div class="dept-filter-bar">
+
+<button onclick="filterDept('')" class="dept-filter active">
+Todos
+</button>
+
+<button onclick="filterDept('comercial')" class="dept-filter">
+Comercial
+</button>
+
+<button onclick="filterDept('produccion')" class="dept-filter">
+Carpintería
+</button>
+
+<button onclick="filterDept('instalacion')" class="dept-filter">
+Stone
+</button>
+
+<button onclick="filterDept('administracion')" class="dept-filter">
+Administración
+</button>
+
+<button onclick="filterDept('maquinarias')" class="dept-filter">
+Maquinarias
+</button>
+
+<button onclick="filterDept('vehiculos')" class="dept-filter">
+Vehículos
+</button>
+
+</div>
+  
 <!-- TABLA -->
 <div class="sop-container" id="sopContainer"></div>
 
@@ -686,12 +765,25 @@ function sortTable(field){
   });
   renderSOP();
 }
+function filterDept(dep){
 
+const buttons = document.querySelectorAll(".dept-filter");
+
+buttons.forEach(btn=>btn.classList.remove("active"));
+
+event.target.classList.add("active");
+
+document.getElementById("deptFilter").value = dep;
+
+filterSOP();
+
+}
 
 
 </script>
 </body>
 </html>
+
 
 
 
