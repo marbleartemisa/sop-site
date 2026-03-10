@@ -427,6 +427,7 @@ background:inherit;
 .dept-vehiculos{background:#e5e7eb;color:#374151;}
 .dept-ecopower{background:#cffafe;color:#0e7490;}
 .dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
+.dept-medidas{background:#f3e8ff;color:#7e22ce;}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
@@ -524,6 +525,7 @@ background:inherit;
     <option value="vehiculos">Vehículos</option>
     <option value="houzz-pro">Houzz Pro</option>
     <option value="ecopower">Ecopowertech</option>
+    <option value="medidas">Medidas</option>
   </select>
 </div>
 
@@ -556,6 +558,10 @@ Maquinarias
 
 <button onclick="filterDept('vehiculos')" class="dept-filter">
 Vehículos
+</button>
+
+<button onclick="filterDept('medidas')" class="dept-filter">
+Medidas
 </button>
 
 </div>
@@ -725,6 +731,7 @@ function renderSOP(filtered){
     comercial:{name:"Comercial",icon:"fa-chart-line"},
     stone:{name:"Stone",icon:"fa-screwdriver-wrench"},
     maquinarias:{name:"Maquinarias",icon:"fa-gears"},
+    medidas:{name:"Medidas",icon:"fa-gears"},
     vehiculos:{name:"Vehículos",icon:"fa-truck"},
     ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
     "houzz-pro":{name:"Houzz Pro",icon:"fa-house"}
@@ -784,6 +791,7 @@ filterSOP();
 </script>
 </body>
 </html>
+
 
 
 
