@@ -425,7 +425,6 @@ background:inherit;
 .dept-stone{background:#fef3c7;color:#92400e;}
 .dept-maquinarias{background:#fee2e2;color:#991b1b;}
 .dept-vehiculos{background:#e5e7eb;color:#374151;}
-.dept-medidas{background:#dcfce7;color:#166534;}
 .dept-ecopower{background:#cffafe;color:#0e7490;}
 .dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
 
@@ -519,7 +518,6 @@ background:inherit;
     <option value="">Todos los departamentos</option>
     <option value="comercial">Comercial</option>
     <option value="produccion">Producción</option>
-    <option value="medidas">Medidas</option>
     <option value="instalacion">Instalación</option>
     <option value="administracion">Administración</option>
     <option value="maquinarias">Maquinarias</option>
@@ -539,9 +537,6 @@ Todos
 Comercial
 </button>
 
-<button onclick="filterDept('medidas')" class="dept-filter">
-Medidas
-</button>
     
 <button onclick="filterDept('produccion')" class="dept-filter">
 Carpintería
@@ -730,7 +725,6 @@ function renderSOP(filtered){
     comercial:{name:"Comercial",icon:"fa-chart-line"},
     stone:{name:"Stone",icon:"fa-screwdriver-wrench"},
     maquinarias:{name:"Maquinarias",icon:"fa-gears"},
-    medidas:{name:"Medidas",icon:"fa-chart-line"},
     vehiculos:{name:"Vehículos",icon:"fa-truck"},
     ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
     "houzz-pro":{name:"Houzz Pro",icon:"fa-house"}
@@ -790,6 +784,7 @@ filterSOP();
 </script>
 </body>
 </html>
+
 
 
 
