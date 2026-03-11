@@ -12,49 +12,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-
-<script>
-
-const backgrounds = [
-"/sop-site/wall0.png",
-"/sop-site/bath1.png",
-"/sop-site/kitchen10.jpeg",
-"/sop-site/kitchen11.jpeg",
-"/sop-site/kitchen12.jpeg",
-"/sop-site/kitchen13.jpeg",
-"/sop-site/kitchen14.jpeg",
-"/sop-site/kitchen2.jpeg"
-
-];
-
-let index = 0;
-
-function changeBackground(){
-
-document.body.style.backgroundImage =
-"url('" + backgrounds[index] + "')";
-
-index++;
-
-if(index >= backgrounds.length){
-index = 0;
-}
-
-}
-
-changeBackground();
-
-setInterval(changeBackground, 8000); // cambia cada 8 segundos
-
-</script>  
   
   
 /* ===== BODY ===== */
 body{
   margin:0;
   font-family:'Inter',sans-serif;
-
-/*=====   background-image:url('/sop-site/wall0.png'); ===== */
+  background-image:url('/sop-site/wall0.png');
   background-position:center;
   background-repeat:no-repeat;
   background-size:cover;
@@ -835,6 +799,7 @@ filterSOP();
 </script>
 </body>
 </html>
+
 
 
 
