@@ -186,11 +186,10 @@ function renderTabla(){
       <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
       <td>${sop.fecha}</td>
       <td>
-        <button onclick="cambiarEstado(${index},'Trámite')"><i class="fa fa-spinner"></i></button>
-        <button onclick="cambiarEstado(${index},'Rechazado')"><i class="fa fa-times"></i></button>
-        <button onclick="cambiarEstado(${index},'Aprobado')"><i class="fa fa-check"></i></button>
-        <button onclick="eliminarSolicitud(${index})"><i class="fa fa-trash"></i></button>
-      </td>
+<span style="color:#888;font-size:0.85rem;">
+Solo administrador
+</span>
+</td>
     `
     tabla.appendChild(fila)
   })
@@ -293,6 +292,7 @@ renderTabla()
 </script>
 </body>
 </html>
+
 
 
 
