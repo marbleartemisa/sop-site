@@ -429,6 +429,7 @@ background:inherit;
 .dept-carpinteria{background:#e0f2fe;color:#0369a1;}
 .dept-administracion{background:#ede9fe;color:#5b21b6;}
 .dept-comercial{background:#dcfce7;color:#166534;}
+.dept-taller{background:#dcfce7;color:#166534;}
 .dept-stone{background:#fef3c7;color:#92400e;}
 .dept-maquinarias{background:#fee2e2;color:#991b1b;}
 .dept-vehiculos{background:#e5e7eb;color:#374151;}
@@ -536,6 +537,8 @@ background:inherit;
     <option value="houzz-pro">Houzz Pro</option>
     <option value="ecopower">Ecopowertech</option>
     <option value="medidas">Medidas</option>
+    <option value="taller">Taller</option>
+    
   </select>
 </div>
 
@@ -577,6 +580,11 @@ Houzz-Pro
 <button onclick="filterDept('medidas')" class="dept-filter">
 Medidas
 </button>
+
+<button onclick="filterDept('taller')" class="dept-filter">
+Medidas
+</button>
+
 
 </div>
   
@@ -752,6 +760,7 @@ function renderSOP(filtered){
     medidas:{name:"Medidas",icon:"fa-gears"},
     vehiculos:{name:"Vehículos",icon:"fa-truck"},
     ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
+    taller:{name:"Taller",icon:"fa-chart-line"},
     "houzz-pro":{name:"Houzz Pro",icon:"fa-house"}
   };
 
@@ -823,6 +832,7 @@ if(password === "Artemisa2026"){   // puedes cambiar la clave
 </script>
 </body>
 </html>
+
 
 
 
