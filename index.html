@@ -506,11 +506,14 @@ background:inherit;
   <div class="menu-toggle" onclick="toggleMenu()">
     <i class="fa-solid fa-bars"></i>
   </div>
-  <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
-  </div>
+  div class="menu">
+  <a href="/sop-site/">Inicio</a>
+  <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+  <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+  <a href="#" onclick="adminLogin()">
+    <i class="fa-solid fa-user-shield"></i> Admin
+  </a>
+</div>
 </div>
 
 <!-- BANNER -->
@@ -794,11 +797,26 @@ document.getElementById("deptFilter").value = dep;
 filterSOP();
 
 }
+function adminLogin(){
 
+const password = prompt("Ingrese contraseña de administrador");
+
+if(password === "Artemisa2026"){   // puedes cambiar la clave
+
+    window.location.href="/sop-site/admin/";
+
+}else{
+
+    alert("Acceso denegado");
+
+}
+
+}
 
 </script>
 </body>
 </html>
+
 
 
 
