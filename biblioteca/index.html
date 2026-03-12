@@ -4,29 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biblioteca SOP - ARTEMISA MARBLE & CABINETS</title>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 
 <style>
 body{
   margin:0;
   font-family:'Segoe UI',Arial,sans-serif;
-  background:#f0f0f0;
+  background:url('/sop-site/wall5.png') no-repeat center top;
+  background-size:cover;
 }
+
+.overlay{
+  background:rgba(0,0,0,0.25);
+  min-height:100vh;
+}
+
+/* NAVBAR */
 .navbar{
   position:sticky;
   top:0;
   background:rgba(0,0,0,0.65);
   backdrop-filter:blur(8px);
-  padding:10px 40px;
+  padding:10px 30px;
   color:white;
   font-weight:bold;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  z-index:999;
+}
+.navbar .logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 .navbar .logo img{
   height:40px;
-  width:auto;
 }
 .navbar .menu a{
   color:white;
@@ -39,18 +54,30 @@ body{
   color:#00aaff;
   transform:scale(1.05);
 }
+
+/* CONTENEDOR */
 .container{
   max-width:1000px;
   margin:50px auto;
-  background:white;
+  background:rgba(255,255,255,0.9);
+  backdrop-filter:blur(10px);
   padding:30px;
-  border-radius:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  border-radius:18px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.3);
 }
-h1{ text-align:center; margin-bottom:20px;}
+
+h1{
+  text-align:center;
+  margin-bottom:25px;
+  color:#003366;
+  font-family:'Nuevo', 'Segoe UI', Arial;
+}
+
+/* LISTA SOP */
 .sop-list{
   list-style:none;
   padding:0;
+  margin:0;
 }
 .sop-list li{
   padding:12px 15px;
@@ -59,6 +86,11 @@ h1{ text-align:center; margin-bottom:20px;}
   display:flex;
   justify-content:space-between;
   align-items:center;
+  transition:.3s;
+}
+.sop-list li:hover{
+  background:rgba(0,0,0,0.05);
+  border-radius:8px;
 }
 .sop-list li a{
   text-decoration:none;
@@ -69,43 +101,19 @@ h1{ text-align:center; margin-bottom:20px;}
   color:#005a9e;
 }
 
-<!-- INICIO AGREGADO -->
-
-body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
-.overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
-.navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo img{height:40px;}
-.menu{display:flex;gap:25px;}
-.menu a{color:white;text-decoration:none;font-weight:bold;transition:.3s;}
-.menu a:hover{color:#00aaff;transform:scale(1.05);}
-.menu-toggle{display:none;font-size:1.6rem;cursor:pointer;}
-.container{max-width:900px;margin:50px auto;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:30px;border-radius:18px;box-shadow:0 15px 35px rgba(0,0,0,0.3);}
-h1{text-align:center;margin-bottom:25px;color:#003366;}
-input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #ccc;font-size:1rem;height:46px;}
-textarea{height:auto;}
-button{padding:12px;border:none;border-radius:30px;background:linear-gradient(135deg,#0072C6,#005a9e);color:white;font-weight:bold;cursor:pointer;transition:.3s;}
-button:hover{transform:scale(1.05);}
-.grid-container{max-width:1100px;margin:40px auto;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:30px;border-radius:18px;box-shadow:0 15px 35px rgba(0,0,0,0.3);}
-table{width:100%;border-collapse:collapse;}
-th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;}
-th{background:#003366;color:white;}
-.estado{padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:bold;}
-.pendiente{background:#fff3cd;color:#856404;}
-.tramite{background:#cce5ff;color:#004085;}
-.rechazado{background:#f8d7da;color:#721c24;}
-.aprobado{background:#d4edda;color:#155724;}
-.footer{text-align:center;padding:30px;color:white;background:#003366;margin-top:50px;}
-.notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
-.notification.success{background:#28a745;}
-.notification.error{background:#dc3545;}
-@media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
-.spinner{margin-left:8px;}
-<!-- FIN AGREGADO -->
-  
+/* FOOTER */
+.footer{
+  text-align:center;
+  padding:30px;
+  color:white;
+  background:#003366;
+  margin-top:50px;
+}
 </style>
 </head>
+
 <body>
+<div class="overlay">
 
 <!-- NAVBAR -->
 <div class="navbar">
@@ -120,7 +128,7 @@ th{background:#003366;color:white;}
   </div>
 </div>
 
-<!-- LISTA DE SOP -->
+<!-- CONTENEDOR -->
 <div class="container">
   <h1>Biblioteca de SOP</h1>
   <ul class="sop-list">
@@ -134,7 +142,11 @@ th{background:#003366;color:white;}
   </ul>
 </div>
 
+<!-- FOOTER -->
+<div class="footer">
+© 2026 ARTEMISA MARBLE & CABINETS
+</div>
+
+</div>
 </body>
-
 </html>
-
