@@ -126,8 +126,6 @@ const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyPqhX5zZou4XmrMZSbcbH
 
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 
-let solicitudes = []
-
 // Notificaciones
 function mostrarNotificacion(msg,tipo){
   const notif=document.createElement("div")
@@ -163,7 +161,7 @@ async function enviarSolicitud(formData){
     archivosBase64 = await archivosA_Base64(archivosInput.files)
   }
 
-  // Construir payload
+  // Construir payload correcto
   let payload = {
     action: "add",
     employee: formData.nombre,
@@ -177,22 +175,11 @@ async function enviarSolicitud(formData){
     files: archivosBase64
   }
 
-  const res = await await fetch(SCRIPT_URL, {
-  method: "POST",
-  body: JSON.stringify({
-    action: "add",        // ⚠️ aquí estaba "guardar" o "accion: guardar"
-    employee: nombre,
-    correo: correo,
-    cargo: cargo,
-    departamento: depto,
-    objetivo: objetivo,
-    areas: areas,
-    resumen: resumen,
-    fecha: fechaActual,
-    files: linksDrive // si los hay
+  // ⚡ Aquí usamos payload directamente
+  const res = await fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(payload)
   })
-})
-
   const data = await res.json()
   return data
 }
