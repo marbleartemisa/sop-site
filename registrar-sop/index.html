@@ -202,22 +202,10 @@ document.getElementById("employee").addEventListener("change",function(){
 })
 
 // ENVÍO FORMULARIO
+<script>
+// ENVÍO FORMULARIO CORREGIDO
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
-
-  // Datos del empleado
-  let datosEmpleado = document.getElementById("employee").value.split("|");
-  let nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], departamentoEmpleado = datosEmpleado[3];
-
-  let depto = document.getElementById("departamento").value.trim();
-  let objetivo = document.getElementById("objetivo").value.trim();
-  let areas = document.getElementById("areas").value.trim();
-  let resumen = document.getElementById("resumen").value.trim();
-
-  if(!nombre || !depto || !objetivo || !areas || !resumen){
-    mostrarNotificacion("Complete todos los campos obligatorios","error");
-    return;
-  }
 
   // Bloquea el botón y muestra spinner
   const btn = document.getElementById("btnEnviar");
@@ -227,22 +215,45 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   btnText.innerText = "Enviando...";
   spinner.style.display = "inline-block";
 
+  // Datos del empleado
+  let datosEmpleado = document.getElementById("employee").value.split("|");
+  let nombre = datosEmpleado[0],
+      correo = datosEmpleado[1],
+      cargo = datosEmpleado[2],
+      departamentoEmpleado = datosEmpleado[3];
+
+  let depto = document.getElementById("departamento").value.trim();
+  let objetivo = document.getElementById("objetivo").value.trim();
+  let areas = document.getElementById("areas").value.trim();
+  let resumen = document.getElementById("resumen").value.trim();
+
+  if(!nombre || !depto || !objetivo || !areas || !resumen){
+    mostrarNotificacion("Complete todos los campos obligatorios","error");
+    btn.disabled = false;
+    btnText.innerText = "Registrar Solicitud";
+    spinner.style.display = "none";
+    return;
+  }
+
   let fechaActual = new Date().toLocaleString();
 
-  // Subir archivos a Drive si hay
+  // Subir archivos a Drive
   const archivosInput = document.getElementById("archivos");
   let linksDrive = [];
   if(archivosInput.files.length > 0){
-    try{
+    try {
       linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
-    }catch(err){
+    } catch(err) {
       console.error("Error subiendo archivos:", err);
       mostrarNotificacion("Error subiendo archivos", "error");
-      linksDrive = [];
+      btn.disabled = false;
+      btnText.innerText = "Registrar Solicitud";
+      spinner.style.display = "none";
+      return; // Detener flujo si falla la subida
     }
   }
 
-  // Crear objeto de solicitud local y renderizar tabla
+  // Crear objeto local y renderizar
   let nuevo = {
     empleado: nombre,
     correo,
@@ -259,7 +270,7 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   renderTabla();
 
   // Guardar en Sheet vía Apps Script
-  try{
+  try {
     await fetch(SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
@@ -276,39 +287,48 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
         archivos: linksDrive
       })
     });
-  }catch(err){
+  } catch(err) {
     console.error("Error guardando en Sheet:", err);
-    mostrarNotificacion("Error guardando solicitud", "error");
+    mostrarNotificacion("Error guardando solicitud en Sheet", "error");
+    btn.disabled = false;
+    btnText.innerText = "Registrar Solicitud";
+    spinner.style.display = "none";
+    return;
   }
 
-  // Enviar correo con EmailJS incluyendo links
+  // Preparar HTML de archivos para correo
   let archivosHTML = linksDrive.length > 0 
     ? linksDrive.map(f => `<p>📎 <a href="${f}" target="_blank">${f.split("/").pop()}</a></p>`).join("")
     : "<p>No se adjuntaron archivos</p>";
 
-  emailjs.send("service_vkt5xuo", "template_vc7447e", {
-    employee: nombre,
-    department: depto,
-    cargo: cargo,
-    objective: objetivo,
-    areas: areas,
-    summary: resumen,
-    date: fechaActual,
-    files: archivosHTML
-  })
-  .then(() => mostrarNotificacion("Solicitud enviada correctamente","success"))
-  .catch(error => {
+  // Enviar correo con EmailJS
+  try {
+    await emailjs.send("service_vkt5xuo", "template_vc7447e", {
+      employee: nombre,
+      department: depto,
+      cargo: cargo,
+      objective: objetivo,
+      areas: areas,
+      summary: resumen,
+      date: fechaActual,
+      files: archivosHTML
+    });
+    mostrarNotificacion("Solicitud enviada correctamente","success");
+  } catch(error) {
     console.error("Error enviando correo:", error);
     mostrarNotificacion("Error enviando correo","error");
-  })
-  .finally(() => {
-    btn.disabled = false;
-    btnText.innerText = "Registrar Solicitud";
-    spinner.style.display = "none";
-    this.reset();
-    cargarSolicitudes(); // recarga tabla desde Sheet
-  });
+  }
+
+  // Reset y desbloquear botón
+  btn.disabled = false;
+  btnText.innerText = "Registrar Solicitud";
+  spinner.style.display = "none";
+  this.reset();
+
+  // Recargar tabla desde Sheet
+  cargarSolicitudes();
 });
+
 </script>
 </body>
 </html>
