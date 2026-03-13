@@ -1,22 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin SOP - ARTEMISA</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',Arial;
+background:url('/sop-site/wall5.png') no-repeat center top;
+background-size:cover;
+}
+
+.overlay{
+background:rgba(0,0,0,0.25);
+min-height:100vh;
+}
+
+/* NAVBAR */
+
+.navbar{
+position:sticky;
+top:0;
+background:rgba(0,0,0,0.65);
+backdrop-filter:blur(8px);
+padding:10px 30px;
+color:white;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logo img{
+height:40px;
+}
+
+.menu{
+display:flex;
+gap:25px;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+/* TABLA */
+
+.grid-container{
+max-width:1100px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:18px;
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #ddd;
+text-align:left;
+}
+
+th{
+background:#003366;
+color:white;
+}
+
+.estado{
+padding:6px 12px;
+border-radius:20px;
+font-size:.8rem;
+font-weight:bold;
+}
+
+.pendiente{background:#fff3cd;color:#856404;}
+.tramite{background:#cce5ff;color:#004085;}
+.rechazado{background:#f8d7da;color:#721c24;}
+.aprobado{background:#d4edda;color:#155724;}
+
+tr.selected{
+background:#e8f4ff;
+}
+
+/* PANEL EDICION */
+
+.editor{
+max-width:1100px;
+margin:20px auto;
+background:white;
+padding:25px;
+border-radius:18px;
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
+display:none;
+}
+
+.editor h3{
+margin-top:0;
+}
+
+.editor button{
+margin-right:10px;
+padding:10px 18px;
+border:none;
+border-radius:25px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.btn-tramite{background:#007bff;color:white;}
+.btn-aprobar{background:#28a745;color:white;}
+.btn-rechazar{background:#dc3545;color:white;}
+.btn-eliminar{background:#444;color:white;}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+<div class="logo">
+<img src="/sop-site/logo.png">
+<span>ARTEMISA MARBLE & CABINETS</span>
+</div>
+
+<div class="menu">
+<a href="/sop-site/">Inicio</a>
+<a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+</div>
+
+</div>
+
+
+<!-- TABLA SOLICITUDES -->
+
+<div class="grid-container">
+
+<h2>Solicitudes SOP</h2>
+
+<input type="text" id="buscarSOP" placeholder="Buscar..."
+style="margin-bottom:15px;padding:8px;width:100%;border-radius:8px;border:1px solid #ccc;">
+
+<table>
+
+<thead>
+<tr>
+<th>Empleado</th>
+<th>Departamento</th>
+<th>Objetivo</th>
+<th>Áreas</th>
+<th>Estado</th>
+<th>Fecha</th>
+</tr>
+</thead>
+
+<tbody id="tablaSOP"></tbody>
+
+</table>
+
+</div>
+
+
+<!-- PANEL EDICION -->
+
+<div class="editor" id="editorPanel">
+
+<h3>Editar solicitud</h3>
+
+<p><b>Empleado:</b> <span id="editEmpleado"></span></p>
+<p><b>Departamento:</b> <span id="editDept"></span></p>
+<p><b>Objetivo:</b> <span id="editObjetivo"></span></p>
+<p><b>Áreas:</b> <span id="editAreas"></span></p>
+
+<div style="margin-top:15px">
+
+<button class="btn-tramite" onclick="cambiarEstadoSeleccionado('Trámite')">
+<i class="fa fa-spinner"></i> Trámite
+</button>
+
+<button class="btn-aprobar" onclick="cambiarEstadoSeleccionado('Aprobado')">
+<i class="fa fa-check"></i> Aprobar
+</button>
+
+<button class="btn-rechazar" onclick="cambiarEstadoSeleccionado('Rechazado')">
+<i class="fa fa-times"></i> Rechazar
+</button>
+
+<button class="btn-eliminar" onclick="eliminarSeleccionado()">
+<i class="fa fa-trash"></i> Eliminar
+</button>
+
+</div>
+
+</div>
+
+
+</div>
+
+
 <script>
 
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec"
+/* DATA */
 
-let solicitudes=[]
-let selectedIndex=null
+let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
+
+let selectedIndex = null
 
 
-/* CARGAR SOLICITUDES DESDE GOOGLE SHEETS */
+function guardar(){
 
-async function cargarSolicitudes(){
-
-let response=await fetch(SCRIPT_URL+"?action=getSOP")
-
-let data=await response.json()
-
-solicitudes=data
-
-renderTabla()
+localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))
 
 }
 
@@ -65,13 +280,13 @@ tabla.appendChild(fila)
 }
 
 
-/* SELECCIONAR SOLICITUD */
+/* SELECCIONAR */
 
 function seleccionarSolicitud(index,row){
 
 selectedIndex=index
 
-document.querySelectorAll("#tablaSOP tr").forEach(r=>r.classList.remove("selected"))
+document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"))
 
 row.classList.add("selected")
 
@@ -89,58 +304,36 @@ document.getElementById("editorPanel").style.display="block"
 
 /* CAMBIAR ESTADO */
 
-async function cambiarEstadoSeleccionado(estado){
+function cambiarEstadoSeleccionado(estado){
 
 if(selectedIndex===null) return
 
-await fetch(SCRIPT_URL,{
+solicitudes[selectedIndex].estado=estado
 
-method:"POST",
+guardar()
 
-body:JSON.stringify({
-
-action:"updateEstado",
-
-index:selectedIndex,
-
-estado:estado
-
-})
-
-})
-
-cargarSolicitudes()
+renderTabla()
 
 }
 
 
 /* ELIMINAR */
 
-async function eliminarSeleccionado(){
+function eliminarSeleccionado(){
 
 if(selectedIndex===null) return
 
 if(!confirm("¿Eliminar solicitud?")) return
 
-await fetch(SCRIPT_URL,{
+solicitudes.splice(selectedIndex,1)
 
-method:"POST",
-
-body:JSON.stringify({
-
-action:"deleteSOP",
-
-index:selectedIndex
-
-})
-
-})
+guardar()
 
 selectedIndex=null
 
 document.getElementById("editorPanel").style.display="none"
 
-cargarSolicitudes()
+renderTabla()
 
 }
 
@@ -150,8 +343,9 @@ cargarSolicitudes()
 document.getElementById("buscarSOP").addEventListener("input",renderTabla)
 
 
-/* INICIO */
-
-cargarSolicitudes()
+renderTabla()
 
 </script>
+
+</body>
+</html>
