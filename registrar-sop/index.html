@@ -1,159 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
+.overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
+.navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo img{height:40px;}
+.menu{display:flex;gap:25px;}
+.menu a{color:white;text-decoration:none;font-weight:bold;transition:.3s;}
+.menu a:hover{color:#00aaff;transform:scale(1.05);}
+.menu-toggle{display:none;font-size:1.6rem;cursor:pointer;}
+.container{max-width:900px;margin:50px auto;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:30px;border-radius:18px;box-shadow:0 15px 35px rgba(0,0,0,0.3);}
+h1{text-align:center;margin-bottom:25px;color:#003366;}
+input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #ccc;font-size:1rem;height:46px;}
+textarea{height:auto;}
+button{padding:12px;border:none;border-radius:30px;background:linear-gradient(135deg,#0072C6,#005a9e);color:white;font-weight:bold;cursor:pointer;transition:.3s;}
+button:hover{transform:scale(1.05);}
+.grid-container{max-width:1100px;margin:40px auto;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:30px;border-radius:18px;box-shadow:0 15px 35px rgba(0,0,0,0.3);}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;}
+th{background:#003366;color:white;}
+.estado{padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:bold;}
+.pendiente{background:#fff3cd;color:#856404;}
+.tramite{background:#cce5ff;color:#004085;}
+.rechazado{background:#f8d7da;color:#721c24;}
+.aprobado{background:#d4edda;color:#155724;}
+.footer{text-align:center;padding:30px;color:white;background:#003366;margin-top:50px;}
+.notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
+.notification.success{background:#28a745;}
+.notification.error{background:#dc3545;}
+@media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
+.spinner{margin-left:8px;}
+</style>
+</head>
+<body>
+<div class="overlay">
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <img src="/sop-site/logo.png">
+    <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+  <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+  <div class="menu">
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+  </div>
+</div>
+
+<!-- FORMULARIO -->
+<div class="container">
+<h1>Registrar Solicitud de SOP - Rev 3.0</h1>
+<form id="sopForm" enctype="multipart/form-data">
+
+<label>Empleado</label>
+<select id="employee" required>
+<option value="">Seleccione empleado</option>
+<option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
+<option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
+<option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+<option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+<option value="Otros|otros|otros|otros">Otros</option>
+</select>
+
+<input type="text" id="departamento" placeholder="Área / Departamento" required>
+<input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
+<input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
+<textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
+<label>Adjuntar archivos (PDF o imágenes)</label>
+<input type="file" id="archivos" multiple>
+
+<!-- Botón con spinner -->
+<button type="submit" id="btnEnviar">
+  <span class="btn-text">Registrar Solicitud</span>
+  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
+</button>
+
+</form>
+</div>
+
+<!-- GRID -->
+<div class="grid-container">
+<h2>Solicitudes SOP</h2>
+<input type="text" id="buscarSOP" placeholder="Buscar..." style="margin-bottom:15px;padding:8px;width:100%;border-radius:8px;border:1px solid #ccc;">
+<select id="filtroEstado" style="margin-bottom:15px;padding:8px;border-radius:8px;border:1px solid #ccc;">
+<option value="">Todos los estados</option>
+<option value="Pendiente">Pendiente</option>
+<option value="Trámite">Trámite</option>
+<option value="Rechazado">Rechazado</option>
+<option value="Aprobado">Aprobado</option>
+</select>
+<table>
+<thead>
+<tr>
+<th>Empleado</th>
+<th>Departamento</th>
+<th>Objetivo</th>
+<th>Áreas</th>
+<th>Estado</th>
+<th>Fecha / Hora</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tablaSOP"></tbody>
+</table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+© 2026 ARTEMISA MARBLE & CABINETS
+</div>
+</div>
+
 <script>
-
 emailjs.init("iR8ieJnOkI4_sr8TH")
-
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec"
 
-let solicitudes=[]
+function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 
-function toggleMenu(){
-document.querySelector('.menu').classList.toggle('show')
+let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
+
+function guardar(){localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))}
+
+function mostrarNotificacion(msg, tipo){
+  const notif=document.createElement("div")
+  notif.className="notification "+tipo
+  notif.innerText=msg
+  document.body.appendChild(notif)
+  setTimeout(()=>notif.remove(),4000)
 }
 
-function mostrarNotificacion(msg,tipo){
-
-const notif=document.createElement("div")
-
-notif.className="notification "+tipo
-
-notif.innerText=msg
-
-document.body.appendChild(notif)
-
-setTimeout(()=>notif.remove(),4000)
-
-}
-
-async function cargarSolicitudes(){
-
-let response=await fetch(SCRIPT_URL+"?action=getSOP")
-
-let data=await response.json()
-
-solicitudes=data
-
-renderTabla()
-
+function eliminarSolicitud(i){
+  if(!confirm("¿Eliminar solicitud?")) return
+  solicitudes.splice(i,1)
+  guardar()
+  renderTabla()
 }
 
 function renderTabla(){
-
-const tabla=document.getElementById("tablaSOP")
-
-tabla.innerHTML=""
-
-solicitudes.forEach((sop,index)=>{
-
-let estadoClass="pendiente"
-
-if(sop.estado=="Trámite")estadoClass="tramite"
-
-if(sop.estado=="Rechazado")estadoClass="rechazado"
-
-if(sop.estado=="Aprobado")estadoClass="aprobado"
-
-let fila=document.createElement("tr")
-
-fila.innerHTML=`
-
-<td>${sop.empleado}</td>
-<td>${sop.departamento}</td>
-<td>${sop.objetivo}</td>
-<td>${sop.areas}</td>
-<td>${sop.resumen}</td>
-<td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-<td>${sop.fecha}</td>
-
-`
-
-tabla.appendChild(fila)
-
-})
-
+  const tabla=document.getElementById("tablaSOP")
+  tabla.innerHTML=""
+  const filtroEstado=document.getElementById("filtroEstado")?.value || ""
+  const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
+  solicitudes.forEach((sop,index)=>{
+    if(filtroEstado && sop.estado!==filtroEstado) return
+    if(buscar){
+      let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
+      if(!texto.includes(buscar)) return
+    }
+    let estadoClass=""
+    switch(sop.estado){
+      case "Pendiente": estadoClass="pendiente"; break
+      case "Trámite": estadoClass="tramite"; break
+      case "Rechazado": estadoClass="rechazado"; break
+      case "Aprobado": estadoClass="aprobado"; break
+      default: estadoClass="pendiente";
+    }
+    let fila=document.createElement("tr")
+    fila.innerHTML=`
+      <td>${sop.empleado}</td>
+      <td>${sop.departamento}</td>
+      <td>${sop.objetivo}</td>
+      <td>${sop.areas}</td>
+      <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
+      <td>${sop.fecha}</td>
+      <td>
+<span style="color:#888;font-size:0.85rem;">
+Solo administrador
+</span>
+</td>
+    `
+    tabla.appendChild(fila)
+  })
 }
 
-// autocompletar departamento
+function cambiarEstado(i,nuevoEstado){
+  solicitudes[i].estado=nuevoEstado
+  guardar()
+  renderTabla()
+}
 
+// Autocompleta departamento
 document.getElementById("employee").addEventListener("change",function(){
-
-let datos=this.value.split("|")
-
-document.getElementById("departamento").value=datos[3] || ""
-
+  let datos=this.value.split("|")
+  document.getElementById("departamento").value=datos[3] || ""
 })
 
-// envío formulario
-
-document.getElementById("sopForm").addEventListener("submit",async function(e){
-
-e.preventDefault()
-
-let datosEmpleado=document.getElementById("employee").value.split("|")
-
-let nombre=datosEmpleado[0]
-
-let correo=datosEmpleado[1]
-
-let cargo=datosEmpleado[2]
-
-let depto=document.getElementById("departamento").value.trim()
-
-let objetivo=document.getElementById("objetivo").value.trim()
-
-let areas=document.getElementById("areas").value.trim()
-
-let resumen=document.getElementById("resumen").value.trim()
-
-let fechaActual=new Date().toLocaleString()
-
-let nuevo={
-
-empleado:nombre,
-correo,
-cargo,
-departamento:depto,
-objetivo,
-areas,
-resumen,
-estado:"Pendiente",
-fecha:fechaActual
-
+// Archivos a Base64
+function archivosA_Base64(files){
+  return Promise.all(Array.from(files).map(file=>{
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader()
+      reader.onload=()=>resolve({name:file.name,data:reader.result})
+      reader.onerror=reject
+      reader.readAsDataURL(file)
+    })
+  }))
 }
 
-await fetch(SCRIPT_URL,{
+async function subirArchivosDrive(files,nombre){
+  let archivosBase64=await archivosA_Base64(files)
+  let response=await fetch(SCRIPT_URL,{
+    method:"POST",
+    body: JSON.stringify({employee:nombre, files:archivosBase64})
+  })
+  let data=await response.json()
+  return data.links
+}
 
-method:"POST",
+// ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
+const btn = document.getElementById("btnEnviar")
+const btnText = btn.querySelector(".btn-text")
+const spinner = btn.querySelector(".spinner")
 
-body:JSON.stringify({
+document.getElementById("sopForm").addEventListener("submit", async function(e){
+  e.preventDefault()
+  let datosEmpleado=document.getElementById("employee").value.split("|")
+  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
+  let depto=document.getElementById("departamento").value.trim()
+  let objetivo=document.getElementById("objetivo").value.trim()
+  let areas=document.getElementById("areas").value.trim()
+  let resumen=document.getElementById("resumen").value.trim()
 
-action:"newSOP",
+  if(!nombre || !depto || !objetivo || !areas || !resumen){
+    mostrarNotificacion("Complete todos los campos obligatorios","error")
+    return
+  }
 
-data:nuevo
+  btn.disabled=true
+  btnText.innerText="Enviando..."
+  spinner.style.display="inline-block"
 
+  let fechaActual=new Date().toLocaleString()
+  let nuevo={empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual}
+  solicitudes.push(nuevo)
+  guardar()
+  renderTabla()
+
+  let archivosInput=document.getElementById("archivos")
+  let linksDrive=[]
+  if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
+
+  let filesHTML=linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
+
+  emailjs.send("service_vkt5xuo","template_vc7447e",{
+    employee:nombre,
+    department:depto,
+    cargo:cargo,
+    objective:objetivo,
+    areas:areas,
+    summary:resumen,
+    date:fechaActual,
+    files:filesHTML
+  })
+  .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
+  .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")})
+  .finally(()=>{
+    btn.disabled=false
+    btnText.innerText="Registrar Solicitud"
+    spinner.style.display="none"
+    this.reset()
+  })
 })
 
-})
+// Filtro y búsqueda
+document.getElementById("buscarSOP").addEventListener("input", renderTabla)
+document.getElementById("filtroEstado").addEventListener("change", renderTabla)
 
-emailjs.send("service_vkt5xuo","template_vc7447e",{
-
-employee:nombre,
-department:depto,
-cargo:cargo,
-objective:objetivo,
-areas:areas,
-summary:resumen,
-date:fechaActual
-
-})
-
-mostrarNotificacion("Solicitud enviada","success")
-
-this.reset()
-
-cargarSolicitudes()
-
-})
-
-cargarSolicitudes()
-
+renderTabla()
 </script>
+</body>
+</html>
+
+
+
