@@ -177,11 +177,21 @@ async function enviarSolicitud(formData){
     files: archivosBase64
   }
 
-  const res = await fetch(SCRIPT_URL,{
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(payload)
+  const res = await await fetch(SCRIPT_URL, {
+  method: "POST",
+  body: JSON.stringify({
+    action: "add",        // ⚠️ aquí estaba "guardar" o "accion: guardar"
+    employee: nombre,
+    correo: correo,
+    cargo: cargo,
+    departamento: depto,
+    objetivo: objetivo,
+    areas: areas,
+    resumen: resumen,
+    fecha: fechaActual,
+    files: linksDrive // si los hay
   })
+})
 
   const data = await res.json()
   return data
