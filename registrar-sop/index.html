@@ -10,7 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
-/* ==== Estilos ==== */
 body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
 .navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
@@ -42,11 +41,167 @@ th{background:#003366;color:white;}
 @media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
 .spinner{margin-left:8px;}
 </style>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-storage.js";
+
+  // ⚠️ Configura tu Firebase
+  const firebaseConfig = {
+    apiKey: "TU_API_KEY",
+    authDomain: "TU_PROJECT_ID.firebaseapp.com",
+    projectId: "TU_PROJECT_ID",
+    storageBucket: "TU_PROJECT_ID.appspot.com",
+    messagingSenderId: "TU_SENDER_ID",
+    appId: "TU_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  emailjs.init("iR8ieJnOkI4_sr8TH");
+
+  // ---- Funciones ----
+  function mostrarNotificacion(msg,tipo){
+    const notif=document.createElement("div");
+    notif.className="notification "+tipo;
+    notif.innerHTML=msg;
+    document.body.appendChild(notif);
+    setTimeout(()=>notif.remove(),4000);
+  }
+
+  function toggleMenu(){document.querySelector('.menu').classList.toggle('show');}
+
+  async function subirArchivos(files){
+    const urls = [];
+    for(const file of files){
+      const storageRef = ref(storage, `SOP_Solicitudes/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      urls.push(url);
+    }
+    return urls;
+  }
+
+  async function cargarSolicitudes(){
+    const tabla=document.getElementById("tablaSOP");
+    tabla.innerHTML="";
+    const filtroEstado = document.getElementById("filtroEstado").value;
+    const buscar = document.getElementById("buscarSOP").value.toLowerCase();
+
+    const q = query(collection(db,"sopSolicitudes"), orderBy("fecha","desc"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(doc => {
+      const s = doc.data();
+      let estadoClass = "";
+      switch(s.estado){
+        case "Pendiente": estadoClass="pendiente"; break;
+        case "Trámite": estadoClass="tramite"; break;
+        case "Rechazado": estadoClass="rechazado"; break;
+        case "Aprobado": estadoClass="aprobado"; break;
+        default: estadoClass="pendiente";
+      }
+      const textoBusqueda = (s.empleado + s.objetivo + s.departamento).toLowerCase();
+      if((filtroEstado && s.estado!==filtroEstado) || (buscar && !textoBusqueda.includes(buscar))) return;
+
+      const archivosHTML = s.archivos && s.archivos.length>0
+        ? s.archivos.map(f=>`<p>📎 <a href="${f}" target="_blank">${f.split("/").pop()}</a></p>`).join("")
+        : "<p>No hay archivos</p>";
+
+      let fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${s.empleado}</td>
+        <td>${s.departamento}</td>
+        <td>${s.objetivo}</td>
+        <td>${s.areas}</td>
+        <td><span class="estado ${estadoClass}">${s.estado}</span></td>
+        <td>${s.fecha ? new Date(s.fecha.seconds*1000).toLocaleString() : ""}</td>
+        <td>${archivosHTML}</td>
+      `;
+      tabla.appendChild(fila);
+    });
+  }
+
+  // ---- Enviar formulario ----
+  document.getElementById("sopForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const datosEmpleado = document.getElementById("employee").value.split("|");
+    const nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], depto = datosEmpleado[3];
+    const objetivo = document.getElementById("objetivo").value.trim();
+    const areas = document.getElementById("areas").value.trim();
+    const resumen = document.getElementById("resumen").value.trim();
+    const archivosInput = document.getElementById("archivos");
+    const fechaActual = new Date();
+
+    if(!nombre || !depto || !objetivo || !areas || !resumen){
+      mostrarNotificacion("Complete todos los campos obligatorios","error");
+      return;
+    }
+
+    const btn = document.getElementById("btnEnviar");
+    btn.disabled = true;
+    btn.querySelector(".btn-text").innerText = "Enviando...";
+    btn.querySelector(".spinner").style.display = "inline-block";
+
+    try{
+      const archivosURLs = archivosInput.files.length>0 ? await subirArchivos(archivosInput.files) : [];
+
+      await addDoc(collection(db,"sopSolicitudes"),{
+        empleado: nombre,
+        correo: correo,
+        cargo: cargo,
+        departamento: depto,
+        objetivo: objetivo,
+        areas: areas,
+        resumen: resumen,
+        estado: "Pendiente",
+        fecha: serverTimestamp(),
+        archivos: archivosURLs
+      });
+
+      // Enviar correo
+      const filesHTML = archivosURLs.length>0
+        ? archivosURLs.map(f=>`<p>📎 <a href="${f}" target="_blank">${f.split("/").pop()}</a></p>`).join("")
+        : "<p>No se adjuntaron archivos</p>";
+
+      await emailjs.send("service_vkt5xuo","template_vc7447e",{
+        employee: nombre,
+        department: depto,
+        cargo: cargo,
+        objective: objetivo,
+        areas: areas,
+        summary: resumen,
+        date: fechaActual.toLocaleString(),
+        files: filesHTML
+      });
+
+      mostrarNotificacion("Solicitud enviada correctamente","success");
+      this.reset();
+      cargarSolicitudes();
+
+    }catch(err){
+      console.error(err);
+      mostrarNotificacion("Error enviando solicitud, revise consola","error");
+    }finally{
+      btn.disabled = false;
+      btn.querySelector(".btn-text").innerText = "Registrar Solicitud";
+      btn.querySelector(".spinner").style.display = "none";
+    }
+  });
+
+  // ---- Filtros ----
+  document.getElementById("buscarSOP").addEventListener("input", cargarSolicitudes);
+  document.getElementById("filtroEstado").addEventListener("change", cargarSolicitudes);
+
+  // Inicializar tabla
+  window.onload = cargarSolicitudes;
+</script>
 </head>
 <body>
 <div class="overlay">
-
-<!-- NAVBAR -->
 <div class="navbar">
   <div class="logo">
     <img src="/sop-site/logo.png">
@@ -60,17 +215,26 @@ th{background:#003366;color:white;}
   </div>
 </div>
 
-<!-- FORMULARIO -->
 <div class="container">
-<h1>Registrar Solicitud de SOP - Merge Seguro</h1>
+<h1>Registrar Solicitud de SOP - Firebase</h1>
 <form id="sopForm" enctype="multipart/form-data">
-
 <label>Empleado</label>
 <select id="employee" required>
 <option value="">Seleccione empleado</option>
 <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
 <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
-<!-- ... otros empleados ... -->
+<option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+<option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
 <option value="Otros|otros|otros|otros">Otros</option>
 </select>
 
@@ -80,15 +244,10 @@ th{background:#003366;color:white;}
 <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
 <label>Adjuntar archivos (PDF o imágenes)</label>
 <input type="file" id="archivos" multiple>
-
-<button type="submit" id="btnEnviar">
-  <span class="btn-text">Registrar Solicitud</span>
-  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
-</button>
+<button type="submit" id="btnEnviar"><span class="btn-text">Registrar Solicitud</span><span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span></button>
 </form>
 </div>
 
-<!-- GRID -->
 <div class="grid-container">
 <h2>Solicitudes SOP</h2>
 <input type="text" id="buscarSOP" placeholder="Buscar..." style="margin-bottom:15px;padding:8px;width:100%;border-radius:8px;border:1px solid #ccc;">
@@ -119,126 +278,5 @@ th{background:#003366;color:white;}
 © 2026 ARTEMISA MARBLE & CABINETS
 </div>
 </div>
-
-<script>
-emailjs.init("iR8ieJnOkI4_sr8TH")
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyPqhX5zZou4XmrMZSbcbHK8qBSTkdVUCXe7mdKWkEwduNeUZFaj0XBc8CpfNr6eq_P/exec"
-
-function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
-
-// Notificaciones
-function mostrarNotificacion(msg,tipo){
-  const notif=document.createElement("div")
-  notif.className="notification "+tipo
-  notif.innerHTML=msg
-  document.body.appendChild(notif)
-  setTimeout(()=>notif.remove(),4000)
-}
-
-// Autocompleta departamento
-document.getElementById("employee").addEventListener("change",function(){
-  let datos=this.value.split("|")
-  document.getElementById("departamento").value=datos[3] || ""
-})
-
-// Convertir archivos a Base64
-function archivosA_Base64(files){
-  return Promise.all(Array.from(files).map(file=>{
-    return new Promise((resolve,reject)=>{
-      const reader=new FileReader()
-      reader.onload=()=>resolve({name:file.name,data:reader.result})
-      reader.onerror=reject
-      reader.readAsDataURL(file)
-    })
-  }))
-}
-
-// Subir archivos + guardar en Sheet
-async function enviarSolicitud(formData){
-  let archivosInput = document.getElementById("archivos")
-  let archivosBase64 = []
-  if(archivosInput.files.length>0){
-    archivosBase64 = await archivosA_Base64(archivosInput.files)
-  }
-
-  // Construir payload correcto
-  let payload = {
-    action: "add",
-    employee: formData.nombre,
-    correo: formData.correo,
-    cargo: formData.cargo,
-    departamento: formData.depto,
-    objetivo: formData.objetivo,
-    areas: formData.areas,
-    resumen: formData.resumen,
-    fecha: formData.fechaActual,
-    files: archivosBase64
-  }
-
-  // ⚡ Aquí usamos payload directamente
-  const res = await fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  })
-  const data = await res.json()
-  return data
-}
-
-// ENVÍO FORMULARIO
-const btn = document.getElementById("btnEnviar")
-const btnText = btn.querySelector(".btn-text")
-const spinner = btn.querySelector(".spinner")
-
-document.getElementById("sopForm").addEventListener("submit", async function(e){
-  e.preventDefault()
-
-  let datosEmpleado = document.getElementById("employee").value.split("|")
-  let nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], depto = datosEmpleado[3]
-  let objetivo = document.getElementById("objetivo").value.trim()
-  let areas = document.getElementById("areas").value.trim()
-  let resumen = document.getElementById("resumen").value.trim()
-  let fechaActual = new Date().toLocaleString()
-
-  if(!nombre || !depto || !objetivo || !areas || !resumen){
-    mostrarNotificacion("Complete todos los campos obligatorios","error")
-    return
-  }
-
-  btn.disabled=true
-  btnText.innerText="Enviando..."
-  spinner.style.display="inline-block"
-
-  try{
-    let result = await enviarSolicitud({nombre,correo,cargo,depto,objetivo,areas,resumen,fechaActual})
-
-    let archivosHTML = result.fileLinks && result.fileLinks.length>0
-      ? result.fileLinks.map(f=>`<p>📎 <a href="${f}" target="_blank">${f.split("/").pop()}</a></p>`).join("")
-      : "<p>No se adjuntaron archivos</p>"
-
-    // Enviar correo
-    await emailjs.send("service_vkt5xuo","template_vc7447e",{
-      employee: nombre,
-      department: depto,
-      cargo: cargo,
-      objective: objetivo,
-      areas: areas,
-      summary: resumen,
-      date: fechaActual,
-      files: archivosHTML
-    })
-
-    mostrarNotificacion("Solicitud enviada correctamente","success")
-
-  }catch(err){
-    console.error(err)
-    mostrarNotificacion("Error enviando solicitud, revise consola","error")
-  }finally{
-    btn.disabled=false
-    btnText.innerText="Registrar Solicitud"
-    spinner.style.display="none"
-    this.reset()
-  }
-})
-</script>
 </body>
 </html>
