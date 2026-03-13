@@ -226,16 +226,70 @@ async function subirArchivosDrive(files,nombre){
 // ENVÍO FORMULARIO
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault()
-  let datosEmpleado=document.getElementById("employee").value.split("|")
-  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
-  let depto=document.getElementById("departamento").value.trim()
-  let objetivo=document.getElementById("objetivo").value.trim()
-  let areas=document.getElementById("areas").value.trim()
-  let resumen=document.getElementById("resumen").value.trim()
+
+  let datosEmpleado = document.getElementById("employee").value.split("|")
+  let nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], departamentoEmpleado = datosEmpleado[3]
+
+  let depto = document.getElementById("departamento").value.trim()
+  let objetivo = document.getElementById("objetivo").value.trim()
+  let areas = document.getElementById("areas").value.trim()
+  let resumen = document.getElementById("resumen").value.trim()
+
   if(!nombre || !depto || !objetivo || !areas || !resumen){
     mostrarNotificacion("Complete todos los campos obligatorios","error")
     return
   }
+
+  // Bloquea el botón y muestra spinner
+  const btn = document.getElementById("btnEnviar")
+  const btnText = btn.querySelector(".btn-text")
+  const spinner = btn.querySelector(".spinner")
+  btn.disabled = true
+  btnText.innerText = "Enviando..."
+  spinner.style.display = "inline-block"
+
+  let fechaActual = new Date().toLocaleString()
+
+  // Crear objeto de solicitud y agregar al array local
+  let nuevo = {
+    empleado: nombre,
+    correo,
+    cargo,
+    departamento: depto,
+    objetivo,
+    areas,
+    resumen,
+    estado: "Pendiente",
+    fecha: fechaActual
+  }
+  solicitudes.push(nuevo)
+  guardar()
+  renderTabla()
+
+  // Enviar correo con EmailJS
+  emailjs.send("service_vkt5xuo","template_vc7447e",{
+    employee: nombre,
+    department: depto,
+    cargo: cargo,
+    objective: objetivo,
+    areas: areas,
+    summary: resumen,
+    date: fechaActual,
+    files: "<p>No se adjuntaron archivos por ahora</p>"
+  })
+  .then(() => mostrarNotificacion("Solicitud enviada correctamente","success"))
+  .catch(error => {
+    console.error(error)
+    mostrarNotificacion("Error enviando correo","error")
+  })
+  .finally(() => {
+    btn.disabled = false
+    btnText.innerText = "Registrar Solicitud"
+    spinner.style.display = "none"
+    this.reset()
+  })
+
+})
   const btn = document.getElementById("btnEnviar")
   const btnText = btn.querySelector(".btn-text")
   const spinner = btn.querySelector(".spinner")
