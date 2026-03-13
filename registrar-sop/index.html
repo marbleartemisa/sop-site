@@ -243,8 +243,8 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
 
   let fechaActual=new Date().toLocaleString()
   let archivosInput=document.getElementById("archivos")
-  let linksDrive=[]
-  if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
+  //let linksDrive=[]
+  //if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
 
   // Guardar en Sheet
   try{
