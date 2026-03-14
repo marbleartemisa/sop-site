@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
+/* === Estilos idénticos al original === */
 body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
 .navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
@@ -66,6 +67,7 @@ th{background:#003366;color:white;}
 
 <label>Empleado</label>
 <select id="employee" required>
+<!-- Opciones idénticas al index original -->
 <option value="">Seleccione empleado</option>
 <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
 <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
@@ -229,6 +231,33 @@ async function subirArchivosDrive(files,nombre){
   return data.links
 }
 
+// ==================== NUEVA FUNCION PARA GOOGLE FORM ====================
+async function enviarAGoogleForm({empleado, correo, departamento, objetivo, areas, resumen, links}) {
+
+  const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSdQCsgWwuuNyGOJfEUyqf902wpfNGgDdYRg99gUfIhhMJNlxQ/formResponse"
+
+  const formData = new URLSearchParams()
+  formData.append("entry.568762201", empleado)
+  formData.append("entry.1014080301", correo)
+  formData.append("entry.786972227", departamento)
+  formData.append("entry.1882221706", objetivo)
+  formData.append("entry.661818737", areas)
+  formData.append("entry.1162818960", resumen)
+  formData.append("entry.144417563", links)
+
+  try {
+    await fetch(formURL, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData
+    })
+    console.log("✔️ Enviado al Google Form con éxito")
+  } catch(error) {
+    console.error("❌ Error enviando al Google Form:", error)
+  }
+
+}
+
 // ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
 const btn = document.getElementById("btnEnviar")
 const btnText = btn.querySelector(".btn-text")
@@ -263,7 +292,9 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
 
   let filesHTML=linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
+  let linksString = linksDrive.join("\n") // para Google Form
 
+  // 1️⃣ Enviar correo
   emailjs.send("service_vkt5xuo","template_vc7447e",{
     employee:nombre,
     department:depto,
@@ -276,12 +307,23 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   })
   .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
   .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")})
-  .finally(()=>{
-    btn.disabled=false
-    btnText.innerText="Registrar Solicitud"
-    spinner.style.display="none"
-    this.reset()
+
+  // 2️⃣ Enviar al Google Form
+  enviarAGoogleForm({
+    empleado: nombre,
+    correo: correo,
+    departamento: depto,
+    objetivo: objetivo,
+    areas: areas,
+    resumen: resumen,
+    links: linksString
   })
+
+  // 3️⃣ Restaurar botón y limpiar
+  btn.disabled=false
+  btnText.innerText="Registrar Solicitud"
+  spinner.style.display="none"
+  this.reset()
 })
 
 // Filtro y búsqueda
