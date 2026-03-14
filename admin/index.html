@@ -8,344 +8,259 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-
 body{
-margin:0;
-font-family:'Segoe UI',Arial;
-background:url('/sop-site/wall5.png') no-repeat center top;
-background-size:cover;
+  margin:0;
+  font-family:'Segoe UI',Arial;
+  background:url('/sop-site/wall5.png') no-repeat center top;
+  background-size:cover;
 }
-
 .overlay{
-background:rgba(0,0,0,0.25);
-min-height:100vh;
+  background:rgba(0,0,0,0.25);
+  min-height:100vh;
 }
-
 /* NAVBAR */
-
 .navbar{
-position:sticky;
-top:0;
-background:rgba(0,0,0,0.65);
-backdrop-filter:blur(8px);
-padding:10px 30px;
-color:white;
-font-weight:bold;
-display:flex;
-justify-content:space-between;
-align-items:center;
+  position:sticky;
+  top:0;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(8px);
+  padding:10px 30px;
+  color:white;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
-
 .logo{
-display:flex;
-align-items:center;
-gap:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
-
 .logo img{
-height:40px;
+  height:40px;
 }
-
 .menu{
-display:flex;
-gap:25px;
+  display:flex;
+  gap:25px;
 }
-
 .menu a{
-color:white;
-text-decoration:none;
-font-weight:bold;
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
 }
-
 /* TABLA */
-
 .grid-container{
-max-width:1100px;
-margin:40px auto;
-background:white;
-padding:30px;
-border-radius:18px;
-box-shadow:0 15px 35px rgba(0,0,0,0.3);
+  max-width:1100px;
+  margin:40px auto;
+  background:white;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.3);
 }
-
 table{
-width:100%;
-border-collapse:collapse;
+  width:100%;
+  border-collapse:collapse;
 }
-
 th,td{
-padding:10px;
-border-bottom:1px solid #ddd;
-text-align:left;
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  text-align:left;
 }
-
 th{
-background:#003366;
-color:white;
+  background:#003366;
+  color:white;
 }
-
 .estado{
-padding:6px 12px;
-border-radius:20px;
-font-size:.8rem;
-font-weight:bold;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:.8rem;
+  font-weight:bold;
 }
-
 .pendiente{background:#fff3cd;color:#856404;}
 .tramite{background:#cce5ff;color:#004085;}
 .rechazado{background:#f8d7da;color:#721c24;}
 .aprobado{background:#d4edda;color:#155724;}
-
-tr.selected{
-background:#e8f4ff;
-}
-
+tr.selected{background:#e8f4ff;}
 /* PANEL EDICION */
-
 .editor{
-max-width:1100px;
-margin:20px auto;
-background:white;
-padding:25px;
-border-radius:18px;
-box-shadow:0 15px 35px rgba(0,0,0,0.3);
-display:none;
+  max-width:1100px;
+  margin:20px auto;
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.3);
+  display:none;
 }
-
 .editor h3{
-margin-top:0;
+  margin-top:0;
 }
-
 .editor button{
-margin-right:10px;
-padding:10px 18px;
-border:none;
-border-radius:25px;
-cursor:pointer;
-font-weight:bold;
+  margin-right:10px;
+  padding:10px 18px;
+  border:none;
+  border-radius:25px;
+  cursor:pointer;
+  font-weight:bold;
 }
-
 .btn-tramite{background:#007bff;color:white;}
 .btn-aprobar{background:#28a745;color:white;}
 .btn-rechazar{background:#dc3545;color:white;}
 .btn-eliminar{background:#444;color:white;}
-
 </style>
 </head>
 
 <body>
-
 <div class="overlay">
 
-<!-- NAVBAR -->
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="logo">
+      <img src="/sop-site/logo.png">
+      <span>ARTEMISA MARBLE & CABINETS</span>
+    </div>
+    <div class="menu">
+      <a href="/sop-site/">Inicio</a>
+      <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+    </div>
+  </div>
 
-<div class="navbar">
+  <!-- TABLA SOLICITUDES -->
+  <div class="grid-container">
+    <h2>Solicitudes SOP</h2>
+    <input type="text" id="buscarSOP" placeholder="Buscar..."
+      style="margin-bottom:15px;padding:8px;width:100%;border-radius:8px;border:1px solid #ccc;">
+    <table>
+      <thead>
+        <tr>
+          <th>Empleado</th>
+          <th>Departamento</th>
+          <th>Objetivo</th>
+          <th>Áreas</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody id="tablaSOP"></tbody>
+    </table>
+  </div>
 
-<div class="logo">
-<img src="/sop-site/logo.png">
-<span>ARTEMISA MARBLE & CABINETS</span>
-</div>
-
-<div class="menu">
-<a href="/sop-site/">Inicio</a>
-<a href="/sop-site/biblioteca/">Biblioteca SOP</a>
-</div>
-
-</div>
-
-
-<!-- TABLA SOLICITUDES -->
-
-<div class="grid-container">
-
-<h2>Solicitudes SOP</h2>
-
-<input type="text" id="buscarSOP" placeholder="Buscar..."
-style="margin-bottom:15px;padding:8px;width:100%;border-radius:8px;border:1px solid #ccc;">
-
-<table>
-
-<thead>
-<tr>
-<th>Empleado</th>
-<th>Departamento</th>
-<th>Objetivo</th>
-<th>Áreas</th>
-<th>Estado</th>
-<th>Fecha</th>
-</tr>
-</thead>
-
-<tbody id="tablaSOP"></tbody>
-
-</table>
-
-</div>
-
-
-<!-- PANEL EDICION -->
-
-<div class="editor" id="editorPanel">
-
-<h3>Editar solicitud</h3>
-
-<p><b>Empleado:</b> <span id="editEmpleado"></span></p>
-<p><b>Departamento:</b> <span id="editDept"></span></p>
-<p><b>Objetivo:</b> <span id="editObjetivo"></span></p>
-<p><b>Áreas:</b> <span id="editAreas"></span></p>
-
-<div style="margin-top:15px">
-
-<button class="btn-tramite" onclick="cambiarEstadoSeleccionado('Trámite')">
-<i class="fa fa-spinner"></i> Trámite
-</button>
-
-<button class="btn-aprobar" onclick="cambiarEstadoSeleccionado('Aprobado')">
-<i class="fa fa-check"></i> Aprobar
-</button>
-
-<button class="btn-rechazar" onclick="cambiarEstadoSeleccionado('Rechazado')">
-<i class="fa fa-times"></i> Rechazar
-</button>
-
-<button class="btn-eliminar" onclick="eliminarSeleccionado()">
-<i class="fa fa-trash"></i> Eliminar
-</button>
+  <!-- PANEL EDICION -->
+  <div class="editor" id="editorPanel">
+    <h3>Editar solicitud</h3>
+    <p><b>Empleado:</b> <span id="editEmpleado"></span></p>
+    <p><b>Departamento:</b> <span id="editDept"></span></p>
+    <p><b>Objetivo:</b> <span id="editObjetivo"></span></p>
+    <p><b>Áreas:</b> <span id="editAreas"></span></p>
+    <div style="margin-top:15px">
+      <button class="btn-tramite" onclick="cambiarEstadoSeleccionado('Trámite')">
+        <i class="fa fa-spinner"></i> Trámite
+      </button>
+      <button class="btn-aprobar" onclick="cambiarEstadoSeleccionado('Aprobado')">
+        <i class="fa fa-check"></i> Aprobar
+      </button>
+      <button class="btn-rechazar" onclick="cambiarEstadoSeleccionado('Rechazado')">
+        <i class="fa fa-times"></i> Rechazar
+      </button>
+      <button class="btn-eliminar" onclick="eliminarSeleccionado()">
+        <i class="fa fa-trash"></i> Eliminar
+      </button>
+    </div>
+  </div>
 
 </div>
-
-</div>
-
-
-</div>
-
 
 <script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwciyqpsCjPWhhdCKVl7h7EGTcY04AXGemepM8tc6re9jjH10Dv-wFvVBQu4_qDBaKO/exec";
 
-/* DATA */
+let solicitudes = [];
+let selectedIndex = null;
 
-let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
-
-let selectedIndex = null
-
-
-function guardar(){
-
-localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))
-
+// Cargar datos desde Sheet
+async function cargarSolicitudes() {
+  try {
+    const res = await fetch(SCRIPT_URL + "?action=get");
+    solicitudes = await res.json();
+    renderTabla();
+  } catch (err) {
+    console.error("Error cargando solicitudes:", err);
+    alert("No se pudo cargar los datos desde el Sheet.");
+  }
 }
 
-
-/* RENDER TABLA */
-
+// Renderizar tabla
 function renderTabla(){
+  const tabla=document.getElementById("tablaSOP");
+  tabla.innerHTML="";
+  const buscar=document.getElementById("buscarSOP").value.toLowerCase();
 
-const tabla=document.getElementById("tablaSOP")
+  solicitudes.forEach((sop,index)=>{
+    let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase();
+    if(buscar && !texto.includes(buscar)) return;
 
-tabla.innerHTML=""
+    let estadoClass="pendiente";
+    if(sop.estado==="Trámite") estadoClass="tramite";
+    if(sop.estado==="Rechazado") estadoClass="rechazado";
+    if(sop.estado==="Aprobado") estadoClass="aprobado";
 
-const buscar=document.getElementById("buscarSOP").value.toLowerCase()
-
-solicitudes.forEach((sop,index)=>{
-
-let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
-
-if(buscar && !texto.includes(buscar)) return
-
-let estadoClass="pendiente"
-
-if(sop.estado==="Trámite") estadoClass="tramite"
-if(sop.estado==="Rechazado") estadoClass="rechazado"
-if(sop.estado==="Aprobado") estadoClass="aprobado"
-
-let fila=document.createElement("tr")
-
-fila.onclick=()=>seleccionarSolicitud(index,fila)
-
-fila.innerHTML=`
-
-<td>${sop.empleado}</td>
-<td>${sop.departamento}</td>
-<td>${sop.objetivo}</td>
-<td>${sop.areas}</td>
-<td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-<td>${sop.fecha}</td>
-
-`
-
-tabla.appendChild(fila)
-
-})
-
+    let fila=document.createElement("tr");
+    fila.onclick=()=>seleccionarSolicitud(index,fila);
+    fila.innerHTML=`
+      <td>${sop.empleado}</td>
+      <td>${sop.departamento}</td>
+      <td>${sop.objetivo}</td>
+      <td>${sop.areas}</td>
+      <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
+      <td>${sop.timestamp}</td>
+    `;
+    tabla.appendChild(fila);
+  });
 }
 
-
-/* SELECCIONAR */
-
+// Seleccionar solicitud
 function seleccionarSolicitud(index,row){
-
-selectedIndex=index
-
-document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"))
-
-row.classList.add("selected")
-
-let sop=solicitudes[index]
-
-document.getElementById("editEmpleado").innerText=sop.empleado
-document.getElementById("editDept").innerText=sop.departamento
-document.getElementById("editObjetivo").innerText=sop.objetivo
-document.getElementById("editAreas").innerText=sop.areas
-
-document.getElementById("editorPanel").style.display="block"
-
+  selectedIndex=index;
+  document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"));
+  row.classList.add("selected");
+  const sop=solicitudes[index];
+  document.getElementById("editEmpleado").innerText=sop.empleado;
+  document.getElementById("editDept").innerText=sop.departamento;
+  document.getElementById("editObjetivo").innerText=sop.objetivo;
+  document.getElementById("editAreas").innerText=sop.areas;
+  document.getElementById("editorPanel").style.display="block";
 }
 
-
-/* CAMBIAR ESTADO */
-
-function cambiarEstadoSeleccionado(estado){
-
-if(selectedIndex===null) return
-
-solicitudes[selectedIndex].estado=estado
-
-guardar()
-
-renderTabla()
-
+// Cambiar estado y actualizar Sheet
+async function cambiarEstadoSeleccionado(estado){
+  if(selectedIndex===null) return;
+  const sop=solicitudes[selectedIndex];
+  sop.estado=estado;
+  renderTabla();
+  await fetch(SCRIPT_URL,{
+    method:"POST",
+    body: JSON.stringify({action:"updateEstado", row: sop.row, estado})
+  });
 }
 
-
-/* ELIMINAR */
-
-function eliminarSeleccionado(){
-
-if(selectedIndex===null) return
-
-if(!confirm("¿Eliminar solicitud?")) return
-
-solicitudes.splice(selectedIndex,1)
-
-guardar()
-
-selectedIndex=null
-
-document.getElementById("editorPanel").style.display="none"
-
-renderTabla()
-
+// Eliminar registro del Sheet
+async function eliminarSeleccionado(){
+  if(selectedIndex===null) return;
+  if(!confirm("¿Eliminar solicitud?")) return;
+  const sop=solicitudes[selectedIndex];
+  await fetch(SCRIPT_URL,{
+    method:"POST",
+    body: JSON.stringify({action:"delete", row: sop.row})
+  });
+  solicitudes.splice(selectedIndex,1);
+  selectedIndex=null;
+  document.getElementById("editorPanel").style.display="none";
+  renderTabla();
 }
 
+// Buscador
+document.getElementById("buscarSOP").addEventListener("input",renderTabla);
 
-/* BUSCADOR */
-
-document.getElementById("buscarSOP").addEventListener("input",renderTabla)
-
-
-renderTabla()
-
+// Inicializar
+cargarSolicitudes();
 </script>
-
 </body>
 </html>
