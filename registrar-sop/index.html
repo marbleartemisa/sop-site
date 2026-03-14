@@ -67,7 +67,20 @@ th{background:#003366;color:white;}
 <label>Empleado</label>
 <select id="employee" required>
 <option value="">Seleccione empleado</option>
-<!-- Opciones aquí... -->
+<option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
+<option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
+<option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+<option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
 <option value="Otros|otros|otros|otros">Otros</option>
 </select>
 
@@ -124,18 +137,75 @@ th{background:#003366;color:white;}
 emailjs.init("iR8ieJnOkI4_sr8TH")
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec"
 
-// Toggle menu
-function toggleMenu(){ document.querySelector('.menu').classList.toggle('show') }
+function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 
-let solicitudes = []
+let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
 
-function mostrarNotificacion(msg,tipo){
+function guardar(){localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))}
+
+function mostrarNotificacion(msg, tipo){
   const notif=document.createElement("div")
   notif.className="notification "+tipo
   notif.innerText=msg
   document.body.appendChild(notif)
   setTimeout(()=>notif.remove(),4000)
 }
+
+function eliminarSolicitud(i){
+  if(!confirm("¿Eliminar solicitud?")) return
+  solicitudes.splice(i,1)
+  guardar()
+  renderTabla()
+}
+
+function renderTabla(){
+  const tabla=document.getElementById("tablaSOP")
+  tabla.innerHTML=""
+  const filtroEstado=document.getElementById("filtroEstado")?.value || ""
+  const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
+  solicitudes.forEach((sop,index)=>{
+    if(filtroEstado && sop.estado!==filtroEstado) return
+    if(buscar){
+      let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
+      if(!texto.includes(buscar)) return
+    }
+    let estadoClass=""
+    switch(sop.estado){
+      case "Pendiente": estadoClass="pendiente"; break
+      case "Trámite": estadoClass="tramite"; break
+      case "Rechazado": estadoClass="rechazado"; break
+      case "Aprobado": estadoClass="aprobado"; break
+      default: estadoClass="pendiente";
+    }
+    let fila=document.createElement("tr")
+    fila.innerHTML=`
+      <td>${sop.empleado}</td>
+      <td>${sop.departamento}</td>
+      <td>${sop.objetivo}</td>
+      <td>${sop.areas}</td>
+      <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
+      <td>${sop.fecha}</td>
+      <td>
+<span style="color:#888;font-size:0.85rem;">
+Solo administrador
+</span>
+</td>
+    `
+    tabla.appendChild(fila)
+  })
+}
+
+function cambiarEstado(i,nuevoEstado){
+  solicitudes[i].estado=nuevoEstado
+  guardar()
+  renderTabla()
+}
+
+// Autocompleta departamento
+document.getElementById("employee").addEventListener("change",function(){
+  let datos=this.value.split("|")
+  document.getElementById("departamento").value=datos[3] || ""
+})
 
 // Archivos a Base64
 function archivosA_Base64(files){
@@ -149,70 +219,17 @@ function archivosA_Base64(files){
   }))
 }
 
-// Subir archivos a Drive y devolver links
 async function subirArchivosDrive(files,nombre){
   let archivosBase64=await archivosA_Base64(files)
-  let response = await fetch(SCRIPT_URL, {
+  let response=await fetch(SCRIPT_URL,{
     method:"POST",
-    body:JSON.stringify({employee:nombre, files:archivosBase64})
+    body: JSON.stringify({employee:nombre, files:archivosBase64})
   })
-  let data = await response.json()
-  return data.links || []
+  let data=await response.json()
+  return data.links
 }
 
-// Renderizar tabla
-function renderTabla(){
-  const tabla=document.getElementById("tablaSOP")
-  tabla.innerHTML=""
-  const filtroEstado=document.getElementById("filtroEstado")?.value || ""
-  const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
-  solicitudes.forEach(sop=>{
-    if(filtroEstado && sop.estado!==filtroEstado) return
-    if(buscar && !(sop.empleado+sop.objetivo+sop.departamento).toLowerCase().includes(buscar)) return
-    let estadoClass=""
-    switch(sop.estado){
-      case "Pendiente": estadoClass="pendiente"; break
-      case "Trámite": estadoClass="tramite"; break
-      case "Rechazado": estadoClass="rechazado"; break
-      case "Aprobado": estadoClass="aprobado"; break
-      default: estadoClass="pendiente"
-    }
-    let fila=document.createElement("tr")
-    fila.innerHTML=`
-      <td>${sop.empleado||""}</td>
-      <td>${sop.departamento||""}</td>
-      <td>${sop.objetivo||""}</td>
-      <td>${sop.areas||""}</td>
-      <td><span class="estado ${estadoClass}">${sop.estado||"Pendiente"}</span></td>
-      <td>${sop.fecha||""}</td>
-      <td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>
-    `
-    tabla.appendChild(fila)
-  })
-}
-
-// Autocompleta departamento
-document.getElementById("employee").addEventListener("change",function(){
-  let datos=this.value.split("|")
-  document.getElementById("departamento").value=datos[3]||""
-})
-
-// Cargar solicitudes desde Google Sheet
-async function cargarSolicitudes(){
-  const response=await fetch(SCRIPT_URL)
-  const data=await response.json()
-  solicitudes = data.map(row=>({
-    empleado:row.Empleado,
-    departamento:row.Departamento,
-    objetivo:row.Objetivo,
-    areas:row.Areas,
-    estado:row.Estado,
-    fecha:row.Fecha
-  }))
-  renderTabla()
-}
-
-// ENVÍO FORMULARIO
+// ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
 const btn = document.getElementById("btnEnviar")
 const btnText = btn.querySelector(".btn-text")
 const spinner = btn.querySelector(".spinner")
@@ -236,30 +253,16 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   spinner.style.display="inline-block"
 
   let fechaActual=new Date().toLocaleString()
+  let nuevo={empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual}
+  solicitudes.push(nuevo)
+  guardar()
+  renderTabla()
 
-  // Subir archivos
   let archivosInput=document.getElementById("archivos")
   let linksDrive=[]
-  if(archivosInput.files.length>0) linksDrive = await subirArchivosDrive(archivosInput.files,nombre)
+  if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
 
-  // Guardar solicitud en Google Sheet
-  await fetch(SCRIPT_URL, {
-    method:"POST",
-    body: JSON.stringify({
-      employee:nombre,
-      correo:correo,
-      cargo:cargo,
-      departamento:depto,
-      objetivo:objetivo,
-      areas:areas,
-      resumen:resumen,
-      date:fechaActual,
-      files:linksDrive.map(l=>({name:l, data:""})) // Solo pasamos links para el Sheet
-    })
-  })
-
-  // Construir HTML para EmailJS
-  let filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link.split("/").pop()}</a></p>`).join("")
+  let filesHTML=linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
 
   emailjs.send("service_vkt5xuo","template_vc7447e",{
     employee:nombre,
@@ -278,16 +281,14 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
     btnText.innerText="Registrar Solicitud"
     spinner.style.display="none"
     this.reset()
-    cargarSolicitudes()
   })
 })
 
-// Filtros
+// Filtro y búsqueda
 document.getElementById("buscarSOP").addEventListener("input", renderTabla)
 document.getElementById("filtroEstado").addEventListener("change", renderTabla)
 
-// Carga inicial
-cargarSolicitudes()
+renderTabla()
 </script>
 </body>
 </html>
