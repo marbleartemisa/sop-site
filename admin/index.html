@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -187,16 +187,24 @@ function renderTabla(){
   const tabla=document.getElementById("tablaSOP");
   tabla.innerHTML="";
   const buscar=document.getElementById("buscarSOP").value.toLowerCase();
+
   solicitudes.forEach((sop,index)=>{
     let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase();
     if(buscar && !texto.includes(buscar)) return;
+
     let estadoClass="pendiente";
     if(sop.estado==="Trámite") estadoClass="tramite";
     if(sop.estado==="Rechazado") estadoClass="rechazado";
     if(sop.estado==="Aprobado") estadoClass="aprobado";
+
     let fila=document.createElement("tr");
     fila.onclick=()=>seleccionarSolicitud(index,fila);
-    let archivosHTML = (sop["links.join"]||"").split(",").map(l=>`<a href="${l}" target="_blank" class="file-link">📎 Archivo</a>`).join("<br>");
+
+    // Archivos con 📎 Archivo que abre el link real
+    let archivosHTML = (sop["links.join"]||"").split(",").map(l=>{
+      return `<a href="${l}" target="_blank" class="file-link" onclick="event.stopPropagation()">📎 Archivo</a>`;
+    }).join("<br>");
+
     fila.innerHTML=`
       <td>${sop.empleado}</td>
       <td>${sop.departamento}</td>
