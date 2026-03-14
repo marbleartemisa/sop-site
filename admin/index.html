@@ -72,10 +72,11 @@ th{
 }
 th:nth-child(1){width:12%;}
 th:nth-child(2){width:12%;}
-th:nth-child(3){width:35%;}
+th:nth-child(3){width:30%;}
 th:nth-child(4){width:18%;}
-th:nth-child(5){width:10%;}
-th:nth-child(6){width:13%;}
+th:nth-child(5){width:18%;}
+th:nth-child(6){width:10%;}
+th:nth-child(7){width:10%;}
 .estado{
   padding:6px 12px;
   border-radius:20px;
@@ -136,6 +137,7 @@ a.file-link{color:#007bff;text-decoration:none;font-size:.85rem;}
 <th>Departamento</th>
 <th>Objetivo</th>
 <th>Áreas</th>
+<th>Archivos</th>
 <th>Estado</th>
 <th>Fecha</th>
 </tr>
@@ -171,7 +173,7 @@ async function cargarSolicitudes(){
     const data=await res.json();
     solicitudes=data.map((s,i)=>({
       ...s,
-      row:i+2, // fila en el Sheet
+      row:i+2,
       estado:s.estado || "Pendiente"
     }));
     renderTabla();
@@ -194,11 +196,13 @@ function renderTabla(){
     if(sop.estado==="Aprobado") estadoClass="aprobado";
     let fila=document.createElement("tr");
     fila.onclick=()=>seleccionarSolicitud(index,fila);
+    let archivosHTML = (sop["links.join"]||"").split(",").map(l=>`<a href="${l}" target="_blank" class="file-link">📎 Archivo</a>`).join("<br>");
     fila.innerHTML=`
       <td>${sop.empleado}</td>
       <td>${sop.departamento}</td>
       <td>${sop.objetivo}</td>
       <td>${sop.areas}</td>
+      <td>${archivosHTML}</td>
       <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
       <td>${new Date(sop.timestamp).toLocaleString()}</td>
     `;
