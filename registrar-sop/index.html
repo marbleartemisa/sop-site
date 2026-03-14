@@ -91,12 +91,10 @@ th{background:#003366;color:white;}
 <label>Adjuntar archivos (PDF o imágenes)</label>
 <input type="file" id="archivos" multiple>
 
-<!-- Botón con spinner -->
 <button type="submit" id="btnEnviar">
   <span class="btn-text">Registrar Solicitud</span>
   <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
 </button>
-
 </form>
 </div>
 
@@ -120,7 +118,7 @@ th{background:#003366;color:white;}
 <th>Áreas</th>
 <th>Estado</th>
 <th>Fecha / Hora</th>
-<th>Acciones</th>
+<th>Archivos</th>
 </tr>
 </thead>
 <tbody id="tablaSOP"></tbody>
@@ -128,9 +126,8 @@ th{background:#003366;color:white;}
 </div>
 
 <!-- FOOTER -->
-<div class="footer">
-© 2026 ARTEMISA MARBLE & CABINETS
-</div>
+<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
+
 </div>
 
 <script>
@@ -139,11 +136,9 @@ const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCm
 
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 
-let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
+let solicitudes=[]
 
-function guardar(){localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))}
-
-function mostrarNotificacion(msg, tipo){
+function mostrarNotificacion(msg,tipo){
   const notif=document.createElement("div")
   notif.className="notification "+tipo
   notif.innerText=msg
@@ -151,19 +146,13 @@ function mostrarNotificacion(msg, tipo){
   setTimeout(()=>notif.remove(),4000)
 }
 
-function eliminarSolicitud(i){
-  if(!confirm("¿Eliminar solicitud?")) return
-  solicitudes.splice(i,1)
-  guardar()
-  renderTabla()
-}
-
+/* TABLA */
 function renderTabla(){
   const tabla=document.getElementById("tablaSOP")
   tabla.innerHTML=""
   const filtroEstado=document.getElementById("filtroEstado")?.value || ""
   const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
-  solicitudes.forEach((sop,index)=>{
+  solicitudes.forEach((sop)=>{
     if(filtroEstado && sop.estado!==filtroEstado) return
     if(buscar){
       let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
@@ -175,73 +164,49 @@ function renderTabla(){
       case "Trámite": estadoClass="tramite"; break
       case "Rechazado": estadoClass="rechazado"; break
       case "Aprobado": estadoClass="aprobado"; break
-      default: estadoClass="pendiente";
+      default: estadoClass="pendiente"
     }
     let fila=document.createElement("tr")
     fila.innerHTML=`
-      <td>${sop.empleado}</td>
-      <td>${sop.departamento}</td>
-      <td>${sop.objetivo}</td>
-      <td>${sop.areas}</td>
-      <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-      <td>${sop.fecha}</td>
-      <td>
-<span style="color:#888;font-size:0.85rem;">
-Solo administrador
-</span>
-</td>
+      <td>${sop.empleado || ""}</td>
+      <td>${sop.departamento || ""}</td>
+      <td>${sop.objetivo || ""}</td>
+      <td>${sop.areas || ""}</td>
+      <td><span class="estado ${estadoClass}">${sop.estado || "Pendiente"}</span></td>
+      <td>${sop.fecha || ""}</td>
+      <td>${
+        sop.Archivos ? sop.Archivos.split("\n").map(link=>`<a href="${link}" target="_blank">📎</a>`).join(" ") : ""
+      }</td>
     `
     tabla.appendChild(fila)
   })
 }
 
-function cambiarEstado(i,nuevoEstado){
-  solicitudes[i].estado=nuevoEstado
-  guardar()
-  renderTabla()
-}
-
-// Autocompleta departamento
+/* AUTOCOMPLETA DEPARTAMENTO */
 document.getElementById("employee").addEventListener("change",function(){
   let datos=this.value.split("|")
   document.getElementById("departamento").value=datos[3] || ""
 })
 
-// Archivos a Base64
+/* ARCHIVOS A BASE64 */
 function archivosA_Base64(files){
-  return Promise.all(Array.from(files).map(file=>{
-    return new Promise((resolve,reject)=>{
-      const reader=new FileReader()
-      reader.onload=()=>resolve({name:file.name,data:reader.result})
-      reader.onerror=reject
-      reader.readAsDataURL(file)
-    })
-  }))
+  return Promise.all(Array.from(files).map(file=>new Promise((resolve,reject)=>{
+    const reader=new FileReader()
+    reader.onload=()=>resolve({name:file.name,data:reader.result})
+    reader.onerror=reject
+    reader.readAsDataURL(file)
+  })))
 }
 
-async function subirArchivosDrive(files,nombre){
-  let archivosBase64=await archivosA_Base64(files)
-  let response=await fetch(SCRIPT_URL,{
-    method:"POST",
-    body: JSON.stringify({employee:nombre, files:archivosBase64})
-  })
-  let data=await response.json()
-  return data.links
-}
-
-// ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
-const btn = document.getElementById("btnEnviar")
-const btnText = btn.querySelector(".btn-text")
-const spinner = btn.querySelector(".spinner")
-
+/* SUBIR ARCHIVOS Y GUARDAR EN SHEET */
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault()
-  let datosEmpleado=document.getElementById("employee").value.split("|")
-  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
-  let depto=document.getElementById("departamento").value.trim()
-  let objetivo=document.getElementById("objetivo").value.trim()
-  let areas=document.getElementById("areas").value.trim()
-  let resumen=document.getElementById("resumen").value.trim()
+  const datosEmpleado=document.getElementById("employee").value.split("|")
+  const nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2]
+  const depto=document.getElementById("departamento").value.trim()
+  const objetivo=document.getElementById("objetivo").value.trim()
+  const areas=document.getElementById("areas").value.trim()
+  const resumen=document.getElementById("resumen").value.trim()
 
   if(!nombre || !depto || !objetivo || !areas || !resumen){
     mostrarNotificacion("Complete todos los campos obligatorios","error")
@@ -252,43 +217,56 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   btnText.innerText="Enviando..."
   spinner.style.display="inline-block"
 
-  let fechaActual=new Date().toLocaleString()
-  let nuevo={empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual}
-  solicitudes.push(nuevo)
-  guardar()
-  renderTabla()
+  const fechaActual=new Date().toLocaleString()
+  const archivosInput=document.getElementById("archivos")
+  let archivosBase64=[]
+  if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files)
 
-  let archivosInput=document.getElementById("archivos")
-  let linksDrive=[]
-  if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
-
-  let filesHTML=linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
-
-  emailjs.send("service_vkt5xuo","template_vc7447e",{
-    employee:nombre,
-    department:depto,
-    cargo:cargo,
-    objective:objetivo,
-    areas:areas,
-    summary:resumen,
-    date:fechaActual,
-    files:filesHTML
+  await fetch(SCRIPT_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      employee:nombre,
+      correo,
+      cargo,
+      departamento:depto,
+      objetivo,
+      areas,
+      resumen,
+      date:fechaActual,
+      files:archivosBase64
+    })
   })
-  .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-  .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")})
-  .finally(()=>{
-    btn.disabled=false
-    btnText.innerText="Registrar Solicitud"
-    spinner.style.display="none"
-    this.reset()
-  })
+
+  mostrarNotificacion("Solicitud enviada correctamente","success")
+  this.reset()
+  btn.disabled=false
+  btnText.innerText="Registrar Solicitud"
+  spinner.style.display="none"
+  cargarSolicitudes()
 })
 
-// Filtro y búsqueda
-document.getElementById("buscarSOP").addEventListener("input", renderTabla)
-document.getElementById("filtroEstado").addEventListener("change", renderTabla)
+/* CARGAR DESDE SHEET */
+async function cargarSolicitudes(){
+  const response=await fetch(SCRIPT_URL)
+  const data=await response.json()
+  solicitudes=data.map(row=>({
+    empleado:row.Empleado,
+    departamento:row.Departamento,
+    objetivo:row.Objetivo,
+    areas:row.Areas,
+    estado:row.Estado,
+    fecha:row.Fecha,
+    Archivos:row.Archivos
+  }))
+  renderTabla()
+}
 
-renderTabla()
+/* FILTROS */
+document.getElementById("buscarSOP").addEventListener("input",renderTabla)
+document.getElementById("filtroEstado").addEventListener("change",renderTabla)
+
+/* CARGA INICIAL */
+cargarSolicitudes()
 </script>
 </body>
 </html>
