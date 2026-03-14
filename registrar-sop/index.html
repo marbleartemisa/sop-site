@@ -63,10 +63,10 @@ th{background:#003366;color:white;}
 <div class="container">
 <h1>Registrar Solicitud de SOP - Rev 3.0</h1>
 <form id="sopForm" enctype="multipart/form-data">
-
 <label>Empleado</label>
 <select id="employee" required>
 <option value="">Seleccione empleado</option>
+<!-- Opciones de empleados -->
 <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
 <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
 <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
@@ -118,28 +118,25 @@ th{background:#003366;color:white;}
 <th>Áreas</th>
 <th>Estado</th>
 <th>Fecha / Hora</th>
-<th>Archivos</th>
+<th>Acciones</th>
 </tr>
 </thead>
 <tbody id="tablaSOP"></tbody>
 </table>
 </div>
 
-<!-- FOOTER -->
 <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
-
 </div>
 
 <script>
-  // Al inicio del <script>
-const btn = document.getElementById("btnEnviar")
-const btnText = btn.querySelector(".btn-text")
-const spinner = btn.querySelector(".spinner")
-  
 emailjs.init("iR8ieJnOkI4_sr8TH")
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec"
 
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
+
+const btn=document.getElementById("btnEnviar")
+const btnText=btn.querySelector(".btn-text")
+const spinner=btn.querySelector(".spinner")
 
 let solicitudes=[]
 
@@ -151,7 +148,27 @@ function mostrarNotificacion(msg,tipo){
   setTimeout(()=>notif.remove(),4000)
 }
 
-/* TABLA */
+function archivosA_Base64(files){
+  return Promise.all(Array.from(files).map(file=>{
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader()
+      reader.onload=()=>resolve({name:file.name,data:reader.result})
+      reader.onerror=reject
+      reader.readAsDataURL(file)
+    })
+  }))
+}
+
+async function subirArchivosDrive(files,nombre){
+  let archivosBase64=await archivosA_Base64(files)
+  let response=await fetch(SCRIPT_URL,{
+    method:"POST",
+    body:JSON.stringify({employee:nombre, files:archivosBase64})
+  })
+  let data=await response.json()
+  return data.links
+}
+
 function renderTabla(){
   const tabla=document.getElementById("tablaSOP")
   tabla.innerHTML=""
@@ -159,10 +176,7 @@ function renderTabla(){
   const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
   solicitudes.forEach((sop)=>{
     if(filtroEstado && sop.estado!==filtroEstado) return
-    if(buscar){
-      let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
-      if(!texto.includes(buscar)) return
-    }
+    if(buscar && !(sop.empleado+sop.objetivo+sop.departamento).toLowerCase().includes(buscar)) return
     let estadoClass=""
     switch(sop.estado){
       case "Pendiente": estadoClass="pendiente"; break
@@ -171,65 +185,46 @@ function renderTabla(){
       case "Aprobado": estadoClass="aprobado"; break
       default: estadoClass="pendiente"
     }
-    let fila=document.createElement("tr")
+    const fila=document.createElement("tr")
     fila.innerHTML=`
-      <td>${sop.empleado || ""}</td>
-      <td>${sop.departamento || ""}</td>
-      <td>${sop.objetivo || ""}</td>
-      <td>${sop.areas || ""}</td>
-      <td><span class="estado ${estadoClass}">${sop.estado || "Pendiente"}</span></td>
-      <td>${sop.fecha || ""}</td>
-      <td>${
-        sop.Archivos ? sop.Archivos.split("\n").map(link=>`<a href="${link}" target="_blank">📎</a>`).join(" ") : ""
-      }</td>
+      <td>${sop.empleado||""}</td>
+      <td>${sop.departamento||""}</td>
+      <td>${sop.objetivo||""}</td>
+      <td>${sop.areas||""}</td>
+      <td><span class="estado ${estadoClass}">${sop.estado||"Pendiente"}</span></td>
+      <td>${sop.fecha||""}</td>
+      <td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>
     `
     tabla.appendChild(fila)
   })
 }
 
-/* AUTOCOMPLETA DEPARTAMENTO */
 document.getElementById("employee").addEventListener("change",function(){
-  let datos=this.value.split("|")
-  document.getElementById("departamento").value=datos[3] || ""
+  const datos=this.value.split("|")
+  document.getElementById("departamento").value=datos[3]||""
 })
 
-/* ARCHIVOS A BASE64 */
-function archivosA_Base64(files){
-  return Promise.all(Array.from(files).map(file=>new Promise((resolve,reject)=>{
-    const reader=new FileReader()
-    reader.onload=()=>resolve({name:file.name,data:reader.result})
-    reader.onerror=reject
-    reader.readAsDataURL(file)
-  })))
-}
-
-/* SUBIR ARCHIVOS Y GUARDAR EN SHEET */
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault()
-
   const datosEmpleado=document.getElementById("employee").value.split("|")
   const nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2]
   const depto=document.getElementById("departamento").value.trim()
   const objetivo=document.getElementById("objetivo").value.trim()
   const areas=document.getElementById("areas").value.trim()
   const resumen=document.getElementById("resumen").value.trim()
-
   if(!nombre || !depto || !objetivo || !areas || !resumen){
     mostrarNotificacion("Complete todos los campos obligatorios","error")
     return
   }
-
   btn.disabled=true
   btnText.innerText="Enviando..."
   spinner.style.display="inline-block"
-
   const fechaActual=new Date().toLocaleString()
   const archivosInput=document.getElementById("archivos")
   let archivosBase64=[]
   if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files)
-
-  try {
-    const response = await fetch(SCRIPT_URL,{
+  try{
+    const response=await fetch(SCRIPT_URL,{
       method:"POST",
       body:JSON.stringify({
         employee:nombre,
@@ -243,13 +238,12 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
         files:archivosBase64
       })
     })
-    const result = await response.json()
-    console.log(result)  // <-- útil para depuración
+    await response.json()
     mostrarNotificacion("Solicitud enviada correctamente","success")
-  } catch(err) {
+  }catch(err){
     console.error(err)
     mostrarNotificacion("Error enviando solicitud","error")
-  } finally {
+  }finally{
     this.reset()
     btn.disabled=false
     btnText.innerText="Registrar Solicitud"
@@ -258,27 +252,28 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   }
 })
 
-/* CARGAR DESDE SHEET */
 async function cargarSolicitudes(){
-  const response=await fetch(SCRIPT_URL)
-  const data=await response.json()
-  solicitudes=data.map(row=>({
-    empleado:row.Empleado,
-    departamento:row.Departamento,
-    objetivo:row.Objetivo,
-    areas:row.Areas,
-    estado:row.Estado,
-    fecha:row.Fecha,
-    Archivos:row.Archivos
-  }))
-  renderTabla()
+  try{
+    const response=await fetch(SCRIPT_URL)
+    const data=await response.json()
+    solicitudes=data.map(row=>({
+      empleado:row.Empleado,
+      departamento:row.Departamento,
+      objetivo:row.Objetivo,
+      areas:row.Areas,
+      estado:row.Estado,
+      fecha:row.Fecha
+    }))
+    renderTabla()
+  }catch(err){
+    console.error(err)
+    mostrarNotificacion("Error cargando solicitudes","error")
+  }
 }
 
-/* FILTROS */
 document.getElementById("buscarSOP").addEventListener("input",renderTabla)
 document.getElementById("filtroEstado").addEventListener("change",renderTabla)
 
-/* CARGA INICIAL */
 cargarSolicitudes()
 </script>
 </body>
