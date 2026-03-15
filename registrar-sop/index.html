@@ -66,13 +66,23 @@ th{background:#003366;color:white;}
 <label>Empleado</label>
 <select id="employee" required>
 <option value="">Seleccione empleado</option>
-<!-- Opciones del formulario idénticas al index original -->
 <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
 <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
 <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-<!-- más opciones según tu lista -->
+<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+<option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
 <option value="Otros|otros|otros|otros">Otros</option>
 </select>
+
 
 <input type="text" id="departamento" placeholder="Área / Departamento" required>
 <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
@@ -245,21 +255,28 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   // Subir archivos
   let archivosInput = document.getElementById("archivos")
   let linksDrive = []
-  if(archivosInput.files.length>0) linksDrive = await subirArchivosDrive(archivosInput.files,nombre)
+  if(archivosInput.files.length>0){
+    try{
+      linksDrive = await subirArchivosDrive(archivosInput.files,nombre)
+    }catch(err){
+      console.error("Error subiendo archivos:", err)
+      alert("Error subiendo archivos")
+    }
+  }
   let linksString = linksDrive.join("\n")
   
-  // Enviar correo
+  // Enviar correo (no bloquear)
   emailjs.send("service_vkt5xuo","template_vc7447e",{
     employee:nombre, department:depto, cargo:cargo,
     objective:objetivo, areas:areas, summary:resumen,
     date:new Date().toLocaleString(), files:linksDrive.map(l=>`<p>${l}</p>`).join("")
-  }).catch(e=>console.error(e))
+  }).catch(e=>console.error("Error enviando correo:", e))
 
-  // Enviar a Google Form
-  await enviarAGoogleForm({empleado:nombre, correo, departamento:depto, objetivo, areas, resumen, links:linksString})
+  // Enviar a Google Form (no bloquea)
+  enviarAGoogleForm({empleado:nombre, correo, departamento:depto, objetivo, areas, resumen, links:linksString})
 
-  // Refrescar desde Sheet
-  cargarSolicitudesDrive()
+  // Refrescar desde Sheet (async pero no bloquea spinner)
+  cargarSolicitudesDrive().catch(err=>console.error("Error cargando Sheet:", err))
 
   // Restaurar botón y limpiar formulario
   btn.disabled = false
