@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel Admin SOP - ARTEMISA</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <style>
 body{margin:0;font-family:'Segoe UI',Arial;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
@@ -85,8 +84,17 @@ tr.selected{background:#e8f4ff;} a.file-link{text-decoration:none;font-size:.9re
 
 <script>
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxhA3ZmwXeTn0oGbK77WjSIgoECEBidcNCIa4yGhJrMm72g5-1PhSDqnCmTniYZTqiKMA/exec";
-let solicitudes=[];
+let solicitudes=[]; 
 let selectedIndex=null;
+
+// Iconos según tipo de archivo
+function iconoArchivo(link){
+  link = link.toLowerCase();
+  if(link.includes(".pdf")) return "📄 SOP.pdf";
+  if(link.includes(".jpg")||link.includes(".png")) return "🖼 Foto.jpg";
+  if(link.includes(".xls")||link.includes(".xlsx")) return "📊 Excel.xlsx";
+  return "📎 Archivo";
+}
 
 async function cargarSolicitudes(){
   try {
@@ -121,8 +129,10 @@ function renderTabla(){
 
     let archivosHTML="";
     if(sop.links){
-      const links=sop.links.split("\n");
-      archivosHTML = links.map(l=>`<a href="${l.trim()}" target="_blank" class="file-link">${l.split("/").pop()}</a>`).join("<br>");
+      const links = sop.links.split("\n");
+      archivosHTML = links.map(l => 
+        `<a href="${l.trim()}" target="_blank" class="file-link">${iconoArchivo(l)}</a>`
+      ).join("<br>");
     }
 
     const fila = document.createElement("tr");
@@ -162,7 +172,7 @@ function seleccionarSolicitud(index,row){
   document.getElementById("editDept").innerText = sop.departamento;
   document.getElementById("editObjetivo").innerText = sop.objetivo;
   document.getElementById("editAreas").innerText = sop.areas;
-  document.getElementById("editFiles").innerHTML = sop.links ? sop.links.split("\n").map(l=>`<a href="${l.trim()}" target="_blank">${l.split("/").pop()}</a>`).join("<br>") : "";
+  document.getElementById("editFiles").innerHTML = sop.links ? sop.links.split("\n").map(l=>`<a href="${l.trim()}" target="_blank">${iconoArchivo(l)}</a>`).join("<br>") : "";
   document.getElementById("editorPanel").style.display = "block";
 }
 
@@ -174,7 +184,7 @@ async function cambiarEstadoSeleccionado(estado){
       method:"POST",
       body: JSON.stringify({id:sop.id, estado:estado})
     });
-    sop.estado = estado; // actualizar localmente
+    sop.estado = estado;
     renderTabla();
   }catch(e){
     console.error("Error actualizando estado:", e);
