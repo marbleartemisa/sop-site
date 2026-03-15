@@ -234,16 +234,17 @@ async function subirArchivosDrive(files,nombre){
 // ==================== NUEVA FUNCION PARA GOOGLE FORM ====================
 async function enviarAGoogleForm({empleado, correo, departamento, objetivo, areas, resumen, links}) {
 
-  const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSdQCsgWwuuNyGOJfEUyqf902wpfNGgDdYRg99gUfIhhMJNlxQ/formResponse"
+  const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
 
   const formData = new URLSearchParams()
-  formData.append("entry.568762201", empleado)
-  formData.append("entry.1014080301", correo)
-  formData.append("entry.786972227", departamento)
-  formData.append("entry.1882221706", objetivo)
-  formData.append("entry.661818737", areas)
-  formData.append("entry.1162818960", resumen)
-  formData.append("entry.144417563", links)
+  formData.append("entry.1393360085", empleado)       // Empleado
+  formData.append("entry.1363198453", correo)         // Correo
+  formData.append("entry.1941994843", departamento)   // Departamento
+  formData.append("entry.1015716567", objetivo)       // Objetivo
+  formData.append("entry.949214050", areas)           // Áreas
+  formData.append("entry.619270886", resumen)         // Resumen
+  formData.append("entry.1989031957", "Pendiente")    // Estado inicial (opcional)
+  formData.append("entry.179457268", links)           // Link(s) a archivos
 
   try {
     await fetch(formURL, {
@@ -255,7 +256,6 @@ async function enviarAGoogleForm({empleado, correo, departamento, objetivo, area
   } catch(error) {
     console.error("❌ Error enviando al Google Form:", error)
   }
-
 }
 
 // ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
