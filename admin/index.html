@@ -201,7 +201,17 @@ function renderTabla(){
     fila.onclick=()=>seleccionarSolicitud(index,fila);
 
     // Archivos con 📎 Archivo que abre el link real
-    let archivosHTML = (sop["links.join"]||"").split(",").map(l=>{
+   let archivosHTML = "";
+
+if (sop["links.join"]) {
+
+  const links = sop["links.join"].split(",");
+
+  archivosHTML = links.map(link => 
+    `<a href="${link.trim()}" target="_blank" class="file-link" onclick="event.stopPropagation()">📎 Archivo</a>`
+  ).join("<br>");
+
+}
       return `<a href="${l}" target="_blank" class="file-link" onclick="event.stopPropagation()">📎 Archivo</a>`;
     }).join("<br>");
 
@@ -211,7 +221,7 @@ function renderTabla(){
       <td>${sop.objetivo}</td>
       <td>${sop.areas}</td>
       <td>${archivosHTML}</td>
-      <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
+      <td><span class="estado ${estadoClass}">${sop.estado || "Pendiente"}</span></td>
       <td>${new Date(sop.timestamp).toLocaleString()}</td>
     `;
     tabla.appendChild(fila);
