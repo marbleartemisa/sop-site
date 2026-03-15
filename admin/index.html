@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel Admin SOP - ARTEMISA</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <style>
 body{margin:0;font-family:'Segoe UI',Arial;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
@@ -24,7 +23,6 @@ tr.selected{background:#e8f4ff;} a.file-link{text-decoration:none;font-size:.9re
 .btn-tramite{background:#007bff;color:white;} .btn-aprobar{background:#28a745;color:white;} .btn-rechazar{background:#dc3545;color:white;} .btn-eliminar{background:#444;color:white;}
 </style>
 </head>
-
 <body>
 <div class="overlay">
 <div class="navbar">
@@ -84,34 +82,23 @@ tr.selected{background:#e8f4ff;} a.file-link{text-decoration:none;font-size:.9re
 </div>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxhA3ZmwXeTn0oGbK77WjSIgoECEBidcNCIa4yGhJrMm72g5-1PhSDqnCmTniYZTqiKMA/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
 let solicitudes=[];
 let selectedIndex=null;
 
-// cargar datos desde Sheet
 async function cargarSolicitudes(){
-  try{
+  try {
     const res = await fetch(SCRIPT_URL);
     solicitudes = await res.json();
     solicitudes.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
     llenarFiltro();
     renderTabla();
-  }catch(e){
+  } catch(e) {
     console.error("Error cargando registros:", e);
     alert("No se pudieron cargar los registros");
   }
 }
 
-// función para mostrar iconos bonitos según tipo de archivo
-function iconoArchivo(link){
-  const l = link.toLowerCase();
-  if(l.endsWith(".pdf")) return "📄 " + link.split("/").pop();
-  if(l.endsWith(".jpg") || l.endsWith(".png")) return "🖼 " + link.split("/").pop();
-  if(l.endsWith(".xls") || l.endsWith(".xlsx")) return "📊 " + link.split("/").pop();
-  return "📎 " + link.split("/").pop();
-}
-
-// renderizar tabla
 function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML = "";
@@ -121,7 +108,7 @@ function renderTabla(){
 
   solicitudes.forEach((sop,index)=>{
     if(sop.estado==="Pendiente") pendientes++;
-    const texto = (sop.empleado+sop.objetivo+sop.departamento).toLowerCase();
+    let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase();
     if(buscar && !texto.includes(buscar)) return;
     if(deptFiltro && sop.departamento!==deptFiltro) return;
 
@@ -132,8 +119,8 @@ function renderTabla(){
 
     let archivosHTML="";
     if(sop.links){
-      const links = sop.links.split("\n");
-      archivosHTML = links.map(l=>`<a href="${l.trim()}" target="_blank" class="file-link">${iconoArchivo(l)}</a>`).join("<br>");
+      const links=sop.links.split("\n");
+      archivosHTML = links.map(l=>`<a href="${l.trim()}" target="_blank" class="file-link"><i class="fa fa-file"></i> ${l.split("/").pop()}</a>`).join("<br>");
     }
 
     const fila = document.createElement("tr");
@@ -153,7 +140,6 @@ function renderTabla(){
   document.getElementById("contadorPendientes").innerText = pendientes;
 }
 
-// llenar filtro de departamentos
 function llenarFiltro(){
   const select=document.getElementById("filtroDept");
   select.innerHTML='<option value="">Filtrar por departamento</option>';
@@ -165,7 +151,6 @@ function llenarFiltro(){
   });
 }
 
-// seleccionar fila
 function seleccionarSolicitud(index,row){
   selectedIndex = index;
   document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"));
@@ -175,11 +160,10 @@ function seleccionarSolicitud(index,row){
   document.getElementById("editDept").innerText = sop.departamento;
   document.getElementById("editObjetivo").innerText = sop.objetivo;
   document.getElementById("editAreas").innerText = sop.areas;
-  document.getElementById("editFiles").innerHTML = sop.links ? sop.links.split("\n").map(l=>`<a href="${l.trim()}" target="_blank">${iconoArchivo(l)}</a>`).join("<br>") : "";
+  document.getElementById("editFiles").innerHTML = sop.links ? sop.links.split("\n").map(l=>`<a href="${l.trim()}" target="_blank"><i class="fa fa-file"></i> ${l.split("/").pop()}</a>`).join("<br>") : "";
   document.getElementById("editorPanel").style.display = "block";
 }
 
-// cambiar estado
 async function cambiarEstadoSeleccionado(estado){
   if(selectedIndex===null) return;
   const sop = solicitudes[selectedIndex];
@@ -188,7 +172,7 @@ async function cambiarEstadoSeleccionado(estado){
       method:"POST",
       body: JSON.stringify({id:sop.id, estado:estado})
     });
-    sop.estado = estado; // actualizar local
+    sop.estado = estado;
     renderTabla();
   }catch(e){
     console.error("Error actualizando estado:", e);
@@ -196,7 +180,6 @@ async function cambiarEstadoSeleccionado(estado){
   }
 }
 
-// eliminar registro
 async function eliminarSeleccionado(){
   if(selectedIndex===null) return;
   if(!confirm("¿Eliminar solicitud?")) return;
