@@ -219,11 +219,10 @@ async function subirArchivosDrive(files, nombre){
   try {
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({employee: nombre, files: archivosBase64})
     });
     
-    const data = await res.json(); // ahora seguro JSON
+    const data = await res.json();
     return data.links || [];
   } catch(err) {
     console.error("Error subiendo archivos:", err);
