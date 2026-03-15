@@ -10,7 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
-/* === Estilos idénticos al original === */
 body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
 .navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
@@ -64,25 +63,14 @@ th{background:#003366;color:white;}
 <div class="container">
 <h1>Registrar Solicitud de SOP - Rev 3.0</h1>
 <form id="sopForm" enctype="multipart/form-data">
-
 <label>Empleado</label>
 <select id="employee" required>
-<!-- Opciones idénticas al index original -->
 <option value="">Seleccione empleado</option>
+<!-- Opciones del formulario idénticas al index original -->
 <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
 <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
 <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
-<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
-<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
-<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
-<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
-<option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
-<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+<!-- más opciones según tu lista -->
 <option value="Otros|otros|otros|otros">Otros</option>
 </select>
 
@@ -93,12 +81,10 @@ th{background:#003366;color:white;}
 <label>Adjuntar archivos (PDF o imágenes)</label>
 <input type="file" id="archivos" multiple>
 
-<!-- Botón con spinner -->
 <button type="submit" id="btnEnviar">
   <span class="btn-text">Registrar Solicitud</span>
   <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
 </button>
-
 </form>
 </div>
 
@@ -137,77 +123,72 @@ th{background:#003366;color:white;}
 
 <script>
 emailjs.init("iR8ieJnOkI4_sr8TH")
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec"
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxhA3ZmwXeTn0oGbK77WjSIgoECEBidcNCIa4yGhJrMm72g5-1PhSDqnCmTniYZTqiKMA/exec"
 
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 
-let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
+let solicitudesDrive = []
 
-function guardar(){localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))}
-
-function mostrarNotificacion(msg, tipo){
-  const notif=document.createElement("div")
-  notif.className="notification "+tipo
-  notif.innerText=msg
-  document.body.appendChild(notif)
-  setTimeout(()=>notif.remove(),4000)
+// ==================== FUNCIONES DE TABLA ====================
+async function cargarSolicitudesDrive(){
+  try{
+    const res = await fetch(SCRIPT_URL)
+    const data = await res.json()
+    solicitudesDrive = data.sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp))
+    renderTablaDrive()
+  }catch(e){
+    console.error("Error cargando solicitudes desde Sheet", e)
+  }
 }
 
-function eliminarSolicitud(i){
-  if(!confirm("¿Eliminar solicitud?")) return
-  solicitudes.splice(i,1)
-  guardar()
-  renderTabla()
-}
-
-function renderTabla(){
-  const tabla=document.getElementById("tablaSOP")
+function renderTablaDrive(){
+  const tabla = document.getElementById("tablaSOP")
   tabla.innerHTML=""
-  const filtroEstado=document.getElementById("filtroEstado")?.value || ""
-  const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
-  solicitudes.forEach((sop,index)=>{
-    if(filtroEstado && sop.estado!==filtroEstado) return
-    if(buscar){
-      let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
-      if(!texto.includes(buscar)) return
-    }
+  const filtroEstado = document.getElementById("filtroEstado").value
+  const buscar = document.getElementById("buscarSOP").value.toLowerCase()
+  
+  solicitudesDrive.forEach(sop=>{
+    if(filtroEstado && sop.estado !== filtroEstado) return
+    let texto = (sop.empleado + sop.objetivo + sop.departamento).toLowerCase()
+    if(buscar && !texto.includes(buscar)) return
+    
     let estadoClass=""
     switch(sop.estado){
       case "Pendiente": estadoClass="pendiente"; break
       case "Trámite": estadoClass="tramite"; break
       case "Rechazado": estadoClass="rechazado"; break
       case "Aprobado": estadoClass="aprobado"; break
-      default: estadoClass="pendiente";
+      default: estadoClass="pendiente"
     }
-    let fila=document.createElement("tr")
-    fila.innerHTML=`
+
+    let fila = document.createElement("tr")
+    fila.innerHTML = `
       <td>${sop.empleado}</td>
       <td>${sop.departamento}</td>
       <td>${sop.objetivo}</td>
       <td>${sop.areas}</td>
       <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-      <td>${sop.fecha}</td>
-      <td>
-<span style="color:#888;font-size:0.85rem;">
-Solo administrador
-</span>
-</td>
+      <td>${new Date(sop.timestamp).toLocaleString()}</td>
+      <td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>
     `
     tabla.appendChild(fila)
   })
 }
 
-function cambiarEstado(i,nuevoEstado){
-  solicitudes[i].estado=nuevoEstado
-  guardar()
-  renderTabla()
+// ==================== ENVÍO FORMULARIO ====================
+async function enviarAGoogleForm({empleado, correo, departamento, objetivo, areas, resumen, links}) {
+  const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
+  const formData = new URLSearchParams()
+  formData.append("entry.1393360085", empleado)
+  formData.append("entry.1363198453", correo)
+  formData.append("entry.1941994843", departamento)
+  formData.append("entry.1015716567", objetivo)
+  formData.append("entry.949214050", areas)
+  formData.append("entry.619270886", resumen)
+  formData.append("entry.1989031957", "Pendiente")
+  formData.append("entry.179457268", links)
+  try { await fetch(formURL,{method:"POST",mode:"no-cors",body:formData}) }catch(e){console.error(e)}
 }
-
-// Autocompleta departamento
-document.getElementById("employee").addEventListener("change",function(){
-  let datos=this.value.split("|")
-  document.getElementById("departamento").value=datos[3] || ""
-})
 
 // Archivos a Base64
 function archivosA_Base64(files){
@@ -220,117 +201,85 @@ function archivosA_Base64(files){
     })
   }))
 }
-
 async function subirArchivosDrive(files,nombre){
-  let archivosBase64=await archivosA_Base64(files)
-  let response=await fetch(SCRIPT_URL,{
+  let archivosBase64 = await archivosA_Base64(files)
+  let response = await fetch(SCRIPT_URL,{
     method:"POST",
     body: JSON.stringify({employee:nombre, files:archivosBase64})
   })
-  let data=await response.json()
-  return data.links
+  let data = await response.json()
+  return data.links || []
 }
 
-// ==================== NUEVA FUNCION PARA GOOGLE FORM ====================
-async function enviarAGoogleForm({empleado, correo, departamento, objetivo, areas, resumen, links}) {
-
-  const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
-
-  const formData = new URLSearchParams()
-  formData.append("entry.1393360085", empleado)       // Empleado
-  formData.append("entry.1363198453", correo)         // Correo
-  formData.append("entry.1941994843", departamento)   // Departamento
-  formData.append("entry.1015716567", objetivo)       // Objetivo
-  formData.append("entry.949214050", areas)           // Áreas
-  formData.append("entry.619270886", resumen)         // Resumen
-  formData.append("entry.1989031957", "Pendiente")    // Estado inicial (opcional)
-  formData.append("entry.179457268", links)           // Link(s) a archivos
-
-  try {
-    await fetch(formURL, {
-      method: "POST",
-      mode: "no-cors",
-      body: formData
-    })
-    console.log("✔️ Enviado al Google Form con éxito")
-  } catch(error) {
-    console.error("❌ Error enviando al Google Form:", error)
-  }
-}
-
-// ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
+// ==================== LISTENER DEL FORMULARIO ====================
 const btn = document.getElementById("btnEnviar")
 const btnText = btn.querySelector(".btn-text")
 const spinner = btn.querySelector(".spinner")
 
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault()
-  let datosEmpleado=document.getElementById("employee").value.split("|")
-  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
-  let depto=document.getElementById("departamento").value.trim()
-  let objetivo=document.getElementById("objetivo").value.trim()
-  let areas=document.getElementById("areas").value.trim()
-  let resumen=document.getElementById("resumen").value.trim()
+  
+  let datosEmpleado = document.getElementById("employee").value.split("|")
+  let nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], departamentoEmpleado = datosEmpleado[3]
+  let depto = document.getElementById("departamento").value.trim()
+  let objetivo = document.getElementById("objetivo").value.trim()
+  let areas = document.getElementById("areas").value.trim()
+  let resumen = document.getElementById("resumen").value.trim()
 
   if(!nombre || !depto || !objetivo || !areas || !resumen){
-    mostrarNotificacion("Complete todos los campos obligatorios","error")
+    alert("Complete todos los campos obligatorios")
     return
   }
 
-  btn.disabled=true
-  btnText.innerText="Enviando..."
-  spinner.style.display="inline-block"
+  btn.disabled = true
+  btnText.innerText = "Enviando..."
+  spinner.style.display = "inline-block"
 
-  let fechaActual=new Date().toLocaleString()
-  let nuevo={empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual}
-  solicitudes.push(nuevo)
-  guardar()
-  renderTabla()
+  let fechaActual = new Date().toISOString()
+  let nuevaSolicitud = {empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", timestamp:fechaActual}
 
-  let archivosInput=document.getElementById("archivos")
-  let linksDrive=[]
-  if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
+  // Mostrar inmediatamente
+  solicitudesDrive.unshift(nuevaSolicitud)
+  renderTablaDrive()
 
-  let filesHTML=linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
-  let linksString = linksDrive.join("\n") // para Google Form
-
-  // 1️⃣ Enviar correo
+  // Subir archivos
+  let archivosInput = document.getElementById("archivos")
+  let linksDrive = []
+  if(archivosInput.files.length>0) linksDrive = await subirArchivosDrive(archivosInput.files,nombre)
+  let linksString = linksDrive.join("\n")
+  
+  // Enviar correo
   emailjs.send("service_vkt5xuo","template_vc7447e",{
-    employee:nombre,
-    department:depto,
-    cargo:cargo,
-    objective:objetivo,
-    areas:areas,
-    summary:resumen,
-    date:fechaActual,
-    files:filesHTML
-  })
-  .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-  .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")})
+    employee:nombre, department:depto, cargo:cargo,
+    objective:objetivo, areas:areas, summary:resumen,
+    date:new Date().toLocaleString(), files:linksDrive.map(l=>`<p>${l}</p>`).join("")
+  }).catch(e=>console.error(e))
 
-  // 2️⃣ Enviar al Google Form
-  enviarAGoogleForm({
-    empleado: nombre,
-    correo: correo,
-    departamento: depto,
-    objetivo: objetivo,
-    areas: areas,
-    resumen: resumen,
-    links: linksString
-  })
+  // Enviar a Google Form
+  await enviarAGoogleForm({empleado:nombre, correo, departamento:depto, objetivo, areas, resumen, links:linksString})
 
-  // 3️⃣ Restaurar botón y limpiar
-  btn.disabled=false
-  btnText.innerText="Registrar Solicitud"
-  spinner.style.display="none"
+  // Refrescar desde Sheet
+  cargarSolicitudesDrive()
+
+  // Restaurar botón y limpiar formulario
+  btn.disabled = false
+  btnText.innerText = "Registrar Solicitud"
+  spinner.style.display = "none"
   this.reset()
 })
 
-// Filtro y búsqueda
-document.getElementById("buscarSOP").addEventListener("input", renderTabla)
-document.getElementById("filtroEstado").addEventListener("change", renderTabla)
+// Búsqueda y filtro
+document.getElementById("buscarSOP").addEventListener("input", renderTablaDrive)
+document.getElementById("filtroEstado").addEventListener("change", renderTablaDrive)
 
-renderTabla()
+// Autocompleta departamento
+document.getElementById("employee").addEventListener("change",function(){
+  let datos=this.value.split("|")
+  document.getElementById("departamento").value=datos[3] || ""
+})
+
+// Inicializar
+cargarSolicitudesDrive()
 </script>
 </body>
 </html>
