@@ -211,14 +211,32 @@ function archivosA_Base64(files){
     })
   }))
 }
-async function subirArchivosDrive(files,nombre){
-  let archivosBase64 = await archivosA_Base64(files)
-  let response = await fetch(SCRIPT_URL,{
-    method:"POST",
-    body: JSON.stringify({employee:nombre, files:archivosBase64})
-  })
-  let data = await response.json()
-  return data.links || []
+async function subirArchivosDrive(files, nombre){
+  try {
+    const archivosBase64 = await archivosA_Base64(files)
+    
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        employee: nombre,
+        files: archivosBase64
+      })
+    })
+    
+    if(!res.ok){
+      console.error("Error HTTP al subir archivos:", res.status, res.statusText)
+      return []
+    }
+    
+    const data = await res.json()
+    if(data.links) return data.links
+    return []
+    
+  } catch(err){
+    console.error("Error en subirArchivosDrive:", err)
+    return []
+  }
 }
 
 // ==================== LISTENER DEL FORMULARIO ====================
