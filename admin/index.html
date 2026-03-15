@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel Admin SOP - ARTEMISA</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
 body{margin:0;font-family:'Segoe UI',Arial;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
@@ -84,37 +85,37 @@ tr.selected{background:#e8f4ff;} a.file-link{text-decoration:none;font-size:.9re
 
 <script>
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxhA3ZmwXeTn0oGbK77WjSIgoECEBidcNCIa4yGhJrMm72g5-1PhSDqnCmTniYZTqiKMA/exec";
-let solicitudes=[]; 
+let solicitudes=[];
 let selectedIndex=null;
 
-// Iconos según tipo de archivo
+// Iconos por tipo de archivo
 function iconoArchivo(link){
   link = link.toLowerCase();
-  if(link.includes(".pdf")) return "📄 SOP.pdf";
-  if(link.includes(".jpg")||link.includes(".png")) return "🖼 Foto.jpg";
-  if(link.includes(".xls")||link.includes(".xlsx")) return "📊 Excel.xlsx";
+  if(link.endsWith(".pdf")) return "📄 SOP.pdf";
+  if(link.endsWith(".jpg")||link.endsWith(".png")) return "🖼 Foto.jpg";
+  if(link.endsWith(".xls")||link.endsWith(".xlsx")) return "📊 Excel.xlsx";
   return "📎 Archivo";
 }
 
 async function cargarSolicitudes(){
-  try {
+  try{
     const res = await fetch(SCRIPT_URL);
     solicitudes = await res.json();
     solicitudes.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
     llenarFiltro();
     renderTabla();
-  } catch(e) {
+  } catch(e){
     console.error("Error cargando registros:", e);
     alert("No se pudieron cargar los registros");
   }
 }
 
 function renderTabla(){
-  const tabla = document.getElementById("tablaSOP");
-  tabla.innerHTML = "";
-  let pendientes = 0;
-  const buscar = document.getElementById("buscarSOP").value.toLowerCase();
-  const deptFiltro = document.getElementById("filtroDept").value;
+  const tabla=document.getElementById("tablaSOP");
+  tabla.innerHTML="";
+  let pendientes=0;
+  const buscar=document.getElementById("buscarSOP").value.toLowerCase();
+  const deptFiltro=document.getElementById("filtroDept").value;
 
   solicitudes.forEach((sop,index)=>{
     if(sop.estado==="Pendiente") pendientes++;
@@ -122,22 +123,20 @@ function renderTabla(){
     if(buscar && !texto.includes(buscar)) return;
     if(deptFiltro && sop.departamento!==deptFiltro) return;
 
-    let estadoClass = "pendiente";
+    let estadoClass="pendiente";
     if(sop.estado==="Trámite") estadoClass="tramite";
     if(sop.estado==="Aprobado") estadoClass="aprobado";
     if(sop.estado==="Rechazado") estadoClass="rechazado";
 
     let archivosHTML="";
     if(sop.links){
-      const links = sop.links.split("\n");
-      archivosHTML = links.map(l => 
-        `<a href="${l.trim()}" target="_blank" class="file-link">${iconoArchivo(l)}</a>`
-      ).join("<br>");
+      const links=sop.links.split("\n");
+      archivosHTML = links.map(l=>`<a href="${l.trim()}" target="_blank" class="file-link">${iconoArchivo(l)}</a>`).join("<br>");
     }
 
-    const fila = document.createElement("tr");
-    fila.onclick = ()=>seleccionarSolicitud(index,fila);
-    fila.innerHTML = `
+    const fila=document.createElement("tr");
+    fila.onclick=()=>seleccionarSolicitud(index,fila);
+    fila.innerHTML=`
       <td>${sop.empleado}</td>
       <td>${sop.departamento}</td>
       <td>${sop.objetivo}</td>
@@ -149,42 +148,42 @@ function renderTabla(){
     tabla.appendChild(fila);
   });
 
-  document.getElementById("contadorPendientes").innerText = pendientes;
+  document.getElementById("contadorPendientes").innerText=pendientes;
 }
 
 function llenarFiltro(){
   const select=document.getElementById("filtroDept");
   select.innerHTML='<option value="">Filtrar por departamento</option>';
   [...new Set(solicitudes.map(s=>s.departamento))].forEach(d=>{
-    let opt = document.createElement("option");
-    opt.value = d;
-    opt.innerText = d;
+    let opt=document.createElement("option");
+    opt.value=d;
+    opt.innerText=d;
     select.appendChild(opt);
   });
 }
 
 function seleccionarSolicitud(index,row){
-  selectedIndex = index;
+  selectedIndex=index;
   document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"));
   row.classList.add("selected");
-  const sop = solicitudes[index];
-  document.getElementById("editEmpleado").innerText = sop.empleado;
-  document.getElementById("editDept").innerText = sop.departamento;
-  document.getElementById("editObjetivo").innerText = sop.objetivo;
-  document.getElementById("editAreas").innerText = sop.areas;
-  document.getElementById("editFiles").innerHTML = sop.links ? sop.links.split("\n").map(l=>`<a href="${l.trim()}" target="_blank">${iconoArchivo(l)}</a>`).join("<br>") : "";
-  document.getElementById("editorPanel").style.display = "block";
+  const sop=solicitudes[index];
+  document.getElementById("editEmpleado").innerText=sop.empleado;
+  document.getElementById("editDept").innerText=sop.departamento;
+  document.getElementById("editObjetivo").innerText=sop.objetivo;
+  document.getElementById("editAreas").innerText=sop.areas;
+  document.getElementById("editFiles").innerHTML=sop.links ? sop.links.split("\n").map(l=>`<a href="${l.trim()}" target="_blank">${iconoArchivo(l)}</a>`).join("<br>") : "";
+  document.getElementById("editorPanel").style.display="block";
 }
 
 async function cambiarEstadoSeleccionado(estado){
   if(selectedIndex===null) return;
-  const sop = solicitudes[selectedIndex];
+  const sop=solicitudes[selectedIndex];
   try{
     await fetch(SCRIPT_URL,{
       method:"POST",
       body: JSON.stringify({id:sop.id, estado:estado})
     });
-    sop.estado = estado;
+    sop.estado=estado; // actualizar localmente
     renderTabla();
   }catch(e){
     console.error("Error actualizando estado:", e);
@@ -195,7 +194,7 @@ async function cambiarEstadoSeleccionado(estado){
 async function eliminarSeleccionado(){
   if(selectedIndex===null) return;
   if(!confirm("¿Eliminar solicitud?")) return;
-  const sop = solicitudes[selectedIndex];
+  const sop=solicitudes[selectedIndex];
   try{
     await fetch(SCRIPT_URL,{
       method:"POST",
