@@ -39,7 +39,6 @@ th{background:#003366;color:white;}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
 @media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
-
 .spinner{margin-left:8px;}
 </style>
 </head>
@@ -136,10 +135,71 @@ th{background:#003366;color:white;}
 
 <script>
 emailjs.init("iR8ieJnOkI4_sr8TH")
-const SCRIPT_URL="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" // Apps Script que sube archivos y guarda en Sheet
-const SHEET_URL="https://script.google.com/macros/s/YOUR_SHEET_SCRIPT_ID/exec" // Apps Script que lee Sheet
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec"
 
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
+
+let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
+
+function guardar(){localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))}
+
+function mostrarNotificacion(msg, tipo){
+  const notif=document.createElement("div")
+  notif.className="notification "+tipo
+  notif.innerText=msg
+  document.body.appendChild(notif)
+  setTimeout(()=>notif.remove(),4000)
+}
+
+function eliminarSolicitud(i){
+  if(!confirm("¿Eliminar solicitud?")) return
+  solicitudes.splice(i,1)
+  guardar()
+  renderTabla()
+}
+
+function renderTabla(){
+  const tabla=document.getElementById("tablaSOP")
+  tabla.innerHTML=""
+  const filtroEstado=document.getElementById("filtroEstado")?.value || ""
+  const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
+  solicitudes.forEach((sop,index)=>{
+    if(filtroEstado && sop.estado!==filtroEstado) return
+    if(buscar){
+      let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
+      if(!texto.includes(buscar)) return
+    }
+    let estadoClass=""
+    switch(sop.estado){
+      case "Pendiente": estadoClass="pendiente"; break
+      case "Trámite": estadoClass="tramite"; break
+      case "Rechazado": estadoClass="rechazado"; break
+      case "Aprobado": estadoClass="aprobado"; break
+      default: estadoClass="pendiente";
+    }
+    let fila=document.createElement("tr")
+    fila.innerHTML=`
+      <td>${sop.empleado}</td>
+      <td>${sop.departamento}</td>
+      <td>${sop.objetivo}</td>
+      <td>${sop.areas}</td>
+      <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
+      <td>${sop.fecha}</td>
+      <td>
+<span style="color:#888;font-size:0.85rem;">
+Solo administrador
+</span>
+</td>
+    `
+    tabla.appendChild(fila)
+  })
+}
+
+function cambiarEstado(i,nuevoEstado){
+  solicitudes[i].estado=nuevoEstado
+  guardar()
+  renderTabla()
+}
 
 // Autocompleta departamento
 document.getElementById("employee").addEventListener("change",function(){
@@ -159,129 +219,79 @@ function archivosA_Base64(files){
   }))
 }
 
-// Subir archivos y obtener links
 async function subirArchivosDrive(files,nombre){
-  if(files.length===0) return [];
-  const archivosBase64 = await archivosA_Base64(files);
-  try{
-    const res = await fetch(SCRIPT_URL,{method:"POST", body:JSON.stringify({employee:nombre, files:archivosBase64})});
-    const data = await res.json();
-    return data.links || [];
-  }catch(err){
-    console.error("Error subiendo archivos:", err);
-    mostrarNotificacion("Error subiendo archivos a Drive","error");
-    return [];
-  }
+  let archivosBase64=await archivosA_Base64(files)
+  let response=await fetch(SCRIPT_URL,{
+    method:"POST",
+    body: JSON.stringify({employee:nombre, files:archivosBase64})
+  })
+  let data=await response.json()
+  return data.links
 }
 
-// Mostrar notificaciones
-function mostrarNotificacion(msg,tipo){
-  const notif=document.createElement("div")
-  notif.className="notification "+tipo
-  notif.innerText=msg
-  document.body.appendChild(notif)
-  setTimeout(()=>notif.remove(),4000)
-}
-
-// Render tabla desde Sheet
-async function renderTabla(){
-  const tabla=document.getElementById("tablaSOP")
-  tabla.innerHTML=""
-  try{
-    const res = await fetch(SHEET_URL)
-    const solicitudes = await res.json()
-    const filtroEstado=document.getElementById("filtroEstado")?.value || ""
-    const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
-    solicitudes.forEach(sop=>{
-      if(filtroEstado && sop.estado!==filtroEstado) return
-      if(buscar){
-        let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
-        if(!texto.includes(buscar)) return
-      }
-      let estadoClass=""
-      switch(sop.estado){
-        case "Pendiente": estadoClass="pendiente"; break
-        case "Trámite": estadoClass="tramite"; break
-        case "Rechazado": estadoClass="rechazado"; break
-        case "Aprobado": estadoClass="aprobado"; break
-        default: estadoClass="pendiente";
-      }
-      let fila=document.createElement("tr")
-      fila.innerHTML=`
-        <td>${sop.empleado}</td>
-        <td>${sop.departamento}</td>
-        <td>${sop.objetivo}</td>
-        <td>${sop.areas}</td>
-        <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-        <td>${sop.fecha}</td>
-        <td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>
-      `
-      tabla.appendChild(fila)
-    })
-  }catch(err){
-    console.error(err)
-    mostrarNotificacion("Error cargando tabla","error")
-  }
-}
-
-// ENVÍO FORMULARIO
-const btn=document.getElementById("btnEnviar")
-const btnText=btn.querySelector(".btn-text")
-const spinner=btn.querySelector(".spinner")
+// ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
+const btn = document.getElementById("btnEnviar")
+const btnText = btn.querySelector(".btn-text")
+const spinner = btn.querySelector(".spinner")
 
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault()
-  const datosEmpleado=document.getElementById("employee").value.split("|")
-  const nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
-  const depto=document.getElementById("departamento").value.trim()
-  const objetivo=document.getElementById("objetivo").value.trim()
-  const areas=document.getElementById("areas").value.trim()
-  const resumen=document.getElementById("resumen").value.trim()
-  if(!nombre||!depto||!objetivo||!areas||!resumen){
-    mostrarNotificacion("Complete todos los campos obligatorios","error"); return
+  let datosEmpleado=document.getElementById("employee").value.split("|")
+  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
+  let depto=document.getElementById("departamento").value.trim()
+  let objetivo=document.getElementById("objetivo").value.trim()
+  let areas=document.getElementById("areas").value.trim()
+  let resumen=document.getElementById("resumen").value.trim()
+
+  if(!nombre || !depto || !objetivo || !areas || !resumen){
+    mostrarNotificacion("Complete todos los campos obligatorios","error")
+    return
   }
 
-  btn.disabled=true; btnText.innerText="Enviando..."; spinner.style.display="inline-block"
+  btn.disabled=true
+  btnText.innerText="Enviando..."
+  spinner.style.display="inline-block"
 
-  const archivosInput=document.getElementById("archivos")
-  const linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
-  const linksString=linksDrive.join("\n")
+  let fechaActual=new Date().toLocaleString()
+  let nuevo={empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual}
+  solicitudes.push(nuevo)
+  guardar()
+  renderTabla()
 
-  // Enviar a Sheet + Drive
-  try{
-    await fetch(SCRIPT_URL,{method:"POST", body:JSON.stringify({
-      empleado:nombre,
-      correo,
-      departamento:depto,
-      cargo,
-      objetivo,
-      areas,
-      resumen,
-      fecha: new Date().toLocaleString(),
-      links: linksDrive,
-      estado:"Pendiente"
-    })})
-  }catch(err){console.error(err); mostrarNotificacion("Error guardando en Sheet","error")}
+  let archivosInput=document.getElementById("archivos")
+  let linksDrive=[]
+  if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
 
-  // Enviar correo
-  const filesHTML=linksDrive.map(l=>`<p>📎 <a href="${l}">${l}</a></p>`).join("")
+  let filesHTML=linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
+
   emailjs.send("service_vkt5xuo","template_vc7447e",{
-    employee:nombre, department:depto, cargo:cargo,
-    objective:objetivo, areas:areas, summary:resumen, date:new Date().toLocaleString(),
+    employee:nombre,
+    department:depto,
+    cargo:cargo,
+    objective:objetivo,
+    areas:areas,
+    summary:resumen,
+    date:fechaActual,
     files:filesHTML
-  }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-    .catch(e=>{console.error(e); mostrarNotificacion("Error enviando correo","error")})
-
-  btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none"
-  this.reset(); renderTabla()
+  })
+  .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
+  .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")})
+  .finally(()=>{
+    btn.disabled=false
+    btnText.innerText="Registrar Solicitud"
+    spinner.style.display="none"
+    this.reset()
+  })
 })
 
 // Filtro y búsqueda
 document.getElementById("buscarSOP").addEventListener("input", renderTabla)
 document.getElementById("filtroEstado").addEventListener("change", renderTabla)
 
-// Cargar tabla al inicio
 renderTabla()
 </script>
 </body>
 </html>
+
+
+
