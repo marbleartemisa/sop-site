@@ -452,29 +452,31 @@ document.getElementById("modalAporte").style.display="none"
 /* ENVIAR APORTE */
 
 async function enviarAporte(){
+  const id = document.getElementById("aporte_id_sop").value;
 
-  let id = document.getElementById("aporte_id_sop").value
+  // Selección del empleado que aporta
+  const select = document.getElementById("aporte_empleado_select").value.split("|");
+  const empleado = select[0];
+  const correo = select[1];
+  const depto = select[2];
 
-  // Tomar empleado, correo y departamento del select
-  let select = document.getElementById("aporte_empleado_select").value.split("|")
-  let empleado = select[0]
-  let correo = select[1]
-  let depto = select[2]
+  const comentario = document.getElementById("aporte_comentario").value.trim();
+  const archivosInput = document.getElementById("aporte_archivos");
+  let linksDrive = [];
 
-  let comentario = document.getElementById("aporte_comentario").value
-  let archivosInput = document.getElementById("aporte_archivos")
-  let linksDrive = []
-
-  if(archivosInput.files.length > 0)
-    linksDrive = await subirArchivosDrive(archivosInput.files, empleado)
-
-  if(!empleado || !correo || !depto || !comentario){
-    mostrarNotificacion("Complete todos los campos","error")
-    return
+  if(archivosInput.files.length > 0){
+    linksDrive = await subirArchivosDrive(archivosInput.files, empleado);
   }
 
+  if(!empleado || !correo || !depto || !comentario){
+    mostrarNotificacion("Complete todos los campos", "error");
+    return;
+  }
+
+  // Enviar a Google Apps Script para guardar en SOP_Aportes
   await fetch(SCRIPT_URL_SOP_ADMIN, {
     method: "POST",
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
       action: "guardarAporte",
       id_sop: id,
@@ -482,28 +484,42 @@ async function enviarAporte(){
       correo: correo,
       departamento: depto,
       comentario: comentario,
-      archivos: linksDrive.join(", ")
+      archivos: linksDrive.join(", "),
+      fecha: new Date().toISOString()
     })
-  })
+  });
 
-  mostrarNotificacion("Aporte registrado","success")
-  cerrarAporte()
-  cargarHistorial(id)
+  mostrarNotificacion("Aporte registrado", "success");
+  cerrarAporte();
+  cargarHistorial(id);
 }
+  
 async function cargarHistorial(id){
+  const historial = document.getElementById("historialAportes");
+  historial.innerHTML = "Cargando...";
 
-const historial=document.getElementById("historialAportes")
-historial.innerHTML="Cargando..."
+  try{
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id));
+    const data = await res.json();
 
-try{
+    if(!data.length){
+      historial.innerHTML = "Sin aportes aún";
+      return;
+    }
 
-const res=await fetch(SCRIPT_URL_SOP_ADMIN+"?aportes="+encodeURIComponent(id))
+    historial.innerHTML = data.map(a => `
+      <div style="border-bottom:1px solid #eee;padding:6px 0;">
+        <strong>${a.EMPLEADO || "Usuario"}</strong><br>
+        <small>${a.FECHA ? new Date(a.FECHA).toLocaleString() : ""}</small><br>
+        ${a.COMENTARIO || ""}<br>
+        ${a.ARCHIVOS ? a.ARCHIVOS.split(",").map(l => iconoArchivo(l.trim())).join("<br>") : ""}
+      </div>
+    `).join("");
 
-const data=await res.json()
-
-if(!data.length){
-historial.innerHTML="Sin aportes aún"
-return
+  } catch(e){
+    historial.innerHTML = "Error cargando historial";
+    console.error(e);
+  }
 }
 
 historial.innerHTML=data.map(a=>`
