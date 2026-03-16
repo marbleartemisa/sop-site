@@ -39,6 +39,7 @@ th{background:#003366;color:white;}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
 @media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
+
 .spinner{margin-left:8px;}
 </style>
 </head>
@@ -63,40 +64,38 @@ th{background:#003366;color:white;}
 <div class="container">
 <h1>Registrar Solicitud de SOP - Rev 3.0</h1>
 <form id="sopForm" enctype="multipart/form-data">
+  <!-- TODOS LOS INPUTS Y SELECTS COMO TENÍAS -->
+  <label>Empleado</label>
+  <select id="employee" required>
+    <option value="">Seleccione empleado</option>
+    <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
+    <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
+    <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+    <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+    <option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+    <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+    <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+    <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+    <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+    <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+    <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+    <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+    <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+    <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+    <option value="Otros|otros|otros|otros">Otros</option>
+  </select>
 
-<label>Empleado</label>
-<select id="employee" required>
-<option value="">Seleccione empleado</option>
-<option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
-<option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
-<option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
-<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
-<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
-<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
-<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
-<option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
-<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-<option value="Otros|otros|otros|otros">Otros</option>
-</select>
+  <input type="text" id="departamento" placeholder="Área / Departamento" required>
+  <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
+  <input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
+  <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
+  <label>Adjuntar archivos (PDF o imágenes)</label>
+  <input type="file" id="archivos" multiple>
 
-<input type="text" id="departamento" placeholder="Área / Departamento" required>
-<input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
-<input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
-<textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
-<label>Adjuntar archivos (PDF o imágenes)</label>
-<input type="file" id="archivos" multiple>
-
-<!-- Botón con spinner -->
-<button type="submit" id="btnEnviar">
-  <span class="btn-text">Registrar Solicitud</span>
-  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
-</button>
-
+  <button type="submit" id="btnEnviar">
+    <span class="btn-text">Registrar Solicitud</span>
+    <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
+  </button>
 </form>
 </div>
 
@@ -135,70 +134,59 @@ th{background:#003366;color:white;}
 
 <script>
 emailjs.init("iR8ieJnOkI4_sr8TH")
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec"
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec"
 
+// MENU
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 
-let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || []
+// --- SOLICITUDES SOLO INFORMACION DESDE SOP_Admin ---
+let solicitudes = [];
 
-function guardar(){localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes))}
-
-function mostrarNotificacion(msg, tipo){
-  const notif=document.createElement("div")
-  notif.className="notification "+tipo
-  notif.innerText=msg
-  document.body.appendChild(notif)
-  setTimeout(()=>notif.remove(),4000)
-}
-
-function eliminarSolicitud(i){
-  if(!confirm("¿Eliminar solicitud?")) return
-  solicitudes.splice(i,1)
-  guardar()
-  renderTabla()
+async function cargarSolicitudes(){
+  try {
+    const res = await fetch(SCRIPT_URL);
+    solicitudes = await res.json();
+    renderTabla();
+  } catch(e){
+    console.error("Error cargando registros:", e);
+    mostrarNotificacion("No se pudieron cargar los registros","error");
+  }
 }
 
 function renderTabla(){
-  const tabla=document.getElementById("tablaSOP")
-  tabla.innerHTML=""
-  const filtroEstado=document.getElementById("filtroEstado")?.value || ""
-  const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
-  solicitudes.forEach((sop,index)=>{
-    if(filtroEstado && sop.estado!==filtroEstado) return
+  const tabla = document.getElementById("tablaSOP");
+  tabla.innerHTML = "";
+  const filtroEstado = document.getElementById("filtroEstado")?.value || "";
+  const buscar = document.getElementById("buscarSOP")?.value?.toLowerCase() || "";
+
+  solicitudes.forEach(sop=>{
+    if(filtroEstado && sop.estado!==filtroEstado) return;
     if(buscar){
-      let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
-      if(!texto.includes(buscar)) return
+      let texto = (sop.empleado+sop.objetivo+sop.departamento).toLowerCase();
+      if(!texto.includes(buscar)) return;
     }
-    let estadoClass=""
+
+    let estadoClass = "";
     switch(sop.estado){
-      case "Pendiente": estadoClass="pendiente"; break
-      case "Trámite": estadoClass="tramite"; break
-      case "Rechazado": estadoClass="rechazado"; break
-      case "Aprobado": estadoClass="aprobado"; break
+      case "Pendiente": estadoClass="pendiente"; break;
+      case "Trámite": estadoClass="tramite"; break;
+      case "Rechazado": estadoClass="rechazado"; break;
+      case "Aprobado": estadoClass="aprobado"; break;
       default: estadoClass="pendiente";
     }
-    let fila=document.createElement("tr")
-    fila.innerHTML=`
+
+    let fila = document.createElement("tr");
+    fila.innerHTML = `
       <td>${sop.empleado}</td>
       <td>${sop.departamento}</td>
       <td>${sop.objetivo}</td>
       <td>${sop.areas}</td>
       <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-      <td>${sop.fecha}</td>
-      <td>
-<span style="color:#888;font-size:0.85rem;">
-Solo administrador
-</span>
-</td>
-    `
-    tabla.appendChild(fila)
-  })
-}
-
-function cambiarEstado(i,nuevoEstado){
-  solicitudes[i].estado=nuevoEstado
-  guardar()
-  renderTabla()
+      <td>${new Date(sop.timestamp).toLocaleString()}</td>
+      <td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>
+    `;
+    tabla.appendChild(fila);
+  });
 }
 
 // Autocompleta departamento
@@ -220,12 +208,12 @@ function archivosA_Base64(files){
 }
 
 async function subirArchivosDrive(files,nombre){
-  let archivosBase64=await archivosA_Base64(files)
-  let response=await fetch(SCRIPT_URL,{
+  let archivosBase64 = await archivosA_Base64(files)
+  let response = await fetch(SCRIPT_URL,{
     method:"POST",
     body: JSON.stringify({employee:nombre, files:archivosBase64})
   })
-  let data=await response.json()
+  let data = await response.json()
   return data.links
 }
 
@@ -236,33 +224,32 @@ const spinner = btn.querySelector(".spinner")
 
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault()
-  let datosEmpleado=document.getElementById("employee").value.split("|")
-  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
-  let depto=document.getElementById("departamento").value.trim()
-  let objetivo=document.getElementById("objetivo").value.trim()
-  let areas=document.getElementById("areas").value.trim()
-  let resumen=document.getElementById("resumen").value.trim()
+  let datosEmpleado = document.getElementById("employee").value.split("|")
+  let nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], departamentoEmpleado = datosEmpleado[3]
+  let depto = document.getElementById("departamento").value.trim()
+  let objetivo = document.getElementById("objetivo").value.trim()
+  let areas = document.getElementById("areas").value.trim()
+  let resumen = document.getElementById("resumen").value.trim()
 
   if(!nombre || !depto || !objetivo || !areas || !resumen){
     mostrarNotificacion("Complete todos los campos obligatorios","error")
     return
   }
 
-  btn.disabled=true
-  btnText.innerText="Enviando..."
-  spinner.style.display="inline-block"
+  btn.disabled = true
+  btnText.innerText = "Enviando..."
+  spinner.style.display = "inline-block"
 
-  let fechaActual=new Date().toLocaleString()
-  let nuevo={empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual}
+  let fechaActual = new Date().toLocaleString()
+  let nuevo = {empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual}
   solicitudes.push(nuevo)
-  guardar()
   renderTabla()
 
-  let archivosInput=document.getElementById("archivos")
-  let linksDrive=[]
-  if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
+  let archivosInput = document.getElementById("archivos")
+  let linksDrive = []
+  if(archivosInput.files.length>0) linksDrive = await subirArchivosDrive(archivosInput.files,nombre)
 
-  let filesHTML=linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
+  let filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
 
   emailjs.send("service_vkt5xuo","template_vc7447e",{
     employee:nombre,
@@ -288,7 +275,20 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
 document.getElementById("buscarSOP").addEventListener("input", renderTabla)
 document.getElementById("filtroEstado").addEventListener("change", renderTabla)
 
-renderTabla()
+// Cargar solicitudes desde SOP_Admin al inicio
+cargarSolicitudes()
+
+// Notificación
+function mostrarNotificacion(msg, tipo){
+  const notif=document.createElement("div")
+  notif.className="notification "+tipo
+  notif.innerText=msg
+  document.body.appendChild(notif)
+  setTimeout(()=>notif.remove(),4000)
+}
+
+// Solo menú
+function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 </script>
 </body>
 </html>
