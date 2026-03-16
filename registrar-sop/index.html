@@ -115,7 +115,7 @@ th{background:#003366;color:white;}
 <th>Áreas</th>
 <th>Estado</th>
 <th>Fecha / Hora</th>
-<th>Acciones</th>
+<th>Archivos</th>
 </tr>
 </thead>
 <tbody id="tablaSOP"></tbody>
@@ -128,60 +128,145 @@ th{background:#003366;color:white;}
 </div>
 
 <script>
+
 emailjs.init("iR8ieJnOkI4_sr8TH")
+
 const SCRIPT_URL_DRIVE="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec"
 const SCRIPT_URL_SOP_ADMIN="https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec"
 const GOOGLE_FORM_URL="https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
 
-function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
-document.getElementById("employee").addEventListener("change",function(){ let datos=this.value.split("|"); document.getElementById("departamento").value=datos[3] || ""})
 
-// Archivos a Base64
-function archivosA_Base64(files){ return Promise.all(Array.from(files).map(file=>{ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onload=()=>resolve({name:file.name,data:reader.result}); reader.onerror=reject; reader.readAsDataURL(file) }) })) }
+function toggleMenu(){
+  document.querySelector('.menu').classList.toggle('show')
+}
+
+document.getElementById("employee").addEventListener("change",function(){
+  let datos=this.value.split("|")
+  document.getElementById("departamento").value=datos[3] || ""
+})
+
+
+/* ICONOS DE ARCHIVOS */
+
+function iconoArchivo(link){
+
+  const url = link.toLowerCase()
+
+  if(url.includes(".pdf"))
+    return `📄 <a href="${link}" target="_blank">PDF</a>`
+
+  if(url.match(/\.(jpg|jpeg|png|gif|webp)$/))
+    return `🖼 <a href="${link}" target="_blank">Imagen</a>`
+
+  if(url.match(/\.(xls|xlsx|csv)$/))
+    return `📊 <a href="${link}" target="_blank">Excel</a>`
+
+  return `📎 <a href="${link}" target="_blank">Archivo</a>`
+}
+
+
+/* ARCHIVOS A BASE64 */
+
+function archivosA_Base64(files){
+  return Promise.all(
+    Array.from(files).map(file=>{
+      return new Promise((resolve,reject)=>{
+        const reader=new FileReader()
+        reader.onload=()=>resolve({name:file.name,data:reader.result})
+        reader.onerror=reject
+        reader.readAsDataURL(file)
+      })
+    })
+  )
+}
+
+
+/* SUBIR ARCHIVOS A DRIVE */
 
 async function subirArchivosDrive(files,nombre){
+
   let archivosBase64=await archivosA_Base64(files)
+
   let response=await fetch(SCRIPT_URL_DRIVE,{
     method:"POST",
     body: JSON.stringify({employee:nombre, files:archivosBase64})
   })
+
   let data=await response.json()
+
   return data.links
 }
 
-// ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
+
+
+/* BOTON */
+
 const btn = document.getElementById("btnEnviar")
 const btnText = btn.querySelector(".btn-text")
 const spinner = btn.querySelector(".spinner")
 
+
+
+/* ENVIO FORMULARIO */
+
 document.getElementById("sopForm").addEventListener("submit", async function(e){
+
   e.preventDefault()
+
   let datosEmpleado=document.getElementById("employee").value.split("|")
-  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
+
+  let nombre=datosEmpleado[0]
+  let correo=datosEmpleado[1]
+  let cargo=datosEmpleado[2]
+
   let depto=document.getElementById("departamento").value.trim()
   let objetivo=document.getElementById("objetivo").value.trim()
   let areas=document.getElementById("areas").value.trim()
   let resumen=document.getElementById("resumen").value.trim()
-  if(!nombre || !depto || !objetivo || !areas || !resumen){ mostrarNotificacion("Complete todos los campos obligatorios","error"); return }
 
-  btn.disabled=true; btnText.innerText="Enviando..."; spinner.style.display="inline-block"
+  if(!nombre || !depto || !objetivo || !areas || !resumen){
+    mostrarNotificacion("Complete todos los campos obligatorios","error")
+    return
+  }
+
+  btn.disabled=true
+  btnText.innerText="Enviando..."
+  spinner.style.display="inline-block"
+
 
   let fechaActual=new Date().toLocaleString()
+
   let archivosInput=document.getElementById("archivos")
   let linksDrive=[]
-  if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
+
+  if(archivosInput.files.length>0)
+    linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
+
+
+
+  /* EMAIL */
 
   let filesHTML=linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
 
-  // Enviar EmailJS
   emailjs.send("service_vkt5xuo","template_vc7447e",{
-    employee:nombre, department:depto, cargo:cargo, objective:objetivo, areas:areas, summary:resumen, date:fechaActual, files:filesHTML
-  }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-    .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")})
+    employee:nombre,
+    department:depto,
+    cargo:cargo,
+    objective:objetivo,
+    areas:areas,
+    summary:resumen,
+    date:fechaActual,
+    files:filesHTML
+  })
 
-  // Enviar Google Form
+
+
+  /* GOOGLE FORM */
+
   try{
+
     const formData = new FormData()
+
     formData.append("entry.1393360085", nombre)
     formData.append("entry.1363198453", correo)
     formData.append("entry.1941994843", depto)
@@ -190,75 +275,126 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
     formData.append("entry.619270886", resumen)
     formData.append("entry.1989031957", "Pendiente")
     formData.append("entry.1877018002", linksDrive.join(", "))
+
     fetch(GOOGLE_FORM_URL,{
       method:"POST",
       body:formData,
       mode:"no-cors"
     })
-  }catch(e){console.error("Error enviando a Google Form:", e)}
 
-  // Refrescar tabla SOP_Admin
+  }catch(e){
+    console.error(e)
+  }
+
+
+  mostrarNotificacion("Solicitud enviada correctamente","success")
+
   renderTabla()
 
-  btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none"
+  btn.disabled=false
+  btnText.innerText="Registrar Solicitud"
+  spinner.style.display="none"
+
   this.reset()
+
 })
 
-// NOTIFICACIONES
-function mostrarNotificacion(msg, tipo){
+
+
+/* NOTIFICACIONES */
+
+function mostrarNotificacion(msg,tipo){
+
   const notif=document.createElement("div")
+
   notif.className="notification "+tipo
   notif.innerText=msg
+
   document.body.appendChild(notif)
+
   setTimeout(()=>notif.remove(),4000)
+
 }
 
-// TABLA SOP_ADMIN
+
+
+/* TABLA SOP */
+
 async function renderTabla(){
+
   const tabla=document.getElementById("tablaSOP")
   tabla.innerHTML=""
-  const filtroEstado=document.getElementById("filtroEstado")?.value || ""
-  const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
+
+  const filtroEstado=document.getElementById("filtroEstado").value
+  const buscar=document.getElementById("buscarSOP").value.toLowerCase()
 
   try{
+
     const res=await fetch(SCRIPT_URL_SOP_ADMIN)
-    const data=await res.json() // Array de objetos
+
+    const data=await res.json()
+
     data.forEach(sop=>{
+
       if(filtroEstado && sop.estado!==filtroEstado) return
+
       if(buscar){
         let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
         if(!texto.includes(buscar)) return
       }
-      let estadoClass=""
-      switch(sop.estado){
-        case "Pendiente": estadoClass="pendiente"; break
-        case "Trámite": estadoClass="tramite"; break
-        case "Rechazado": estadoClass="rechazado"; break
-        case "Aprobado": estadoClass="aprobado"; break
-        default: estadoClass="pendiente"
+
+      let estadoClass="pendiente"
+
+      if(sop.estado==="Trámite") estadoClass="tramite"
+      if(sop.estado==="Rechazado") estadoClass="rechazado"
+      if(sop.estado==="Aprobado") estadoClass="aprobado"
+
+      let archivosHTML=""
+
+      if(sop.links){
+
+        let links=sop.links.split(",")
+
+        archivosHTML=links.map(l=>iconoArchivo(l.trim())).join("<br>")
+
       }
+
       let fila=document.createElement("tr")
+
       fila.innerHTML=`
-        <td>${sop.empleado}</td>
-        <td>${sop.departamento}</td>
-        <td>${sop.objetivo}</td>
-        <td>${sop.areas}</td>
-        <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-        <td>${sop.fecha}</td>
-        <td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>
+      <td>${sop.empleado || ""}</td>
+      <td>${sop.departamento || ""}</td>
+      <td>${sop.objetivo || ""}</td>
+      <td>${sop.areas || ""}</td>
+      <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td>
+      <td>${sop.Timestamp || ""}</td>
+      <td>${archivosHTML}</td>
       `
+
       tabla.appendChild(fila)
+
     })
-  }catch(e){ console.error("Error cargando SOP_Admin:", e)}
+
+  }
+  catch(e){
+    console.error("Error cargando SOP:",e)
+  }
+
 }
 
-// FILTRO Y BÚSQUEDA
+
+
+/* FILTROS */
+
 document.getElementById("buscarSOP").addEventListener("input", renderTabla)
 document.getElementById("filtroEstado").addEventListener("change", renderTabla)
 
-// Inicializar tabla
-renderTabla()
-</script>
 
+
+/* INICIO */
+
+renderTabla()
+
+</script>
 </body>
 </html>
