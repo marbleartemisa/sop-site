@@ -131,30 +131,42 @@ th{background:#003366;color:white;}
 
 <!-- MODAL APORTES -->
 <div id="modalAporte" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:9999;">
+  <div style="background:white;padding:30px;border-radius:12px;width:400px;max-width:90%;">
+    <h3>Aportar a SOP</h3>
+    <div id="historialAportes" style="max-height:200px;overflow:auto;margin-bottom:15px;border:1px solid #ddd;padding:10px;border-radius:8px;">
+      Cargando historial...
+    </div>
+    <input type="hidden" id="aporte_id_sop">
 
-<div style="background:white;padding:30px;border-radius:12px;width:400px;max-width:90%;">
+    <!-- Selección del empleado que aporta -->
+    <label>Empleado que aporta</label>
+    <select id="aporte_empleado_select" required>
+      <option value="">Seleccione empleado</option>
+      <option value="Damian Molina|damian@artemisamarble.com|Ventas">Damian Molina</option>
+      <option value="Alberto Molina|frontdesk@artemisamarble.com|Administracion">Alberto Molina</option>
+      <option value="Gabriel Batista|sales@artemisamarble.com|Comercial">Gabriel Batista</option>
+      <option value="Jenny Perez|jenny@artemisamarble.com|Ventas">Jenny Perez</option>
+      <option value="Yozusi Urdaneta|wood@artemisamarble.com|Diseño">Yozusi Urdaneta</option>
+      <option value="Yoandry Perez|yoandry@artemisamarble.com|Producción">Yoandry Perez</option>
+      <option value="Wendy Romanach|accounting@artemisamarble.com|Administracion">Wendy Romanach</option>
+      <option value="Rolando Diaz|rolando@artemisamarble.com|Medida">Rolando Diaz</option>
+      <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Diseño">Krishna Camila Rojas</option>
+      <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medida">Gregorio Abreu</option>
+      <option value="Juan Pablo Molina|sales3@artemisamarble.com|Diseño">Juan Pablo Molina</option>
+      <option value="Kevin Pastor|sales4@artemisamarble.com|Comercial">Kevin Pastor</option>
+      <option value="Eliana Pineda|info@artemisamarble.com|Comercial">Eliana Pineda</option>
+      <option value="Carlos Herrera|control@artemisamarble.com|Control">Carlos Herrera</option>
+    </select>
 
-<h3>Aportar a SOP</h3>
-  <div id="historialAportes" style="max-height:200px;overflow:auto;margin-bottom:15px;border:1px solid #ddd;padding:10px;border-radius:8px;">
-Cargando historial...
-</div>
+    <textarea id="aporte_comentario" placeholder="Comentario u observación" style="width:100%;height:100px;margin-top:10px;"></textarea>
+    <label>Adjuntar archivos</label>
+    <input type="file" id="aporte_archivos" multiple>
 
-<input type="hidden" id="aporte_id_sop">
-<input type="hidden" id="aporte_empleado">
-<input type="hidden" id="aporte_correo">
-<input type="hidden" id="aporte_departamento">
-
-<textarea id="aporte_comentario" placeholder="Comentario u observación" style="width:100%;height:100px;margin-top:10px;"></textarea>
-
-<label>Adjuntar archivos</label>
-<input type="file" id="aporte_archivos" multiple>
-
-<div style="margin-top:15px;display:flex;gap:10px;">
-<button onclick="enviarAporte()">Enviar</button>
-<button onclick="cerrarAporte()" style="background:#999;">Cancelar</button>
-</div>
-
-</div>
+    <div style="margin-top:15px;display:flex;gap:10px;">
+      <button onclick="enviarAporte()">Enviar</button>
+      <button onclick="cerrarAporte()" style="background:#999;">Cancelar</button>
+    </div>
+  </div>
 </div>
 
 
@@ -441,36 +453,42 @@ document.getElementById("modalAporte").style.display="none"
 
 async function enviarAporte(){
 
-let id=document.getElementById("aporte_id_sop").value
-let empleado=document.getElementById("aporte_empleado").value
-let correo=document.getElementById("aporte_correo").value
-let depto=document.getElementById("aporte_departamento").value
-let comentario=document.getElementById("aporte_comentario").value
+  let id = document.getElementById("aporte_id_sop").value
 
-let archivosInput=document.getElementById("aporte_archivos")
-let linksDrive=[]
+  // Tomar empleado, correo y departamento del select
+  let select = document.getElementById("aporte_empleado_select").value.split("|")
+  let empleado = select[0]
+  let correo = select[1]
+  let depto = select[2]
 
-if(archivosInput.files.length>0)
-linksDrive=await subirArchivosDrive(archivosInput.files,empleado)
+  let comentario = document.getElementById("aporte_comentario").value
+  let archivosInput = document.getElementById("aporte_archivos")
+  let linksDrive = []
 
+  if(archivosInput.files.length > 0)
+    linksDrive = await subirArchivosDrive(archivosInput.files, empleado)
 
-await fetch(SCRIPT_URL_SOP_ADMIN,{
-method:"POST",
-body:JSON.stringify({
-action:"guardarAporte",
-id_sop:id,
-empleado:empleado,
-correo:correo,
-departamento:depto,
-comentario:comentario,
-archivos:linksDrive.join(", ")
-})
-})
+  if(!empleado || !correo || !depto || !comentario){
+    mostrarNotificacion("Complete todos los campos","error")
+    return
+  }
 
-mostrarNotificacion("Aporte registrado","success")
+  await fetch(SCRIPT_URL_SOP_ADMIN, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "guardarAporte",
+      id_sop: id,
+      empleado: empleado,
+      correo: correo,
+      departamento: depto,
+      comentario: comentario,
+      archivos: linksDrive.join(", ")
+    })
+  })
 
-cerrarAporte()
-
+  mostrarNotificacion("Aporte registrado","success")
+  cerrarAporte()
+  cargarHistorial(id)
 }
 async function cargarHistorial(id){
 
@@ -491,12 +509,13 @@ return
 historial.innerHTML=data.map(a=>`
 
 <div style="border-bottom:1px solid #eee;padding:6px 0;">
-<strong>${a.EMPLEADO}</strong><br>
-<small>${a.FECHA}</small><br>
+<strong>${a.EMPLEADO || "Usuario"}</strong><br>
+<small>${a.FECHA ? new Date(a.FECHA).toLocaleString() : ""}</small><br>
 ${a.COMENTARIO || ""}
 </div>
 
 `).join("")
+
 
 }
 catch(e){
