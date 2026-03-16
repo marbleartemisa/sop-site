@@ -42,6 +42,7 @@ th{background:#003366;color:white;}
 </head>
 <body>
 <div class="overlay">
+
 <!-- NAVBAR -->
 <div class="navbar">
   <div class="logo">
@@ -85,6 +86,8 @@ th{background:#003366;color:white;}
   <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
   <label>Adjuntar archivos (PDF o imágenes)</label>
   <input type="file" id="archivos" multiple>
+
+  <!-- Botón con spinner -->
   <button type="submit" id="btnEnviar">
     <span class="btn-text">Registrar Solicitud</span>
     <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
@@ -97,22 +100,22 @@ th{background:#003366;color:white;}
 <h2>Solicitudes SOP</h2>
 <input type="text" id="buscarSOP" placeholder="Buscar..." style="margin-bottom:15px;padding:8px;width:100%;border-radius:8px;border:1px solid #ccc;">
 <select id="filtroEstado" style="margin-bottom:15px;padding:8px;border-radius:8px;border:1px solid #ccc;">
-  <option value="">Todos los estados</option>
-  <option value="Pendiente">Pendiente</option>
-  <option value="Trámite">Trámite</option>
-  <option value="Rechazado">Rechazado</option>
-  <option value="Aprobado">Aprobado</option>
+<option value="">Todos los estados</option>
+<option value="Pendiente">Pendiente</option>
+<option value="Trámite">Trámite</option>
+<option value="Rechazado">Rechazado</option>
+<option value="Aprobado">Aprobado</option>
 </select>
 <table>
 <thead>
 <tr>
-  <th>Empleado</th>
-  <th>Departamento</th>
-  <th>Objetivo</th>
-  <th>Áreas</th>
-  <th>Estado</th>
-  <th>Fecha / Hora</th>
-  <th>Acciones</th>
+<th>Empleado</th>
+<th>Departamento</th>
+<th>Objetivo</th>
+<th>Áreas</th>
+<th>Estado</th>
+<th>Fecha / Hora</th>
+<th>Acciones</th>
 </tr>
 </thead>
 <tbody id="tablaSOP"></tbody>
@@ -121,160 +124,141 @@ th{background:#003366;color:white;}
 
 <!-- FOOTER -->
 <div class="footer"> © 2026 ARTEMISA MARBLE & CABINETS </div>
+
 </div>
 
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH");
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec";
+emailjs.init("iR8ieJnOkI4_sr8TH")
+const SCRIPT_URL_DRIVE="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec"
+const SCRIPT_URL_SOP_ADMIN="https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec"
+const GOOGLE_FORM_URL="https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
 
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
+document.getElementById("employee").addEventListener("change",function(){ let datos=this.value.split("|"); document.getElementById("departamento").value=datos[3] || ""})
 
-// ====== NOTIFICACIONES ======
-function mostrarNotificacion(msg, tipo){
-  const notif=document.createElement("div");
-  notif.className="notification "+tipo;
-  notif.innerText=msg;
-  document.body.appendChild(notif);
-  setTimeout(()=>notif.remove(),4000);
-}
-
-// ====== TABLA SOP ADMIN (desde Sheet SOP_Admin) ======
-let solicitudes = [];
-
-async function cargarSolicitudesAdmin(){
-  try {
-    const res = await fetch(SCRIPT_URL + "?sheet=SOP_Admin");
-    const data = await res.json();
-    solicitudes = data; // Ahora solicitudes viene del Sheet SOP_Admin
-    renderTabla();
-  } catch(e){
-    console.error("Error cargando SOP_Admin:", e);
-    mostrarNotificacion("No se pudieron cargar los registros de SOP_Admin", "error");
-  }
-}
-
-function renderTabla(){
-  const tabla = document.getElementById("tablaSOP");
-  tabla.innerHTML = "";
-  const filtroEstado = document.getElementById("filtroEstado")?.value || "";
-  const buscar = document.getElementById("buscarSOP")?.value?.toLowerCase() || "";
-
-  solicitudes.forEach((sop,index)=>{
-    if(filtroEstado && sop.estado!==filtroEstado) return;
-    if(buscar){
-      let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase();
-      if(!texto.includes(buscar)) return;
-    }
-    let estadoClass="";
-    switch(sop.estado){
-      case "Pendiente": estadoClass="pendiente"; break;
-      case "Trámite": estadoClass="tramite"; break;
-      case "Rechazado": estadoClass="rechazado"; break;
-      case "Aprobado": estadoClass="aprobado"; break;
-      default: estadoClass="pendiente";
-    }
-    let fila=document.createElement("tr");
-    fila.innerHTML=`
-      <td>${sop.empleado}</td>
-      <td>${sop.departamento}</td>
-      <td>${sop.objetivo}</td>
-      <td>${sop.areas}</td>
-      <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-      <td>${sop.fecha}</td>
-      <td><span style="color:#888;font-size:0.85rem;"> Solo administrador </span></td>
-    `;
-    tabla.appendChild(fila);
-  });
-}
-
-// ====== AUTOCOMPLETA DEPARTAMENTO ======
-document.getElementById("employee").addEventListener("change", function(){
-  let datos = this.value.split("|");
-  document.getElementById("departamento").value = datos[3] || "";
-});
-
-// ====== ARCHIVOS A BASE64 ======
-function archivosA_Base64(files){
-  return Promise.all(Array.from(files).map(file=>{
-    return new Promise((resolve,reject)=>{
-      const reader=new FileReader();
-      reader.onload=()=>resolve({name:file.name,data:reader.result});
-      reader.onerror=reject;
-      reader.readAsDataURL(file);
-    });
-  }));
-}
+// Archivos a Base64
+function archivosA_Base64(files){ return Promise.all(Array.from(files).map(file=>{ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onload=()=>resolve({name:file.name,data:reader.result}); reader.onerror=reject; reader.readAsDataURL(file) }) })) }
 
 async function subirArchivosDrive(files,nombre){
-  let archivosBase64 = await archivosA_Base64(files);
-  let response = await fetch(SCRIPT_URL,{
+  let archivosBase64=await archivosA_Base64(files)
+  let response=await fetch(SCRIPT_URL_DRIVE,{
     method:"POST",
     body: JSON.stringify({employee:nombre, files:archivosBase64})
-  });
-  let data = await response.json();
-  return data.links;
+  })
+  let data=await response.json()
+  return data.links
 }
 
-// ====== ENVÍO FORMULARIO ======
-const btn = document.getElementById("btnEnviar");
-const btnText = btn.querySelector(".btn-text");
-const spinner = btn.querySelector(".spinner");
+// ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
+const btn = document.getElementById("btnEnviar")
+const btnText = btn.querySelector(".btn-text")
+const spinner = btn.querySelector(".spinner")
 
 document.getElementById("sopForm").addEventListener("submit", async function(e){
-  e.preventDefault();
-  let datosEmpleado=document.getElementById("employee").value.split("|");
-  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3];
-  let depto=document.getElementById("departamento").value.trim();
-  let objetivo=document.getElementById("objetivo").value.trim();
-  let areas=document.getElementById("areas").value.trim();
-  let resumen=document.getElementById("resumen").value.trim();
+  e.preventDefault()
+  let datosEmpleado=document.getElementById("employee").value.split("|")
+  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
+  let depto=document.getElementById("departamento").value.trim()
+  let objetivo=document.getElementById("objetivo").value.trim()
+  let areas=document.getElementById("areas").value.trim()
+  let resumen=document.getElementById("resumen").value.trim()
+  if(!nombre || !depto || !objetivo || !areas || !resumen){ mostrarNotificacion("Complete todos los campos obligatorios","error"); return }
 
-  if(!nombre || !depto || !objetivo || !areas || !resumen){
-    mostrarNotificacion("Complete todos los campos obligatorios","error");
-    return;
-  }
+  btn.disabled=true; btnText.innerText="Enviando..."; spinner.style.display="inline-block"
 
-  btn.disabled=true;
-  btnText.innerText="Enviando...";
-  spinner.style.display="inline-block";
+  let fechaActual=new Date().toLocaleString()
+  let archivosInput=document.getElementById("archivos")
+  let linksDrive=[]
+  if(archivosInput.files.length>0) linksDrive=await subirArchivosDrive(archivosInput.files,nombre)
 
-  let fechaActual=new Date().toLocaleString();
-  let nuevo={empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual};
-  solicitudes.push(nuevo); // Para mostrar instantáneamente
-  renderTabla();
+  let filesHTML=linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
 
-  let archivosInput=document.getElementById("archivos");
-  let linksDrive=[];
-  if(archivosInput.files.length>0) linksDrive = await subirArchivosDrive(archivosInput.files,nombre);
-  let filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
-
+  // Enviar EmailJS
   emailjs.send("service_vkt5xuo","template_vc7447e",{
-    employee:nombre,
-    department:depto,
-    cargo:cargo,
-    objective:objetivo,
-    areas:areas,
-    summary:resumen,
-    date:fechaActual,
-    files:filesHTML
-  })
-  .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-  .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")})
-  .finally(()=>{
-    btn.disabled=false;
-    btnText.innerText="Registrar Solicitud";
-    spinner.style.display="none";
-    this.reset();
-  });
-});
+    employee:nombre, department:depto, cargo:cargo, objective:objetivo, areas:areas, summary:resumen, date:fechaActual, files:filesHTML
+  }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
+    .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")})
 
-// ====== FILTRO Y BÚSQUEDA ======
-document.getElementById("buscarSOP").addEventListener("input", renderTabla);
-document.getElementById("filtroEstado").addEventListener("change", renderTabla);
+  // Enviar Google Form
+  try{
+    const formData = new FormData()
+    formData.append("entry.1393360085", nombre)
+    formData.append("entry.1363198453", correo)
+    formData.append("entry.1941994843", depto)
+    formData.append("entry.1015716567", objetivo)
+    formData.append("entry.949214050", areas)
+    formData.append("entry.619270886", resumen)
+    formData.append("entry.1989031957", "Pendiente")
+    formData.append("entry.1877018002", linksDrive.join(", "))
+    fetch(GOOGLE_FORM_URL,{
+      method:"POST",
+      body:formData,
+      mode:"no-cors"
+    })
+  }catch(e){console.error("Error enviando a Google Form:", e)}
 
-// ====== CARGAR TABLA AL INICIO ======
-cargarSolicitudesAdmin();
+  // Refrescar tabla SOP_Admin
+  renderTabla()
 
+  btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none"
+  this.reset()
+})
+
+// NOTIFICACIONES
+function mostrarNotificacion(msg, tipo){
+  const notif=document.createElement("div")
+  notif.className="notification "+tipo
+  notif.innerText=msg
+  document.body.appendChild(notif)
+  setTimeout(()=>notif.remove(),4000)
+}
+
+// TABLA SOP_ADMIN
+async function renderTabla(){
+  const tabla=document.getElementById("tablaSOP")
+  tabla.innerHTML=""
+  const filtroEstado=document.getElementById("filtroEstado")?.value || ""
+  const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase() || ""
+
+  try{
+    const res=await fetch(SCRIPT_URL_SOP_ADMIN)
+    const data=await res.json() // Array de objetos
+    data.forEach(sop=>{
+      if(filtroEstado && sop.estado!==filtroEstado) return
+      if(buscar){
+        let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase()
+        if(!texto.includes(buscar)) return
+      }
+      let estadoClass=""
+      switch(sop.estado){
+        case "Pendiente": estadoClass="pendiente"; break
+        case "Trámite": estadoClass="tramite"; break
+        case "Rechazado": estadoClass="rechazado"; break
+        case "Aprobado": estadoClass="aprobado"; break
+        default: estadoClass="pendiente"
+      }
+      let fila=document.createElement("tr")
+      fila.innerHTML=`
+        <td>${sop.empleado}</td>
+        <td>${sop.departamento}</td>
+        <td>${sop.objetivo}</td>
+        <td>${sop.areas}</td>
+        <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
+        <td>${sop.fecha}</td>
+        <td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>
+      `
+      tabla.appendChild(fila)
+    })
+  }catch(e){ console.error("Error cargando SOP_Admin:", e)}
+}
+
+// FILTRO Y BÚSQUEDA
+document.getElementById("buscarSOP").addEventListener("input", renderTabla)
+document.getElementById("filtroEstado").addEventListener("change", renderTabla)
+
+// Inicializar tabla
+renderTabla()
 </script>
+
 </body>
 </html>
