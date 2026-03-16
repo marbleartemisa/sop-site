@@ -4,11 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
 <style>
 body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
@@ -39,13 +37,11 @@ th{background:#003366;color:white;}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
 @media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
-
 .spinner{margin-left:8px;}
 </style>
 </head>
 <body>
 <div class="overlay">
-
 <!-- NAVBAR -->
 <div class="navbar">
   <div class="logo">
@@ -64,7 +60,6 @@ th{background:#003366;color:white;}
 <div class="container">
 <h1>Registrar Solicitud de SOP - Rev 3.0</h1>
 <form id="sopForm" enctype="multipart/form-data">
-  <!-- TODOS LOS INPUTS Y SELECTS COMO TENÍAS -->
   <label>Empleado</label>
   <select id="employee" required>
     <option value="">Seleccione empleado</option>
@@ -84,14 +79,12 @@ th{background:#003366;color:white;}
     <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
     <option value="Otros|otros|otros|otros">Otros</option>
   </select>
-
   <input type="text" id="departamento" placeholder="Área / Departamento" required>
   <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
   <input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
   <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
   <label>Adjuntar archivos (PDF o imágenes)</label>
   <input type="file" id="archivos" multiple>
-
   <button type="submit" id="btnEnviar">
     <span class="btn-text">Registrar Solicitud</span>
     <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
@@ -104,22 +97,22 @@ th{background:#003366;color:white;}
 <h2>Solicitudes SOP</h2>
 <input type="text" id="buscarSOP" placeholder="Buscar..." style="margin-bottom:15px;padding:8px;width:100%;border-radius:8px;border:1px solid #ccc;">
 <select id="filtroEstado" style="margin-bottom:15px;padding:8px;border-radius:8px;border:1px solid #ccc;">
-<option value="">Todos los estados</option>
-<option value="Pendiente">Pendiente</option>
-<option value="Trámite">Trámite</option>
-<option value="Rechazado">Rechazado</option>
-<option value="Aprobado">Aprobado</option>
+  <option value="">Todos los estados</option>
+  <option value="Pendiente">Pendiente</option>
+  <option value="Trámite">Trámite</option>
+  <option value="Rechazado">Rechazado</option>
+  <option value="Aprobado">Aprobado</option>
 </select>
 <table>
 <thead>
 <tr>
-<th>Empleado</th>
-<th>Departamento</th>
-<th>Objetivo</th>
-<th>Áreas</th>
-<th>Estado</th>
-<th>Fecha / Hora</th>
-<th>Acciones</th>
+  <th>Empleado</th>
+  <th>Departamento</th>
+  <th>Objetivo</th>
+  <th>Áreas</th>
+  <th>Estado</th>
+  <th>Fecha / Hora</th>
+  <th>Acciones</th>
 </tr>
 </thead>
 <tbody id="tablaSOP"></tbody>
@@ -127,29 +120,36 @@ th{background:#003366;color:white;}
 </div>
 
 <!-- FOOTER -->
-<div class="footer">
-© 2026 ARTEMISA MARBLE & CABINETS
-</div>
+<div class="footer"> © 2026 ARTEMISA MARBLE & CABINETS </div>
 </div>
 
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH")
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec"
+emailjs.init("iR8ieJnOkI4_sr8TH");
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec";
 
-// MENU
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 
-// --- SOLICITUDES SOLO INFORMACION DESDE SOP_Admin ---
+// ====== NOTIFICACIONES ======
+function mostrarNotificacion(msg, tipo){
+  const notif=document.createElement("div");
+  notif.className="notification "+tipo;
+  notif.innerText=msg;
+  document.body.appendChild(notif);
+  setTimeout(()=>notif.remove(),4000);
+}
+
+// ====== TABLA SOP ADMIN (desde Sheet SOP_Admin) ======
 let solicitudes = [];
 
-async function cargarSolicitudes(){
+async function cargarSolicitudesAdmin(){
   try {
-    const res = await fetch(SCRIPT_URL);
-    solicitudes = await res.json();
+    const res = await fetch(SCRIPT_URL + "?sheet=SOP_Admin");
+    const data = await res.json();
+    solicitudes = data; // Ahora solicitudes viene del Sheet SOP_Admin
     renderTabla();
   } catch(e){
-    console.error("Error cargando registros:", e);
-    mostrarNotificacion("No se pudieron cargar los registros","error");
+    console.error("Error cargando SOP_Admin:", e);
+    mostrarNotificacion("No se pudieron cargar los registros de SOP_Admin", "error");
   }
 }
 
@@ -159,14 +159,13 @@ function renderTabla(){
   const filtroEstado = document.getElementById("filtroEstado")?.value || "";
   const buscar = document.getElementById("buscarSOP")?.value?.toLowerCase() || "";
 
-  solicitudes.forEach(sop=>{
+  solicitudes.forEach((sop,index)=>{
     if(filtroEstado && sop.estado!==filtroEstado) return;
     if(buscar){
-      let texto = (sop.empleado+sop.objetivo+sop.departamento).toLowerCase();
+      let texto=(sop.empleado+sop.objetivo+sop.departamento).toLowerCase();
       if(!texto.includes(buscar)) return;
     }
-
-    let estadoClass = "";
+    let estadoClass="";
     switch(sop.estado){
       case "Pendiente": estadoClass="pendiente"; break;
       case "Trámite": estadoClass="tramite"; break;
@@ -174,82 +173,80 @@ function renderTabla(){
       case "Aprobado": estadoClass="aprobado"; break;
       default: estadoClass="pendiente";
     }
-
-    let fila = document.createElement("tr");
-    fila.innerHTML = `
+    let fila=document.createElement("tr");
+    fila.innerHTML=`
       <td>${sop.empleado}</td>
       <td>${sop.departamento}</td>
       <td>${sop.objetivo}</td>
       <td>${sop.areas}</td>
       <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-      <td>${new Date(sop.timestamp).toLocaleString()}</td>
-      <td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>
+      <td>${sop.fecha}</td>
+      <td><span style="color:#888;font-size:0.85rem;"> Solo administrador </span></td>
     `;
     tabla.appendChild(fila);
   });
 }
 
-// Autocompleta departamento
-document.getElementById("employee").addEventListener("change",function(){
-  let datos=this.value.split("|")
-  document.getElementById("departamento").value=datos[3] || ""
-})
+// ====== AUTOCOMPLETA DEPARTAMENTO ======
+document.getElementById("employee").addEventListener("change", function(){
+  let datos = this.value.split("|");
+  document.getElementById("departamento").value = datos[3] || "";
+});
 
-// Archivos a Base64
+// ====== ARCHIVOS A BASE64 ======
 function archivosA_Base64(files){
   return Promise.all(Array.from(files).map(file=>{
     return new Promise((resolve,reject)=>{
-      const reader=new FileReader()
-      reader.onload=()=>resolve({name:file.name,data:reader.result})
-      reader.onerror=reject
-      reader.readAsDataURL(file)
-    })
-  }))
+      const reader=new FileReader();
+      reader.onload=()=>resolve({name:file.name,data:reader.result});
+      reader.onerror=reject;
+      reader.readAsDataURL(file);
+    });
+  }));
 }
 
 async function subirArchivosDrive(files,nombre){
-  let archivosBase64 = await archivosA_Base64(files)
+  let archivosBase64 = await archivosA_Base64(files);
   let response = await fetch(SCRIPT_URL,{
     method:"POST",
     body: JSON.stringify({employee:nombre, files:archivosBase64})
-  })
-  let data = await response.json()
-  return data.links
+  });
+  let data = await response.json();
+  return data.links;
 }
 
-// ENVÍO FORMULARIO CON SPINNER Y BLOQUEO
-const btn = document.getElementById("btnEnviar")
-const btnText = btn.querySelector(".btn-text")
-const spinner = btn.querySelector(".spinner")
+// ====== ENVÍO FORMULARIO ======
+const btn = document.getElementById("btnEnviar");
+const btnText = btn.querySelector(".btn-text");
+const spinner = btn.querySelector(".spinner");
 
 document.getElementById("sopForm").addEventListener("submit", async function(e){
-  e.preventDefault()
-  let datosEmpleado = document.getElementById("employee").value.split("|")
-  let nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], departamentoEmpleado = datosEmpleado[3]
-  let depto = document.getElementById("departamento").value.trim()
-  let objetivo = document.getElementById("objetivo").value.trim()
-  let areas = document.getElementById("areas").value.trim()
-  let resumen = document.getElementById("resumen").value.trim()
+  e.preventDefault();
+  let datosEmpleado=document.getElementById("employee").value.split("|");
+  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3];
+  let depto=document.getElementById("departamento").value.trim();
+  let objetivo=document.getElementById("objetivo").value.trim();
+  let areas=document.getElementById("areas").value.trim();
+  let resumen=document.getElementById("resumen").value.trim();
 
   if(!nombre || !depto || !objetivo || !areas || !resumen){
-    mostrarNotificacion("Complete todos los campos obligatorios","error")
-    return
+    mostrarNotificacion("Complete todos los campos obligatorios","error");
+    return;
   }
 
-  btn.disabled = true
-  btnText.innerText = "Enviando..."
-  spinner.style.display = "inline-block"
+  btn.disabled=true;
+  btnText.innerText="Enviando...";
+  spinner.style.display="inline-block";
 
-  let fechaActual = new Date().toLocaleString()
-  let nuevo = {empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual}
-  solicitudes.push(nuevo)
-  renderTabla()
+  let fechaActual=new Date().toLocaleString();
+  let nuevo={empleado:nombre, correo, cargo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual};
+  solicitudes.push(nuevo); // Para mostrar instantáneamente
+  renderTabla();
 
-  let archivosInput = document.getElementById("archivos")
-  let linksDrive = []
-  if(archivosInput.files.length>0) linksDrive = await subirArchivosDrive(archivosInput.files,nombre)
-
-  let filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
+  let archivosInput=document.getElementById("archivos");
+  let linksDrive=[];
+  if(archivosInput.files.length>0) linksDrive = await subirArchivosDrive(archivosInput.files,nombre);
+  let filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
 
   emailjs.send("service_vkt5xuo","template_vc7447e",{
     employee:nombre,
@@ -264,31 +261,20 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
   .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")})
   .finally(()=>{
-    btn.disabled=false
-    btnText.innerText="Registrar Solicitud"
-    spinner.style.display="none"
-    this.reset()
-  })
-})
+    btn.disabled=false;
+    btnText.innerText="Registrar Solicitud";
+    spinner.style.display="none";
+    this.reset();
+  });
+});
 
-// Filtro y búsqueda
-document.getElementById("buscarSOP").addEventListener("input", renderTabla)
-document.getElementById("filtroEstado").addEventListener("change", renderTabla)
+// ====== FILTRO Y BÚSQUEDA ======
+document.getElementById("buscarSOP").addEventListener("input", renderTabla);
+document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 
-// Cargar solicitudes desde SOP_Admin al inicio
-cargarSolicitudes()
+// ====== CARGAR TABLA AL INICIO ======
+cargarSolicitudesAdmin();
 
-// Notificación
-function mostrarNotificacion(msg, tipo){
-  const notif=document.createElement("div")
-  notif.className="notification "+tipo
-  notif.innerText=msg
-  document.body.appendChild(notif)
-  setTimeout(()=>notif.remove(),4000)
-}
-
-// Solo menú
-function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 </script>
 </body>
 </html>
