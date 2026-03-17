@@ -316,39 +316,39 @@ document.getElementById("employee").addEventListener("change", function(){
 });
 
 // Convierte archivos a Base64
-async function archivosA_Base64(files) {
+
+
+ async function archivosA_Base64(files) {
   return Promise.all(Array.from(files).map(file => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve({
       name: file.name,
-      type: file.type || "application/octet-stream",  // importante
+      type: file.type,
       data: reader.result
     });
     reader.onerror = reject;
     reader.readAsDataURL(file);
   })));
-}
-
+}); 
 
 // Subida de archivos a Google Drive (solo envia lo que el script espera)
+
+
+
 async function subirArchivosDrive(files, empleado) {
   if (!files || files.length === 0) return [];
   try {
-    let archivosBase64 = await archivosA_Base64(files);
+    const archivosBase64 = await archivosA_Base64(files);
 
-    let response = await fetch(SCRIPT_URL_DRIVE, {
+    const response = await fetch(SCRIPT_URL_DRIVE, {
       method: "POST",
       body: JSON.stringify({ employee: empleado, files: archivosBase64 })
     });
 
-    // Depuración: ver la respuesta real
-    let text = await response.text();
-    console.log("RAW RESPONSE DRIVE:", text);
+    const data = await response.json();
 
-    let data = JSON.parse(text);
     if(data.status !== "success") {
-      console.error("Error en App Script:", data.message);
-      mostrarNotificacion("Error subiendo archivos: " + data.message, "error");
+      console.error("Error App Script:", data.message);
       return [];
     }
 
@@ -356,11 +356,11 @@ async function subirArchivosDrive(files, empleado) {
 
   } catch(err) {
     console.error("Error JS subirArchivosDrive:", err);
-    mostrarNotificacion("Error subiendo archivos", "error");
     return [];
   }
 }
 
+  
 // Iconos según tipo de archivo
 function iconoArchivo(link) {
   const url = link.toLowerCase();
