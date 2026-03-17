@@ -259,42 +259,27 @@
     <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
   </div>
 
-  <!-- Modal Aportes -->
-<div id="modalAporte" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:9999;">
-  <div style="background:white;padding:30px;border-radius:12px;width:400px;max-width:90%;">
-    <h3>Aportar a SOP</h3>
-
-    <!-- ✅ INFO SOP -->
-    <div id="infoSOP" style="
-      background:#f1f5f9;
-      padding:12px;
-      border-radius:10px;
-      margin-bottom:15px;
-      font-size:14px;
-    ">
-      <strong id="info_objetivo">SOP</strong><br>
-      <span id="info_empleado"></span> | 
-      <span id="info_departamento"></span><br>
-      <small id="info_fecha"></small>
-    </div>
-
-    <div id="historialAportes" style="max-height:200px;overflow:auto;margin-bottom:15px;border:1px solid #ddd;padding:10px;border-radius:8px;">
-      Cargando historial...
-    </div>
-
-    <input type="hidden" id="aporte_id_sop">
-    <input type="hidden" id="aporte_empleado">
-    <input type="hidden" id="aporte_correo">
-    <input type="hidden" id="aporte_departamento">
-    <textarea id="aporte_comentario" placeholder="Comentario u observación" style="width:100%;height:100px;margin-top:10px;"></textarea>
-    <label>Adjuntar archivos</label>
-    <input type="file" id="aporte_archivos" multiple>
-    <div style="margin-top:15px;display:flex;gap:10px;">
-      <button onclick="enviarAporte()">Enviar</button>
-      <button onclick="cerrarAporte()" style="background:#999;">Cancelar</button>
+  <!-- MODAL APORTES -->
+  <div id="modalAporte" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:9999;">
+    <div style="background:white;padding:30px;border-radius:12px;width:400px;max-width:90%;">
+      <h3>Aportar a SOP</h3>
+      <div id="historialAportes" style="max-height:200px;overflow:auto;margin-bottom:15px;border:1px solid #ddd;padding:10px;border-radius:8px;">
+        Cargando historial...
+      </div>
+      <input type="hidden" id="aporte_id_sop">
+      <input type="hidden" id="aporte_empleado">
+      <input type="hidden" id="aporte_correo">
+      <input type="hidden" id="aporte_departamento">
+      <textarea id="aporte_comentario" placeholder="Comentario u observación" style="width:100%;height:100px;margin-top:10px;"></textarea>
+      <label>Adjuntar archivos</label>
+      <input type="file" id="aporte_archivos" multiple>
+      <div style="margin-top:15px;display:flex;gap:10px;">
+        <button onclick="enviarAporte()">Enviar</button>
+        <button onclick="cerrarAporte()" style="background:#999;">Cancelar</button>
+      </div>
     </div>
   </div>
-</div>
+
   <script>
     emailjs.init("iR8ieJnOkI4_sr8TH");
 
@@ -425,12 +410,8 @@
         const res = await fetch(SCRIPT_URL_SOP_ADMIN);
         const data = await res.json();
 
-      data.forEach(sop => {
-
-          console.log("ID SOP:", sop.Timestamp); // 👈 AQUÍ
-
+        data.forEach(sop => {
           if (filtroEstado && sop.estado !== filtroEstado) return;
-        
           if (buscar) {
             let texto = (sop.empleado + sop.objetivo + sop.departamento).toLowerCase();
             if (!texto.includes(buscar)) return;
@@ -456,16 +437,7 @@
             <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td>
             <td>${sop.Timestamp || ""}</td>
             <td>${archivosHTML}</td>
-<td>
-  <button onclick="abrirAporte(
-    '${sop.ID_SOP}',       // ✅ ahora usamos ID_SOP
-    '${sop.empleado}',
-    '${sop.correo}',
-    '${sop.departamento}',
-    '${sop.objetivo}',
-    '${sop.Timestamp}'     // fecha para mostrar
-  )">💬</button>
-</td>
+            <td><button onclick="abrirAporte('${sop.Timestamp}','${sop.empleado}','${sop.correo}','${sop.departamento}')">💬</button></td>
           `;
           tabla.appendChild(fila);
         });
@@ -474,26 +446,14 @@
       }
     }
 
-    function formatearFecha(fecha) {
-  const f = new Date(fecha);
-  return f.toLocaleString();
-}
-
-function abrirAporte(id_sop, empleado, correo, depto, objetivo, fecha) {
-  document.getElementById("modalAporte").style.display = "flex";
-  document.getElementById("aporte_id_sop").value = id_sop;
-  document.getElementById("aporte_empleado").value = empleado;
-  document.getElementById("aporte_correo").value = correo;
-  document.getElementById("aporte_departamento").value = depto;
-
-  // ✅ llenar info del SOP
-  document.getElementById("info_objetivo").innerText = objetivo || "";
-  document.getElementById("info_empleado").innerText = empleado || "";
-  document.getElementById("info_departamento").innerText = depto || "";
-  document.getElementById("info_fecha").innerText = fecha ? new Date(fecha).toLocaleString() : "";
-
-  cargarHistorial(id_sop); // ahora historial filtra por ID_SOP
-}
+    function abrirAporte(id, empleado, correo, depto) {
+      document.getElementById("modalAporte").style.display = "flex";
+      document.getElementById("aporte_id_sop").value = id;
+      document.getElementById("aporte_empleado").value = empleado;
+      document.getElementById("aporte_correo").value = correo;
+      document.getElementById("aporte_departamento").value = depto;
+      cargarHistorial(id);
+    }
 
     function cerrarAporte() {
       document.getElementById("modalAporte").style.display = "none";
@@ -528,27 +488,27 @@ function abrirAporte(id_sop, empleado, correo, depto, objetivo, fecha) {
       cerrarAporte();
     }
 
-async function cargarHistorial(id_sop) {
-  const historial = document.getElementById("historialAportes");
-  historial.innerHTML = "Cargando...";
-  try {
-    const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id_sop));
-    const data = await res.json();
-    if (!data.length) {
-      historial.innerHTML = "Sin aportes aún";
-      return;
+    async function cargarHistorial(id) {
+      const historial = document.getElementById("historialAportes");
+      historial.innerHTML = "Cargando...";
+      try {
+        const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id));
+        const data = await res.json();
+        if (!data.length) {
+          historial.innerHTML = "Sin aportes aún";
+          return;
+        }
+        historial.innerHTML = data.map(a => `
+          <div style="border-bottom:1px solid #eee;padding:6px 0;">
+            <strong>${a.EMPLEADO}</strong><br>
+            <small>${a.FECHA}</small><br>
+            ${a.COMENTARIO || ""}
+          </div>
+        `).join("");
+      } catch (e) {
+        historial.innerHTML = "Error cargando historial";
+      }
     }
-    historial.innerHTML = data.map(a => `
-      <div style="border-bottom:1px solid #eee;padding:6px 0;">
-        <strong>${a.EMPLEADO}</strong><br>
-        <small>${new Date(a.FECHA).toLocaleString()}</small><br>
-        ${a.COMENTARIO || ""}
-      </div>
-    `).join("");
-  } catch (e) {
-    historial.innerHTML = "Error cargando historial";
-  }
-}
 
     document.getElementById("buscarSOP").addEventListener("input", renderTabla);
     document.getElementById("filtroEstado").addEventListener("change", renderTabla);
