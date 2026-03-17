@@ -346,8 +346,9 @@ function iconoArchivo(link) {
   return `📎 <a href="${link}" target="_blank">Archivo</a>`;
 }
 
+
 // ==========================
-// SUBMIT FORMULARIO SOP
+// SUBMIT FORMULARIO SOP REVISADO
 // ==========================
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
@@ -375,40 +376,68 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
     let archivosInput = document.getElementById("archivos");
     let linksDrive = [];
 
-    // Subir archivos a Drive
-    if (archivosInput.files.length > 0)
-      linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
+    // Subida segura de archivos
+    if (archivosInput.files.length > 0) {
+      try {
+        linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
+        if (!linksDrive.length) mostrarNotificacion("Archivos subidos pero sin URL", "error");
+      } catch (err) {
+        console.error("Error en subida de archivos:", err);
+        mostrarNotificacion("Error subiendo archivos", "error");
+      }
+    }
 
+    // HTML de archivos
     let filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}" target="_blank">${link}</a></p>`).join("");
 
     // Enviar email
-    await emailjs.send("service_vkt5xuo", "template_vc7447e", {
-      employee: nombre,
-      department: depto,
-      cargo: cargo,
-      objective: objetivo,
-      areas: areas,
-      summary: resumen,
-      date: fechaActual,
-      files: filesHTML
-    });
+    try {
+      await emailjs.send("service_vkt5xuo", "template_vc7447e", {
+        employee: nombre,
+        department: depto,
+        cargo: cargo,
+        objective: objetivo,
+        areas: areas,
+        summary: resumen,
+        date: fechaActual,
+        files: filesHTML
+      });
+    } catch(e){
+      console.error("Error enviando email:", e);
+      mostrarNotificacion("Email no enviado", "error");
+    }
 
     // Enviar a Google Form
-    const formData = new FormData();
-    formData.append("entry.1393360085", nombre);
-    formData.append("entry.1363198453", correo);
-    formData.append("entry.1941994843", depto);
-    formData.append("entry.1015716567", objetivo);
-    formData.append("entry.949214050", areas);
-    formData.append("entry.619270886", resumen);
-    formData.append("entry.1989031957", "Pendiente");
-    formData.append("entry.1877018002", linksDrive.join(", "));
-    fetch(GOOGLE_FORM_URL, { method: "POST", body: formData, mode: "no-cors" });
+    try {
+      const formData = new FormData();
+      formData.append("entry.1393360085", nombre);
+      formData.append("entry.1363198453", correo);
+      formData.append("entry.1941994843", depto);
+      formData.append("entry.1015716567", objetivo);
+      formData.append("entry.949214050", areas);
+      formData.append("entry.619270886", resumen);
+      formData.append("entry.1989031957", "Pendiente");
+      formData.append("entry.1877018002", linksDrive.join(", "));
+      await fetch(GOOGLE_FORM_URL, { method: "POST", body: formData, mode: "no-cors" });
+    } catch(e){
+      console.error("Error enviando a Google Form:", e);
+    }
 
     mostrarNotificacion("Solicitud enviada correctamente", "success");
 
-    // Opcional: guardar en localStorage y renderTabla si lo usas
-    let nuevo = { empleado: nombre, correo, cargo, departamento: depto, objetivo, areas, resumen, estado: "Pendiente", fecha: fechaActual, links: linksDrive.join(",") };
+    // Guardar local y renderizar
+    let nuevo = {
+      empleado: nombre,
+      correo,
+      cargo,
+      departamento: depto,
+      objetivo,
+      areas,
+      resumen,
+      estado: "Pendiente",
+      Timestamp: fechaActual,
+      links: linksDrive.join(",")
+    };
     solicitudes.push(nuevo);
     renderTabla();
 
@@ -423,8 +452,9 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   }
 });
 
+
 // ==========================
-// RENDER TABLA SOP
+// RENDER TABLA SOP REVISADO
 // ==========================
 async function renderTabla() {
   const tabla = document.getElementById("tablaSOP");
@@ -439,7 +469,7 @@ async function renderTabla() {
     data.forEach(sop => {
       if (filtroEstado && sop.estado !== filtroEstado) return;
       if (buscar) {
-        let texto = (sop.empleado + sop.objetivo + sop.departamento).toLowerCase();
+        let texto = ((sop.empleado||"") + (sop.objetivo||"") + (sop.departamento||"")).toLowerCase();
         if (!texto.includes(buscar)) return;
       }
 
@@ -451,7 +481,7 @@ async function renderTabla() {
       let archivosHTML = "";
       if (sop.links) {
         let links = sop.links.split(",");
-        archivosHTML = links.map(l => iconoArchivo(l.trim())).join("<br>");
+        archivosHTML = links.map(l => l.trim() ? iconoArchivo(l.trim()) : "").join("<br>");
       }
 
       let fila = document.createElement("tr");
@@ -469,6 +499,7 @@ async function renderTabla() {
     });
   } catch (e) {
     console.error("Error cargando SOP:", e);
+    mostrarNotificacion("Error cargando la tabla SOP", "error");
   }
 }
 
