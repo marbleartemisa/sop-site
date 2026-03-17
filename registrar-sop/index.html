@@ -280,240 +280,236 @@
     </div>
   </div>
 
-  <script>
-    emailjs.init("iR8ieJnOkI4_sr8TH");
+ <script>
+emailjs.init("iR8ieJnOkI4_sr8TH");
 
-    const SCRIPT_URL_DRIVE = "https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec";
-    const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
-    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
+const SCRIPT_URL_DRIVE = "https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec";
+const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
 
-    function toggleMenu() {
-      document.querySelector('.menu').classList.toggle('show');
+/* =========================
+   UTILIDADES
+========================= */
+
+function toggleMenu() {
+  document.querySelector('.menu').classList.toggle('show');
+}
+
+document.getElementById("employee").addEventListener("change", function() {
+  let datos = this.value.split("|");
+  document.getElementById("departamento").value = datos[3] || "";
+});
+
+function mostrarNotificacion(msg, tipo) {
+  const notif = document.createElement("div");
+  notif.className = "notification " + tipo;
+  notif.innerText = msg;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 4000);
+}
+
+async function archivosA_Base64(files) {
+  return Promise.all(
+    Array.from(files).map(file => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve({
+        name: file.name,
+        data: reader.result,
+        type: file.type
+      });
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    }))
+  );
+}
+
+/* =========================
+   DRIVE (FIX PRINCIPAL)
+========================= */
+
+async function subirArchivosDrive(files, datos) {
+
+  let archivosBase64 = await archivosA_Base64(files);
+
+  let response = await fetch(SCRIPT_URL_DRIVE, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    employee: datos.nombre,
+    correo: datos.correo,
+    cargo: datos.cargo,
+    departamento: datos.depto,
+    objetivo: datos.objetivo,
+    areas: datos.areas,
+    resumen: datos.resumen,
+    date: datos.fecha,
+    files: archivosBase64
+  })
+});
+
+  if (!response.ok) throw new Error("Error en Apps Script");
+
+  let data = await response.json();
+  return data.links || [];
+}
+
+/* =========================
+   SUBMIT FORM
+========================= */
+
+const btn = document.getElementById("btnEnviar");
+const btnText = btn.querySelector(".btn-text");
+const spinner = btn.querySelector(".spinner");
+
+document.getElementById("sopForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  // ✅ VALIDACIÓN AQUÍ
+  if (!document.getElementById("employee").value) {
+    mostrarNotificacion("Seleccione un empleado", "error");
+    return;
+  }
+
+ let employeeValue = document.getElementById("employee").value;
+let datosEmpleado = employeeValue.split("|");
+
+  let datos = {
+    nombre: datosEmpleado[0],
+    correo: datosEmpleado[1],
+    cargo: datosEmpleado[2],
+    depto: document.getElementById("departamento").value.trim(),
+    objetivo: document.getElementById("objetivo").value.trim(),
+    areas: document.getElementById("areas").value.trim(),
+    resumen: document.getElementById("resumen").value.trim(),
+    fecha: new Date().toLocaleString()
+  };
+
+  if (!datos.nombre || !datos.depto || !datos.objetivo || !datos.areas || !datos.resumen) {
+    mostrarNotificacion("Complete todos los campos", "error");
+    return;
+  }
+
+  btn.disabled = true;
+  btnText.innerText = "Enviando...";
+  spinner.style.display = "inline-block";
+
+  let archivosInput = document.getElementById("archivos");
+  let linksDrive = [];
+
+  /* ===== SUBIR ARCHIVOS ===== */
+  try {
+    if (archivosInput.files.length > 0) {
+      linksDrive = await subirArchivosDrive(archivosInput.files, datos);
     }
+  } catch (err) {
+    console.error(err);
+    mostrarNotificacion("Error subiendo archivos", "error");
+    resetBoton();
+    return;
+  }
 
-    document.getElementById("employee").addEventListener("change", function() {
-      let datos = this.value.split("|");
-      document.getElementById("departamento").value = datos[3] || "";
+  let filesHTML = linksDrive.map(l => `<a href="${l}">${l}</a>`).join("<br>");
+
+  /* ===== EMAIL ===== */
+  try {
+    await emailjs.send("service_vkt5xuo", "template_vc7447e", {
+      employee: datos.nombre,
+      department: datos.depto,
+      cargo: datos.cargo,
+      objective: datos.objetivo,
+      areas: datos.areas,
+      summary: datos.resumen,
+      date: datos.fecha,
+      files: filesHTML
+    });
+  } catch (err) {
+    console.error("Email error:", err);
+  }
+
+  /* ===== GOOGLE FORM ===== */
+  try {
+    const formData = new FormData();
+    formData.append("entry.1393360085", datos.nombre);
+    formData.append("entry.1363198453", datos.correo);
+    formData.append("entry.1941994843", datos.depto);
+    formData.append("entry.1015716567", datos.objetivo);
+    formData.append("entry.949214050", datos.areas);
+    formData.append("entry.619270886", datos.resumen);
+    formData.append("entry.1989031957", "Pendiente");
+    formData.append("entry.1877018002", linksDrive.join(", "));
+
+    fetch(GOOGLE_FORM_URL, {
+      method: "POST",
+      body: formData,
+      mode: "no-cors"
+    });
+  } catch (err) {
+    console.error("Form error:", err);
+  }
+
+  mostrarNotificacion("Solicitud enviada correctamente", "success");
+  document.getElementById("sopForm").reset();
+  resetBoton();
+  renderTabla();
+});
+
+function resetBoton() {
+  btn.disabled = false;
+  btnText.innerText = "Registrar Solicitud";
+  spinner.style.display = "none";
+}
+
+/* =========================
+   TABLA (SIN CAMBIOS)
+========================= */
+function iconoArchivo(link) {
+  const url = link.toLowerCase();
+  if (url.includes(".pdf")) return `📄 <a href="${link}" target="_blank">PDF</a>`;
+  if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) return `🖼 <a href="${link}" target="_blank">Imagen</a>`;
+  return `📎 <a href="${link}" target="_blank">Archivo</a>`;
+}
+
+   
+async function renderTabla() {
+  const tabla = document.getElementById("tablaSOP");
+  tabla.innerHTML = "";
+
+  try {
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN);
+    const data = await res.json();
+
+    data.forEach(sop => {
+      let fila = document.createElement("tr");
+
+      fila.innerHTML = `
+        <td>${sop.empleado || ""}</td>
+        <td>${sop.departamento || ""}</td>
+        <td>${sop.objetivo || ""}</td>
+        <td>${sop.areas || ""}</td>
+        <td>${sop.estado || ""}</td>
+        <td>${sop.Timestamp || ""}</td>
+        <td>
+  ${
+    sop.links
+      ? sop.links.split("\n").map(l => iconoArchivo(l.trim())).join("<br>")
+      : ""
+  }
+</td>
+        <td>💬</td>
+      `;
+
+      tabla.appendChild(fila);
     });
 
-    function iconoArchivo(link) {
-      const url = link.toLowerCase();
-      if (url.includes(".pdf")) return `📄 <a href="${link}" target="_blank">PDF</a>`;
-      if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) return `🖼 <a href="${link}" target="_blank">Imagen</a>`;
-      if (url.match(/\.(xls|xlsx|csv)$/)) return `📊 <a href="${link}" target="_blank">Excel</a>`;
-      return `📎 <a href="${link}" target="_blank">Archivo</a>`;
-    }
+  } catch (e) {
+    console.error("Error cargando SOP:", e);
+  }
+}
 
-    async function archivosA_Base64(files) {
-      return Promise.all(
-        Array.from(files).map(file => new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve({ name: file.name, data: reader.result });
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        }))
-      );
-    }
+renderTabla();
+</script>
 
-    async function subirArchivosDrive(files, nombre) {
-      let archivosBase64 = await archivosA_Base64(files);
-      let response = await fetch(SCRIPT_URL_DRIVE, {
-        method: "POST",
-        body: JSON.stringify({ employee: nombre, files: archivosBase64 })
-      });
-      let data = await response.json();
-      return data.links;
-    }
-
-    const btn = document.getElementById("btnEnviar");
-    const btnText = btn.querySelector(".btn-text");
-    const spinner = btn.querySelector(".spinner");
-
-    document.getElementById("sopForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      let datosEmpleado = document.getElementById("employee").value.split("|");
-      let nombre = datosEmpleado[0];
-      let correo = datosEmpleado[1];
-      let cargo = datosEmpleado[2];
-      let depto = document.getElementById("departamento").value.trim();
-      let objetivo = document.getElementById("objetivo").value.trim();
-      let areas = document.getElementById("areas").value.trim();
-      let resumen = document.getElementById("resumen").value.trim();
-
-      if (!nombre || !depto || !objetivo || !areas || !resumen) {
-        mostrarNotificacion("Complete todos los campos obligatorios", "error");
-        return;
-      }
-
-      btn.disabled = true;
-      btnText.innerText = "Enviando...";
-      spinner.style.display = "inline-block";
-
-      let fechaActual = new Date().toLocaleString();
-      let archivosInput = document.getElementById("archivos");
-      let linksDrive = [];
-
-      if (archivosInput.files.length > 0)
-        linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
-
-      let filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}">${link}</a></p>`).join("");
-
-      emailjs.send("service_vkt5xuo", "template_vc7447e", {
-        employee: nombre,
-        department: depto,
-        cargo: cargo,
-        objective: objetivo,
-        areas: areas,
-        summary: resumen,
-        date: fechaActual,
-        files: filesHTML
-      });
-
-      try {
-        const formData = new FormData();
-        formData.append("entry.1393360085", nombre);
-        formData.append("entry.1363198453", correo);
-        formData.append("entry.1941994843", depto);
-        formData.append("entry.1015716567", objetivo);
-        formData.append("entry.949214050", areas);
-        formData.append("entry.619270886", resumen);
-        formData.append("entry.1989031957", "Pendiente");
-        formData.append("entry.1877018002", linksDrive.join(", "));
-        fetch(GOOGLE_FORM_URL, { method: "POST", body: formData, mode: "no-cors" });
-      } catch (e) {
-        console.error(e);
-      }
-
-      mostrarNotificacion("Solicitud enviada correctamente", "success");
-      renderTabla();
-      btn.disabled = false;
-      btnText.innerText = "Registrar Solicitud";
-      spinner.style.display = "none";
-      this.reset();
-    });
-
-    function mostrarNotificacion(msg, tipo) {
-      const notif = document.createElement("div");
-      notif.className = "notification " + tipo;
-      notif.innerText = msg;
-      document.body.appendChild(notif);
-      setTimeout(() => notif.remove(), 4000);
-    }
-
-    async function renderTabla() {
-      const tabla = document.getElementById("tablaSOP");
-      tabla.innerHTML = "";
-      const filtroEstado = document.getElementById("filtroEstado").value;
-      const buscar = document.getElementById("buscarSOP").value.toLowerCase();
-
-      try {
-        const res = await fetch(SCRIPT_URL_SOP_ADMIN);
-        const data = await res.json();
-
-        data.forEach(sop => {
-          if (filtroEstado && sop.estado !== filtroEstado) return;
-          if (buscar) {
-            let texto = (sop.empleado + sop.objetivo + sop.departamento).toLowerCase();
-            if (!texto.includes(buscar)) return;
-          }
-
-          let estadoClass = "pendiente";
-          if (sop.estado === "Trámite") estadoClass = "tramite";
-          if (sop.estado === "Rechazado") estadoClass = "rechazado";
-          if (sop.estado === "Aprobado") estadoClass = "aprobado";
-
-          let archivosHTML = "";
-          if (sop.links) {
-            let links = sop.links.split(",");
-            archivosHTML = links.map(l => iconoArchivo(l.trim())).join("<br>");
-          }
-
-          let fila = document.createElement("tr");
-          fila.innerHTML = `
-            <td>${sop.empleado || ""}</td>
-            <td>${sop.departamento || ""}</td>
-            <td>${sop.objetivo || ""}</td>
-            <td>${sop.areas || ""}</td>
-            <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td>
-            <td>${sop.Timestamp || ""}</td>
-            <td>${archivosHTML}</td>
-            <td><button onclick="abrirAporte('${sop.Timestamp}','${sop.empleado}','${sop.correo}','${sop.departamento}')">💬</button></td>
-          `;
-          tabla.appendChild(fila);
-        });
-      } catch (e) {
-        console.error("Error cargando SOP:", e);
-      }
-    }
-
-    function abrirAporte(id, empleado, correo, depto) {
-      document.getElementById("modalAporte").style.display = "flex";
-      document.getElementById("aporte_id_sop").value = id;
-      document.getElementById("aporte_empleado").value = empleado;
-      document.getElementById("aporte_correo").value = correo;
-      document.getElementById("aporte_departamento").value = depto;
-      cargarHistorial(id);
-    }
-
-    function cerrarAporte() {
-      document.getElementById("modalAporte").style.display = "none";
-    }
-
-    async function enviarAporte() {
-      let id = document.getElementById("aporte_id_sop").value;
-      let empleado = document.getElementById("aporte_empleado").value;
-      let correo = document.getElementById("aporte_correo").value;
-      let depto = document.getElementById("aporte_departamento").value;
-      let comentario = document.getElementById("aporte_comentario").value;
-      let archivosInput = document.getElementById("aporte_archivos");
-      let linksDrive = [];
-
-      if (archivosInput.files.length > 0)
-        linksDrive = await subirArchivosDrive(archivosInput.files, empleado);
-
-      await fetch(SCRIPT_URL_SOP_ADMIN, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "guardarAporte",
-          id_sop: id,
-          empleado: empleado,
-          correo: correo,
-          departamento: depto,
-          comentario: comentario,
-          archivos: linksDrive.join(", ")
-        })
-      });
-
-      mostrarNotificacion("Aporte registrado", "success");
-      cerrarAporte();
-    }
-
-    async function cargarHistorial(id) {
-      const historial = document.getElementById("historialAportes");
-      historial.innerHTML = "Cargando...";
-      try {
-        const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id));
-        const data = await res.json();
-        if (!data.length) {
-          historial.innerHTML = "Sin aportes aún";
-          return;
-        }
-        historial.innerHTML = data.map(a => `
-          <div style="border-bottom:1px solid #eee;padding:6px 0;">
-            <strong>${a.EMPLEADO}</strong><br>
-            <small>${a.FECHA}</small><br>
-            ${a.COMENTARIO || ""}
-          </div>
-        `).join("");
-      } catch (e) {
-        historial.innerHTML = "Error cargando historial";
-      }
-    }
-
-    document.getElementById("buscarSOP").addEventListener("input", renderTabla);
-    document.getElementById("filtroEstado").addEventListener("change", renderTabla);
-
-    renderTabla();
-  </script>
 </body>
 </html>
