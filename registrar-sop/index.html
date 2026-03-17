@@ -457,13 +457,13 @@
             <td>${sop.Timestamp || ""}</td>
             <td>${archivosHTML}</td>
   <td>
-  <button onclick="abrirAporte(
-    '${sop.Timestamp}',
-    '${sop.empleado}',
-    '${sop.correo}',
-    '${sop.departamento}',
-    '${sop.objetivo}'
-  )">💬</button>
+<button onclick="abrirAporte(
+  '${sop.Timestamp}',
+  '${sop.empleado}',
+  '${sop.correo}',
+  '${sop.departamento}',
+  '${sop.objetivo}'
+)">💬</button>
 </td>
           `;
           tabla.appendChild(fila);
@@ -478,7 +478,7 @@
   return f.toLocaleString();
 }
 
-   function abrirAporte(id, empleado, correo, depto, objetivo) {
+function abrirAporte(id, empleado, correo, depto, objetivo) {
   document.getElementById("modalAporte").style.display = "flex";
   document.getElementById("aporte_id_sop").value = id;
   document.getElementById("aporte_empleado").value = empleado;
@@ -489,7 +489,10 @@
   document.getElementById("info_objetivo").innerText = objetivo || "";
   document.getElementById("info_empleado").innerText = empleado || "";
   document.getElementById("info_departamento").innerText = depto || "";
-  document.getElementById("info_fecha").innerText = new Date(id).toLocaleString();
+
+  // ✅ Formatear fecha de manera segura
+  let fecha = new Date(Number(id));
+  document.getElementById("info_fecha").innerText = isNaN(fecha) ? "" : fecha.toLocaleString();
 
   cargarHistorial(id);
 }
