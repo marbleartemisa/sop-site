@@ -8,161 +8,42 @@
   <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <style>
+    /* --- Tu CSS original --- */
     body {
       margin: 0;
       font-family: 'Segoe UI', Arial, sans-serif;
       background: url('/sop-site/wall5.png') no-repeat center top;
       background-size: cover;
     }
-    .overlay {
-      background: rgba(0,0,0,0.25);
-      min-height: 100vh;
-    }
-    .navbar {
-      position: sticky;
-      top: 0;
-      background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(8px);
-      padding: 10px 30px;
-      color: white;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 999;
-      font-family: 'Nuevo', 'Segoe UI', Arial;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logo img {
-      height: 40px;
-    }
-    .menu {
-      display: flex;
-      gap: 25px;
-    }
-    .menu a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      transition: .3s;
-    }
-    .menu a:hover {
-      color: #00aaff;
-      transform: scale(1.05);
-    }
-    .menu-toggle {
-      display: none;
-      font-size: 1.6rem;
-      cursor: pointer;
-    }
-    .container {
-      max-width: 900px;
-      margin: 50px auto;
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(10px);
-      padding: 30px;
-      border-radius: 18px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #003366;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-      height: 46px;
-    }
-    textarea {
-      height: auto;
-    }
-    button {
-      padding: 12px;
-      border: none;
-      border-radius: 30px;
-      background: linear-gradient(135deg,#0072C6,#005a9e);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: .3s;
-    }
-    button:hover {
-      transform: scale(1.05);
-    }
-    .grid-container {
-      max-width: 1100px;
-      margin: 40px auto;
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(10px);
-      padding: 30px;
-      border-radius: 18px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-    th {
-      background: #003366;
-      color: white;
-    }
-    .estado {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: .8rem;
-      font-weight: bold;
-    }
+    .overlay { background: rgba(0,0,0,0.25); min-height: 100vh; }
+    .navbar { position: sticky; top: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); padding: 10px 30px; color: white; font-weight: bold; display: flex; justify-content: space-between; align-items: center; z-index: 999; font-family: 'Nuevo', 'Segoe UI', Arial; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { height: 40px; }
+    .menu { display: flex; gap: 25px; }
+    .menu a { color: white; text-decoration: none; font-weight: bold; transition: .3s; }
+    .menu a:hover { color: #00aaff; transform: scale(1.05); }
+    .menu-toggle { display: none; font-size: 1.6rem; cursor: pointer; }
+    .container { max-width: 900px; margin: 50px auto; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 30px; border-radius: 18px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
+    h1 { text-align: center; margin-bottom: 25px; color: #003366; }
+    input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ccc; font-size: 1rem; height: 46px; }
+    textarea { height: auto; }
+    button { padding: 12px; border: none; border-radius: 30px; background: linear-gradient(135deg,#0072C6,#005a9e); color: white; font-weight: bold; cursor: pointer; transition: .3s; }
+    button:hover { transform: scale(1.05); }
+    .grid-container { max-width: 1100px; margin: 40px auto; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 30px; border-radius: 18px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+    th { background: #003366; color: white; }
+    .estado { padding: 6px 12px; border-radius: 20px; font-size: .8rem; font-weight: bold; }
     .pendiente { background: #fff3cd; color: #856404; }
     .tramite { background: #cce5ff; color: #004085; }
     .rechazado { background: #f8d7da; color: #721c24; }
     .aprobado { background: #d4edda; color: #155724; }
-    .footer {
-      text-align: center;
-      padding: 30px;
-      color: white;
-      background: #003366;
-      margin-top: 50px;
-    }
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 15px 25px;
-      border-radius: 12px;
-      color: white;
-      font-weight: bold;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-      z-index: 9999;
-      opacity: 0.95;
-    }
+    .footer { text-align: center; padding: 30px; color: white; background: #003366; margin-top: 50px; }
+    .notification { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 12px; color: white; font-weight: bold; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 9999; opacity: 0.95; }
     .notification.success { background: #28a745; }
     .notification.error { background: #dc3545; }
     @media(max-width:768px) {
-      .menu {
-        display: none;
-        flex-direction: column;
-        background: rgba(0,0,0,0.9);
-        position: absolute;
-        top: 60px;
-        right: 0;
-        width: 200px;
-        padding: 20px;
-        border-radius: 10px 0 0 10px;
-      }
+      .menu { display: none; flex-direction: column; background: rgba(0,0,0,0.9); position: absolute; top: 60px; right: 0; width: 200px; padding: 20px; border-radius: 10px 0 0 10px; }
       .menu.show { display: flex; }
       .menu-toggle { display: block; }
     }
@@ -194,6 +75,7 @@
         <label>Empleado</label>
         <select id="employee" required>
           <option value="">Seleccione empleado</option>
+          <!-- Opciones originales -->
           <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
           <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
           <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
@@ -217,17 +99,14 @@
         <label>Adjuntar archivos (PDF o imágenes)</label>
         <input type="file" id="archivos" multiple>
 
-        <!-- Botón con spinner -->
         <button type="submit" id="btnEnviar">
           <span class="btn-text">Registrar Solicitud</span>
-          <span class="spinner" style="display:none;">
-            <i class="fa fa-spinner fa-spin"></i>
-          </span>
+          <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
         </button>
       </form>
     </div>
 
-    <!-- GRID -->
+    <!-- GRID DE SOP -->
     <div class="grid-container">
       <h2>Solicitudes SOP</h2>
       <input type="text" id="buscarSOP" placeholder="Buscar..." style="margin-bottom:15px;padding:8px;width:100%;border-radius:8px;border:1px solid #ccc;">
@@ -263,9 +142,7 @@
   <div id="modalAporte" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:9999;">
     <div style="background:white;padding:30px;border-radius:12px;width:400px;max-width:90%;">
       <h3>Aportar a SOP</h3>
-      <div id="historialAportes" style="max-height:200px;overflow:auto;margin-bottom:15px;border:1px solid #ddd;padding:10px;border-radius:8px;">
-        Cargando historial...
-      </div>
+      <div id="historialAportes" style="max-height:200px;overflow:auto;margin-bottom:15px;border:1px solid #ddd;padding:10px;border-radius:8px;">Cargando historial...</div>
       <input type="hidden" id="aporte_id_sop">
       <input type="hidden" id="aporte_empleado">
       <input type="hidden" id="aporte_correo">
@@ -287,185 +164,45 @@
     const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
     const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
 
-    function toggleMenu() {
-      document.querySelector('.menu').classList.toggle('show');
-    }
-
-    document.getElementById("sopForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
-
-  try {
-    let datosEmpleado = document.getElementById("employee").value.split("|");
-    let nombre = datosEmpleado[0];
-    let correo = datosEmpleado[1];
-    let cargo = datosEmpleado[2];
-
-    let depto = document.getElementById("departamento").value.trim();
-    let objetivo = document.getElementById("objetivo").value.trim();
-    let areas = document.getElementById("areas").value.trim();
-    let resumen = document.getElementById("resumen").value.trim();
-
-    if (!nombre || !depto || !objetivo || !areas || !resumen) {
-      mostrarNotificacion("Complete todos los campos obligatorios", "error");
-      return;
-    }
-
-    btn.disabled = true;
-    btnText.innerText = "Enviando...";
-    spinner.style.display = "inline-block";
-
-    let fechaActual = new Date().toLocaleString();
-
-    let archivosInput = document.getElementById("archivos");
-    let linksDrive = [];
-
-    if (archivosInput.files.length > 0) {
-      linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
-    }
-
-    let filesHTML = linksDrive.map(link => 
-      `<p>📎 <a href="${link}" target="_blank">${link}</a></p>`
-    ).join("");
-
-    // ✅ EMAIL
-    await emailjs.send("service_vkt5xuo", "template_vc7447e", {
-      employee: nombre,
-      department: depto,
-      cargo: cargo,
-      objective: objetivo,
-      areas: areas,
-      summary: resumen,
-      date: fechaActual,
-      files: filesHTML
-    });
-
-    // ✅ GOOGLE FORM
-    const formData = new FormData();
-    formData.append("entry.1393360085", nombre);
-    formData.append("entry.1363198453", correo);
-    formData.append("entry.1941994843", depto);
-    formData.append("entry.1015716567", objetivo);
-    formData.append("entry.949214050", areas);
-    formData.append("entry.619270886", resumen);
-    formData.append("entry.1989031957", "Pendiente");
-    formData.append("entry.1877018002", linksDrive.join(", "));
-
-    await fetch(GOOGLE_FORM_URL, {
-      method: "POST",
-      body: formData,
-      mode: "no-cors"
-    });
-
-    mostrarNotificacion("Solicitud enviada correctamente", "success");
-    renderTabla();
-    this.reset();
-
-  } catch (error) {
-    console.error("ERROR GENERAL:", error);
-    mostrarNotificacion("Error enviando solicitud", "error");
-  }
-
-  btn.disabled = false;
-  btnText.innerText = "Registrar Solicitud";
-  spinner.style.display = "none";
-});
-    function iconoArchivo(link) {
-      const url = link.toLowerCase();
-      if (url.includes(".pdf")) return `📄 <a href="${link}" target="_blank">PDF</a>`;
-      if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) return `🖼 <a href="${link}" target="_blank">Imagen</a>`;
-      if (url.match(/\.(xls|xlsx|csv)$/)) return `📊 <a href="${link}" target="_blank">Excel</a>`;
-      return `📎 <a href="${link}" target="_blank">Archivo</a>`;
-    }
-
-    async function archivosA_Base64(files) {
-      return Promise.all(
-        Array.from(files).map(file => new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve({ name: file.name, data: reader.result });
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        }))
-      );
-    }
-
-async function subirArchivosDrive(files, nombre) {
-  let archivosBase64 = await archivosA_Base64(files);
-
-  await fetch(SCRIPT_URL_DRIVE, {
-    method: "POST",
-    body: JSON.stringify({ employee: nombre, files: archivosBase64 }),
-    mode: "no-cors" // ✅ CLAVE
-  });
-
-  return []; // ⚠️ no puedes leer respuesta
-}
-
     const btn = document.getElementById("btnEnviar");
     const btnText = btn.querySelector(".btn-text");
     const spinner = btn.querySelector(".spinner");
 
-    document.getElementById("sopForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      let datosEmpleado = document.getElementById("employee").value.split("|");
-      let nombre = datosEmpleado[0];
-      let correo = datosEmpleado[1];
-      let cargo = datosEmpleado[2];
-      let depto = document.getElementById("departamento").value.trim();
-      let objetivo = document.getElementById("objetivo").value.trim();
-      let areas = document.getElementById("areas").value.trim();
-      let resumen = document.getElementById("resumen").value.trim();
+    function toggleMenu() { document.querySelector('.menu').classList.toggle('show'); }
 
-      if (!nombre || !depto || !objetivo || !areas || !resumen) {
-        mostrarNotificacion("Complete todos los campos obligatorios", "error");
-        return;
-      }
+    // Convierte archivos a Base64
+    async function archivosA_Base64(files) {
+      return Promise.all(Array.from(files).map(file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({ name: file.name, data: reader.result, type: file.type });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      })));
+    }
 
-      btn.disabled = true;
-      btnText.innerText = "Enviando...";
-      spinner.style.display = "inline-block";
+    // Subir archivos a Drive via Apps Script y obtener links
+    async function subirArchivosDrive(files, nombre, correo, cargo, depto, objetivo, areas, resumen) {
+      let archivosBase64 = await archivosA_Base64(files);
 
-      let fechaActual = new Date().toLocaleString();
-      let archivosInput = document.getElementById("archivos");
-      let linksDrive = [];
-
-      if (archivosInput.files.length > 0)
-        linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
-
-      let filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}">${link}</a></p>`).join("");
-
-      emailjs.send("service_vkt5xuo", "template_vc7447e", {
-        employee: nombre,
-        department: depto,
-        cargo: cargo,
-        objective: objetivo,
-        areas: areas,
-        summary: resumen,
-        date: fechaActual,
-        files: filesHTML
+      const response = await fetch(SCRIPT_URL_DRIVE, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          employee: nombre,
+          correo: correo,
+          cargo: cargo,
+          departamento: depto,
+          objetivo: objetivo,
+          areas: areas,
+          resumen: resumen,
+          date: new Date().toLocaleString(),
+          files: archivosBase64
+        })
       });
 
-      try {
-        const formData = new FormData();
-        formData.append("entry.1393360085", nombre);
-        formData.append("entry.1363198453", correo);
-        formData.append("entry.1941994843", depto);
-        formData.append("entry.1015716567", objetivo);
-        formData.append("entry.949214050", areas);
-        formData.append("entry.619270886", resumen);
-        formData.append("entry.1989031957", "Pendiente");
-        formData.append("entry.1877018002", linksDrive.join(", "));
-        fetch(GOOGLE_FORM_URL, { method: "POST", body: formData, mode: "no-cors" });
-      } catch (e) {
-        console.error(e);
-      }
-
-      mostrarNotificacion("Solicitud enviada correctamente", "success");
-      renderTabla();
-      btn.disabled = false;
-      btnText.innerText = "Registrar Solicitud";
-      spinner.style.display = "none";
-      this.reset();
-    });
+      const data = await response.json();
+      return data.links || [];
+    }
 
     function mostrarNotificacion(msg, tipo) {
       const notif = document.createElement("div");
@@ -475,6 +212,84 @@ async function subirArchivosDrive(files, nombre) {
       setTimeout(() => notif.remove(), 4000);
     }
 
+    function iconoArchivo(link) {
+      const url = link.toLowerCase();
+      if (url.includes(".pdf")) return `📄 <a href="${link}" target="_blank">PDF</a>`;
+      if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) return `🖼 <a href="${link}" target="_blank">Imagen</a>`;
+      if (url.match(/\.(xls|xlsx|csv)$/)) return `📊 <a href="${link}" target="_blank">Excel</a>`;
+      return `📎 <a href="${link}" target="_blank">Archivo</a>`;
+    }
+
+    // Submit del formulario
+    document.getElementById("sopForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      try {
+        let datosEmpleado = document.getElementById("employee").value.split("|");
+        let nombre = datosEmpleado[0];
+        let correo = datosEmpleado[1];
+        let cargo = datosEmpleado[2];
+        let depto = document.getElementById("departamento").value.trim();
+        let objetivo = document.getElementById("objetivo").value.trim();
+        let areas = document.getElementById("areas").value.trim();
+        let resumen = document.getElementById("resumen").value.trim();
+        if (!nombre || !depto || !objetivo || !areas || !resumen) {
+          mostrarNotificacion("Complete todos los campos obligatorios", "error");
+          return;
+        }
+
+        btn.disabled = true;
+        btnText.innerText = "Enviando...";
+        spinner.style.display = "inline-block";
+
+        let fechaActual = new Date().toLocaleString();
+        let archivosInput = document.getElementById("archivos");
+        let linksDrive = [];
+
+        if (archivosInput.files.length > 0) {
+          linksDrive = await subirArchivosDrive(
+            archivosInput.files, nombre, correo, cargo, depto, objetivo, areas, resumen
+          );
+        }
+
+        // Enviar EmailJS
+        let filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}" target="_blank">${link}</a></p>`).join("");
+        await emailjs.send("service_vkt5xuo", "template_vc7447e", {
+          employee: nombre,
+          department: depto,
+          cargo: cargo,
+          objective: objetivo,
+          areas: areas,
+          summary: resumen,
+          date: fechaActual,
+          files: filesHTML
+        });
+
+        // Enviar Google Form
+        const formData = new FormData();
+        formData.append("entry.1393360085", nombre);
+        formData.append("entry.1363198453", correo);
+        formData.append("entry.1941994843", depto);
+        formData.append("entry.1015716567", objetivo);
+        formData.append("entry.949214050", areas);
+        formData.append("entry.619270886", resumen);
+        formData.append("entry.1989031957", "Pendiente");
+        formData.append("entry.1877018002", linksDrive.join(", "));
+        await fetch(GOOGLE_FORM_URL, { method: "POST", body: formData, mode: "no-cors" });
+
+        mostrarNotificacion("Solicitud enviada correctamente", "success");
+        renderTabla();
+        this.reset();
+      } catch (error) {
+        console.error(error);
+        mostrarNotificacion("Error enviando solicitud", "error");
+      } finally {
+        btn.disabled = false;
+        btnText.innerText = "Registrar Solicitud";
+        spinner.style.display = "none";
+      }
+    });
+
+    // Render tabla
     async function renderTabla() {
       const tabla = document.getElementById("tablaSOP");
       tabla.innerHTML = "";
@@ -530,9 +345,7 @@ async function subirArchivosDrive(files, nombre) {
       cargarHistorial(id);
     }
 
-    function cerrarAporte() {
-      document.getElementById("modalAporte").style.display = "none";
-    }
+    function cerrarAporte() { document.getElementById("modalAporte").style.display = "none"; }
 
     async function enviarAporte() {
       let id = document.getElementById("aporte_id_sop").value;
@@ -544,7 +357,7 @@ async function subirArchivosDrive(files, nombre) {
       let linksDrive = [];
 
       if (archivosInput.files.length > 0)
-        linksDrive = await subirArchivosDrive(archivosInput.files, empleado);
+        linksDrive = await subirArchivosDrive(archivosInput.files, empleado, correo, "", depto, "", "", "");
 
       await fetch(SCRIPT_URL_SOP_ADMIN, {
         method: "POST",
@@ -569,10 +382,7 @@ async function subirArchivosDrive(files, nombre) {
       try {
         const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id));
         const data = await res.json();
-        if (!data.length) {
-          historial.innerHTML = "Sin aportes aún";
-          return;
-        }
+        if (!data.length) { historial.innerHTML = "Sin aportes aún"; return; }
         historial.innerHTML = data.map(a => `
           <div style="border-bottom:1px solid #eee;padding:6px 0;">
             <strong>${a.EMPLEADO}</strong><br>
