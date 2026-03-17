@@ -291,11 +291,93 @@
       document.querySelector('.menu').classList.toggle('show');
     }
 
-    document.getElementById("employee").addEventListener("change", function() {
-      let datos = this.value.split("|");
-      document.getElementById("departamento").value = datos[3] || "";
+    document.getElementById("sopForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  try {
+    let datosEmpleado = document.getElementById("employee").value.split("|");
+    let nombre = datosEmpleado[0];
+    let correo = datosEmpleado[1];
+    let cargo = datosEmpleado[2];
+
+    let depto = document.getElementById("departamento").value.trim();
+    let objetivo = document.getElementById("objetivo").value.trim();
+    let areas = document.getElementById("areas").value.trim();
+    let resumen = document.getElementById("resumen").value.trim();
+
+    if (!nombre || !depto || !objetivo || !areas || !resumen) {
+      mostrarNotificacion("Complete todos los campos obligatorios", "error");
+      return;
+    }
+
+    btn.disabled = true;
+    btnText.innerText = "Enviando...";
+    spinner.style.display = "inline-block";
+
+    let fechaActual = new Date().toLocaleString();
+
+    let archivosInput = document.getElementById("archivos");
+    let linksDrive = [];
+
+ if (archivosInput.files.length > 0) {
+  linksDrive = await subirArchivosDrive(
+    archivosInput.files,
+    nombre,
+    correo,
+    cargo,
+    depto,
+    objetivo,
+    areas,
+    resumen
+  );
+}
+
+    let filesHTML = linksDrive.map(link => 
+      `<p>📎 <a href="${link}" target="_blank">${link}</a></p>`
+    ).join("");
+
+    // ✅ EMAIL
+    await emailjs.send("service_vkt5xuo", "template_vc7447e", {
+      employee: nombre,
+      department: depto,
+      cargo: cargo,
+      objective: objetivo,
+      areas: areas,
+      summary: resumen,
+      date: fechaActual,
+      files: filesHTML
     });
 
+    // ✅ GOOGLE FORM
+    const formData = new FormData();
+    formData.append("entry.1393360085", nombre);
+    formData.append("entry.1363198453", correo);
+    formData.append("entry.1941994843", depto);
+    formData.append("entry.1015716567", objetivo);
+    formData.append("entry.949214050", areas);
+    formData.append("entry.619270886", resumen);
+    formData.append("entry.1989031957", "Pendiente");
+    formData.append("entry.1877018002", linksDrive.join(", "));
+
+    await fetch(GOOGLE_FORM_URL, {
+      method: "POST",
+      body: formData,
+      mode: "no-cors"
+    });
+
+    mostrarNotificacion("Solicitud enviada correctamente", "success");
+    renderTabla();
+    this.reset();
+
+  } catch (error) {
+    console.error("ERROR GENERAL:", error);
+    mostrarNotificacion("Error enviando solicitud", "error");
+  }
+
+  btn.disabled = false;
+  btnText.innerText = "Registrar Solicitud";
+  spinner.style.display = "none";
+});
     function iconoArchivo(link) {
       const url = link.toLowerCase();
       if (url.includes(".pdf")) return `📄 <a href="${link}" target="_blank">PDF</a>`;
@@ -315,15 +397,17 @@
       );
     }
 
-    async function subirArchivosDrive(files, nombre) {
-      let archivosBase64 = await archivosA_Base64(files);
-      let response = await fetch(SCRIPT_URL_DRIVE, {
-        method: "POST",
-        body: JSON.stringify({ employee: nombre, files: archivosBase64 })
-      });
-      let data = await response.json();
-      return data.links;
-    }
+async function subirArchivosDrive(files, nombre) {
+  let archivosBase64 = await archivosA_Base64(files);
+
+  await fetch(SCRIPT_URL_DRIVE, {
+    method: "POST",
+    body: JSON.stringify({ employee: nombre, files: archivosBase64 }),
+    mode: "no-cors" // ✅ CLAVE
+  });
+
+  return []; // ⚠️ no puedes leer respuesta
+}
 
     const btn = document.getElementById("btnEnviar");
     const btnText = btn.querySelector(".btn-text");
