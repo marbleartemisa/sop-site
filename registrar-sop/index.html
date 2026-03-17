@@ -410,8 +410,12 @@
         const res = await fetch(SCRIPT_URL_SOP_ADMIN);
         const data = await res.json();
 
-        data.forEach(sop => {
+      data.forEach(sop => {
+
+          console.log("ID SOP:", sop.Timestamp); // 👈 AQUÍ
+
           if (filtroEstado && sop.estado !== filtroEstado) return;
+        
           if (buscar) {
             let texto = (sop.empleado + sop.objetivo + sop.departamento).toLowerCase();
             if (!texto.includes(buscar)) return;
