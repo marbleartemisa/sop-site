@@ -388,15 +388,17 @@
       );
     }
 
-    async function subirArchivosDrive(files, nombre) {
-      let archivosBase64 = await archivosA_Base64(files);
-      let response = await fetch(SCRIPT_URL_DRIVE, {
-        method: "POST",
-        body: JSON.stringify({ employee: nombre, files: archivosBase64 })
-      });
-      let data = await response.json();
-      return data.links;
-    }
+async function subirArchivosDrive(files, nombre) {
+  let archivosBase64 = await archivosA_Base64(files);
+
+  await fetch(SCRIPT_URL_DRIVE, {
+    method: "POST",
+    body: JSON.stringify({ employee: nombre, files: archivosBase64 }),
+    mode: "no-cors" // ✅ CLAVE
+  });
+
+  return []; // ⚠️ no puedes leer respuesta
+}
 
     const btn = document.getElementById("btnEnviar");
     const btnText = btn.querySelector(".btn-text");
