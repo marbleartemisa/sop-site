@@ -291,12 +291,8 @@
       document.querySelector('.menu').classList.toggle('show');
     }
 
-document.getElementById("sopForm").addEventListener("submit", async function(e) {
+    document.getElementById("sopForm").addEventListener("submit", async function(e) {
   e.preventDefault();
-
-  const btn = document.getElementById("btnEnviar");
-  const btnText = btn.querySelector(".btn-text");
-  const spinner = btn.querySelector(".spinner");
 
   try {
     let datosEmpleado = document.getElementById("employee").value.split("|");
@@ -319,16 +315,28 @@ document.getElementById("sopForm").addEventListener("submit", async function(e) 
     spinner.style.display = "inline-block";
 
     let fechaActual = new Date().toLocaleString();
+
     let archivosInput = document.getElementById("archivos");
     let linksDrive = [];
 
-    if (archivosInput.files.length > 0) {
-      linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
-    }
+ if (archivosInput.files.length > 0) {
+  linksDrive = await subirArchivosDrive(
+    archivosInput.files,
+    nombre,
+    correo,
+    cargo,
+    depto,
+    objetivo,
+    areas,
+    resumen
+  );
+}
 
-    let filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}" target="_blank">${link}</a></p>`).join("");
+    let filesHTML = linksDrive.map(link => 
+      `<p>📎 <a href="${link}" target="_blank">${link}</a></p>`
+    ).join("");
 
-    // ✅ ENVIAR EMAIL
+    // ✅ EMAIL
     await emailjs.send("service_vkt5xuo", "template_vc7447e", {
       employee: nombre,
       department: depto,
@@ -340,7 +348,7 @@ document.getElementById("sopForm").addEventListener("submit", async function(e) 
       files: filesHTML
     });
 
-    // ✅ ENVIAR GOOGLE FORM
+    // ✅ GOOGLE FORM
     const formData = new FormData();
     formData.append("entry.1393360085", nombre);
     formData.append("entry.1363198453", correo);
@@ -351,7 +359,11 @@ document.getElementById("sopForm").addEventListener("submit", async function(e) 
     formData.append("entry.1989031957", "Pendiente");
     formData.append("entry.1877018002", linksDrive.join(", "));
 
-    await fetch(GOOGLE_FORM_URL, { method: "POST", body: formData, mode: "no-cors" });
+    await fetch(GOOGLE_FORM_URL, {
+      method: "POST",
+      body: formData,
+      mode: "no-cors"
+    });
 
     mostrarNotificacion("Solicitud enviada correctamente", "success");
     renderTabla();
@@ -374,34 +386,27 @@ document.getElementById("sopForm").addEventListener("submit", async function(e) 
       return `📎 <a href="${link}" target="_blank">Archivo</a>`;
     }
 
-async function archivosA_Base64(files) {
-  return Promise.all(
-    Array.from(files).map(file => new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve({ name: file.name, data: reader.result });
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    }))
-  );
-}
+    async function archivosA_Base64(files) {
+      return Promise.all(
+        Array.from(files).map(file => new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({ name: file.name, data: reader.result });
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        }))
+      );
+    }
 
 async function subirArchivosDrive(files, nombre) {
   let archivosBase64 = await archivosA_Base64(files);
 
-  const res = await fetch(SCRIPT_URL_DRIVE, {
+  await fetch(SCRIPT_URL_DRIVE, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ employee: nombre, files: archivosBase64 }),
+    mode: "no-cors" // ✅ CLAVE
   });
 
-  // Leer respuesta del Apps Script con los links
-  try {
-    const data = await res.json();
-    return data.links || [];
-  } catch (e) {
-    console.error("Error leyendo links de Drive:", e);
-    return [];
-  }
+  return []; // ⚠️ no puedes leer respuesta
 }
 
     const btn = document.getElementById("btnEnviar");
