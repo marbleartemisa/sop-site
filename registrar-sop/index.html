@@ -456,15 +456,15 @@
             <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td>
             <td>${sop.Timestamp || ""}</td>
             <td>${archivosHTML}</td>
-  <td>
-<button onclick="abrirAporte(
-  '${sop.id}',
-  '${sop.empleado}',
-  '${sop.correo}',
-  '${sop.departamento}',
-  '${sop.objetivo}',
-  '${sop.Timestamp}'
-)">💬</button>
+<td>
+  <button onclick="abrirAporte(
+    '${sop.ID_SOP}',       // ✅ ahora usamos ID_SOP
+    '${sop.empleado}',
+    '${sop.correo}',
+    '${sop.departamento}',
+    '${sop.objetivo}',
+    '${sop.Timestamp}'     // fecha para mostrar
+  )">💬</button>
 </td>
           `;
           tabla.appendChild(fila);
@@ -479,19 +479,20 @@
   return f.toLocaleString();
 }
 
-function abrirAporte(id, empleado, correo, depto, objetivo, timestamp) {
+function abrirAporte(id_sop, empleado, correo, depto, objetivo, fecha) {
   document.getElementById("modalAporte").style.display = "flex";
-  document.getElementById("aporte_id_sop").value = id;
+  document.getElementById("aporte_id_sop").value = id_sop;
   document.getElementById("aporte_empleado").value = empleado;
   document.getElementById("aporte_correo").value = correo;
   document.getElementById("aporte_departamento").value = depto;
 
+  // ✅ llenar info del SOP
   document.getElementById("info_objetivo").innerText = objetivo || "";
   document.getElementById("info_empleado").innerText = empleado || "";
   document.getElementById("info_departamento").innerText = depto || "";
-  document.getElementById("info_fecha").innerText = timestamp ? new Date(timestamp).toLocaleString() : "";
-  
-  cargarHistorial(id); // filtra aportes por UUID
+  document.getElementById("info_fecha").innerText = fecha ? new Date(fecha).toLocaleString() : "";
+
+  cargarHistorial(id_sop); // ahora historial filtra por ID_SOP
 }
 
     function cerrarAporte() {
@@ -527,27 +528,27 @@ function abrirAporte(id, empleado, correo, depto, objetivo, timestamp) {
       cerrarAporte();
     }
 
-    async function cargarHistorial(id) {
-      const historial = document.getElementById("historialAportes");
-      historial.innerHTML = "Cargando...";
-      try {
-        const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id));
-        const data = await res.json();
-        if (!data.length) {
-          historial.innerHTML = "Sin aportes aún";
-          return;
-        }
-        historial.innerHTML = data.map(a => `
-          <div style="border-bottom:1px solid #eee;padding:6px 0;">
-            <strong>${a.EMPLEADO}</strong><br>
-            <small>${a.FECHA}</small><br>
-            ${a.COMENTARIO || ""}
-          </div>
-        `).join("");
-      } catch (e) {
-        historial.innerHTML = "Error cargando historial";
-      }
+async function cargarHistorial(id_sop) {
+  const historial = document.getElementById("historialAportes");
+  historial.innerHTML = "Cargando...";
+  try {
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id_sop));
+    const data = await res.json();
+    if (!data.length) {
+      historial.innerHTML = "Sin aportes aún";
+      return;
     }
+    historial.innerHTML = data.map(a => `
+      <div style="border-bottom:1px solid #eee;padding:6px 0;">
+        <strong>${a.EMPLEADO}</strong><br>
+        <small>${new Date(a.FECHA).toLocaleString()}</small><br>
+        ${a.COMENTARIO || ""}
+      </div>
+    `).join("");
+  } catch (e) {
+    historial.innerHTML = "Error cargando historial";
+  }
+}
 
     document.getElementById("buscarSOP").addEventListener("input", renderTabla);
     document.getElementById("filtroEstado").addEventListener("change", renderTabla);
