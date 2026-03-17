@@ -458,11 +458,12 @@
             <td>${archivosHTML}</td>
   <td>
 <button onclick="abrirAporte(
-  '${sop.Timestamp}',
+  '${sop.id}',
   '${sop.empleado}',
   '${sop.correo}',
   '${sop.departamento}',
-  '${sop.objetivo}'
+  '${sop.objetivo}',
+  '${sop.Timestamp}'
 )">💬</button>
 </td>
           `;
@@ -478,23 +479,19 @@
   return f.toLocaleString();
 }
 
-function abrirAporte(id, empleado, correo, depto, objetivo) {
+function abrirAporte(id, empleado, correo, depto, objetivo, timestamp) {
   document.getElementById("modalAporte").style.display = "flex";
   document.getElementById("aporte_id_sop").value = id;
   document.getElementById("aporte_empleado").value = empleado;
   document.getElementById("aporte_correo").value = correo;
   document.getElementById("aporte_departamento").value = depto;
 
-  // ✅ Llenar info del SOP en el div
   document.getElementById("info_objetivo").innerText = objetivo || "";
   document.getElementById("info_empleado").innerText = empleado || "";
   document.getElementById("info_departamento").innerText = depto || "";
-
-  // ✅ Formatear fecha de manera segura
-  let fecha = new Date(Number(id));
-  document.getElementById("info_fecha").innerText = isNaN(fecha) ? "" : fecha.toLocaleString();
-
-  cargarHistorial(id);
+  document.getElementById("info_fecha").innerText = timestamp ? new Date(timestamp).toLocaleString() : "";
+  
+  cargarHistorial(id); // filtra aportes por UUID
 }
 
     function cerrarAporte() {
