@@ -81,82 +81,96 @@ button:hover{transform:scale(1.05);}
 </div>
 
 <script>
-const SCRIPT_URL_DRIVE = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
+emailjs.init("iR8ieJnOkI4_sr8TH");
+const SCRIPT_URL = "TU_DEPLOY_URL_DEL_NUEVO_SCRIPT"; // reemplaza con tu URL deploy
 
-function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
-
-// Convertir archivos a Base64
+// Archivos a Base64
 function archivosA_Base64(files){
-  return Promise.all(Array.from(files).map(file => new Promise((resolve,reject)=>{
-    const reader = new FileReader();
-    reader.onload = ()=> resolve({name:file.name, data:reader.result, type:file.type});
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  })));
+  return Promise.all(Array.from(files).map(file => {
+    return new Promise((resolve,reject)=>{
+      const reader = new FileReader();
+      reader.onload = ()=>resolve({name: file.name, data: reader.result, type:file.type});
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    })
+  }));
 }
 
-// Subir archivos a Drive
-async function subirArchivosDrive(files, empleado){
-  const archivosBase64 = await archivosA_Base64(files);
-  const res = await fetch(SCRIPT_URL_DRIVE, {
-    method:"POST",
-    body: JSON.stringify({employee: empleado, files: archivosBase64})
-  });
-  const data = await res.json();
-  return data.links;
-}
-
-// Enviar datos al Google Form
-async function enviarGoogleForm(datos){
-  const formData = new FormData();
-  formData.append("entry.1393360085", datos.nombre);
-  formData.append("entry.1363198453", datos.correo);
-  formData.append("entry.1941994843", datos.departamento);
-  formData.append("entry.1015716567", datos.objetivo);
-  formData.append("entry.949214050", datos.areas);
-  formData.append("entry.619270886", datos.resumen);
-  formData.append("entry.1989031957", "Pendiente");
-  formData.append("entry.1877018002", datos.links.join(", "));
-  await fetch(GOOGLE_FORM_URL, { method:"POST", body: formData });
-}
-
-// Evento submit
+// Enviar formulario
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
 
   const datosEmpleado = document.getElementById("employee").value.split("|");
-  const nombre = datosEmpleado[0], correo = datosEmpleado[1], departamento = document.getElementById("departamento").value.trim();
+  const nombre = datosEmpleado[0];
+  const correo = datosEmpleado[1];
+  const cargo = datosEmpleado[2];
+  const departamentoEmpleado = datosEmpleado[3];
+
+  const depto = document.getElementById("departamento").value.trim();
   const objetivo = document.getElementById("objetivo").value.trim();
   const areas = document.getElementById("areas").value.trim();
   const resumen = document.getElementById("resumen").value.trim();
-  const archivosInput = document.getElementById("archivos");
 
-  if(!nombre || !departamento || !objetivo || !areas || !resumen){
+  if(!nombre || !depto || !objetivo || !areas || !resumen){
     alert("Complete todos los campos obligatorios");
     return;
   }
 
-  // Mostrar spinner
   const btn = document.getElementById("btnEnviar");
-  btn.disabled = true;
-  btn.querySelector(".btn-text").innerText = "Enviando...";
-  btn.querySelector(".spinner").style.display = "inline-block";
+  const btnText = btn.querySelector(".btn-text");
+  const spinner = btn.querySelector(".spinner");
+  btn.disabled = true; btnText.innerText="Enviando..."; spinner.style.display="inline-block";
 
-  // 1️⃣ Subir archivos
-  let linksDrive = [];
-  if(archivosInput.files.length > 0){
-    linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
+  const fechaActual = new Date().toLocaleString();
+  const archivosInput = document.getElementById("archivos");
+  let archivosBase64 = [];
+  if(archivosInput.files.length>0){
+    archivosBase64 = await archivosA_Base64(archivosInput.files);
   }
 
-  // 2️⃣ Enviar al Google Form
-  await enviarGoogleForm({nombre, correo, departamento, objetivo, areas, resumen, links: linksDrive});
+  // Enviar a Apps Script
+  try{
+    const response = await fetch(SCRIPT_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        employee: nombre,
+        correo: correo,
+        cargo: cargo,
+        departamento: depto,
+        objetivo: objetivo,
+        areas: areas,
+        resumen: resumen,
+        date: fechaActual,
+        files: archivosBase64
+      })
+    });
+    const data = await response.json();
+    if(data.status==="success"){
+      const filesHTML = data.links.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
 
-  alert("Solicitud enviada correctamente!");
-  btn.disabled = false;
-  btn.querySelector(".btn-text").innerText = "Registrar Solicitud";
-  btn.querySelector(".spinner").style.display = "none";
-  this.reset();
+      // Enviar email
+      emailjs.send("service_vkt5xuo","template_vc7447e",{
+        employee:nombre,
+        department:depto,
+        cargo:cargo,
+        objective:objetivo,
+        areas:areas,
+        summary:resumen,
+        date:fechaActual,
+        files:filesHTML
+      })
+      .then(()=>alert("Solicitud enviada correctamente"))
+      .catch(()=>alert("Error enviando correo"));
+
+      this.reset();
+    } else {
+      alert("Error en script: " + data.message);
+    }
+  } catch(err){
+    alert("Error enviando datos: " + err.message);
+  } finally {
+    btn.disabled = false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none";
+  }
 });
 </script>
 </body>
