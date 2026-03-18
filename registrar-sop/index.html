@@ -119,39 +119,34 @@ const btnText = btn.querySelector(".btn-text")
 const spinner = btn.querySelector(".spinner")
 
 document.getElementById("sopForm").addEventListener("submit", async function(e){
-  e.preventDefault()
+  e.preventDefault();
 
-  let datosEmpleado=document.getElementById("employee").value.split("|")
-  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2]
-  let depto=document.getElementById("departamento").value.trim()
-  let objetivo=document.getElementById("objetivo").value.trim()
-  let areas=document.getElementById("areas").value.trim()
-  let resumen=document.getElementById("resumen").value.trim()
+  let datosEmpleado=document.getElementById("employee").value.split("|");
+  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2];
+  let depto=document.getElementById("departamento").value.trim();
+  let objetivo=document.getElementById("objetivo").value.trim();
+  let areas=document.getElementById("areas").value.trim();
+  let resumen=document.getElementById("resumen").value.trim();
 
   if(!nombre || !depto || !objetivo || !areas || !resumen){
-    mostrarNotificacion("Complete todos los campos obligatorios","error")
-    return
+    mostrarNotificacion("Complete todos los campos obligatorios","error");
+    return;
   }
 
-  btn.disabled=true
-  btnText.innerText="Enviando..."
-  spinner.style.display="inline-block"
+  btn.disabled=true;
+  btnText.innerText="Enviando...";
+  spinner.style.display="inline-block";
 
-  const fechaActual = new Date().toLocaleString()
-  let linksDrive = []
-  let folderDrive = ""
+  const fechaActual = new Date().toLocaleString();
+  let linksDrive = [];
 
   try {
-    // =============================
-    // 1️⃣ SUBIR ARCHIVOS Y OBTENER LINKS
-    // =============================
-    let archivosInput = document.getElementById("archivos")
+    // 1️⃣ Subir archivos a Drive mediante Apps Script
+    let archivosInput = document.getElementById("archivos");
     if(archivosInput.files.length > 0){
-      const archivosBase64 = await archivosA_Base64(archivosInput.files)
+      const archivosBase64 = await archivosA_Base64(archivosInput.files);
 
-      console.log("Subiendo archivos a Drive...")
-
-      const response = await fetch(SCRIPT_URL,{
+      const response = await fetch(SCRIPT_URL, {
         method: "POST",
         body: JSON.stringify({
           employee: nombre,
@@ -164,55 +159,39 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
           date: fechaActual,
           files: archivosBase64
         })
-      })
+      });
 
-      const text = await response.text()
-      console.log("RAW RESPONSE:", text)
+      const text = await response.text();
+      let result;
+      try { result = JSON.parse(text); } 
+      catch(e){ throw new Error("Respuesta inválida del servidor"); }
 
-      let result
-      try {
-        result = JSON.parse(text)
-      } catch(e){
-        throw new Error("Respuesta inválida del servidor")
-      }
-
-      console.log("Resultado Drive:", result)
-
-      if(result.result === "success"){
-        linksDrive = result.links || []
-        folderDrive = result.folderUrl || ""
+      if(result.status === "success"){
+        linksDrive = result.links || [];
       } else {
-        throw new Error(result.message || "Error en Apps Script")
+        throw new Error(result.message);
       }
     }
 
-    // =============================
-    // 2️⃣ GUARDAR EN GOOGLE FORM
-    // =============================
-    const formData = new FormData()
-    formData.append("entry.1393360085", nombre)
-    formData.append("entry.1363198453", correo)
-    formData.append("entry.1941994843", depto)
-    formData.append("entry.1015716567", objetivo)
-    formData.append("entry.949214050", areas)
-    formData.append("entry.619270886", resumen)
-    formData.append("entry.1989031957", "Pendiente")
-    formData.append("entry.1877018002", linksDrive.join("\n"))
+    // 2️⃣ Guardar en Google Form usando los links devueltos por Apps Script
+    const formData = new FormData();
+    formData.append("entry.1393360085", nombre);
+    formData.append("entry.1363198453", correo);
+    formData.append("entry.1941994843", depto);
+    formData.append("entry.1015716567", objetivo);
+    formData.append("entry.949214050", areas);
+    formData.append("entry.619270886", resumen);
+    formData.append("entry.1989031957", "Pendiente");
+    formData.append("entry.1877018002", linksDrive.join(", "));
 
-    await fetch(FORM_URL,{
-      method:"POST",
-      mode:"no-cors",
+    await fetch(FORM_URL, {
+      method: "POST",
+      mode: "no-cors",
       body: formData
-    })
+    });
 
-    console.log("✅ Guardado en Form OK")
-
-    // =============================
-    // 3️⃣ ENVIAR EMAIL
-    // =============================
-    let filesHTML = linksDrive.map(l=>`<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("")
-    if(folderDrive) filesHTML += `<p>📂 <a href="${folderDrive}" target="_blank">Carpeta completa</a></p>`
-
+    // 3️⃣ Enviar Email con los links
+    let filesHTML = linksDrive.map(l=>`<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("");
     await emailjs.send("service_vkt5xuo","template_vc7447e",{
       employee: nombre,
       department: depto,
@@ -222,20 +201,20 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
       summary: resumen,
       date: fechaActual,
       files: filesHTML || "Sin archivos"
-    })
+    });
 
-    mostrarNotificacion("Solicitud registrada correctamente ✅", "success")
+    mostrarNotificacion("Solicitud registrada correctamente","success");
 
   } catch(err){
-    console.error("ERROR GENERAL:", err)
-    mostrarNotificacion(err.message || "Error al procesar la solicitud", "error")
+    console.error("ERROR GENERAL:", err);
+    mostrarNotificacion(err.message,"error");
   } finally {
-    btn.disabled=false
-    btnText.innerText="Registrar Solicitud"
-    spinner.style.display="none"
-    this.reset()
+    btn.disabled=false;
+    btnText.innerText="Registrar Solicitud";
+    spinner.style.display="none";
+    this.reset();
   }
-})
+});
 
 // Notificación
 function mostrarNotificacion(msg,tipo){
