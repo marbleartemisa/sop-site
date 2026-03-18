@@ -6,9 +6,8 @@
 <title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <style>
-/* --- Tu CSS actual --- */
 body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
 .navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
@@ -24,6 +23,11 @@ input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:10px;bo
 textarea{height:auto;}
 button{padding:12px;border:none;border-radius:30px;background:linear-gradient(135deg,#0072C6,#005a9e);color:white;font-weight:bold;cursor:pointer;transition:.3s;}
 button:hover{transform:scale(1.05);}
+.footer{text-align:center;padding:30px;color:white;background:#003366;margin-top:50px;}
+.notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
+.notification.success{background:#28a745;}
+.notification.error{background:#dc3545;}
+@media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
 .spinner{margin-left:8px;}
 </style>
 </head>
@@ -36,9 +40,7 @@ button:hover{transform:scale(1.05);}
     <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
-  <div class="menu-toggle" onclick="document.querySelector('.menu').classList.toggle('show')">
-    <i class="fa-solid fa-bars"></i>
-  </div>
+  <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
@@ -48,7 +50,7 @@ button:hover{transform:scale(1.05);}
 
 <!-- FORMULARIO -->
 <div class="container">
-<h1>Registrar Solicitud de SOP</h1>
+<h1>Registrar Solicitud de SOP - Rev 3.0</h1>
 <form id="sopForm" enctype="multipart/form-data">
   <label>Empleado</label>
   <select id="employee" required>
@@ -56,16 +58,18 @@ button:hover{transform:scale(1.05);}
     <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
     <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
     <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+    <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
     <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+    <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
     <option value="Otros|otros|otros|otros">Otros</option>
   </select>
-
   <input type="text" id="departamento" placeholder="Área / Departamento" required>
   <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
   <input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
   <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
   <label>Adjuntar archivos (PDF o imágenes)</label>
   <input type="file" id="archivos" multiple>
+
   <button type="submit" id="btnEnviar">
     <span class="btn-text">Registrar Solicitud</span>
     <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
@@ -73,112 +77,87 @@ button:hover{transform:scale(1.05);}
 </form>
 </div>
 
+<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
+</div>
+
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH")  // tu public key EmailJS
-const SCRIPT_URL_DRIVE = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
+const SCRIPT_URL_DRIVE = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
+
+function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 
 // Convertir archivos a Base64
 function archivosA_Base64(files){
   return Promise.all(Array.from(files).map(file => new Promise((resolve,reject)=>{
-    const reader = new FileReader()
-    reader.onload = () => resolve({name:file.name, data:reader.result})
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })))
+    const reader = new FileReader();
+    reader.onload = ()=> resolve({name:file.name, data:reader.result, type:file.type});
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  })));
 }
 
-// Subir archivos a Google Drive y retornar links
-async function subirArchivosDrive(files, nombre){
-  if(files.length === 0) return []
-  let archivosBase64 = await archivosA_Base64(files)
-  let response = await fetch(SCRIPT_URL_DRIVE, {
+// Subir archivos a Drive
+async function subirArchivosDrive(files, empleado){
+  const archivosBase64 = await archivosA_Base64(files);
+  const res = await fetch(SCRIPT_URL_DRIVE, {
     method:"POST",
-    body: JSON.stringify({employee:nombre, files:archivosBase64})
-  })
-  let data = await response.json()
-  return data.links
+    body: JSON.stringify({employee: empleado, files: archivosBase64})
+  });
+  const data = await res.json();
+  return data.links;
 }
 
-// Función para enviar formulario de Google
-async function enviarGoogleForm({nombre, correo, depto, objetivo, areas, resumen, estado, linksDrive}){
-  const formData = new FormData()
-  formData.append("entry.1393360085", nombre)
-  formData.append("entry.1363198453", correo)
-  formData.append("entry.1941994843", depto)
-  formData.append("entry.1015716567", objetivo)
-  formData.append("entry.949214050", areas)
-  formData.append("entry.619270886", resumen)
-  formData.append("entry.1989031957", estado)
-  formData.append("entry.1877018002", linksDrive.join(", "))
-  
-  await fetch(GOOGLE_FORM_URL, {
-    method:"POST",
-    body: formData,
-    mode:"no-cors" // evita problemas CORS
-  })
+// Enviar datos al Google Form
+async function enviarGoogleForm(datos){
+  const formData = new FormData();
+  formData.append("entry.1393360085", datos.nombre);
+  formData.append("entry.1363198453", datos.correo);
+  formData.append("entry.1941994843", datos.departamento);
+  formData.append("entry.1015716567", datos.objetivo);
+  formData.append("entry.949214050", datos.areas);
+  formData.append("entry.619270886", datos.resumen);
+  formData.append("entry.1989031957", "Pendiente");
+  formData.append("entry.1877018002", datos.links.join(", "));
+  await fetch(GOOGLE_FORM_URL, { method:"POST", body: formData });
 }
 
-// Envío EmailJS con links
-function enviarEmailJS({nombre, correo, cargo, depto, objetivo, areas, resumen, fechaActual, linksDrive}){
-  let filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}">${link}</a></p>`).join("")
-  return emailjs.send("service_vkt5xuo", "template_vc7447e", {
-    employee: nombre,
-    department: depto,
-    cargo: cargo,
-    objective: objetivo,
-    areas: areas,
-    summary: resumen,
-    date: fechaActual,
-    files: filesHTML
-  })
-}
-
-// Evento de envío de formulario
+// Evento submit
 document.getElementById("sopForm").addEventListener("submit", async function(e){
-  e.preventDefault()
+  e.preventDefault();
 
-  const datosEmpleado = document.getElementById("employee").value.split("|")
-  const nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], deptoEmpleado = datosEmpleado[3]
-  const depto = document.getElementById("departamento").value.trim()
-  const objetivo = document.getElementById("objetivo").value.trim()
-  const areas = document.getElementById("areas").value.trim()
-  const resumen = document.getElementById("resumen").value.trim()
+  const datosEmpleado = document.getElementById("employee").value.split("|");
+  const nombre = datosEmpleado[0], correo = datosEmpleado[1], departamento = document.getElementById("departamento").value.trim();
+  const objetivo = document.getElementById("objetivo").value.trim();
+  const areas = document.getElementById("areas").value.trim();
+  const resumen = document.getElementById("resumen").value.trim();
+  const archivosInput = document.getElementById("archivos");
 
-  if(!nombre || !depto || !objetivo || !areas || !resumen){
-    alert("Complete todos los campos obligatorios")
-    return
+  if(!nombre || !departamento || !objetivo || !areas || !resumen){
+    alert("Complete todos los campos obligatorios");
+    return;
   }
 
-  const btn = document.getElementById("btnEnviar")
-  const btnText = btn.querySelector(".btn-text")
-  const spinner = btn.querySelector(".spinner")
-  btn.disabled = true; btnText.innerText = "Enviando..."; spinner.style.display = "inline-block"
+  // Mostrar spinner
+  const btn = document.getElementById("btnEnviar");
+  btn.disabled = true;
+  btn.querySelector(".btn-text").innerText = "Enviando...";
+  btn.querySelector(".spinner").style.display = "inline-block";
 
-  const fechaActual = new Date().toLocaleString()
-  const archivosInput = document.getElementById("archivos")
-
-  try {
-    // 1️⃣ Subir archivos a Drive
-    const linksDrive = await subirArchivosDrive(archivosInput.files, nombre)
-
-    // 2️⃣ Llenar Google Form
-    await enviarGoogleForm({nombre, correo, depto, objetivo, areas, resumen, estado:"Pendiente", linksDrive})
-
-    // 3️⃣ Enviar EmailJS
-    await enviarEmailJS({nombre, correo, cargo, depto, objetivo, areas, resumen, fechaActual, linksDrive})
-
-    alert("Solicitud enviada correctamente")
-
-    // Reset form
-    this.reset()
-  } catch(err){
-    console.error("Error enviando solicitud:", err)
-    alert("Ocurrió un error al enviar la solicitud")
-  } finally {
-    btn.disabled = false; btnText.innerText = "Registrar Solicitud"; spinner.style.display = "none"
+  // 1️⃣ Subir archivos
+  let linksDrive = [];
+  if(archivosInput.files.length > 0){
+    linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
   }
-})
+
+  // 2️⃣ Enviar al Google Form
+  await enviarGoogleForm({nombre, correo, departamento, objetivo, areas, resumen, links: linksDrive});
+
+  alert("Solicitud enviada correctamente!");
+  btn.disabled = false;
+  btn.querySelector(".btn-text").innerText = "Registrar Solicitud";
+  btn.querySelector(".spinner").style.display = "none";
+  this.reset();
+});
 </script>
 </body>
 </html>
