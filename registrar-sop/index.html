@@ -6,99 +6,140 @@
 <title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <style>
-body{font-family:Arial,sans-serif;margin:30px;}
-label{display:block;margin-top:15px;font-weight:bold;}
-input,textarea,select{width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc;}
-button{margin-top:20px;padding:12px 20px;background:#0072C6;color:white;border:none;border-radius:5px;cursor:pointer;}
-.notification{position:fixed;top:20px;right:20px;padding:15px;border-radius:8px;color:white;font-weight:bold;z-index:9999;opacity:0.95;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f2f2f2;padding:20px;}
+.container{max-width:600px;margin:auto;background:white;padding:30px;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.2);}
+h1{text-align:center;color:#003366;}
+input,textarea,select,button{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;}
+button{background:#0072C6;color:white;font-weight:bold;border:none;cursor:pointer;}
+.notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;z-index:9999;}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
-.spinner{display:none;margin-left:10px;}
 </style>
 </head>
 <body>
-
-<h2>Registrar Solicitud de SOP</h2>
+<div class="container">
+<h1>Registrar Solicitud de SOP</h1>
 <form id="sopForm" enctype="multipart/form-data">
   <label>Empleado</label>
-  <input type="text" id="employee" placeholder="Nombre completo" required>
-  <label>Correo</label>
-  <input type="email" id="correo" placeholder="Correo electrónico" required>
-  <label>Cargo</label>
-  <input type="text" id="cargo" placeholder="Cargo" required>
-  <label>Departamento</label>
-  <input type="text" id="departamento" placeholder="Departamento" required>
-  <label>Objetivo</label>
+  <select id="employee" required>
+    <option value="">Seleccione empleado</option>
+    <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+    <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+    <option value="Otros|otros|otros|otros">Otros</option>
+  </select>
+
+  <input type="text" id="departamento" placeholder="Área / Departamento" required>
   <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
-  <label>Áreas involucradas</label>
-  <input type="text" id="areas" placeholder="Áreas o roles" required>
-  <label>Resumen</label>
+  <input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
   <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
-  <label>Adjuntar archivos (PDF o imágenes)</label>
+  <label>Adjuntar archivos</label>
   <input type="file" id="archivos" multiple>
-  <button type="submit">Enviar <span class="spinner">⏳</span></button>
+
+  <button type="submit" id="btnEnviar">Registrar Solicitud</button>
 </form>
+</div>
 
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH"); // tu clave EmailJS
-const SCRIPT_URL = "TU_SCRIPT_DOPOST_URL_AQUI"; // Script viejo que funciona
+emailjs.init("iR8ieJnOkI4_sr8TH"); // tu userID EmailJS
+const SCRIPT_URL = "https://script.google.com/macros/s/TU_SCRIPT_ID/exec"; // reemplaza con tu script
+
+// Autocompleta departamento
+document.getElementById("employee").addEventListener("change", function(){
+  let datos = this.value.split("|");
+  document.getElementById("departamento").value = datos[3] || "";
+});
+
+// Mostrar notificación
+function mostrarNotificacion(msg, tipo){
+  const notif = document.createElement("div");
+  notif.className = "notification " + tipo;
+  notif.innerText = msg;
+  document.body.appendChild(notif);
+  setTimeout(()=>notif.remove(),4000);
+}
 
 // Convertir archivos a Base64
 function archivosA_Base64(files){
   return Promise.all(Array.from(files).map(file=>{
     return new Promise((resolve,reject)=>{
       const reader = new FileReader();
-      reader.onload = ()=>resolve({name:file.name,data:reader.result,type:file.type});
+      reader.onload = ()=>resolve({name:file.name, data:reader.result, type:file.type});
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
   }));
 }
 
+// Subir archivos a Google Drive a través del script
+async function subirArchivosDrive(files, datosFormulario){
+  let archivosBase64 = await archivosA_Base64(files);
+  let payload = {
+    employee: datosFormulario.nombre,
+    correo: datosFormulario.correo,
+    cargo: datosFormulario.cargo,
+    departamento: datosFormulario.departamento,
+    objetivo: datosFormulario.objetivo,
+    areas: datosFormulario.areas,
+    resumen: datosFormulario.resumen,
+    date: datosFormulario.fecha,
+    files: archivosBase64
+  };
+  let response = await fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+  return await response.json();
+}
+
+// Envío del formulario
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
-  const btn = this.querySelector("button");
-  const spinner = btn.querySelector(".spinner");
-  btn.disabled = true; spinner.style.display="inline-block";
 
-  const employee = document.getElementById("employee").value.trim();
-  const correo = document.getElementById("correo").value.trim();
-  const cargo = document.getElementById("cargo").value.trim();
-  const departamento = document.getElementById("departamento").value.trim();
-  const objetivo = document.getElementById("objetivo").value.trim();
-  const areas = document.getElementById("areas").value.trim();
-  const resumen = document.getElementById("resumen").value.trim();
-  const fecha = new Date().toLocaleString();
-  const filesInput = document.getElementById("archivos");
+  let datosEmpleado = document.getElementById("employee").value.split("|");
+  let datosFormulario = {
+    nombre: datosEmpleado[0],
+    correo: datosEmpleado[1],
+    cargo: datosEmpleado[2],
+    departamento: document.getElementById("departamento").value.trim(),
+    objetivo: document.getElementById("objetivo").value.trim(),
+    areas: document.getElementById("areas").value.trim(),
+    resumen: document.getElementById("resumen").value.trim(),
+    fecha: new Date().toLocaleString()
+  };
 
-  let files = [];
-  if(filesInput.files.length > 0){
-    files = await archivosA_Base64(filesInput.files);
-  }
-
-  // Enviar a Google Apps Script
-  let links = [];
-  try{
-    const res = await fetch(SCRIPT_URL,{
-      method:"POST",
-      body: JSON.stringify({employee, correo, cargo, departamento, objetivo, areas, resumen, date: fecha, files}),
-    });
-    const data = await res.json();
-    links = data.links || [];
-  }catch(err){
-    alert("Error subiendo archivos al Drive.");
-    console.error(err);
-    btn.disabled = false; spinner.style.display="none";
+  if(!datosFormulario.nombre || !datosFormulario.departamento || !datosFormulario.objetivo ||
+     !datosFormulario.areas || !datosFormulario.resumen){
+    mostrarNotificacion("Complete todos los campos","error");
     return;
   }
 
-  // Enviar EmailJS
-  let filesHTML = links.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
-  emailjs.send("service_vkt5xuo","template_vc7447e",{employee, department:departamento, cargo, objective:objetivo, areas, summary:resumen, date:fecha, files:filesHTML})
-  .then(()=>alert("Solicitud enviada correctamente!"))
-  .catch(err=>{console.error(err); alert("Error enviando correo.");});
+  let archivosInput = document.getElementById("archivos");
+  let linksDrive = [];
+  if(archivosInput.files.length>0){
+    try{
+      const resultado = await subirArchivosDrive(archivosInput.files, datosFormulario);
+      linksDrive = resultado.links;
+    }catch(err){
+      console.error(err);
+      mostrarNotificacion("Error subiendo archivos","error");
+      return;
+    }
+  }
 
-  btn.disabled = false; spinner.style.display="none";
+  // Enviar EmailJS
+  let filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
+  emailjs.send("service_vkt5xuo","template_vc7447e",{
+    employee: datosFormulario.nombre,
+    department: datosFormulario.departamento,
+    cargo: datosFormulario.cargo,
+    objective: datosFormulario.objetivo,
+    areas: datosFormulario.areas,
+    summary: datosFormulario.resumen,
+    date: datosFormulario.fecha,
+    files: filesHTML
+  }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
+    .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")});
+
   this.reset();
 });
 </script>
