@@ -63,16 +63,16 @@ button:hover{transform:scale(1.05);}
     <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
     <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
     <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-     <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-          <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
-          <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
-          <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
-          <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
-          <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
-          <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-          <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-          <option value="Otros|otros|otros|otros">Otros</option>
-        </select>
+    <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+    <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+    <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+    <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+    <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+    <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+    <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+    <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+    <option value="Otros|otros|otros|otros">Otros</option>
+  </select>
 
   <input type="text" id="departamento" placeholder="Área / Departamento" required>
   <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
@@ -90,7 +90,6 @@ button:hover{transform:scale(1.05);}
 
 <script>
 emailjs.init("iR8ieJnOkI4_sr8TH") // tu user ID EmailJS
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
 
 // Toggle menu
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
@@ -111,10 +110,13 @@ function archivosA_Base64(files){
   }))
 }
 
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
+
 // Manejo formulario
-const btn=document.getElementById("btnEnviar")
-const btnText=btn.querySelector(".btn-text")
-const spinner=btn.querySelector(".spinner")
+const btn = document.getElementById("btnEnviar")
+const btnText = btn.querySelector(".btn-text")
+const spinner = btn.querySelector(".spinner")
 
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault()
@@ -131,64 +133,53 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   }
 
   btn.disabled=true; btnText.innerText="Enviando..."; spinner.style.display="inline-block"
-
-  let fechaActual=new Date().toLocaleString()
-  let archivosInput=document.getElementById("archivos")
-  let archivosBase64=[]
-  if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files)
+  let fechaActual = new Date().toLocaleString()
+  let archivosInput = document.getElementById("archivos")
+  let archivosBase64 = archivosInput.files.length > 0 ? await archivosA_Base64(archivosInput.files) : []
 
   try{
-
+    // 1️⃣ Subir archivos a Drive
     const response = await fetch(SCRIPT_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    employee: nombre,
-    correo: correo,
-    cargo: cargo,           // opcional, para EmailJS
-    departamento: depto,
-    objetivo: objetivo,
-    areas: areas,
-    resumen: resumen,
-    date: fechaActual,
-    files: archivosBase64
-  })
-});
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ files: archivosBase64 })
+    });
+    const result = await response.json();
+    const linksDrive = result.links || [];
 
-    
-const result = await response.json();
-  console.log("Respuesta del script:", result); // <--- LOG IMPORTANTE
+    // 2️⃣ Enviar datos al Google Form
+    const formData = new FormData();
+    formData.append("entry.1393360085", nombre);
+    formData.append("entry.1363198453", correo);
+    formData.append("entry.1941994843", depto);
+    formData.append("entry.1015716567", objetivo);
+    formData.append("entry.949214050", areas);
+    formData.append("entry.619270886", resumen);
+    formData.append("entry.1989031957", "Pendiente");
+    formData.append("entry.1877018002", linksDrive.join(", "));
 
-  if(result.status === "success"){
-    const links = result.links || [];
-    let filesHTML = links.map(l=>`<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("");
-    
-    emailjs.send("service_vkt5xuo","template_vc7447e",{
-      employee:nombre,
-      department:depto,
-      cargo:cargo,
-      objective:objetivo,
-      areas:areas,
-      summary:resumen,
-      date:fechaActual,
-      files:filesHTML
+    await fetch(FORM_URL, { method: "POST", body: formData });
+
+    // 3️⃣ Enviar correo con EmailJS
+    const filesHTML = linksDrive.map(l => `<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("");
+    emailjs.send("service_vkt5xuo", "template_vc7447e", {
+      employee: nombre,
+      department: depto,
+      cargo: cargo,
+      objective: objetivo,
+      areas: areas,
+      summary: resumen,
+      date: fechaActual,
+      files: filesHTML
     }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-      .catch(err=>{ console.error(err); mostrarNotificacion("Error enviando correo","error") });
-  } else {
-    console.error("Error del script:", result);
-    mostrarNotificacion("Error al registrar el SOP: " + result.message,"error");
-  }
+      .catch(err=>{console.error(err); mostrarNotificacion("Error enviando correo","error")});
 
-} catch(err){
-  console.error("Error catch:", err);
-  mostrarNotificacion("Error al registrar el SOP: " + err.message,"error");
-}
-  
-  finally{
-    btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none"
-    this.reset()
+  }catch(err){
+    console.error(err);
+    mostrarNotificacion("Error registrando solicitud: " + err.message,"error")
+  }finally{
+    btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none";
+    this.reset();
   }
 })
 
