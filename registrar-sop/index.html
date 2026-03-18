@@ -74,121 +74,111 @@ button:hover{transform:scale(1.05);}
 </div>
 
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH");
+emailjs.init("iR8ieJnOkI4_sr8TH")  // tu public key EmailJS
+const SCRIPT_URL_DRIVE = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
 
-const SCRIPT_URL_DRIVE = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
-
-// Autocompleta departamento
-document.getElementById("employee").addEventListener("change", function(){
-  let datos = this.value.split("|");
-  document.getElementById("departamento").value = datos[3] || "";
-});
-
-// Archivos a Base64
+// Convertir archivos a Base64
 function archivosA_Base64(files){
-  return Promise.all(Array.from(files).map(file => {
-    return new Promise((resolve,reject)=>{
-      const reader = new FileReader();
-      reader.onload = () => resolve({name:file.name, data:reader.result, type:file.type});
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }));
+  return Promise.all(Array.from(files).map(file => new Promise((resolve,reject)=>{
+    const reader = new FileReader()
+    reader.onload = () => resolve({name:file.name, data:reader.result})
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })))
 }
 
-// Subir archivos a Drive
+// Subir archivos a Google Drive y retornar links
 async function subirArchivosDrive(files, nombre){
-  let archivosBase64 = await archivosA_Base64(files);
+  if(files.length === 0) return []
+  let archivosBase64 = await archivosA_Base64(files)
   let response = await fetch(SCRIPT_URL_DRIVE, {
-    method: "POST",
+    method:"POST",
     body: JSON.stringify({employee:nombre, files:archivosBase64})
-  });
-  let data = await response.json();
-  return data.links; // devuelve array de URLs
+  })
+  let data = await response.json()
+  return data.links
 }
 
-// Enviar formulario
+// Función para enviar formulario de Google
+async function enviarGoogleForm({nombre, correo, depto, objetivo, areas, resumen, estado, linksDrive}){
+  const formData = new FormData()
+  formData.append("entry.1393360085", nombre)
+  formData.append("entry.1363198453", correo)
+  formData.append("entry.1941994843", depto)
+  formData.append("entry.1015716567", objetivo)
+  formData.append("entry.949214050", areas)
+  formData.append("entry.619270886", resumen)
+  formData.append("entry.1989031957", estado)
+  formData.append("entry.1877018002", linksDrive.join(", "))
+  
+  await fetch(GOOGLE_FORM_URL, {
+    method:"POST",
+    body: formData,
+    mode:"no-cors" // evita problemas CORS
+  })
+}
+
+// Envío EmailJS con links
+function enviarEmailJS({nombre, correo, cargo, depto, objetivo, areas, resumen, fechaActual, linksDrive}){
+  let filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}">${link}</a></p>`).join("")
+  return emailjs.send("service_vkt5xuo", "template_vc7447e", {
+    employee: nombre,
+    department: depto,
+    cargo: cargo,
+    objective: objetivo,
+    areas: areas,
+    summary: resumen,
+    date: fechaActual,
+    files: filesHTML
+  })
+}
+
+// Evento de envío de formulario
 document.getElementById("sopForm").addEventListener("submit", async function(e){
-  e.preventDefault();
+  e.preventDefault()
 
-  const datosEmpleado = document.getElementById("employee").value.split("|");
-  const nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], departamentoEmpleado = datosEmpleado[3];
-
-  const depto = document.getElementById("departamento").value.trim();
-  const objetivo = document.getElementById("objetivo").value.trim();
-  const areas = document.getElementById("areas").value.trim();
-  const resumen = document.getElementById("resumen").value.trim();
+  const datosEmpleado = document.getElementById("employee").value.split("|")
+  const nombre = datosEmpleado[0], correo = datosEmpleado[1], cargo = datosEmpleado[2], deptoEmpleado = datosEmpleado[3]
+  const depto = document.getElementById("departamento").value.trim()
+  const objetivo = document.getElementById("objetivo").value.trim()
+  const areas = document.getElementById("areas").value.trim()
+  const resumen = document.getElementById("resumen").value.trim()
 
   if(!nombre || !depto || !objetivo || !areas || !resumen){
-    alert("Complete todos los campos obligatorios");
-    return;
+    alert("Complete todos los campos obligatorios")
+    return
   }
 
-  const btn = document.getElementById("btnEnviar");
-  const btnText = btn.querySelector(".btn-text");
-  const spinner = btn.querySelector(".spinner");
+  const btn = document.getElementById("btnEnviar")
+  const btnText = btn.querySelector(".btn-text")
+  const spinner = btn.querySelector(".spinner")
+  btn.disabled = true; btnText.innerText = "Enviando..."; spinner.style.display = "inline-block"
 
-  btn.disabled = true;
-  btnText.innerText = "Enviando...";
-  spinner.style.display = "inline-block";
+  const fechaActual = new Date().toLocaleString()
+  const archivosInput = document.getElementById("archivos")
 
-  let archivosInput = document.getElementById("archivos");
-  let linksDrive = [];
+  try {
+    // 1️⃣ Subir archivos a Drive
+    const linksDrive = await subirArchivosDrive(archivosInput.files, nombre)
 
-  if(archivosInput.files.length > 0){
-    try{
-      linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
-    }catch(err){
-      console.error("Error subiendo archivos:", err);
-      alert("Error subiendo archivos a Drive");
-      btn.disabled = false;
-      btnText.innerText = "Registrar Solicitud";
-      spinner.style.display = "none";
-      return;
-    }
+    // 2️⃣ Llenar Google Form
+    await enviarGoogleForm({nombre, correo, depto, objetivo, areas, resumen, estado:"Pendiente", linksDrive})
+
+    // 3️⃣ Enviar EmailJS
+    await enviarEmailJS({nombre, correo, cargo, depto, objetivo, areas, resumen, fechaActual, linksDrive})
+
+    alert("Solicitud enviada correctamente")
+
+    // Reset form
+    this.reset()
+  } catch(err){
+    console.error("Error enviando solicitud:", err)
+    alert("Ocurrió un error al enviar la solicitud")
+  } finally {
+    btn.disabled = false; btnText.innerText = "Registrar Solicitud"; spinner.style.display = "none"
   }
-
-  // Enviar Google Form
-  try{
-    const formData = new FormData();
-    formData.append("entry.1393360085", nombre);
-    formData.append("entry.1363198453", correo);
-    formData.append("entry.1941994843", depto);
-    formData.append("entry.1015716567", objetivo);
-    formData.append("entry.949214050", areas);
-    formData.append("entry.619270886", resumen);
-    formData.append("entry.1989031957", "Pendiente");
-    formData.append("entry.1877018002", linksDrive.join(", "));
-    await fetch(GOOGLE_FORM_URL, {method:"POST", body:formData, mode:"no-cors"});
-  }catch(err){
-    console.error("Error enviando a Google Form:", err);
-  }
-
-  // Enviar EmailJS
-  try{
-    const filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}">${link}</a></p>`).join("");
-    await emailjs.send("service_vkt5xuo", "template_vc7447e", {
-      employee: nombre,
-      department: depto,
-      cargo: cargo,
-      objective: objetivo,
-      areas: areas,
-      summary: resumen,
-      date: new Date().toLocaleString(),
-      files: filesHTML
-    });
-    alert("Solicitud enviada correctamente");
-  }catch(err){
-    console.error("Error enviando correo:", err);
-    alert("Error enviando correo");
-  }
-
-  btn.disabled = false;
-  btnText.innerText = "Registrar Solicitud";
-  spinner.style.display = "none";
-  this.reset();
-});
+})
 </script>
 </body>
 </html>
