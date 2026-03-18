@@ -61,10 +61,8 @@ th{background:#003366;color:white;}
 
 <!-- FORMULARIO -->
 <div class="container">
-<h1>Registrar Solicitud de SOP - Rev 3.6</h1>
+<h1>Registrar Solicitud de SOP - Rev 4.0</h1>
 <form id="sopForm" enctype="multipart/form-data">
-
-
 <label>Empleado</label>
 <select id="employee" required>
 <option value="">Seleccione empleado</option>
@@ -84,8 +82,6 @@ th{background:#003366;color:white;}
 <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
 <option value="Otros|otros|otros|otros">Otros</option>
 </select>
-
-
 
 <input type="text" id="departamento" placeholder="Área / Departamento" required>
 <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
@@ -128,99 +124,83 @@ th{background:#003366;color:white;}
 </table>
 </div>
 
-<!-- FOOTER -->
 <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
 </div>
 
 <script>
 emailjs.init("iR8ieJnOkI4_sr8TH");
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZJInkltKoao4zafWUycVTH/exec";
+const GOOGLE_FORM_URL="https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
 
 let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || [];
 
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show');}
 function guardar(){localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes));}
 function mostrarNotificacion(msg,tipo){const n=document.createElement("div");n.className="notification "+tipo;n.innerText=msg;document.body.appendChild(n);setTimeout(()=>n.remove(),4000);}
-function renderTabla(){
-  const tabla=document.getElementById("tablaSOP");tabla.innerHTML="";
-  const filtroEstado=document.getElementById("filtroEstado")?.value||"";
-  const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase()||"";
-  solicitudes.forEach((sop,index)=>{
-    if(filtroEstado && sop.estado!==filtroEstado) return;
-    if(buscar && !(sop.empleado+sop.objetivo+sop.departamento).toLowerCase().includes(buscar)) return;
-    let estadoClass=sop.estado==="Pendiente"?"pendiente":sop.estado==="Trámite"?"tramite":sop.estado==="Rechazado"?"rechazado":"aprobado";
-    let fila=document.createElement("tr");
-    fila.innerHTML=`<td>${sop.empleado}</td><td>${sop.departamento}</td><td>${sop.objetivo}</td><td>${sop.areas}</td><td><span class="estado ${estadoClass}">${sop.estado}</span></td><td>${sop.fecha}</td><td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>`;
-    tabla.appendChild(fila);
-  });
-}
+function renderTabla(){const tabla=document.getElementById("tablaSOP");tabla.innerHTML="";const filtroEstado=document.getElementById("filtroEstado")?.value||"";const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase()||"";solicitudes.forEach((sop,index)=>{if(filtroEstado && sop.estado!==filtroEstado)return;if(buscar && !(sop.empleado+sop.objetivo+sop.departamento).toLowerCase().includes(buscar))return;let estadoClass=sop.estado==="Pendiente"?"pendiente":sop.estado==="Trámite"?"tramite":sop.estado==="Rechazado"?"rechazado":"aprobado";let fila=document.createElement("tr");fila.innerHTML=`<td>${sop.empleado}</td><td>${sop.departamento}</td><td>${sop.objetivo}</td><td>${sop.areas}</td><td><span class="estado ${estadoClass}">${sop.estado}</span></td><td>${sop.fecha}</td><td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>`;tabla.appendChild(fila);});}
 
 document.getElementById("employee").addEventListener("change",function(){let d=this.value.split("|");document.getElementById("departamento").value=d[3]||"";});
 
-async function archivosA_Base64(files){
-  return Promise.all(Array.from(files).map(file=>new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=()=>resolve({name:file.name,data:reader.result,type:file.type});
-    reader.onerror=reject;
-    reader.readAsDataURL(file);
-  })));
+const btn = document.getElementById("btnEnviar");
+const btnText = btn.querySelector(".btn-text");
+const spinner = btn.querySelector(".spinner");
+
+async function subirArchivosDrive(files, nombre){
+  let links = [];
+  for(const file of files){
+    try{
+      const base64 = await new Promise((resolve,reject)=>{
+        const reader = new FileReader();
+        reader.onload=()=>resolve(reader.result);
+        reader.onerror=reject;
+        reader.readAsDataURL(file);
+      });
+      const response = await fetch(SCRIPT_URL,{
+        method:"POST",
+        body:JSON.stringify({employee:nombre, files:[{name:file.name, data:base64, type:file.type}]}),
+        headers:{'Content-Type':'application/json'}
+      });
+      const data = await response.json();
+      if(data.links) links.push(...data.links);
+    }catch(err){
+      console.warn("⚠️ Archivo no subido:", file.name, err);
+    }
+  }
+  return links;
 }
 
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
-
   const datosEmpleado = document.getElementById("employee").value.split("|");
-  const nombre = datosEmpleado[0];
-  const correo = datosEmpleado[1];
-  const cargo = datosEmpleado[2] || "";
+  const nombre = datosEmpleado[0], correo = datosEmpleado[1];
   const depto = document.getElementById("departamento").value.trim();
   const objetivo = document.getElementById("objetivo").value.trim();
   const areas = document.getElementById("areas").value.trim();
   const resumen = document.getElementById("resumen").value.trim();
 
-  if(!nombre || !depto || !objetivo || !areas || !resumen){
+  if(!nombre||!depto||!objetivo||!areas||!resumen){
     mostrarNotificacion("Complete todos los campos obligatorios","error");
     return;
   }
 
-  btn.disabled = true;
-  btnText.innerText = "Enviando...";
-  spinner.style.display = "inline-block";
+  btn.disabled=true; btnText.innerText="Enviando..."; spinner.style.display="inline-block";
 
-  const fechaActual = new Date().toLocaleString();
-  let linksDrive = [];
+  const fechaActual=new Date().toLocaleString();
+  const archivosInput=document.getElementById("archivos");
+  let linksDrive=[];
 
-  // 1️⃣ Intentar subir archivos, pero si falla no bloquea
-  try {
-    const archivosInput = document.getElementById("archivos");
-    if(archivosInput.files.length > 0){
-      linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
-    }
-  } catch(err) {
-    console.warn("⚠️ Subida de archivos falló, continuamos sin links:", err);
+  if(archivosInput.files.length>0){
+    linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
   }
 
-  const filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}">${link}</a></p>`).join("");
+  const filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
 
-  // 2️⃣ Enviar EmailJS (siempre)
   emailjs.send("service_vkt5xuo","template_vc7447e",{
-    employee: nombre,
-    department: depto,
-    cargo: cargo,
-    objective: objetivo,
-    areas: areas,
-    summary: resumen,
-    date: fechaActual,
-    files: filesHTML
-  })
-  .then(() => mostrarNotificacion("Solicitud enviada correctamente","success"))
-  .catch(error => {
-    console.error("Error enviando correo:", error);
-    mostrarNotificacion("Error enviando correo","error");
-  });
+    employee:nombre, department:depto, cargo:"", objective:objetivo, areas:areas, summary:resumen, date:fechaActual, files:filesHTML
+  }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
+    .catch(err=>{console.error("Error enviando correo:", err); mostrarNotificacion("Error enviando correo","error");});
 
-  // 3️⃣ Llenar Google Form (siempre)
-  try {
+  try{
     const formData = new FormData();
     formData.append("entry.1393360085", nombre);
     formData.append("entry.1363198453", correo);
@@ -230,22 +210,18 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
     formData.append("entry.619270886", resumen);
     formData.append("entry.1989031957", "Pendiente");
     formData.append("entry.1877018002", linksDrive.join(", "));
+    fetch(GOOGLE_FORM_URL,{method:"POST",body:formData,mode:"no-cors"})
+      .catch(err=>console.warn("⚠️ Google Form falló:",err));
+  }catch(err){console.warn("⚠️ Error llenando Google Form:",err);}
 
-    fetch(GOOGLE_FORM_URL, { method: "POST", body: formData, mode: "no-cors" })
-      .catch(err => console.warn("⚠️ Google Form falló, continuamos:", err));
-  } catch(err) {
-    console.warn("⚠️ Error llenando Google Form:", err);
-  }
+  solicitudes.push({empleado:nombre, correo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual});
+  guardar(); renderTabla();
 
-  // 4️⃣ Actualizar tabla y reset
-  renderTabla();
-  btn.disabled = false;
-  btnText.innerText = "Registrar Solicitud";
-  spinner.style.display = "none";
-  this.reset();
+  btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none"; this.reset();
 });
-document.getElementById("buscarSOP").addEventListener("input", renderTabla);
-document.getElementById("filtroEstado").addEventListener("change", renderTabla);
+
+document.getElementById("buscarSOP").addEventListener("input",renderTabla);
+document.getElementById("filtroEstado").addEventListener("change",renderTabla);
 renderTabla();
 </script>
 </body>
