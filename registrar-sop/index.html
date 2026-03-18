@@ -53,7 +53,7 @@ button:hover{transform:scale(1.05);}
 
 <!-- FORMULARIO -->
 <div class="container">
-<h1>Registrar Solicitud de SOP - Rev 3.0</h1>
+<h1>Registrar Solicitud de SOP - Rev 3.1</h1>
 <form id="sopForm" enctype="multipart/form-data">
   <label>Empleado</label>
   <select id="employee" required>
@@ -89,7 +89,7 @@ button:hover{transform:scale(1.05);}
 </div>
 
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH")
+emailjs.init("iR8ieJnOkI4_sr8TH") // tu ID EmailJS
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
 const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
@@ -139,122 +139,96 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
 
   const fechaActual = new Date().toLocaleString()
   let linksDrive = []
+  let folderDrive = ""
 
   try {
     // =============================
-    // 1️⃣ SUBIR ARCHIVOS (NO CRÍTICO)
+    // 1️⃣ SUBIR ARCHIVOS Y OBTENER LINKS
     // =============================
-    try {
-      let archivosInput = document.getElementById("archivos")
-      if(archivosInput.files.length > 0){
-        const archivosBase64 = await archivosA_Base64(archivosInput.files)
+    let archivosInput = document.getElementById("archivos")
+    if(archivosInput.files.length > 0){
+      const archivosBase64 = await archivosA_Base64(archivosInput.files)
 
-        console.log("Subiendo archivos a Drive...")
+      console.log("Subiendo archivos a Drive...")
 
-const response=await fetch(SCRIPT_URL,{
-  method:"POST",
-  body:JSON.stringify({
-    employee:nombre,
-    correo:correo,
-    cargo:cargo,
-    departamento:depto,
-    objetivo:objetivo,
-    areas:areas,
-    resumen:resumen,
-    date:fechaActual,
-    files:archivosBase64
-  })
-})
-        
-// 🔥 CAMBIO AQUÍ
-const text = await response.text()
-console.log("RAW RESPONSE:", text)
+      const response = await fetch(SCRIPT_URL,{
+        method: "POST",
+        body: JSON.stringify({
+          employee: nombre,
+          correo: correo,
+          cargo: cargo,
+          departamento: depto,
+          objetivo: objetivo,
+          areas: areas,
+          resumen: resumen,
+          date: fechaActual,
+          files: archivosBase64
+        })
+      })
 
-let result
-try {
-  result = JSON.parse(text)
-} catch(e){
-  throw new Error("Respuesta inválida del servidor")
-}
+      const text = await response.text()
+      console.log("RAW RESPONSE:", text)
 
-console.log("Resultado Drive:", result)
-
-
-
-        if(result.status === "success"){
-          linksDrive = result.links || []
-        } else {
-          throw new Error(result.message)
-        }
+      let result
+      try {
+        result = JSON.parse(text)
+      } catch(e){
+        throw new Error("Respuesta inválida del servidor")
       }
-    } catch(err){
-      console.warn("⚠️ Drive falló, continuamos sin archivos:", err)
-      mostrarNotificacion("Archivos no se pudieron subir (continuando)","error")
+
+      console.log("Resultado Drive:", result)
+
+      if(result.result === "success"){
+        linksDrive = result.links || []
+        folderDrive = result.folderUrl || ""
+      } else {
+        throw new Error(result.message || "Error en Apps Script")
+      }
     }
 
     // =============================
-    // 2️⃣ GUARDAR EN GOOGLE FORM (CRÍTICO)
+    // 2️⃣ GUARDAR EN GOOGLE FORM
     // =============================
-    try {
-      console.log("Guardando en Google Form...")
+    const formData = new FormData()
+    formData.append("entry.1393360085", nombre)
+    formData.append("entry.1363198453", correo)
+    formData.append("entry.1941994843", depto)
+    formData.append("entry.1015716567", objetivo)
+    formData.append("entry.949214050", areas)
+    formData.append("entry.619270886", resumen)
+    formData.append("entry.1989031957", "Pendiente")
+    formData.append("entry.1877018002", linksDrive.join("\n"))
 
-      const formData = new FormData()
-      formData.append("entry.1393360085", nombre)
-      formData.append("entry.1363198453", correo)
-      formData.append("entry.1941994843", depto)
-      formData.append("entry.1015716567", objetivo)
-      formData.append("entry.949214050", areas)
-      formData.append("entry.619270886", resumen)
-      formData.append("entry.1989031957", "Pendiente")
-      formData.append("entry.1877018002", linksDrive.join(", "))
+    await fetch(FORM_URL,{
+      method:"POST",
+      mode:"no-cors",
+      body: formData
+    })
 
-      await fetch(FORM_URL,{
-        method:"POST",
-        mode:"no-cors", // 🔥 evita bloqueos
-        body:formData
-      })
-
-      console.log("✅ Guardado en Form OK")
-
-    } catch(err){
-      console.error("❌ Error guardando en Form:", err)
-      throw new Error("No se pudo guardar la solicitud")
-    }
+    console.log("✅ Guardado en Form OK")
 
     // =============================
-    // 3️⃣ EMAIL (NO CRÍTICO)
+    // 3️⃣ ENVIAR EMAIL
     // =============================
-    try {
-      console.log("Enviando email...")
+    let filesHTML = linksDrive.map(l=>`<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("")
+    if(folderDrive) filesHTML += `<p>📂 <a href="${folderDrive}" target="_blank">Carpeta completa</a></p>`
 
-      let filesHTML = linksDrive.map(l=>`<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("")
+    await emailjs.send("service_vkt5xuo","template_vc7447e",{
+      employee: nombre,
+      department: depto,
+      cargo: cargo,
+      objective: objetivo,
+      areas: areas,
+      summary: resumen,
+      date: fechaActual,
+      files: filesHTML || "Sin archivos"
+    })
 
-      await emailjs.send("service_vkt5xuo","template_vc7447e",{
-        employee:nombre,
-        department:depto,
-        cargo:cargo,
-        objective:objetivo,
-        areas:areas,
-        summary:resumen,
-        date:fechaActual,
-        files:filesHTML || "Sin archivos"
-      })
-
-      console.log("✅ Email enviado")
-
-    } catch(err){
-      console.warn("⚠️ Email falló:", err)
-      mostrarNotificacion("Solicitud guardada, pero falló el email","error")
-    }
-
-    // =============================
-    // SUCCESS FINAL
-    // =============================
-    mostrarNotificacion("Solicitud registrada correctamente","success")
+    mostrarNotificacion("Solicitud registrada correctamente ✅", "success")
 
   } catch(err){
     console.error("ERROR GENERAL:", err)
-    mostrarNotificacion(err.message,"error")
+    mostrarNotificacion(err.message || "Error al procesar la solicitud", "error")
   } finally {
     btn.disabled=false
     btnText.innerText="Registrar Solicitud"
