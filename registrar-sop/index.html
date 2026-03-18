@@ -151,12 +151,12 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
 
         console.log("Subiendo archivos a Drive...")
 
-        const response = await fetch(SCRIPT_URL,{
+const response=await fetch(SCRIPT_URL,{
   method:"POST",
-  headers:{ "Content-Type":"application/json" },
   body:JSON.stringify({
     employee:nombre,
     correo:correo,
+    cargo:cargo,
     departamento:depto,
     objetivo:objetivo,
     areas:areas,
@@ -165,7 +165,7 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
     files:archivosBase64
   })
 })
-
+        
 // 🔥 CAMBIO AQUÍ
 const text = await response.text()
 console.log("RAW RESPONSE:", text)
