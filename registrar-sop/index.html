@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <style>
-/* Mantengo tu estilo anterior */
 body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
 .navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
@@ -28,11 +27,31 @@ button:hover{transform:scale(1.05);}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
 .spinner{margin-left:8px;}
+@media(max-width:768px){
+  .menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}
+  .menu.show{display:flex;}
+  .menu-toggle{display:block;}
+}
 </style>
 </head>
 <body>
 <div class="overlay">
 
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <img src="/sop-site/logo.png">
+    <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+  <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+  <div class="menu">
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+  </div>
+</div>
+
+<!-- FORMULARIO -->
 <div class="container">
 <h1>Registrar Solicitud de SOP - Rev 3.0</h1>
 <form id="sopForm" enctype="multipart/form-data">
@@ -44,8 +63,17 @@ button:hover{transform:scale(1.05);}
     <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
     <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
     <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-    <option value="Otros|otros|otros|otros">Otros</option>
-  </select>
+     <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+          <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+          <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+          <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+          <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+          <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+          <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+          <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+          <option value="Otros|otros|otros|otros">Otros</option>
+        </select>
+
   <input type="text" id="departamento" placeholder="Área / Departamento" required>
   <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
   <input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
@@ -64,7 +92,7 @@ button:hover{transform:scale(1.05);}
 emailjs.init("iR8ieJnOkI4_sr8TH") // tu user ID EmailJS
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
 
-// Toggle menu si quieres mantener
+// Toggle menu
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 document.getElementById("employee").addEventListener("change",function(){
   let datos=this.value.split("|");
@@ -109,7 +137,6 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   let archivosBase64=[]
   if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files)
 
-  // Enviar datos al Apps Script
   try{
     const response=await fetch(SCRIPT_URL,{
       method:"POST",
@@ -128,7 +155,6 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
     const result=await response.json()
     const links=result.links || []
 
-    // Enviar correo EmailJS con los links
     let filesHTML=links.map(l=>`<p>📎 <a href="${l}">${l}</a></p>`).join("")
     emailjs.send("service_vkt5xuo","template_vc7447e",{
       employee:nombre,
@@ -152,7 +178,6 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   }
 })
 
-// Función de notificaciones
 function mostrarNotificacion(msg,tipo){
   const notif=document.createElement("div")
   notif.className="notification "+tipo
