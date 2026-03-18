@@ -4,16 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <style>
-body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;}
-.container{max-width:900px;margin:50px auto;background:white;padding:30px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.2);}
+body{margin:0;font-family:Arial,sans-serif;background:#f0f0f0;}
+.container{max-width:600px;margin:50px auto;background:white;padding:30px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.2);}
 h1{text-align:center;color:#003366;margin-bottom:25px;}
-input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #ccc;font-size:1rem;}
-button{padding:12px;border:none;border-radius:30px;background:linear-gradient(135deg,#0072C6,#005a9e);color:white;font-weight:bold;cursor:pointer;transition:.3s;}
+input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #ccc;font-size:1rem;}
+textarea{height:100px;}
+button{padding:12px;border:none;border-radius:30px;background:#0072C6;color:white;font-weight:bold;cursor:pointer;transition:.3s;}
 button:hover{transform:scale(1.05);}
-.notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
+.notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
 .spinner{margin-left:8px;}
@@ -24,138 +27,129 @@ button:hover{transform:scale(1.05);}
 <div class="container">
 <h1>Registrar Solicitud de SOP</h1>
 <form id="sopForm" enctype="multipart/form-data">
-  <label>Empleado</label>
-  <select id="employee" required>
-    <option value="">Seleccione empleado</option>
-    <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
-    <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
-    <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-    <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-    <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-    <option value="Otros|otros|otros|otros">Otros</option>
-  </select>
 
-  <input type="text" id="departamento" placeholder="Área / Departamento" required>
-  <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
-  <input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
-  <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
-  <label>Adjuntar archivos (PDF o imágenes)</label>
-  <input type="file" id="archivos" multiple>
+<label>Empleado</label>
+<select id="employee" required>
+<option value="">Seleccione empleado</option>
+<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+<option value="Otros|otros|otros|otros">Otros</option>
+</select>
 
-  <button type="submit" id="btnEnviar">
-    <span class="btn-text">Registrar Solicitud</span>
-    <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
-  </button>
+<input type="text" id="departamento" placeholder="Área / Departamento" required>
+<input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
+<input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
+<textarea id="resumen" placeholder="Resumen de instrucciones" required></textarea>
+<label>Adjuntar archivos (PDF o imágenes)</label>
+<input type="file" id="archivos" multiple>
+
+<button type="submit" id="btnEnviar">
+  <span class="btn-text">Registrar Solicitud</span>
+  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
+</button>
 </form>
 </div>
 
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH"); // Tu ID de EmailJS
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
+emailjs.init("iR8ieJnOkI4_sr8TH") // tu usuario EmailJS
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
 
-// Notificaciones
-function mostrarNotificacion(msg,tipo){
-  const notif = document.createElement("div");
-  notif.className = "notification " + tipo;
-  notif.innerText = msg;
-  document.body.appendChild(notif);
-  setTimeout(()=>notif.remove(),4000);
-}
+const btn = document.getElementById("btnEnviar")
+const btnText = btn.querySelector(".btn-text")
+const spinner = btn.querySelector(".spinner")
 
-// Autocompleta departamento
+// Autocompleta departamento al seleccionar empleado
 document.getElementById("employee").addEventListener("change",function(){
-  let datos=this.value.split("|");
-  document.getElementById("departamento").value=datos[3] || "";
-});
+  const datos = this.value.split("|")
+  document.getElementById("departamento").value = datos[3] || ""
+})
 
-// Convertir archivos a Base64
+// Convierte archivos a Base64
 function archivosA_Base64(files){
-  return Promise.all(Array.from(files).map(file => new Promise((resolve,reject)=>{
-    const reader = new FileReader();
-    reader.onload = ()=>resolve({name:file.name,data:reader.result,type:file.type});
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  })));
+  return Promise.all(Array.from(files).map(file => {
+    return new Promise((resolve,reject)=>{
+      const reader = new FileReader()
+      reader.onload = ()=>resolve({name:file.name, data:reader.result, type:file.type})
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }))
 }
 
-// Función principal para enviar SOP
-async function subirSOP(){
-  const employeeData = document.getElementById("employee").value.split("|");
-  const nombre = employeeData[0];
-  const correo = employeeData[1];
-  const cargo = employeeData[2];
-  const departamento = document.getElementById("departamento").value.trim();
-  const objetivo = document.getElementById("objetivo").value.trim();
-  const areas = document.getElementById("areas").value.trim();
-  const resumen = document.getElementById("resumen").value.trim();
-  const fecha = new Date().toLocaleString();
-  const archivosInput = document.getElementById("archivos");
+// Subir archivos al Script de Google Apps Script
+async function subirArchivos(files, empleado, correo, cargo, departamento, objetivo, areas, resumen){
+  const archivosBase64 = await archivosA_Base64(files)
+  const payload = {employee: empleado, correo, cargo, departamento, objetivo, areas, resumen, files: archivosBase64}
+  const response = await fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  })
+  const data = await response.json()
+  return data.links || []
+}
+
+// Mostrar notificación
+function mostrarNotificacion(msg, tipo){
+  const notif = document.createElement("div")
+  notif.className = "notification " + tipo
+  notif.innerText = msg
+  document.body.appendChild(notif)
+  setTimeout(()=>notif.remove(),4000)
+}
+
+// Envío del formulario
+document.getElementById("sopForm").addEventListener("submit", async function(e){
+  e.preventDefault()
+
+  const datosEmpleado = document.getElementById("employee").value.split("|")
+  const nombre = datosEmpleado[0]
+  const correo = datosEmpleado[1]
+  const cargo = datosEmpleado[2]
+  const departamento = document.getElementById("departamento").value.trim()
+  const objetivo = document.getElementById("objetivo").value.trim()
+  const areas = document.getElementById("areas").value.trim()
+  const resumen = document.getElementById("resumen").value.trim()
+  const archivosInput = document.getElementById("archivos")
 
   if(!nombre || !departamento || !objetivo || !areas || !resumen){
-    mostrarNotificacion("Complete todos los campos","error");
-    return;
+    mostrarNotificacion("Complete todos los campos obligatorios","error")
+    return
   }
 
-  // Spinner
-  const btn = document.getElementById("btnEnviar");
-  const btnText = btn.querySelector(".btn-text");
-  const spinner = btn.querySelector(".spinner");
-  btn.disabled = true; btnText.innerText = "Enviando..."; spinner.style.display="inline-block";
-
-  // Archivos
-  let files = [];
-  if(archivosInput.files.length>0){
-    files = await archivosA_Base64(archivosInput.files);
-  }
+  btn.disabled=true
+  btnText.innerText="Enviando..."
+  spinner.style.display="inline-block"
 
   try{
-    const res = await fetch(SCRIPT_URL,{
-      method:"POST",
-      body: JSON.stringify({
-        employee: nombre,
-        correo,
-        cargo,
-        departamento,
-        objetivo,
-        areas,
-        resumen,
-        date: fecha,
-        files
-      })
-    });
-    const data = await res.json();
-    if(data.status === "success"){
-      // Enviar EmailJS
-      const filesHTML = data.links.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
-      emailjs.send("service_vkt5xuo","template_vc7447e",{
-        employee: nombre,
-        department: departamento,
-        cargo: cargo,
-        objective: objetivo,
-        areas: areas,
-        summary: resumen,
-        date: fecha,
-        files: filesHTML
-      }).then(()=>mostrarNotificacion("SOP registrado y correo enviado","success"))
-        .catch(err=>{console.error(err); mostrarNotificacion("Error enviando correo","error")});
-
-      document.getElementById("sopForm").reset();
-    } else {
-      mostrarNotificacion("Error al registrar SOP","error");
+    // Subir archivos a Drive y obtener links
+    let linksDrive = []
+    if(archivosInput.files.length>0){
+      linksDrive = await subirArchivos(archivosInput.files, nombre, correo, cargo, departamento, objetivo, areas, resumen)
     }
-  } catch(err){
-    console.error(err);
-    mostrarNotificacion("Error enviando solicitud","error");
-  } finally{
-    btn.disabled = false; btnText.innerText = "Registrar Solicitud"; spinner.style.display="none";
-  }
-}
 
-// Listener del formulario
-document.getElementById("sopForm").addEventListener("submit",function(e){
-  e.preventDefault();
-  subirSOP();
-});
+    // Enviar EmailJS
+    let filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
+    await emailjs.send("service_vkt5xuo","template_vc7447e",{
+      employee: nombre,
+      department: departamento,
+      cargo: cargo,
+      objective: objetivo,
+      areas: areas,
+      summary: resumen,
+      files: filesHTML,
+      date: new Date().toLocaleString()
+    })
+
+    mostrarNotificacion("Solicitud enviada correctamente","success")
+    this.reset()
+  }catch(error){
+    console.error(error)
+    mostrarNotificacion("Error enviando solicitud","error")
+  }finally{
+    btn.disabled=false
+    btnText.innerText="Registrar Solicitud"
+    spinner.style.display="none"
+  }
+})
 </script>
 
 </body>
