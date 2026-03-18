@@ -126,109 +126,141 @@ th{background:#003366;color:white;}
 
 <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
 </div>
-
+  
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH");
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZJInkltKoao4zafWUycVTH/exec";
-const GOOGLE_FORM_URL="https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
+emailjs.init("iR8ieJnOkI4_sr8TH"); // tu user ID EmailJS
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
 
-let solicitudes = JSON.parse(localStorage.getItem("sopSolicitudes")) || [];
-
+// Toggle menu
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show');}
-function guardar(){localStorage.setItem("sopSolicitudes", JSON.stringify(solicitudes));}
-function mostrarNotificacion(msg,tipo){const n=document.createElement("div");n.className="notification "+tipo;n.innerText=msg;document.body.appendChild(n);setTimeout(()=>n.remove(),4000);}
-function renderTabla(){const tabla=document.getElementById("tablaSOP");tabla.innerHTML="";const filtroEstado=document.getElementById("filtroEstado")?.value||"";const buscar=document.getElementById("buscarSOP")?.value?.toLowerCase()||"";solicitudes.forEach((sop,index)=>{if(filtroEstado && sop.estado!==filtroEstado)return;if(buscar && !(sop.empleado+sop.objetivo+sop.departamento).toLowerCase().includes(buscar))return;let estadoClass=sop.estado==="Pendiente"?"pendiente":sop.estado==="Trámite"?"tramite":sop.estado==="Rechazado"?"rechazado":"aprobado";let fila=document.createElement("tr");fila.innerHTML=`<td>${sop.empleado}</td><td>${sop.departamento}</td><td>${sop.objetivo}</td><td>${sop.areas}</td><td><span class="estado ${estadoClass}">${sop.estado}</span></td><td>${sop.fecha}</td><td><span style="color:#888;font-size:0.85rem;">Solo administrador</span></td>`;tabla.appendChild(fila);});}
+document.getElementById("employee").addEventListener("change",function(){
+  let datos=this.value.split("|");
+  document.getElementById("departamento").value=datos[3] || ""
+})
 
-document.getElementById("employee").addEventListener("change",function(){let d=this.value.split("|");document.getElementById("departamento").value=d[3]||"";});
-
-const btn = document.getElementById("btnEnviar");
-const btnText = btn.querySelector(".btn-text");
-const spinner = btn.querySelector(".spinner");
-
-
-async function subirArchivosDrive(files, nombre){
-  let links = [];
-  for(const file of files){
-    try{
-      const base64 = await new Promise((resolve,reject)=>{
-        const reader = new FileReader();
-        reader.onload=()=>resolve(reader.result);
-        reader.onerror=reject;
-        reader.readAsDataURL(file);
-      });
-      const response = await fetch(SCRIPT_URL,{
-        method:"POST",
-        body:JSON.stringify({employee:nombre, files:[{name:file.name, data:base64, type:file.type}]}),
-        headers:{'Content-Type':'application/json'}
-      });
-      try{
-        const data = await response.json();
-        if(data.links) links.push(...data.links);
-      } catch(jsonErr){
-        console.warn("⚠️ No se recibió URL, pero archivo subido correctamente (o falló silencioso).");
-      }
-    }catch(err){
-      console.warn("⚠️ Archivo no subido:", file.name, err);
-    }
-  }
-  return links; // aunque sea vacío, no rompe nada
+// Convertir archivos a Base64
+function archivosA_Base64(files){
+  return Promise.all(Array.from(files).map(file=>{
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=()=>resolve({name:file.name,data:reader.result,type:file.type});
+      reader.onerror=reject;
+      reader.readAsDataURL(file);
+    })
+  }));
 }
 
-  
+// Manejo formulario
+const btn=document.getElementById("btnEnviar");
+const btnText=btn.querySelector(".btn-text");
+const spinner=btn.querySelector(".spinner");
+
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
-  const datosEmpleado = document.getElementById("employee").value.split("|");
-  const nombre = datosEmpleado[0], correo = datosEmpleado[1];
-  const depto = document.getElementById("departamento").value.trim();
-  const objetivo = document.getElementById("objetivo").value.trim();
-  const areas = document.getElementById("areas").value.trim();
-  const resumen = document.getElementById("resumen").value.trim();
 
-  if(!nombre||!depto||!objetivo||!areas||!resumen){
+  let datosEmpleado=document.getElementById("employee").value.split("|");
+  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3];
+  let depto=document.getElementById("departamento").value.trim();
+  let objetivo=document.getElementById("objetivo").value.trim();
+  let areas=document.getElementById("areas").value.trim();
+  let resumen=document.getElementById("resumen").value.trim();
+
+  if(!nombre || !depto || !objetivo || !areas || !resumen){
     mostrarNotificacion("Complete todos los campos obligatorios","error");
     return;
   }
 
-  btn.disabled=true; btnText.innerText="Enviando..."; spinner.style.display="inline-block";
+  btn.disabled=true; 
+  btnText.innerText="Enviando..."; 
+  spinner.style.display="inline-block";
 
-  const fechaActual=new Date().toLocaleString();
-  const archivosInput=document.getElementById("archivos");
-  let linksDrive=[];
-
-  if(archivosInput.files.length>0){
-    linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
-  }
-
-  const filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
-
-  emailjs.send("service_vkt5xuo","template_vc7447e",{
-    employee:nombre, department:depto, cargo:"", objective:objetivo, areas:areas, summary:resumen, date:fechaActual, files:filesHTML
-  }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-    .catch(err=>{console.error("Error enviando correo:", err); mostrarNotificacion("Error enviando correo","error");});
+  let fechaActual=new Date().toLocaleString();
+  let archivosInput=document.getElementById("archivos");
+  let archivosBase64=[];
+  if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files);
 
   try{
-    const formData = new FormData();
-    formData.append("entry.1393360085", nombre);
-    formData.append("entry.1363198453", correo);
-    formData.append("entry.1941994843", depto);
-    formData.append("entry.1015716567", objetivo);
-    formData.append("entry.949214050", areas);
-    formData.append("entry.619270886", resumen);
-    formData.append("entry.1989031957", "Pendiente");
-    formData.append("entry.1877018002", linksDrive.join(", "));
-    fetch(GOOGLE_FORM_URL,{method:"POST",body:formData,mode:"no-cors"})
-      .catch(err=>console.warn("⚠️ Google Form falló:",err));
-  }catch(err){console.warn("⚠️ Error llenando Google Form:",err);}
+    // 1️⃣ Subir archivos y obtener URLs
+    const response=await fetch(SCRIPT_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        employee:nombre,
+        correo:correo,
+        cargo:cargo,
+        departamento:depto,
+        objetivo:objetivo,
+        areas:areas,
+        resumen:resumen,
+        date:fechaActual,
+        files:archivosBase64
+      })
+    });
+    const result=await response.json();
+    const links=result.links || [];
 
-  solicitudes.push({empleado:nombre, correo, departamento:depto, objetivo, areas, resumen, estado:"Pendiente", fecha:fechaActual});
-  guardar(); renderTabla();
+    console.log("Links recibidos del endpoint:", links);
 
-  btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none"; this.reset();
-});
+    // 2️⃣ Preparar HTML para email
+    let filesHTML = "";
+    if(Array.isArray(links) && links.length > 0){
+      filesHTML = links.map(l => `<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("");
+    }
 
-document.getElementById("buscarSOP").addEventListener("input",renderTabla);
-document.getElementById("filtroEstado").addEventListener("change",renderTabla);
-renderTabla();
+    // 3️⃣ Enviar EmailJS
+    emailjs.send("service_vkt5xuo","template_vc7447e",{
+      employee:nombre,
+      department:depto,
+      cargo:cargo,
+      objective:objetivo,
+      areas:areas,
+      summary:resumen,
+      date:fechaActual,
+      files:filesHTML
+    })
+    .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
+    .catch(err=>{console.error(err); mostrarNotificacion("Error enviando correo","error")});
+
+    // 4️⃣ Llenar Google Form con URLs
+    try{
+      const formData = new FormData();
+      formData.append("entry.1393360085", nombre);
+      formData.append("entry.1363198453", correo);
+      formData.append("entry.1941994843", depto);
+      formData.append("entry.1015716567", objetivo);
+      formData.append("entry.949214050", areas);
+      formData.append("entry.619270886", resumen);
+      formData.append("entry.1989031957", "Pendiente");
+      formData.append("entry.1877018002", links.join("\n")); // usar saltos de línea para múltiples links
+
+      fetch("https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse", {
+        method:"POST",
+        body:formData,
+        mode:"no-cors"
+      }).catch(err=>console.warn("Google Form falló:", err));
+
+    } catch(err){
+      console.warn("Error llenando Google Form:", err);
+    }
+
+  }catch(err){
+    console.error("Error al registrar SOP:", err);
+    mostrarNotificacion("Ocurrió un error al registrar SOP","error");
+  }finally{
+    btn.disabled=false; 
+    btnText.innerText="Registrar Solicitud"; 
+    spinner.style.display="none";
+    this.reset();
+  }
+})
+
+function mostrarNotificacion(msg,tipo){
+  const notif=document.createElement("div");
+  notif.className="notification "+tipo;
+  notif.innerText=msg;
+  document.body.appendChild(notif);
+  setTimeout(()=>notif.remove(),4000);
+}
 </script>
+
 </body>
 </html>
