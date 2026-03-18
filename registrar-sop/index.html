@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <style>
+/* Mantengo tu estilo anterior */
 body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
 .navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
@@ -23,34 +24,17 @@ input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:10px;bo
 textarea{height:auto;}
 button{padding:12px;border:none;border-radius:30px;background:linear-gradient(135deg,#0072C6,#005a9e);color:white;font-weight:bold;cursor:pointer;transition:.3s;}
 button:hover{transform:scale(1.05);}
-.footer{text-align:center;padding:30px;color:white;background:#003366;margin-top:50px;}
 .notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
-@media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
 .spinner{margin-left:8px;}
 </style>
 </head>
 <body>
 <div class="overlay">
 
-<!-- NAVBAR -->
-<div class="navbar">
-  <div class="logo">
-    <img src="/sop-site/logo.png">
-    <span>ARTEMISA MARBLE & CABINETS</span>
-  </div>
-  <div class="menu-toggle" onclick="document.querySelector('.menu').classList.toggle('show')"><i class="fa-solid fa-bars"></i></div>
-  <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
-  </div>
-</div>
-
-<!-- FORMULARIO -->
 <div class="container">
-<h1>Registrar Solicitud de SOP</h1>
+<h1>Registrar Solicitud de SOP - Rev 3.0</h1>
 <form id="sopForm" enctype="multipart/form-data">
   <label>Empleado</label>
   <select id="employee" required>
@@ -59,10 +43,7 @@ button:hover{transform:scale(1.05);}
     <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
     <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
     <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-    <option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
     <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-    <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-    <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
     <option value="Otros|otros|otros|otros">Otros</option>
   </select>
   <input type="text" id="departamento" placeholder="Área / Departamento" required>
@@ -71,6 +52,7 @@ button:hover{transform:scale(1.05);}
   <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
   <label>Adjuntar archivos (PDF o imágenes)</label>
   <input type="file" id="archivos" multiple>
+
   <button type="submit" id="btnEnviar">
     <span class="btn-text">Registrar Solicitud</span>
     <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
@@ -78,106 +60,107 @@ button:hover{transform:scale(1.05);}
 </form>
 </div>
 
-<!-- FOOTER -->
-<div class="footer"> © 2026 ARTEMISA MARBLE & CABINETS </div>
-
-</div>
-
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH");
+emailjs.init("iR8ieJnOkI4_sr8TH") // tu user ID EmailJS
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
-
-// Autocompletar departamento
+// Toggle menu si quieres mantener
+function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 document.getElementById("employee").addEventListener("change",function(){
   let datos=this.value.split("|");
-  document.getElementById("departamento").value = datos[3] || "";
-});
+  document.getElementById("departamento").value=datos[3] || ""
+})
 
-// Form submit
+// Convertir archivos a Base64
+function archivosA_Base64(files){
+  return Promise.all(Array.from(files).map(file=>{
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader()
+      reader.onload=()=>resolve({name:file.name,data:reader.result,type:file.type})
+      reader.onerror=reject
+      reader.readAsDataURL(file)
+    })
+  }))
+}
+
+// Manejo formulario
+const btn=document.getElementById("btnEnviar")
+const btnText=btn.querySelector(".btn-text")
+const spinner=btn.querySelector(".spinner")
+
 document.getElementById("sopForm").addEventListener("submit", async function(e){
-  e.preventDefault();
-  const btn = document.getElementById("btnEnviar");
-  const btnText = btn.querySelector(".btn-text");
-  const spinner = btn.querySelector(".spinner");
-  
-  btn.disabled = true; btnText.innerText = "Enviando..."; spinner.style.display="inline-block";
+  e.preventDefault()
 
-  const datosEmpleado = document.getElementById("employee").value.split("|");
-  const nombre = datosEmpleado[0];
-  const correo = datosEmpleado[1];
-  const cargo = datosEmpleado[2];
-  const departamento = document.getElementById("departamento").value.trim();
-  const objetivo = document.getElementById("objetivo").value.trim();
-  const areas = document.getElementById("areas").value.trim();
-  const resumen = document.getElementById("resumen").value.trim();
-
-  if(!nombre || !departamento || !objetivo || !areas || !resumen){
-    alert("Complete todos los campos obligatorios");
-    btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none";
-    return;
+  let datosEmpleado=document.getElementById("employee").value.split("|")
+  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
+  let depto=document.getElementById("departamento").value.trim()
+  let objetivo=document.getElementById("objetivo").value.trim()
+  let areas=document.getElementById("areas").value.trim()
+  let resumen=document.getElementById("resumen").value.trim()
+  if(!nombre || !depto || !objetivo || !areas || !resumen){
+    mostrarNotificacion("Complete todos los campos obligatorios","error")
+    return
   }
 
-  const archivosInput = document.getElementById("archivos");
-  let linksDrive = [];
+  btn.disabled=true; btnText.innerText="Enviando..."; spinner.style.display="inline-block"
 
-  try {
-    // Archivos a Base64
-    const archivosBase64 = await Promise.all(Array.from(archivosInput.files).map(file => {
-      return new Promise((resolve,reject)=>{
-        const reader = new FileReader();
-        reader.onload = ()=>resolve({name:file.name,data:reader.result,type:file.type});
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }));
+  let fechaActual=new Date().toLocaleString()
+  let archivosInput=document.getElementById("archivos")
+  let archivosBase64=[]
+  if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files)
 
-    // Subir al Apps Script y guardar en Sheet
-    const response = await fetch(SCRIPT_URL,{
+  // Enviar datos al Apps Script
+  try{
+    const response=await fetch(SCRIPT_URL,{
       method:"POST",
-      body: JSON.stringify({
-        employee: nombre,
-        correo: correo,
-        cargo: cargo,
-        departamento: departamento,
-        objetivo: objetivo,
-        areas: areas,
-        resumen: resumen,
-        date: new Date().toLocaleString(),
-        files: archivosBase64
+      body:JSON.stringify({
+        employee:nombre,
+        correo:correo,
+        cargo:cargo,
+        departamento:depto,
+        objetivo:objetivo,
+        areas:areas,
+        resumen:resumen,
+        date:fechaActual,
+        files:archivosBase64
       })
-    });
-    const data = await response.json();
-    linksDrive = data.links || [];
+    })
+    const result=await response.json()
+    const links=result.links || []
 
-  } catch(err){
-    console.error("Error subiendo archivos o guardando Sheet:",err);
-  }
-
-  // Construir HTML de links
-  const filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}" target="_blank">${link}</a></p>`).join("");
-
-  // Enviar email
-  try {
-    await emailjs.send("service_vkt5xuo","template_vc7447e",{
+    // Enviar correo EmailJS con los links
+    let filesHTML=links.map(l=>`<p>📎 <a href="${l}">${l}</a></p>`).join("")
+    emailjs.send("service_vkt5xuo","template_vc7447e",{
       employee:nombre,
-      department:departamento,
+      department:depto,
       cargo:cargo,
       objective:objetivo,
       areas:areas,
       summary:resumen,
-      date:new Date().toLocaleString(),
+      date:fechaActual,
       files:filesHTML
-    });
-    alert("Solicitud enviada correctamente con archivos y email.");
-  } catch(err){
-    console.error("Error enviando email:",err);
-    alert("Error enviando correo, revise la consola");
-  }
+    })
+    .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
+    .catch(err=>{console.error(err); mostrarNotificacion("Error enviando correo","error")})
 
-  btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none";
-  this.reset();
-});
+  }catch(err){
+    console.error(err)
+    mostrarNotificacion("Ocurrió un error al registrar SOP","error")
+  }finally{
+    btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none"
+    this.reset()
+  }
+})
+
+// Función de notificaciones
+function mostrarNotificacion(msg,tipo){
+  const notif=document.createElement("div")
+  notif.className="notification "+tipo
+  notif.innerText=msg
+  document.body.appendChild(notif)
+  setTimeout(()=>notif.remove(),4000)
+}
 </script>
+</div>
 </body>
 </html>
