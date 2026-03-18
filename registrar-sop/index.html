@@ -152,22 +152,34 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
         console.log("Subiendo archivos a Drive...")
 
         const response = await fetch(SCRIPT_URL,{
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body:JSON.stringify({
-            employee:nombre,
-            correo:correo,
-            departamento:depto,
-            objetivo:objetivo,
-            areas:areas,
-            resumen:resumen,
-            date:fechaActual,
-            files:archivosBase64
-          })
-        })
+  method:"POST",
+  headers:{ "Content-Type":"application/json" },
+  body:JSON.stringify({
+    employee:nombre,
+    correo:correo,
+    departamento:depto,
+    objetivo:objetivo,
+    areas:areas,
+    resumen:resumen,
+    date:fechaActual,
+    files:archivosBase64
+  })
+})
 
-        const result = await response.json()
-        console.log("Respuesta Drive:", result)
+// 🔥 CAMBIO AQUÍ
+const text = await response.text()
+console.log("RAW RESPONSE:", text)
+
+let result
+try {
+  result = JSON.parse(text)
+} catch(e){
+  throw new Error("Respuesta inválida del servidor")
+}
+
+console.log("Resultado Drive:", result)
+
+
 
         if(result.status === "success"){
           linksDrive = result.links || []
