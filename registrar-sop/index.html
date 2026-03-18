@@ -157,10 +157,13 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   })
 });
     
-    const result=await response.json()
-    const links=result.links || []
+const result = await response.json();
+  console.log("Respuesta del script:", result); // <--- LOG IMPORTANTE
 
-    let filesHTML=links.map(l=>`<p>📎 <a href="${l}">${l}</a></p>`).join("")
+  if(result.status === "success"){
+    const links = result.links || [];
+    let filesHTML = links.map(l=>`<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("");
+    
     emailjs.send("service_vkt5xuo","template_vc7447e",{
       employee:nombre,
       department:depto,
@@ -170,14 +173,19 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
       summary:resumen,
       date:fechaActual,
       files:filesHTML
-    })
-    .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-    .catch(err=>{console.error(err); mostrarNotificacion("Error enviando correo","error")})
+    }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
+      .catch(err=>{ console.error(err); mostrarNotificacion("Error enviando correo","error") });
+  } else {
+    console.error("Error del script:", result);
+    mostrarNotificacion("Error al registrar el SOP: " + result.message,"error");
+  }
 
-  }catch(err){
-    console.error(err)
-    mostrarNotificacion("Ocurrió un error al registrar SOP","error")
-  }finally{
+} catch(err){
+  console.error("Error catch:", err);
+  mostrarNotificacion("Error al registrar el SOP: " + err.message,"error");
+}
+  
+  finally{
     btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none"
     this.reset()
   }
