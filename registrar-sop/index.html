@@ -138,14 +138,36 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   let archivosBase64 = archivosInput.files.length > 0 ? await archivosA_Base64(archivosInput.files) : []
 
   try{
-    // 1️⃣ Subir archivos a Drive
-    const response = await fetch(SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ files: archivosBase64 })
-    });
-    const result = await response.json();
-    const linksDrive = result.links || [];
+    // ❌ COMENTA ESTO TEMPORALMENTE
+      // 1️⃣ Subir archivos a Drive
+/*
+const response = await fetch(SCRIPT_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ files: archivosBase64 })
+});
+const result = await response.json();
+const linksDrive = result.links || [];
+*/
+
+  const response = await fetch(SCRIPT_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    employee: nombre,      // 👈 AGREGA ESTO
+    correo: correo,
+    departamento: depto,
+    objetivo: objetivo,
+    areas: areas,
+    resumen: resumen,
+    date: fechaActual,
+    files: archivosBase64
+  })
+});
+
+    
+// ✅ PRUEBA SIN DRIVE
+const linksDrive = ["test-link"];
 
     // 2️⃣ Enviar datos al Google Form
     const formData = new FormData();
