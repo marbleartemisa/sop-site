@@ -89,16 +89,19 @@ button:hover{transform:scale(1.05);}
 </div>
 
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH") // tu user ID EmailJS
+emailjs.init("iR8ieJnOkI4_sr8TH")
 
-// Toggle menu
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
+
+// UI
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
 document.getElementById("employee").addEventListener("change",function(){
   let datos=this.value.split("|");
   document.getElementById("departamento").value=datos[3] || ""
 })
 
-// Convertir archivos a Base64
+// Base64
 function archivosA_Base64(files){
   return Promise.all(Array.from(files).map(file=>{
     return new Promise((resolve,reject)=>{
@@ -110,10 +113,7 @@ function archivosA_Base64(files){
   }))
 }
 
-const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse"
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
-
-// Manejo formulario
+// UI elements
 const btn = document.getElementById("btnEnviar")
 const btnText = btn.querySelector(".btn-text")
 const spinner = btn.querySelector(".spinner")
@@ -122,89 +122,136 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault()
 
   let datosEmpleado=document.getElementById("employee").value.split("|")
-  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3]
+  let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2]
   let depto=document.getElementById("departamento").value.trim()
   let objetivo=document.getElementById("objetivo").value.trim()
   let areas=document.getElementById("areas").value.trim()
   let resumen=document.getElementById("resumen").value.trim()
+
   if(!nombre || !depto || !objetivo || !areas || !resumen){
     mostrarNotificacion("Complete todos los campos obligatorios","error")
     return
   }
 
-  btn.disabled=true; btnText.innerText="Enviando..."; spinner.style.display="inline-block"
-  let fechaActual = new Date().toLocaleString()
-  let archivosInput = document.getElementById("archivos")
-  let archivosBase64 = archivosInput.files.length > 0 ? await archivosA_Base64(archivosInput.files) : []
+  btn.disabled=true
+  btnText.innerText="Enviando..."
+  spinner.style.display="inline-block"
 
-  try{
-    // ❌ COMENTA ESTO TEMPORALMENTE
-      // 1️⃣ Subir archivos a Drive
-/*
-const response = await fetch(SCRIPT_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ files: archivosBase64 })
-});
-const result = await response.json();
-const linksDrive = result.links || [];
-*/
+  const fechaActual = new Date().toLocaleString()
+  let linksDrive = []
 
-  const response = await fetch(SCRIPT_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    employee: nombre,      // 👈 AGREGA ESTO
-    correo: correo,
-    departamento: depto,
-    objetivo: objetivo,
-    areas: areas,
-    resumen: resumen,
-    date: fechaActual,
-    files: archivosBase64
-  })
-});
+  try {
+    // =============================
+    // 1️⃣ SUBIR ARCHIVOS (NO CRÍTICO)
+    // =============================
+    try {
+      let archivosInput = document.getElementById("archivos")
+      if(archivosInput.files.length > 0){
+        const archivosBase64 = await archivosA_Base64(archivosInput.files)
 
-    
-// ✅ PRUEBA SIN DRIVE
-const linksDrive = ["test-link"];
+        console.log("Subiendo archivos a Drive...")
 
-    // 2️⃣ Enviar datos al Google Form
-    const formData = new FormData();
-    formData.append("entry.1393360085", nombre);
-    formData.append("entry.1363198453", correo);
-    formData.append("entry.1941994843", depto);
-    formData.append("entry.1015716567", objetivo);
-    formData.append("entry.949214050", areas);
-    formData.append("entry.619270886", resumen);
-    formData.append("entry.1989031957", "Pendiente");
-    formData.append("entry.1877018002", linksDrive.join(", "));
+        const response = await fetch(SCRIPT_URL,{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body:JSON.stringify({
+            employee:nombre,
+            correo:correo,
+            departamento:depto,
+            objetivo:objetivo,
+            areas:areas,
+            resumen:resumen,
+            date:fechaActual,
+            files:archivosBase64
+          })
+        })
 
-    await fetch(FORM_URL, { method: "POST", body: formData });
+        const result = await response.json()
+        console.log("Respuesta Drive:", result)
 
-    // 3️⃣ Enviar correo con EmailJS
-    const filesHTML = linksDrive.map(l => `<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("");
-    emailjs.send("service_vkt5xuo", "template_vc7447e", {
-      employee: nombre,
-      department: depto,
-      cargo: cargo,
-      objective: objetivo,
-      areas: areas,
-      summary: resumen,
-      date: fechaActual,
-      files: filesHTML
-    }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-      .catch(err=>{console.error(err); mostrarNotificacion("Error enviando correo","error")});
+        if(result.status === "success"){
+          linksDrive = result.links || []
+        } else {
+          throw new Error(result.message)
+        }
+      }
+    } catch(err){
+      console.warn("⚠️ Drive falló, continuamos sin archivos:", err)
+      mostrarNotificacion("Archivos no se pudieron subir (continuando)","error")
+    }
 
-  }catch(err){
-    console.error(err);
-    mostrarNotificacion("Error registrando solicitud: " + err.message,"error")
-  }finally{
-    btn.disabled=false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none";
-    this.reset();
+    // =============================
+    // 2️⃣ GUARDAR EN GOOGLE FORM (CRÍTICO)
+    // =============================
+    try {
+      console.log("Guardando en Google Form...")
+
+      const formData = new FormData()
+      formData.append("entry.1393360085", nombre)
+      formData.append("entry.1363198453", correo)
+      formData.append("entry.1941994843", depto)
+      formData.append("entry.1015716567", objetivo)
+      formData.append("entry.949214050", areas)
+      formData.append("entry.619270886", resumen)
+      formData.append("entry.1989031957", "Pendiente")
+      formData.append("entry.1877018002", linksDrive.join(", "))
+
+      await fetch(FORM_URL,{
+        method:"POST",
+        mode:"no-cors", // 🔥 evita bloqueos
+        body:formData
+      })
+
+      console.log("✅ Guardado en Form OK")
+
+    } catch(err){
+      console.error("❌ Error guardando en Form:", err)
+      throw new Error("No se pudo guardar la solicitud")
+    }
+
+    // =============================
+    // 3️⃣ EMAIL (NO CRÍTICO)
+    // =============================
+    try {
+      console.log("Enviando email...")
+
+      let filesHTML = linksDrive.map(l=>`<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("")
+
+      await emailjs.send("service_vkt5xuo","template_vc7447e",{
+        employee:nombre,
+        department:depto,
+        cargo:cargo,
+        objective:objetivo,
+        areas:areas,
+        summary:resumen,
+        date:fechaActual,
+        files:filesHTML || "Sin archivos"
+      })
+
+      console.log("✅ Email enviado")
+
+    } catch(err){
+      console.warn("⚠️ Email falló:", err)
+      mostrarNotificacion("Solicitud guardada, pero falló el email","error")
+    }
+
+    // =============================
+    // SUCCESS FINAL
+    // =============================
+    mostrarNotificacion("Solicitud registrada correctamente","success")
+
+  } catch(err){
+    console.error("ERROR GENERAL:", err)
+    mostrarNotificacion(err.message,"error")
+  } finally {
+    btn.disabled=false
+    btnText.innerText="Registrar Solicitud"
+    spinner.style.display="none"
+    this.reset()
   }
 })
 
+// Notificación
 function mostrarNotificacion(msg,tipo){
   const notif=document.createElement("div")
   notif.className="notification "+tipo
