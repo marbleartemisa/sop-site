@@ -145,6 +145,7 @@ const btn = document.getElementById("btnEnviar");
 const btnText = btn.querySelector(".btn-text");
 const spinner = btn.querySelector(".spinner");
 
+
 async function subirArchivosDrive(files, nombre){
   let links = [];
   for(const file of files){
@@ -160,15 +161,20 @@ async function subirArchivosDrive(files, nombre){
         body:JSON.stringify({employee:nombre, files:[{name:file.name, data:base64, type:file.type}]}),
         headers:{'Content-Type':'application/json'}
       });
-      const data = await response.json();
-      if(data.links) links.push(...data.links);
+      try{
+        const data = await response.json();
+        if(data.links) links.push(...data.links);
+      } catch(jsonErr){
+        console.warn("⚠️ No se recibió URL, pero archivo subido correctamente (o falló silencioso).");
+      }
     }catch(err){
       console.warn("⚠️ Archivo no subido:", file.name, err);
     }
   }
-  return links;
+  return links; // aunque sea vacío, no rompe nada
 }
 
+  
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
   const datosEmpleado = document.getElementById("employee").value.split("|");
