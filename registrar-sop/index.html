@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <style>
 body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 .overlay{background:rgba(0,0,0,0.25);min-height:100vh;}
@@ -23,12 +24,11 @@ input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:10px;bo
 textarea{height:auto;}
 button{padding:12px;border:none;border-radius:30px;background:linear-gradient(135deg,#0072C6,#005a9e);color:white;font-weight:bold;cursor:pointer;transition:.3s;}
 button:hover{transform:scale(1.05);}
-.footer{text-align:center;padding:30px;color:white;background:#003366;margin-top:50px;}
 .notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
-.spinner{margin-left:8px;}
 @media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
+.spinner{margin-left:8px;}
 </style>
 </head>
 <body>
@@ -40,7 +40,7 @@ button:hover{transform:scale(1.05);}
     <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
-  <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+  <div class="menu-toggle" onclick="document.querySelector('.menu').classList.toggle('show')"><i class="fa-solid fa-bars"></i></div>
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
@@ -52,139 +52,139 @@ button:hover{transform:scale(1.05);}
 <div class="container">
 <h1>Registrar Solicitud de SOP - Rev 3.0</h1>
 <form id="sopForm" enctype="multipart/form-data">
-
-<label>Empleado</label>
-<select id="employee" required>
-<option value="">Seleccione empleado</option>
-<option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
-<option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
-<option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
-<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
-<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
-<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
-<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
-<option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
-<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-<option value="Otros|otros|otros|otros">Otros</option>
-</select>
-
-<input type="text" id="departamento" placeholder="Área / Departamento" required>
-<input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
-<input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
-<textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
-<label>Adjuntar archivos (PDF o imágenes)</label>
-<input type="file" id="archivos" multiple>
-
-<!-- Botón con spinner -->
-<button type="submit" id="btnEnviar">
-  <span class="btn-text">Registrar Solicitud</span>
-  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
-</button>
+  <label>Empleado</label>
+  <select id="employee" required>
+    <option value="">Seleccione empleado</option>
+    <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
+    <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
+    <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+    <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+    <option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+    <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+    <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+    <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+    <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+    <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+    <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+    <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+    <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+    <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+    <option value="Otros|otros|otros|otros">Otros</option>
+  </select>
+  <input type="text" id="departamento" placeholder="Área / Departamento" required>
+  <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
+  <input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
+  <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
+  <label>Adjuntar archivos (PDF o imágenes)</label>
+  <input type="file" id="archivos" multiple>
+  <button type="submit" id="btnEnviar">
+    <span class="btn-text">Registrar Solicitud</span>
+    <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
+  </button>
 </form>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
 </div>
 
 <script>
 emailjs.init("iR8ieJnOkI4_sr8TH")
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec"
 
-function toggleMenu(){document.querySelector('.menu').classList.toggle('show')}
+document.getElementById("employee").addEventListener("change", function(){
+  let datos = this.value.split("|");
+  document.getElementById("departamento").value = datos[3] || "";
+});
 
-// Autocompleta departamento
-document.getElementById("employee").addEventListener("change",function(){
-  let datos=this.value.split("|")
-  document.getElementById("departamento").value=datos[3] || ""
-})
+const btn = document.getElementById("btnEnviar");
+const btnText = btn.querySelector(".btn-text");
+const spinner = btn.querySelector(".spinner");
 
-// Convertir archivos a Base64
+function mostrarNotificacion(msg,tipo){
+  const notif = document.createElement("div");
+  notif.className = "notification "+tipo;
+  notif.innerText = msg;
+  document.body.appendChild(notif);
+  setTimeout(()=>notif.remove(),4000);
+}
+
 function archivosA_Base64(files){
   return Promise.all(Array.from(files).map(file=>{
     return new Promise((resolve,reject)=>{
-      const reader = new FileReader()
-      reader.onload = ()=>resolve({name:file.name,data:reader.result,type:file.type})
-      reader.onerror = reject
-      reader.readAsDataURL(file)
-    })
-  }))
+      const reader = new FileReader();
+      reader.onload = ()=>resolve({name:file.name,data:reader.result,type:file.type});
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    }));
+  }));
 }
 
-// Manejar envío de formulario
+async function enviarSOP(formData){
+  const archivosInput = document.getElementById("archivos");
+  const archivosBase64 = archivosInput.files.length > 0 ? await archivosA_Base64(archivosInput.files) : [];
+  const data = {
+    employee: formData.nombre,
+    correo: formData.correo,
+    cargo: formData.cargo,
+    departamento: formData.departamento,
+    objetivo: formData.objetivo,
+    areas: formData.areas,
+    resumen: formData.resumen,
+    date: new Date().toLocaleString(),
+    files: archivosBase64
+  };
+  const response = await fetch(SCRIPT_URL,{
+    method:"POST",
+    body: JSON.stringify(data)
+  });
+  return await response.json();
+}
+
 document.getElementById("sopForm").addEventListener("submit", async function(e){
-  e.preventDefault()
+  e.preventDefault();
 
-  const datosEmpleado = document.getElementById("employee").value.split("|")
-  const nombre = datosEmpleado[0]
-  const correo = datosEmpleado[1]
-  const cargo = datosEmpleado[2]
-  const depto = document.getElementById("departamento").value.trim()
-  const objetivo = document.getElementById("objetivo").value.trim()
-  const areas = document.getElementById("areas").value.trim()
-  const resumen = document.getElementById("resumen").value.trim()
-
-  if(!nombre || !depto || !objetivo || !areas || !resumen){
-    alert("Complete todos los campos obligatorios")
-    return
-  }
-
-  const btn = document.getElementById("btnEnviar")
-  const spinner = btn.querySelector(".spinner")
-  const btnText = btn.querySelector(".btn-text")
-  btn.disabled = true; btnText.innerText="Enviando..."; spinner.style.display="inline-block"
-
-  const archivosInput = document.getElementById("archivos")
-  let archivosBase64 = []
-  if(archivosInput.files.length>0){
-    archivosBase64 = await archivosA_Base64(archivosInput.files)
-  }
+  const datosEmpleado = document.getElementById("employee").value.split("|");
+  const formData = {
+    nombre: datosEmpleado[0],
+    correo: datosEmpleado[1],
+    cargo: datosEmpleado[2],
+    departamento: document.getElementById("departamento").value,
+    objetivo: document.getElementById("objetivo").value,
+    areas: document.getElementById("areas").value,
+    resumen: document.getElementById("resumen").value
+  };
 
   try{
-    const response = await fetch(SCRIPT_URL,{
-      method:"POST",
-      body: JSON.stringify({
-        employee:nombre,
-        correo:correo,
-        cargo:cargo,
-        departamento:depto,
-        objetivo:objetivo,
-        areas:areas,
-        resumen:resumen,
-        estado:"Pendiente",
-        files:archivosBase64
-      })
-    })
-    const result = await response.json()
-    if(result.status!=="success") throw new Error(result.message)
+    btn.disabled = true;
+    btnText.innerText = "Enviando...";
+    spinner.style.display = "inline-block";
 
-    // Enviar EmailJS
-    const filesHTML = result.links.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("")
-    await emailjs.send("service_vkt5xuo","template_vc7447e",{
-      employee:nombre,
-      department:depto,
-      cargo:cargo,
-      objective:objetivo,
-      areas:areas,
-      summary:resumen,
-      date:new Date().toLocaleString(),
-      files:filesHTML
-    })
+    const result = await enviarSOP(formData);
 
-    alert("Formulario enviado correctamente!")
-    this.reset()
+    if(result.status === "success"){
+      let filesHTML = result.links.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
+      emailjs.send("service_vkt5xuo","template_vc7447e",{
+        employee: formData.nombre,
+        department: formData.departamento,
+        cargo: formData.cargo,
+        objective: formData.objetivo,
+        areas: formData.areas,
+        summary: formData.resumen,
+        date: new Date().toLocaleString(),
+        files: filesHTML
+      }).then(()=> mostrarNotificacion("Solicitud enviada correctamente","success"))
+        .catch(()=> mostrarNotificacion("Error enviando correo","error"));
+      this.reset();
+    } else {
+      mostrarNotificacion("Error: "+result.message,"error");
+    }
   }catch(err){
-    console.error(err)
-    alert("Ocurrió un error al enviar la solicitud")
+    console.error(err);
+    mostrarNotificacion("Error enviando solicitud","error");
   }finally{
-    btn.disabled = false; btnText.innerText="Registrar Solicitud"; spinner.style.display="none"
+    btn.disabled = false;
+    btnText.innerText = "Registrar Solicitud";
+    spinner.style.display = "none";
   }
-})
+});
 </script>
+
 </body>
 </html>
