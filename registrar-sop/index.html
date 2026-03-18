@@ -1,147 +1,81 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<style>
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f2f2f2;padding:20px;}
-.container{max-width:600px;margin:auto;background:white;padding:30px;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.2);}
-h1{text-align:center;color:#003366;}
-input,textarea,select,button{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;}
-button{background:#0072C6;color:white;font-weight:bold;border:none;cursor:pointer;}
-.notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;z-index:9999;}
-.notification.success{background:#28a745;}
-.notification.error{background:#dc3545;}
-</style>
-</head>
-<body>
-<div class="container">
-<h1>Registrar Solicitud de SOP</h1>
-<form id="sopForm" enctype="multipart/form-data">
-  <label>Empleado</label>
-  <select id="employee" required>
-    <option value="">Seleccione empleado</option>
-    <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-    <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-    <option value="Otros|otros|otros|otros">Otros</option>
-  </select>
-
-  <input type="text" id="departamento" placeholder="Área / Departamento" required>
-  <input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
-  <input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
-  <textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
-  <label>Adjuntar archivos</label>
-  <input type="file" id="archivos" multiple>
-
-  <button type="submit" id="btnEnviar">Registrar Solicitud</button>
-</form>
-</div>
-
 <script>
-emailjs.init("iR8ieJnOkI4_sr8TH"); // tu userID EmailJS
-const SCRIPT_URL = "https://script.google.com/macros/s/TU_SCRIPT_ID/exec"; // reemplaza con tu script
+const SCRIPT_URL_DRIVE = "TU_URL_APPS_SCRIPT"; // reemplaza con tu script que sube a Drive
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
 
-// Autocompleta departamento
-document.getElementById("employee").addEventListener("change", function(){
-  let datos = this.value.split("|");
-  document.getElementById("departamento").value = datos[3] || "";
-});
-
-// Mostrar notificación
-function mostrarNotificacion(msg, tipo){
-  const notif = document.createElement("div");
-  notif.className = "notification " + tipo;
-  notif.innerText = msg;
-  document.body.appendChild(notif);
-  setTimeout(()=>notif.remove(),4000);
-}
-
-// Convertir archivos a Base64
+// Convierte archivos a Base64
 function archivosA_Base64(files){
   return Promise.all(Array.from(files).map(file=>{
     return new Promise((resolve,reject)=>{
       const reader = new FileReader();
-      reader.onload = ()=>resolve({name:file.name, data:reader.result, type:file.type});
+      reader.onload = ()=>resolve({name:file.name,data:reader.result});
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
   }));
 }
 
-// Subir archivos a Google Drive a través del script
-async function subirArchivosDrive(files, datosFormulario){
+// Subir archivos a Drive vía Apps Script
+async function subirArchivosDrive(files,nombre){
+  if(!files.length) return [];
   let archivosBase64 = await archivosA_Base64(files);
-  let payload = {
-    employee: datosFormulario.nombre,
-    correo: datosFormulario.correo,
-    cargo: datosFormulario.cargo,
-    departamento: datosFormulario.departamento,
-    objetivo: datosFormulario.objetivo,
-    areas: datosFormulario.areas,
-    resumen: datosFormulario.resumen,
-    date: datosFormulario.fecha,
-    files: archivosBase64
-  };
-  let response = await fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
+  let response = await fetch(SCRIPT_URL_DRIVE,{
+    method:"POST",
+    body: JSON.stringify({employee:nombre, files:archivosBase64})
   });
-  return await response.json();
+  let data = await response.json();
+  return data.links; // URLs de Drive
 }
 
-// Envío del formulario
+// Enviar formulario
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
 
   let datosEmpleado = document.getElementById("employee").value.split("|");
-  let datosFormulario = {
-    nombre: datosEmpleado[0],
-    correo: datosEmpleado[1],
-    cargo: datosEmpleado[2],
-    departamento: document.getElementById("departamento").value.trim(),
-    objetivo: document.getElementById("objetivo").value.trim(),
-    areas: document.getElementById("areas").value.trim(),
-    resumen: document.getElementById("resumen").value.trim(),
-    fecha: new Date().toLocaleString()
-  };
+  let nombre = datosEmpleado[0] || "";
+  let correo = datosEmpleado[1] || "";
+  let depto = document.getElementById("departamento").value.trim();
+  let objetivo = document.getElementById("objetivo").value.trim();
+  let areas = document.getElementById("areas").value.trim();
+  let resumen = document.getElementById("resumen").value.trim();
+  let archivosInput = document.getElementById("archivos");
 
-  if(!datosFormulario.nombre || !datosFormulario.departamento || !datosFormulario.objetivo ||
-     !datosFormulario.areas || !datosFormulario.resumen){
-    mostrarNotificacion("Complete todos los campos","error");
+  if(!nombre || !depto || !objetivo || !areas || !resumen){
+    alert("Complete todos los campos obligatorios");
     return;
   }
 
-  let archivosInput = document.getElementById("archivos");
+  // 1️⃣ Subir archivos y obtener links
   let linksDrive = [];
-  if(archivosInput.files.length>0){
-    try{
-      const resultado = await subirArchivosDrive(archivosInput.files, datosFormulario);
-      linksDrive = resultado.links;
-    }catch(err){
-      console.error(err);
-      mostrarNotificacion("Error subiendo archivos","error");
-      return;
-    }
+  try{
+    linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
+  } catch(e){
+    console.error("Error subiendo archivos:", e);
+    alert("Error subiendo archivos a Drive");
+    return;
   }
 
-  // Enviar EmailJS
-  let filesHTML = linksDrive.map(link=>`<p>📎 <a href="${link}">${link}</a></p>`).join("");
-  emailjs.send("service_vkt5xuo","template_vc7447e",{
-    employee: datosFormulario.nombre,
-    department: datosFormulario.departamento,
-    cargo: datosFormulario.cargo,
-    objective: datosFormulario.objetivo,
-    areas: datosFormulario.areas,
-    summary: datosFormulario.resumen,
-    date: datosFormulario.fecha,
-    files: filesHTML
-  }).then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-    .catch(error=>{console.error(error); mostrarNotificacion("Error enviando correo","error")});
+  // 2️⃣ Llenar Google Form
+  try{
+    const formData = new FormData();
+    formData.append("entry.1393360085", nombre);
+    formData.append("entry.1363198453", correo);
+    formData.append("entry.1941994843", depto);
+    formData.append("entry.1015716567", objetivo);
+    formData.append("entry.949214050", areas);
+    formData.append("entry.619270886", resumen);
+    formData.append("entry.1989031957", "Pendiente");
+    formData.append("entry.1877018002", linksDrive.join(", "));
 
-  this.reset();
+    await fetch(GOOGLE_FORM_URL,{
+      method:"POST",
+      body: formData,
+      mode:"no-cors"
+    });
+    alert("Formulario enviado y archivos subidos correctamente!");
+    this.reset();
+  } catch(e){
+    console.error("Error enviando Google Form:", e);
+    alert("Error enviando formulario");
+  }
 });
 </script>
-</body>
-</html>
