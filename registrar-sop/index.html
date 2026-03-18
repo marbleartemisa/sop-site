@@ -61,7 +61,7 @@ th{background:#003366;color:white;}
 
 <!-- FORMULARIO -->
 <div class="container">
-<h1>Registrar Solicitud de SOP - Rev 3.4</h1>
+<h1>Registrar Solicitud de SOP - Rev 3.6</h1>
 <form id="sopForm" enctype="multipart/form-data">
 
 
@@ -168,31 +168,82 @@ async function archivosA_Base64(files){
 
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
-  let datosEmpleado=document.getElementById("employee").value.split("|");
-  let nombre=datosEmpleado[0],correo=datosEmpleado[1],cargo=datosEmpleado[2],depto=document.getElementById("departamento").value.trim();
-  let objetivo=document.getElementById("objetivo").value.trim(),areas=document.getElementById("areas").value.trim(),resumen=document.getElementById("resumen").value.trim();
-  if(!nombre||!depto||!objetivo||!areas||!resumen){mostrarNotificacion("Complete todos los campos","error");return;}
-  const btn=document.getElementById("btnEnviar"),btnText=btn.querySelector(".btn-text"),spinner=btn.querySelector(".spinner");
-  btn.disabled=true;btnText.innerText="Enviando...";spinner.style.display="inline-block";
-  let fechaActual=new Date().toLocaleString();
-  let archivosInput=document.getElementById("archivos"),archivosBase64=[];
-  if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files);
-  const payload={employee:nombre,correo,cargo,departamento:depto,objetivo,areas,resumen,date:fechaActual,files:archivosBase64};
-  try{
-    const res=await fetch(SCRIPT_URL,{method:"POST",body:JSON.stringify(payload)});
-    const data=await res.json();
-    if(data.status==="success"){
-      const filesHTML=(data.links||[]).map(u=>`<p>📎 <a href="${u}" target="_blank">${u}</a></p>`).join("");
-      emailjs.send("service_vkt5xuo","template_vc7447e",{employee:nombre,department:depto,cargo,cargo,objective:objetivo,areas,summary:resumen,date:fechaActual,files:filesHTML})
-      .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-      .catch(err=>{console.error(err);mostrarNotificacion("Error enviando email","error");});
-      solicitudes.push({empleado:nombre,departamento:depto,objetivo,areas,resumen,estado:"Pendiente",fecha:fechaActual});
-      guardar();renderTabla();this.reset();
-    }else{mostrarNotificacion("Error: "+data.message,"error");}
-  }catch(err){console.error(err);mostrarNotificacion("Error general: "+err.message,"error");}
-  finally{btn.disabled=false;btnText.innerText="Registrar Solicitud";spinner.style.display="none";}
-});
 
+  const datosEmpleado = document.getElementById("employee").value.split("|");
+  const nombre = datosEmpleado[0];
+  const correo = datosEmpleado[1];
+  const cargo = datosEmpleado[2] || "";
+  const depto = document.getElementById("departamento").value.trim();
+  const objetivo = document.getElementById("objetivo").value.trim();
+  const areas = document.getElementById("areas").value.trim();
+  const resumen = document.getElementById("resumen").value.trim();
+
+  if(!nombre || !depto || !objetivo || !areas || !resumen){
+    mostrarNotificacion("Complete todos los campos obligatorios","error");
+    return;
+  }
+
+  btn.disabled = true;
+  btnText.innerText = "Enviando...";
+  spinner.style.display = "inline-block";
+
+  const fechaActual = new Date().toLocaleString();
+  let linksDrive = [];
+
+  // 1️⃣ Intentar subir archivos, pero si falla no bloquea
+  try {
+    const archivosInput = document.getElementById("archivos");
+    if(archivosInput.files.length > 0){
+      linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
+    }
+  } catch(err) {
+    console.warn("⚠️ Subida de archivos falló, continuamos sin links:", err);
+  }
+
+  const filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}">${link}</a></p>`).join("");
+
+  // 2️⃣ Enviar EmailJS (siempre)
+  emailjs.send("service_vkt5xuo","template_vc7447e",{
+    employee: nombre,
+    department: depto,
+    cargo: cargo,
+    objective: objetivo,
+    areas: areas,
+    summary: resumen,
+    date: fechaActual,
+    files: filesHTML
+  })
+  .then(() => mostrarNotificacion("Solicitud enviada correctamente","success"))
+  .catch(error => {
+    console.error("Error enviando correo:", error);
+    mostrarNotificacion("Error enviando correo","error");
+  });
+
+  // 3️⃣ Llenar Google Form (siempre)
+  try {
+    const formData = new FormData();
+    formData.append("entry.1393360085", nombre);
+    formData.append("entry.1363198453", correo);
+    formData.append("entry.1941994843", depto);
+    formData.append("entry.1015716567", objetivo);
+    formData.append("entry.949214050", areas);
+    formData.append("entry.619270886", resumen);
+    formData.append("entry.1989031957", "Pendiente");
+    formData.append("entry.1877018002", linksDrive.join(", "));
+
+    fetch(GOOGLE_FORM_URL, { method: "POST", body: formData, mode: "no-cors" })
+      .catch(err => console.warn("⚠️ Google Form falló, continuamos:", err));
+  } catch(err) {
+    console.warn("⚠️ Error llenando Google Form:", err);
+  }
+
+  // 4️⃣ Actualizar tabla y reset
+  renderTabla();
+  btn.disabled = false;
+  btnText.innerText = "Registrar Solicitud";
+  spinner.style.display = "none";
+  this.reset();
+});
 document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
