@@ -168,23 +168,25 @@ async function renderTabla() {
         : "";
 
       // CREAR FILA CON ORDEN EXACTO DE ENCABEZADOS
-      const fila = document.createElement("tr");
-      fila.innerHTML = `
-        <td>${sop.empleado || ""}</td>          <!-- empleado -->
-        <td>${sop.departamento || ""}</td>      <!-- departamento -->
-        <td>${sop.objetivo || ""}</td>          <!-- objetivo -->
-        <td>${sop.areas || ""}</td>             <!-- areas -->
-        <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td> <!-- estado -->
-        <td>${sop.Timestamp || ""}</td>         <!-- fecha / hora -->
-        <td>${archivosHTML}</td>                 <!-- archivos con icono -->
-        <td><button type="button" onclick="abrirAporte('${sop.Timestamp}')">💬</button></td> <!-- aportar -->
-      `;
+  const fila = document.createElement("tr");
+  fila.innerHTML = `
+    <td>${sop.empleado || ""}</td>           <!-- empleado -->
+    <td>${sop.departamento || ""}</td>     <!-- departamento -->
+    <td>${sop.objetivo || ""}</td>         <!-- objetivo -->
+    <td>${sop.areas || ""}</td>          <!-- areas -->
+    <td>${sop.estado || ""}</td>           <!-- estado -->
+    <td>${sop.Fecha || ""}</td>            <!-- fecha/hora -->
+    <td>${iconoArchivo(sop.url)}</td>      <!-- archivos -->
+    <td><button onclick="abrirAporte('${sop.Fecha}')">💬</button></td> <!-- aportar -->
+`;
       tabla.appendChild(fila);
     });
   } catch (e) {
     console.error("Error cargando SOP:", e);
   }
 }
+
+
 
 // =======================
 // MODAL APORTES
