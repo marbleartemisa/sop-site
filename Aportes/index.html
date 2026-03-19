@@ -143,6 +143,15 @@
   <div id="modalAporte">
     <div class="modal-content">
       <h3>Aportar a SOP</h3>
+      function abrirAporte(id) {
+      document.getElementById("modalAporte").style.display = "flex";
+      document.getElementById("aporte_id_sop").value = id;
+
+        // Mostrar Timestamp en el modal
+        document.getElementById("aporte_timestamp_display").innerText = id;
+
+        cargarHistorial(id);
+      }
       <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:10px;">Cargando historial...</div>
       <input type="hidden" id="aporte_id_sop">
       <select id="aporte_employee">
