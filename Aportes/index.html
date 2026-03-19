@@ -152,8 +152,8 @@ async function renderTabla() {
       // FILTRO POR ESTADO
       if (filtroEstado && sop.estado !== filtroEstado) return;
 
-      // FILTRO DE BUSQUEDA
-      const texto = (sop.empleado + sop.objetivo + sop.departamento).toLowerCase();
+      // FILTRO DE BÚSQUEDA (empleado + objetivo + departamento + areas)
+      const texto = (sop.empleado + sop.objetivo + sop.departamento + sop.areas).toLowerCase();
       if (buscar && !texto.includes(buscar)) return;
 
       // CLASES DE ESTADO
@@ -163,19 +163,21 @@ async function renderTabla() {
       else if (sop.estado === "Aprobado") estadoClass = "aprobado";
 
       // ICONOS DE ARCHIVOS
-      const archivosHTML = sop.links ? sop.links.split(",").map(l => iconoArchivo(l.trim())).join(" ") : "";
+      const archivosHTML = sop.links 
+        ? sop.links.split(",").map(l => iconoArchivo(l.trim())).join(" ") 
+        : "";
 
-      // CREAR FILA
+      // CREAR FILA CON ORDEN EXACTO DE ENCABEZADOS
       const fila = document.createElement("tr");
       fila.innerHTML = `
-        <td>${sop.empleado || ""}</td>
-        <td>${sop.departamento || ""}</td>
-        <td>${sop.objetivo || ""}</td>
-        <td>${sop.areas || ""}</td>
-        <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td>
-        <td>${sop.Timestamp || ""}</td>
-        <td>${archivosHTML}</td>
-        <td><button type="button" onclick="abrirAporte('${sop.Timestamp}')">💬</button></td>
+        <td>${sop.empleado || ""}</td>          <!-- empleado -->
+        <td>${sop.departamento || ""}</td>      <!-- departamento -->
+        <td>${sop.objetivo || ""}</td>          <!-- objetivo -->
+        <td>${sop.areas || ""}</td>             <!-- areas -->
+        <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td> <!-- estado -->
+        <td>${sop.Timestamp || ""}</td>         <!-- fecha / hora -->
+        <td>${archivosHTML}</td>                 <!-- archivos con icono -->
+        <td><button type="button" onclick="abrirAporte('${sop.Timestamp}')">💬</button></td> <!-- aportar -->
       `;
       tabla.appendChild(fila);
     });
