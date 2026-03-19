@@ -284,9 +284,13 @@ async function renderTabla() {
 function abrirAporte(id) {
   document.getElementById("modalAporte").style.display = "flex";
   document.getElementById("aporte_id_sop").value = id;
+
+  // Mostrar Timestamp en el modal
+  document.getElementById("aporte_timestamp_display").innerText = id;
+
   cargarHistorial(id);
 }
-
+  
 function cerrarAporte() {
   document.getElementById("modalAporte").style.display = "none";
   document.getElementById("aporte_comentario").value = "";
