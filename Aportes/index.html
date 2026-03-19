@@ -267,9 +267,25 @@
         Cargando historial...
       </div>
       <input type="hidden" id="aporte_id_sop">
-      <input type="hidden" id="aporte_empleado">
-      <input type="hidden" id="aporte_correo">
-      <input type="hidden" id="aporte_departamento">
+      <label>Empleado</label>
+<select id="aporte_employee">
+  <option value="">Seleccione empleado</option>
+          <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
+          <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
+          <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+          <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+          <option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+          <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+          <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+          <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+          <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+          <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+          <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+          <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+          <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+          <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+          <option value="Otros|otros|otros|otros">Otros</option>
+</select>
       <textarea id="aporte_comentario" placeholder="Comentario u observación" style="width:100%;height:100px;margin-top:10px;"></textarea>
       <label>Adjuntar archivos</label>
       <input type="file" id="aporte_archivos" multiple>
@@ -280,240 +296,324 @@
     </div>
   </div>
 
-  <script>
-    emailjs.init("iR8ieJnOkI4_sr8TH");
+<script>
+emailjs.init("iR8ieJnOkI4_sr8TH");
 
-    const SCRIPT_URL_DRIVE = "https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec";
-    const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
-    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
+const SCRIPT_URL_DRIVE = "https://script.google.com/macros/s/AKfycbwXCmWHuByuduROkUoweCmmYMUCsA-cdizy3twM30OAsZyJInkltKoao4zafWUycVTH/exec";
+const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse";
 
-    function toggleMenu() {
-      document.querySelector('.menu').classList.toggle('show');
-    }
+function toggleMenu() {
+  document.querySelector('.menu').classList.toggle('show');
+}
 
-    document.getElementById("employee").addEventListener("change", function() {
-      let datos = this.value.split("|");
-      document.getElementById("departamento").value = datos[3] || "";
+document.getElementById("employee").addEventListener("change", function() {
+  let datos = this.value.split("|");
+  document.getElementById("departamento").value = datos[3] || "";
+});
+
+function iconoArchivo(link) {
+  const url = link.toLowerCase();
+  if (url.includes(".pdf")) return `📄 <a href="${link}" target="_blank">PDF</a>`;
+  if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) return `🖼 <a href="${link}" target="_blank">Imagen</a>`;
+  if (url.match(/\.(xls|xlsx|csv)$/)) return `📊 <a href="${link}" target="_blank">Excel</a>`;
+  return `📎 <a href="${link}" target="_blank">Archivo</a>`;
+}
+
+async function archivosA_Base64(files) {
+  return Promise.all(
+    Array.from(files).map(file => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve({ name: file.name, data: reader.result });
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    }))
+  );
+}
+
+async function subirArchivosDrive(files, nombre, correo, depto, comentario) {
+  let archivosBase64 = await archivosA_Base64(files);
+
+  const response = await fetch(SCRIPT_URL_DRIVE, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      employee: nombre,
+      correo: correo,
+      departamento: depto,
+      comentario: comentario,
+      files: archivosBase64
+    })
+  });
+
+  const result = await response.json();
+  return result.links || [];
+}
+
+const btn = document.getElementById("btnEnviar");
+const btnText = btn.querySelector(".btn-text");
+const spinner = btn.querySelector(".spinner");
+
+document.getElementById("sopForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  let datosEmpleado = document.getElementById("employee").value.split("|");
+  let nombre = datosEmpleado[0];
+  let correo = datosEmpleado[1];
+  let cargo = datosEmpleado[2];
+  let depto = document.getElementById("departamento").value.trim();
+  let objetivo = document.getElementById("objetivo").value.trim();
+  let areas = document.getElementById("areas").value.trim();
+  let resumen = document.getElementById("resumen").value.trim();
+
+  if (!nombre || !depto || !objetivo || !areas || !resumen) {
+    mostrarNotificacion("Complete todos los campos obligatorios", "error");
+    return;
+  }
+
+  btn.disabled = true;
+  btnText.innerText = "Enviando...";
+  spinner.style.display = "inline-block";
+
+  let fechaActual = new Date().toLocaleString();
+  let archivosInput = document.getElementById("archivos");
+  let linksDrive = [];
+
+  if (archivosInput.files.length > 0) {
+    linksDrive = await subirArchivosDrive(
+      archivosInput.files,
+      nombre,
+      correo,
+      depto,
+      resumen
+    );
+  }
+
+  let filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}">${link}</a></p>`).join("");
+
+  emailjs.send("service_vkt5xuo", "template_vc7447e", {
+    employee: nombre,
+    department: depto,
+    cargo: cargo,
+    objective: objetivo,
+    areas: areas,
+    summary: resumen,
+    date: fechaActual,
+    files: filesHTML
+  });
+
+  try {
+    const formData = new FormData();
+    formData.append("entry.1393360085", nombre);
+    formData.append("entry.1363198453", correo);
+    formData.append("entry.1941994843", depto);
+    formData.append("entry.1015716567", objetivo);
+    formData.append("entry.949214050", areas);
+    formData.append("entry.619270886", resumen);
+    formData.append("entry.1989031957", "Pendiente");
+    formData.append("entry.1877018002", linksDrive.join(", "));
+
+    fetch(GOOGLE_FORM_URL, {
+      method: "POST",
+      body: formData,
+      mode: "no-cors"
+    });
+  } catch (e) {
+    console.error(e);
+  }
+
+  mostrarNotificacion("Solicitud enviada correctamente", "success");
+  renderTabla();
+
+  btn.disabled = false;
+  btnText.innerText = "Registrar Solicitud";
+  spinner.style.display = "none";
+
+  this.reset();
+});
+
+function mostrarNotificacion(msg, tipo) {
+  const notif = document.createElement("div");
+  notif.className = "notification " + tipo;
+  notif.innerText = msg;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 4000);
+}
+
+async function renderTabla() {
+  const tabla = document.getElementById("tablaSOP");
+  tabla.innerHTML = "";
+
+  const filtroEstado = document.getElementById("filtroEstado").value;
+  const buscar = document.getElementById("buscarSOP").value.toLowerCase();
+
+  try {
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN);
+    const data = await res.json();
+
+    data.forEach(sop => {
+      if (filtroEstado && sop.estado !== filtroEstado) return;
+
+      if (buscar) {
+        let texto = (sop.empleado + sop.objetivo + sop.departamento).toLowerCase();
+        if (!texto.includes(buscar)) return;
+      }
+
+      let estadoClass = "pendiente";
+      if (sop.estado === "Trámite") estadoClass = "tramite";
+      if (sop.estado === "Rechazado") estadoClass = "rechazado";
+      if (sop.estado === "Aprobado") estadoClass = "aprobado";
+
+      let archivosHTML = "";
+      if (sop.links) {
+        let links = sop.links.split(",");
+        archivosHTML = links.map(l => iconoArchivo(l.trim())).join("<br>");
+      }
+
+      let fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${sop.empleado || ""}</td>
+        <td>${sop.departamento || ""}</td>
+        <td>${sop.objetivo || ""}</td>
+        <td>${sop.areas || ""}</td>
+        <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td>
+        <td>${sop.Timestamp || ""}</td>
+        <td>${archivosHTML}</td>
+        <td><button onclick="abrirAporte('${sop.Timestamp}')">💬</button></td>
+      `;
+      tabla.appendChild(fila);
     });
 
-    function iconoArchivo(link) {
-      const url = link.toLowerCase();
-      if (url.includes(".pdf")) return `📄 <a href="${link}" target="_blank">PDF</a>`;
-      if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) return `🖼 <a href="${link}" target="_blank">Imagen</a>`;
-      if (url.match(/\.(xls|xlsx|csv)$/)) return `📊 <a href="${link}" target="_blank">Excel</a>`;
-      return `📎 <a href="${link}" target="_blank">Archivo</a>`;
+  } catch (e) {
+    console.error("Error cargando SOP:", e);
+  }
+}
+
+function abrirAporte(id) {
+  document.getElementById("modalAporte").style.display = "flex";
+  document.getElementById("aporte_id_sop").value = id;
+  cargarHistorial(id);
+}
+
+function cerrarAporte() {
+  document.getElementById("modalAporte").style.display = "none";
+  document.getElementById("aporte_comentario").value = "";
+  document.getElementById("aporte_archivos").value = null;
+  document.getElementById("aporte_employee").value = "";
+}
+
+async function enviarAporte() {
+  let id = document.getElementById("aporte_id_sop").value;
+
+  if (!id) {
+    mostrarNotificacion("Error: SOP no identificado", "error");
+    return;
+  }
+
+  let valor = document.getElementById("aporte_employee").value;
+
+  if (!valor) {
+    mostrarNotificacion("Seleccione un empleado", "error");
+    return;
+  }
+
+  let datosEmpleado = valor.split("|");
+  let nombre = datosEmpleado[0];
+  let correo = datosEmpleado[1];
+  let depto = datosEmpleado[3]; // 🔥 CORREGIDO
+
+  let comentario = document.getElementById("aporte_comentario").value;
+
+  if (!comentario) {
+    mostrarNotificacion("Debe escribir un comentario", "error");
+    return;
+  }
+
+  let archivosInput = document.getElementById("aporte_archivos");
+  let linksDrive = [];
+
+  const btnModal = document.querySelector("#modalAporte button");
+  btnModal.disabled = true;
+
+  if (archivosInput.files.length > 0) {
+    linksDrive = await subirArchivosDrive(
+      archivosInput.files,
+      nombre,
+      correo,
+      depto,
+      comentario
+    );
+  }
+
+  await fetch(SCRIPT_URL_SOP_ADMIN, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "guardarAporte",
+      id_sop: id,
+      empleado: nombre,
+      correo: correo,
+      departamento: depto,
+      comentario: comentario,
+      archivos: linksDrive.join(", ")
+    })
+  });
+
+  let filesHTML = linksDrive.map(l => `<p>📎 <a href="${l}">${l}</a></p>`).join("");
+
+  emailjs.send("service_vkt5xuo", "template_vc7447e", {
+    employee: nombre,
+    department: depto,
+    summary: comentario,
+    date: new Date().toLocaleString(),
+    files: filesHTML
+  })
+  .then(() => console.log("Email OK"))
+  .catch(err => {
+    console.error("Email error", err);
+    mostrarNotificacion("Error enviando email", "error");
+  });
+
+  await cargarHistorial(id);
+
+  mostrarNotificacion("Aporte registrado correctamente", "success");
+
+  setTimeout(() => {
+    cerrarAporte();
+    btnModal.disabled = false;
+  }, 800);
+}
+
+async function cargarHistorial(id) {
+  const historial = document.getElementById("historialAportes");
+  historial.innerHTML = "Cargando...";
+
+  try {
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id));
+    const data = await res.json();
+
+    if (!data.length) {
+      historial.innerHTML = "Sin aportes aún";
+      return;
     }
 
-    async function archivosA_Base64(files) {
-      return Promise.all(
-        Array.from(files).map(file => new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve({ name: file.name, data: reader.result });
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        }))
-      );
-    }
+    historial.innerHTML = data.map(a => `
+      <div style="border-bottom:1px solid #eee;padding:6px 0;">
+        <strong>${a.EMPLEADO}</strong><br>
+        <small>${a.FECHA}</small><br>
+        ${a.COMENTARIO || ""}
+      </div>
+    `).join("");
 
-    async function subirArchivosDrive(files, nombre) {
-      let archivosBase64 = await archivosA_Base64(files);
-      let response = await fetch(SCRIPT_URL_DRIVE, {
-        method: "POST",
-        body: JSON.stringify({ employee: nombre, files: archivosBase64 })
-      });
-      let data = await response.json();
-      return data.links;
-    }
+  } catch (e) {
+    historial.innerHTML = "Error cargando historial";
+  }
+}
 
-    const btn = document.getElementById("btnEnviar");
-    const btnText = btn.querySelector(".btn-text");
-    const spinner = btn.querySelector(".spinner");
+document.getElementById("buscarSOP").addEventListener("input", renderTabla);
+document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 
-    document.getElementById("sopForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      let datosEmpleado = document.getElementById("employee").value.split("|");
-      let nombre = datosEmpleado[0];
-      let correo = datosEmpleado[1];
-      let cargo = datosEmpleado[2];
-      let depto = document.getElementById("departamento").value.trim();
-      let objetivo = document.getElementById("objetivo").value.trim();
-      let areas = document.getElementById("areas").value.trim();
-      let resumen = document.getElementById("resumen").value.trim();
-
-      if (!nombre || !depto || !objetivo || !areas || !resumen) {
-        mostrarNotificacion("Complete todos los campos obligatorios", "error");
-        return;
-      }
-
-      btn.disabled = true;
-      btnText.innerText = "Enviando...";
-      spinner.style.display = "inline-block";
-
-      let fechaActual = new Date().toLocaleString();
-      let archivosInput = document.getElementById("archivos");
-      let linksDrive = [];
-
-      if (archivosInput.files.length > 0)
-        linksDrive = await subirArchivosDrive(archivosInput.files, nombre);
-
-      let filesHTML = linksDrive.map(link => `<p>📎 <a href="${link}">${link}</a></p>`).join("");
-
-      emailjs.send("service_vkt5xuo", "template_vc7447e", {
-        employee: nombre,
-        department: depto,
-        cargo: cargo,
-        objective: objetivo,
-        areas: areas,
-        summary: resumen,
-        date: fechaActual,
-        files: filesHTML
-      });
-
-      try {
-        const formData = new FormData();
-        formData.append("entry.1393360085", nombre);
-        formData.append("entry.1363198453", correo);
-        formData.append("entry.1941994843", depto);
-        formData.append("entry.1015716567", objetivo);
-        formData.append("entry.949214050", areas);
-        formData.append("entry.619270886", resumen);
-        formData.append("entry.1989031957", "Pendiente");
-        formData.append("entry.1877018002", linksDrive.join(", "));
-        fetch(GOOGLE_FORM_URL, { method: "POST", body: formData, mode: "no-cors" });
-      } catch (e) {
-        console.error(e);
-      }
-
-      mostrarNotificacion("Solicitud enviada correctamente", "success");
-      renderTabla();
-      btn.disabled = false;
-      btnText.innerText = "Registrar Solicitud";
-      spinner.style.display = "none";
-      this.reset();
-    });
-
-    function mostrarNotificacion(msg, tipo) {
-      const notif = document.createElement("div");
-      notif.className = "notification " + tipo;
-      notif.innerText = msg;
-      document.body.appendChild(notif);
-      setTimeout(() => notif.remove(), 4000);
-    }
-
-    async function renderTabla() {
-      const tabla = document.getElementById("tablaSOP");
-      tabla.innerHTML = "";
-      const filtroEstado = document.getElementById("filtroEstado").value;
-      const buscar = document.getElementById("buscarSOP").value.toLowerCase();
-
-      try {
-        const res = await fetch(SCRIPT_URL_SOP_ADMIN);
-        const data = await res.json();
-
-        data.forEach(sop => {
-          if (filtroEstado && sop.estado !== filtroEstado) return;
-          if (buscar) {
-            let texto = (sop.empleado + sop.objetivo + sop.departamento).toLowerCase();
-            if (!texto.includes(buscar)) return;
-          }
-
-          let estadoClass = "pendiente";
-          if (sop.estado === "Trámite") estadoClass = "tramite";
-          if (sop.estado === "Rechazado") estadoClass = "rechazado";
-          if (sop.estado === "Aprobado") estadoClass = "aprobado";
-
-          let archivosHTML = "";
-          if (sop.links) {
-            let links = sop.links.split(",");
-            archivosHTML = links.map(l => iconoArchivo(l.trim())).join("<br>");
-          }
-
-          let fila = document.createElement("tr");
-          fila.innerHTML = `
-            <td>${sop.empleado || ""}</td>
-            <td>${sop.departamento || ""}</td>
-            <td>${sop.objetivo || ""}</td>
-            <td>${sop.areas || ""}</td>
-            <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td>
-            <td>${sop.Timestamp || ""}</td>
-            <td>${archivosHTML}</td>
-            <td><button onclick="abrirAporte('${sop.Timestamp}','${sop.empleado}','${sop.correo}','${sop.departamento}')">💬</button></td>
-          `;
-          tabla.appendChild(fila);
-        });
-      } catch (e) {
-        console.error("Error cargando SOP:", e);
-      }
-    }
-
-    function abrirAporte(id, empleado, correo, depto) {
-      document.getElementById("modalAporte").style.display = "flex";
-      document.getElementById("aporte_id_sop").value = id;
-      document.getElementById("aporte_empleado").value = empleado;
-      document.getElementById("aporte_correo").value = correo;
-      document.getElementById("aporte_departamento").value = depto;
-      cargarHistorial(id);
-    }
-
-    function cerrarAporte() {
-      document.getElementById("modalAporte").style.display = "none";
-    }
-
-    async function enviarAporte() {
-      let id = document.getElementById("aporte_id_sop").value;
-      let empleado = document.getElementById("aporte_empleado").value;
-      let correo = document.getElementById("aporte_correo").value;
-      let depto = document.getElementById("aporte_departamento").value;
-      let comentario = document.getElementById("aporte_comentario").value;
-      let archivosInput = document.getElementById("aporte_archivos");
-      let linksDrive = [];
-
-      if (archivosInput.files.length > 0)
-        linksDrive = await subirArchivosDrive(archivosInput.files, empleado);
-
-      await fetch(SCRIPT_URL_SOP_ADMIN, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "guardarAporte",
-          id_sop: id,
-          empleado: empleado,
-          correo: correo,
-          departamento: depto,
-          comentario: comentario,
-          archivos: linksDrive.join(", ")
-        })
-      });
-
-      mostrarNotificacion("Aporte registrado", "success");
-      cerrarAporte();
-    }
-
-    async function cargarHistorial(id) {
-      const historial = document.getElementById("historialAportes");
-      historial.innerHTML = "Cargando...";
-      try {
-        const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id));
-        const data = await res.json();
-        if (!data.length) {
-          historial.innerHTML = "Sin aportes aún";
-          return;
-        }
-        historial.innerHTML = data.map(a => `
-          <div style="border-bottom:1px solid #eee;padding:6px 0;">
-            <strong>${a.EMPLEADO}</strong><br>
-            <small>${a.FECHA}</small><br>
-            ${a.COMENTARIO || ""}
-          </div>
-        `).join("");
-      } catch (e) {
-        historial.innerHTML = "Error cargando historial";
-      }
-    }
-
-    document.getElementById("buscarSOP").addEventListener("input", renderTabla);
-    document.getElementById("filtroEstado").addEventListener("change", renderTabla);
-
-    renderTabla();
-  </script>
+renderTabla();
+</script>
 </body>
 </html>
