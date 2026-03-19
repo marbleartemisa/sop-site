@@ -33,6 +33,10 @@
     .notification { position:fixed; top:20px; right:20px; padding:12px 20px; border-radius:12px; color:white; font-weight:bold; z-index:9999; opacity:0.95; }
     .notification.success { background:#28a745; }
     .notification.error { background:#dc3545; }
+
+    /* Iconos de archivo con tooltip */
+    .file-icon { font-size:1.2rem; margin-right:5px; text-decoration:none; }
+    .file-icon:hover { transform:scale(1.2); }
   </style>
 </head>
 <body>
@@ -81,22 +85,10 @@
       <div id="historialAportes" style="max-height:200px;overflow:auto;border:1px solid #ddd;padding:10px;border-radius:6px;margin-bottom:10px;">Cargando historial...</div>
       <input type="hidden" id="aporte_id_sop">
       <select id="aporte_employee">
-          <option value="">Seleccione empleado</option>
-          <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
-          <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
-          <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-          <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-          <option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
-          <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-          <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-          <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
-          <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
-          <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
-          <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
-          <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
-          <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-          <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-          <option value="Otros|otros|otros|otros">Otros</option>
+        <option value="">Seleccione empleado</option>
+        <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+        <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+        <option value="Otros|otros|otros|otros">Otros</option>
       </select>
       <textarea id="aporte_comentario" placeholder="Comentario u observación" rows="4"></textarea>
       <input type="file" id="aporte_archivos" multiple>
@@ -121,9 +113,13 @@ function mostrarNotificacion(msg, tipo) {
 function iconoArchivo(link) {
   if (!link) return "";
   const url = link.toLowerCase();
-  if (url.includes(".pdf")) return `📄 <a href="${link}" target="_blank">PDF</a>`;
-  if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) return `🖼 <a href="${link}" target="_blank">Imagen</a>`;
-  return `📎 <a href="${link}" target="_blank">Archivo</a>`;
+  let icon = "📎";
+  if (url.includes(".pdf")) icon = "📄";
+  else if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) icon = "🖼";
+  else if (url.match(/\.(xls|xlsx|csv)$/)) icon = "📊";
+
+  const nombreArchivo = link.split("/").pop();
+  return `<a href="${link}" target="_blank" class="file-icon" title="${nombreArchivo}">${icon}</a>`;
 }
 
 async function renderTabla() {
@@ -149,7 +145,7 @@ async function renderTabla() {
       if (sop.estado === "Rechazado") estadoClass = "rechazado";
       if (sop.estado === "Aprobado") estadoClass = "aprobado";
 
-      let archivosHTML = sop.links ? sop.links.split(",").map(l => iconoArchivo(l.trim())).join("<br>") : "";
+      let archivosHTML = sop.links ? sop.links.split(",").map(l => iconoArchivo(l.trim())).join(" ") : "";
 
       let fila = document.createElement("tr");
       fila.innerHTML = `
@@ -194,13 +190,10 @@ async function enviarAporte() {
   let comentario = document.getElementById("aporte_comentario").value;
   if (!comentario) { mostrarNotificacion("Debe escribir un comentario", "error"); return; }
 
-  let archivosInput = document.getElementById("aporte_archivos");
-  let linksDrive = []; // opcional: subir a Drive si tu script lo soporta
-
   await fetch(SCRIPT_URL_SOP_ADMIN, {
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ action:"guardarAporte", id_sop:id, empleado:nombre, correo:correo, departamento:depto, comentario:comentario, archivos:linksDrive.join(",") })
+    body: JSON.stringify({ action:"guardarAporte", id_sop:id, empleado:nombre, correo:correo, departamento:depto, comentario:comentario, archivos:"" })
   });
 
   mostrarNotificacion("Aporte registrado correctamente", "success");
