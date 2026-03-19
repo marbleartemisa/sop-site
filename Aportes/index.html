@@ -100,31 +100,19 @@
   </div>
 
 <script>
-const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
-
-// NOTIFICACIONES
-function mostrarNotificacion(msg, tipo) {
-  const notif = document.createElement("div");
-  notif.className = "notification " + tipo;
-  notif.innerText = msg;
-  document.body.appendChild(notif);
-  setTimeout(() => notif.remove(), 4000);
-}
-
-// ICONO DE ARCHIVO
 function iconoArchivo(link) {
   if (!link) return "";
   const url = link.toLowerCase();
-  let icon = "📎";
+  let icon = "📎"; // icono genérico
   if (url.includes(".pdf")) icon = "📄";
   else if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) icon = "🖼";
   else if (url.match(/\.(xls|xlsx|csv)$/)) icon = "📊";
 
+  // Solo se muestra el icono, el tooltip es el nombre del archivo
   const nombreArchivo = link.split("/").pop();
   return `<a href="${link}" target="_blank" class="file-icon" title="${nombreArchivo}">${icon}</a>`;
 }
 
-// RENDER TABLA
 async function renderTabla() {
   const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML = "";
@@ -137,23 +125,19 @@ async function renderTabla() {
     const data = await res.json();
 
     data.forEach(sop => {
-      // FILTROS
       if (filtroEstado && sop.estado !== filtroEstado) return;
       if (buscar) {
         const texto = (sop.empleado || "" + sop.objetivo || "" + sop.departamento || "").toLowerCase();
         if (!texto.includes(buscar)) return;
       }
 
-      // ESTADO
       let estadoClass = "pendiente";
       if (sop.estado === "Trámite") estadoClass = "tramite";
       else if (sop.estado === "Rechazado") estadoClass = "rechazado";
       else if (sop.estado === "Aprobado") estadoClass = "aprobado";
 
-      // ARCHIVOS
       let archivosHTML = sop.links ? sop.links.split(",").map(l => iconoArchivo(l.trim())).join(" ") : "";
 
-      // FILA
       let fila = document.createElement("tr");
       fila.innerHTML = `
         <td>${sop.empleado || sop.correo || ""}</td>
@@ -171,72 +155,6 @@ async function renderTabla() {
     console.error(e);
   }
 }
-
-// ABRIR MODAL
-function abrirAporte(id) {
-  if (!id) return;
-  document.getElementById("modalAporte").style.display = "flex";
-  document.getElementById("aporte_id_sop").value = id;
-  cargarHistorial(id);
-}
-
-// CERRAR MODAL
-function cerrarAporte() {
-  document.getElementById("modalAporte").style.display = "none";
-  document.getElementById("aporte_comentario").value = "";
-  document.getElementById("aporte_archivos").value = null;
-  document.getElementById("aporte_employee").value = "";
-}
-
-// ENVIAR APORTES
-async function enviarAporte() {
-  let id = document.getElementById("aporte_id_sop").value;
-  if (!id) { mostrarNotificacion("Error: SOP no identificado", "error"); return; }
-
-  let valor = document.getElementById("aporte_employee").value;
-  if (!valor) { mostrarNotificacion("Seleccione empleado", "error"); return; }
-  let [nombre, correo, , depto] = valor.split("|");
-
-  let comentario = document.getElementById("aporte_comentario").value;
-  if (!comentario) { mostrarNotificacion("Debe escribir un comentario", "error"); return; }
-
-  await fetch(SCRIPT_URL_SOP_ADMIN, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ action:"guardarAporte", id_sop:id, empleado:nombre, correo:correo, departamento:depto, comentario:comentario, archivos:"" })
-  });
-
-  mostrarNotificacion("Aporte registrado correctamente", "success");
-  cerrarAporte();
-  renderTabla();
-}
-
-// CARGAR HISTORIAL DE APORTES
-async function cargarHistorial(id) {
-  const historial = document.getElementById("historialAportes");
-  historial.innerHTML = "Cargando...";
-
-  try {
-    const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id));
-    const data = await res.json();
-    if (!data.length) { historial.innerHTML = "Sin aportes aún"; return; }
-    historial.innerHTML = data.map(a => `
-      <div style="border-bottom:1px solid #eee;padding:6px 0;">
-        <strong>${a.EMPLEADO}</strong><br>
-        <small>${a.FECHA}</small><br>
-        ${a.COMENTARIO || ""}
-      </div>
-    `).join("");
-  } catch(e) { historial.innerHTML = "Error cargando historial"; }
-}
-
-// EVENTOS FILTRO Y BUSCADOR
-document.getElementById("buscarSOP").addEventListener("input", renderTabla);
-document.getElementById("filtroEstado").addEventListener("change", renderTabla);
-
-// RENDER INICIAL
-window.addEventListener("DOMContentLoaded", renderTabla);
-</script>
-  
+</script>  
 </body>
 </html>
