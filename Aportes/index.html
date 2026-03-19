@@ -24,9 +24,17 @@
 
     /* Encabezados de columna */
     th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle;
-         white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+         white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
 
-    td { padding:10px 12px; border-bottom:1px solid #ddd; text-align:left; vertical-align:top; word-break:break-word; }
+    td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        vertical-align: top;
+
+        word-break: normal;        /* 🔴 NO cortar palabras */
+        white-space: nowrap;       /* 🔴 Mantener texto en una sola línea */
+        }
 
     .estado { padding:4px 10px; border-radius:12px; font-size:.8rem; font-weight:bold; display:inline-block; }
     .pendiente { background:#fff3cd; color:#856404; }
