@@ -8,13 +8,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
   <style>
     body { margin:0; font-family:'Segoe UI', Arial, sans-serif; background:#f5f5f5; }
-    .overlay { min-height:100vh; padding:20px; }
-    .navbar { position:sticky; top:0; background:#003366; color:white; padding:10px 30px; display:flex; justify-content:space-between; align-items:center; }
+    .navbar { position:sticky; top:0; background:#003366; color:white; padding:10px 30px; display:flex; justify-content:space-between; align-items:center; z-index:1000; }
     .navbar .logo { display:flex; align-items:center; gap:10px; }
     .navbar .logo img { height:40px; }
-    .grid-container { max-width:1100px; margin:20px auto; background:white; padding:20px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+    .navbar .menu a { color:white; margin-left:20px; text-decoration:none; font-weight:bold; }
+    .overlay { min-height:100vh; padding:20px; max-width:1200px; margin:auto; }
     h2 { margin-bottom:15px; color:#003366; }
-    table { width:100%; border-collapse:collapse; }
+    input, select { margin-bottom:15px; padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; }
+    table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
     th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; vertical-align:top; word-break:break-word; }
     th { background:#003366; color:white; }
     .estado { padding:4px 10px; border-radius:12px; font-size:.8rem; font-weight:bold; display:inline-block; }
@@ -23,60 +24,67 @@
     .rechazado { background:#f8d7da; color:#721c24; }
     .aprobado { background:#d4edda; color:#155724; }
     .footer { text-align:center; padding:20px; color:white; background:#003366; margin-top:30px; }
-    #buscarSOP, #filtroEstado { margin-bottom:15px; padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; }
+    .notification { position:fixed; top:20px; right:20px; padding:12px 20px; border-radius:12px; color:white; font-weight:bold; z-index:9999; opacity:0.95; }
+    .notification.success { background:#28a745; }
+    .notification.error { background:#dc3545; }
+    /* Iconos de archivo */
+    .file-icon { font-size:1.2rem; margin-right:5px; cursor:pointer; }
+    .file-icon:hover { transform:scale(1.2); }
+
+    /* Modal aportes */
     #modalAporte { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; }
     #modalAporte .modal-content { background:white; padding:20px; border-radius:12px; width:400px; max-width:90%; }
     #modalAporte textarea, #modalAporte select, #modalAporte input { width:100%; margin-top:10px; padding:8px; border-radius:6px; border:1px solid #ccc; }
     #modalAporte button { margin-top:10px; padding:10px; border:none; border-radius:8px; cursor:pointer; }
     #modalAporte button.cancel { background:#999; color:white; }
     #modalAporte button.send { background:#0072C6; color:white; }
-    .notification { position:fixed; top:20px; right:20px; padding:12px 20px; border-radius:12px; color:white; font-weight:bold; z-index:9999; opacity:0.95; }
-    .notification.success { background:#28a745; }
-    .notification.error { background:#dc3545; }
-
-    /* Iconos de archivo con tooltip */
-    .file-icon { font-size:1.2rem; margin-right:5px; text-decoration:none; }
-    .file-icon:hover { transform:scale(1.2); }
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <div class="navbar">
-      <div class="logo">
-        <img src="/sop-site/logo.png">
-        <span>ARTEMISA MARBLE & CABINETS</span>
-      </div>
-    </div>
 
-    <div class="grid-container">
-      <h2>Historial de SOPs</h2>
-      <input type="text" id="buscarSOP" placeholder="Buscar...">
-      <select id="filtroEstado">
-        <option value="">Todos los estados</option>
-        <option value="Pendiente">Pendiente</option>
-        <option value="Trámite">Trámite</option>
-        <option value="Rechazado">Rechazado</option>
-        <option value="Aprobado">Aprobado</option>
-      </select>
-      <table>
-        <thead>
-          <tr>
-            <th>Empleado</th>
-            <th>Departamento</th>
-            <th>Objetivo</th>
-            <th>Áreas</th>
-            <th>Estado</th>
-            <th>Fecha / Hora</th>
-            <th>Archivos</th>
-            <th>Aportar</th>
-          </tr>
-        </thead>
-        <tbody id="tablaSOP"></tbody>
-      </table>
+  <!-- MENÚ SUPERIOR -->
+  <div class="navbar">
+    <div class="logo">
+      <img src="/sop-site/logo.png">
+      <span>ARTEMISA MARBLE & CABINETS</span>
     </div>
-
-    <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
+    <div class="menu">
+      <a href="#">Inicio</a>
+      <a href="#">Historial SOPs</a>
+      <a href="#">Reportes</a>
+      <a href="#">Configuración</a>
+    </div>
   </div>
+
+  <div class="overlay">
+    <h2>Historial de SOPs</h2>
+    <input type="text" id="buscarSOP" placeholder="Buscar...">
+    <select id="filtroEstado">
+      <option value="">Todos los estados</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="Trámite">Trámite</option>
+      <option value="Rechazado">Rechazado</option>
+      <option value="Aprobado">Aprobado</option>
+    </select>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Empleado</th>
+          <th>Departamento</th>
+          <th>Objetivo</th>
+          <th>Áreas</th>
+          <th>Estado</th>
+          <th>Fecha / Hora</th>
+          <th>Archivos</th>
+          <th>Aportar</th>
+        </tr>
+      </thead>
+      <tbody id="tablaSOP"></tbody>
+    </table>
+  </div>
+
+  <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
 
   <!-- MODAL APORTES -->
   <div id="modalAporte">
@@ -100,17 +108,25 @@
   </div>
 
 <script>
+const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
+
+function mostrarNotificacion(msg, tipo) {
+  const notif = document.createElement("div");
+  notif.className = "notification " + tipo;
+  notif.innerText = msg;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 4000);
+}
+
 function iconoArchivo(link) {
   if (!link) return "";
   const url = link.toLowerCase();
-  let icon = "📎"; // icono genérico
+  let icon = "📎";
   if (url.includes(".pdf")) icon = "📄";
   else if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) icon = "🖼";
   else if (url.match(/\.(xls|xlsx|csv)$/)) icon = "📊";
 
-  // Solo se muestra el icono, el tooltip es el nombre del archivo
-  const nombreArchivo = link.split("/").pop();
-  return `<a href="${link}" target="_blank" class="file-icon" title="${nombreArchivo}">${icon}</a>`;
+  return `<a href="${link}" target="_blank" class="file-icon" title="${link.split('/').pop()}">${icon}</a>`;
 }
 
 async function renderTabla() {
@@ -126,28 +142,25 @@ async function renderTabla() {
 
     data.forEach(sop => {
       if (filtroEstado && sop.estado !== filtroEstado) return;
-      if (buscar) {
-        const texto = (sop.empleado || "" + sop.objetivo || "" + sop.departamento || "").toLowerCase();
-        if (!texto.includes(buscar)) return;
-      }
+      if (buscar && !(sop.empleado.toLowerCase() + sop.objetivo.toLowerCase() + sop.departamento.toLowerCase()).includes(buscar)) return;
 
       let estadoClass = "pendiente";
       if (sop.estado === "Trámite") estadoClass = "tramite";
-      else if (sop.estado === "Rechazado") estadoClass = "rechazado";
-      else if (sop.estado === "Aprobado") estadoClass = "aprobado";
+      if (sop.estado === "Rechazado") estadoClass = "rechazado";
+      if (sop.estado === "Aprobado") estadoClass = "aprobado";
 
       let archivosHTML = sop.links ? sop.links.split(",").map(l => iconoArchivo(l.trim())).join(" ") : "";
 
-      let fila = document.createElement("tr");
+      const fila = document.createElement("tr");
       fila.innerHTML = `
-        <td>${sop.empleado || sop.correo || ""}</td>
+        <td>${sop.empleado || ""}</td>
         <td>${sop.departamento || ""}</td>
         <td>${sop.objetivo || ""}</td>
         <td>${sop.areas || ""}</td>
         <td><span class="estado ${estadoClass}">${sop.estado || ""}</span></td>
         <td>${sop.Timestamp || ""}</td>
         <td>${archivosHTML}</td>
-        <td><button onclick="abrirAporte('${sop.Timestamp || ""}')">💬</button></td>
+        <td><button onclick="abrirAporte('${sop.Timestamp}')">💬</button></td>
       `;
       tabla.appendChild(fila);
     });
@@ -155,6 +168,61 @@ async function renderTabla() {
     console.error(e);
   }
 }
-</script>  
+
+function abrirAporte(id) {
+  document.getElementById("modalAporte").style.display = "flex";
+  document.getElementById("aporte_id_sop").value = id;
+  cargarHistorial(id);
+}
+
+function cerrarAporte() {
+  document.getElementById("modalAporte").style.display = "none";
+  document.getElementById("aporte_comentario").value = "";
+  document.getElementById("aporte_archivos").value = null;
+  document.getElementById("aporte_employee").value = "";
+}
+
+async function enviarAporte() {
+  let id = document.getElementById("aporte_id_sop").value;
+  if (!id) { mostrarNotificacion("Error: SOP no identificado", "error"); return; }
+
+  let valor = document.getElementById("aporte_employee").value;
+  if (!valor) { mostrarNotificacion("Seleccione un empleado", "error"); return; }
+  let datosEmpleado = valor.split("|");
+  let nombre = datosEmpleado[0], correo = datosEmpleado[1], depto = datosEmpleado[3];
+
+  let comentario = document.getElementById("aporte_comentario").value;
+  if (!comentario) { mostrarNotificacion("Debe escribir un comentario", "error"); return; }
+
+  await fetch(SCRIPT_URL_SOP_ADMIN, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ action:"guardarAporte", id_sop:id, empleado:nombre, correo:correo, departamento:depto, comentario:comentario, archivos:"" })
+  });
+
+  mostrarNotificacion("Aporte registrado correctamente", "success");
+  cerrarAporte();
+  renderTabla();
+}
+
+async function cargarHistorial(id) {
+  const historial = document.getElementById("historialAportes");
+  historial.innerHTML = "Cargando...";
+
+  try {
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN + "?aportes=" + encodeURIComponent(id));
+    const data = await res.json();
+    if (!data.length) { historial.innerHTML = "Sin aportes aún"; return; }
+    historial.innerHTML = data.map(a => `<div style="border-bottom:1px solid #eee;padding:6px 0;"><strong>${a.EMPLEADO}</strong><br><small>${a.FECHA}</small><br>${a.COMENTARIO || ""}</div>`).join("");
+  } catch(e) { historial.innerHTML = "Error cargando historial"; }
+}
+
+document.getElementById("buscarSOP").addEventListener("input", renderTabla);
+document.getElementById("filtroEstado").addEventListener("change", renderTabla);
+
+// Render inicial al cargar la página
+renderTabla();
+</script>
+
 </body>
 </html>
