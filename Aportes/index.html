@@ -135,6 +135,7 @@
 
 <script>
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
+  document.getElementById("modalAporte").style.display = "none";
 
 function mostrarNotificacion(msg, tipo) {
   const notif = document.createElement("div");
@@ -196,7 +197,9 @@ async function renderTabla() {
         <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
         <td>${sop.Timestamp}</td>
         <td>${archivosHTML}</td>
-        <td><button onclick="abrirAporte('${sop.Timestamp}')">💬</button></td>
+        <td>
+          ${sop.Timestamp ? `<button onclick="abrirAporte('${sop.Timestamp}')">💬</button>` : ""}
+        </td>
       `;
       tabla.appendChild(fila);
     });
