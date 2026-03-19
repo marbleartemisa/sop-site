@@ -261,27 +261,55 @@ function cerrarAporte() {
   document.getElementById("aporte_employee").value = "";
 }
 
-async function enviarAporte() {
+  async function enviarAporte() {
   const id = document.getElementById("aporte_id_sop").value;
-  if (!id) { mostrarNotificacion("Error: SOP no identificado", "error"); return; }
+  if (!id) {
+    mostrarNotificacion("Error: SOP no identificado", "error");
+    return;
+  }
 
   const valor = document.getElementById("aporte_employee").value;
-  if (!valor) { mostrarNotificacion("Seleccione un empleado", "error"); return; }
+  if (!valor) {
+    mostrarNotificacion("Seleccione un empleado", "error");
+    return;
+  }
+
   const datosEmpleado = valor.split("|");
-  const nombre = datosEmpleado[0], correo = datosEmpleado[1], depto = datosEmpleado[3];
+  const nombre = datosEmpleado[0];
+  const correo = datosEmpleado[1];
+  const depto = datosEmpleado[3];
 
   const comentario = document.getElementById("aporte_comentario").value;
-  if (!comentario) { mostrarNotificacion("Debe escribir un comentario", "error"); return; }
+  if (!comentario) {
+    mostrarNotificacion("Debe escribir un comentario", "error");
+    return;
+  }
 
-  await fetch(SCRIPT_URL_SOP_ADMIN, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ action:"guardarAporte", id_sop:id, empleado:nombre, correo:correo, departamento:depto, comentario:comentario, archivos:"" })
-  });
+  try {
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "guardarAporte",
+        id_sop: id,
+        empleado: nombre,
+        correo: correo,
+        departamento: depto,
+        comentario: comentario,
+        archivos: ""
+      })
+    });
 
-  mostrarNotificacion("Aporte registrado correctamente", "success");
-  cerrarAporte();
-  renderTabla();
+    const text = await res.text(); // 👈 IMPORTANTE para debug
+    console.log("Respuesta:", text);
+
+    mostrarNotificacion("Aporte enviado correctamente", "success");
+    cerrarAporte();
+    renderTabla();
+
+  } catch (error) {
+    console.error(error);
+    mostrarNotificacion("Error enviando aporte", "error");
+  }
 }
 
 async function cargarHistorial(id) {
