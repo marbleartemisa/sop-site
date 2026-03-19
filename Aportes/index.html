@@ -16,62 +16,17 @@
     h2 { margin-bottom:15px; color:#003366; }
     input, select { margin-bottom:15px; padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; }
 
-    /* Contenedor para scroll horizontal si la pantalla es pequeña */
     .table-container { overflow-x:auto; margin-bottom:20px; }
 
-    /* Tabla principal */
     table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+    th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    td { padding:10px 12px; border-bottom:1px solid #ddd; text-align:left; vertical-align:top; word-break:normal; white-space:nowrap; }
 
-    /* Encabezados de columna */
-    th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle;
-         white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
-
-    td {
-        padding: 10px 12px;
-        border-bottom: 1px solid #ddd;
-        text-align: left;
-        vertical-align: top;
-
-        word-break: normal;        /* 🔴 NO cortar palabras */
-        white-space: nowrap;       /* 🔴 Mantener texto en una sola línea */
-        }
-
-.estado {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  border: 1px solid transparent;
-}
-
-/* Colores modernos tipo UI */
-.pendiente {
-  background: #fff4cc;
-  color: #b38f00;
-  border-color: #ffe58f;
-}
-
-.tramite {
-  background: #e6f0ff;
-  color: #1a5fd0;
-  border-color: #99c2ff;
-}
-
-.rechazado {
-  background: #fdecea;
-  color: #c62828;
-  border-color: #f5a5a0;
-}
-
-.aprobado {
-  background: #e6f7ec;
-  color: #1e7e34;
-  border-color: #9dd8b1;
-}
+    .estado { display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; border:1px solid transparent; }
+    .pendiente { background:#fff4cc; color:#b38f00; border-color:#ffe58f; }
+    .tramite { background:#e6f0ff; color:#1a5fd0; border-color:#99c2ff; }
+    .rechazado { background:#fdecea; color:#c62828; border-color:#f5a5a0; }
+    .aprobado { background:#e6f7ec; color:#1e7e34; border-color:#9dd8b1; }
 
     .footer { text-align:center; padding:20px; color:white; background:#003366; margin-top:30px; }
 
@@ -87,7 +42,12 @@
     #modalAporte textarea, #modalAporte select, #modalAporte input { width:100%; margin-top:10px; padding:8px; border-radius:6px; border:1px solid #ccc; }
     #modalAporte button { margin-top:10px; padding:10px; border:none; border-radius:8px; cursor:pointer; }
     #modalAporte button.cancel { background:#999; color:white; }
-    #modalAporte button.send { background:#0072C6; color:white; }
+    #modalAporte button.send { background:#0072C6; color:white; display:flex; align-items:center; justify-content:center; gap:5px; }
+
+    .spinner { border:2px solid #f3f3f3; border-top:2px solid #fff; border-radius:50%; width:14px; height:14px; animation:spin 1s linear infinite; display:inline-block; vertical-align:middle; }
+    @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+
+    #aporte_timestamp_display { font-size:0.8rem; color:#666; margin-bottom:5px; }
   </style>
 </head>
 <body>
@@ -139,53 +99,35 @@
 
   <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
 
-
   <!-- MODAL APORTES -->
-<div id="modalAporte">
-  <div class="modal-content">
-    <h3>Aportar a SOP</h3>
-    <p><strong>Timestamp SOP:</strong> <span id="aporte_timestamp_display">-</span></p>
-    <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:10px;">
-      Cargando historial...
-    </div>
-    <input type="hidden" id="aporte_id_sop">
-    <select id="aporte_employee">
-       <option value="">Seleccione empleado</option>
-       <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
-       <!-- resto de empleados -->
-    </select>
-    <textarea id="aporte_comentario" placeholder="Comentario u observación" rows="4"></textarea>
-    <input type="file" id="aporte_archivos" multiple>
-    <div style="display:flex; gap:10px;">
-      <button class="send" onclick="enviarAporte()">Enviar</button>
-      <button class="cancel" onclick="cerrarAporte()">Cancelar</button>
-    </div>
-  </div>
-</div>  
-  <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:10px;">Cargando historial...</div>
+  <div id="modalAporte">
+    <div class="modal-content">
+      <h3>Aportar a SOP</h3>
+      <div id="aporte_timestamp_display"></div>
+      <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:10px;">Cargando historial...</div>
       <input type="hidden" id="aporte_id_sop">
       <select id="aporte_employee">
-         <option value="">Seleccione empleado</option>
-          <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
-          <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
-          <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-          <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-          <option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
-          <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-          <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-          <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
-          <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
-          <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
-          <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
-          <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
-          <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-          <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-          <option value="Otros|otros|otros|otros">Otros</option>
+        <option value="">Seleccione empleado</option>
+        <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
+        <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
+        <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+        <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+        <option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+        <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+        <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+        <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+        <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+        <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+        <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+        <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+        <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+        <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+        <option value="Otros|otros|otros|otros">Otros</option>
       </select>
       <textarea id="aporte_comentario" placeholder="Comentario u observación" rows="4"></textarea>
       <input type="file" id="aporte_archivos" multiple>
       <div style="display:flex; gap:10px;">
-        <button class="send" onclick="enviarAporte()">Enviar</button>
+        <button class="send" id="btnEnviar" onclick="enviarAporte()">Enviar</button>
         <button class="cancel" onclick="cerrarAporte()">Cancelar</button>
       </div>
     </div>
@@ -193,17 +135,14 @@
 
 <script>
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
-  document.getElementById("modalAporte").style.display = "none";
 
-  function archivosA_Base64(files){
+document.getElementById("modalAporte").style.display = "none";
+
+function archivosA_Base64(files){
   return Promise.all(Array.from(files).map(file=>{
-    return new Promise((resolve)=>{
+    return new Promise(resolve=>{
       const reader=new FileReader();
-      reader.onload=()=>resolve({
-        name:file.name,
-        data:reader.result,
-        type:file.type
-      });
+      reader.onload=()=>resolve({ name:file.name, data:reader.result, type:file.type });
       reader.readAsDataURL(file);
     });
   }));
@@ -217,14 +156,9 @@ function mostrarNotificacion(msg, tipo) {
   setTimeout(() => notif.remove(), 4000);
 }
 
-function iconoArchivo(link) {
+function iconoArchivo(link, nombre="archivo") {
   if (!link) return "";
-  const url = link.toLowerCase();
-  let icon = "📎";
-  if (url.includes(".pdf")) icon = "📄";
-  else if (url.match(/\.(jpg|jpeg|png|gif|webp)$/)) icon = "🖼";
-  else if (url.match(/\.(xls|xlsx|csv)$/)) icon = "📊";
-  return `<a href="${link}" target="_blank" class="file-icon" title="${link.split('/').pop()}">${icon}</a>`;
+  return `<a href="${link}" target="_blank" class="file-icon" title="${nombre}">📎</a>`;
 }
 
 async function renderTabla() {
@@ -275,111 +209,103 @@ async function renderTabla() {
       `;
       tabla.appendChild(fila);
     });
-  } catch (e) {
+  } catch(e) {
     console.error(e);
-    mostrarNotificacion("Error cargando los SOPs", "error");
+    mostrarNotificacion("Error cargando los SOPs","error");
   }
 }
 
-function abrirAporte(id) {
+function abrirAporte(id){
   document.getElementById("modalAporte").style.display = "flex";
   document.getElementById("aporte_id_sop").value = id;
-
-  // Mostrar Timestamp en el modal
-  document.getElementById("aporte_timestamp_display").innerText = id;
-
+  document.getElementById("aporte_timestamp_display").innerText = "Timestamp: " + id;
   cargarHistorial(id);
 }
-  
-function cerrarAporte() {
+
+function cerrarAporte(){
   document.getElementById("modalAporte").style.display = "none";
   document.getElementById("aporte_comentario").value = "";
   document.getElementById("aporte_archivos").value = null;
   document.getElementById("aporte_employee").value = "";
 }
 
-  
-  
-async function enviarAporte() {
+async function enviarAporte(){
+  const btn = document.getElementById("btnEnviar");
+  btn.disabled = true;
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<span class="spinner"></span> Enviando...';
 
   const id = document.getElementById("aporte_id_sop").value;
-  if (!id) {
-    mostrarNotificacion("Error: SOP no identificado", "error");
-    return;
-  }
+  if(!id){ mostrarNotificacion("Error: SOP no identificado","error"); btn.disabled=false; btn.innerHTML=originalText; return; }
 
   const valor = document.getElementById("aporte_employee").value;
-  if (!valor) {
-    mostrarNotificacion("Seleccione un empleado", "error");
-    return;
-  }
+  if(!valor){ mostrarNotificacion("Seleccione un empleado","error"); btn.disabled=false; btn.innerHTML=originalText; return; }
 
   const datos = valor.split("|");
-  const nombre = datos[0];
-  const correo = datos[1];
-  const depto = datos[3];
+  const nombre = datos[0], correo = datos[1], depto = datos[3];
 
   const comentario = document.getElementById("aporte_comentario").value;
-  if (!comentario) {
-    mostrarNotificacion("Debe escribir un comentario", "error");
-    return;
-  }
+  if(!comentario){ mostrarNotificacion("Debe escribir un comentario","error"); btn.disabled=false; btn.innerHTML=originalText; return; }
 
   try {
-
-    // 🔥 CONVERTIR ARCHIVOS A BASE64 (CLAVE)
     const archivosInput = document.getElementById("aporte_archivos");
     let archivosBase64 = [];
-
-    if (archivosInput.files.length > 0) {
-      archivosBase64 = await archivosA_Base64(archivosInput.files);
-    }
+    if(archivosInput.files.length>0){ archivosBase64 = await archivosA_Base64(archivosInput.files); }
 
     const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type":"application/json" },
       body: JSON.stringify({
-        action: "guardarAporte",
-        id_sop: id,
-        empleado: nombre,
-        correo: correo,
-        departamento: depto,
-        comentario: comentario,
-        archivos: archivosBase64 // 🔥 AHORA SÍ ENVÍA ARCHIVOS
+        action:"guardarAporte",
+        id_sop:id,
+        empleado:nombre,
+        correo:correo,
+        departamento:depto,
+        comentario:comentario,
+        archivos: JSON.stringify(archivosBase64)
       })
     });
 
     const result = await res.json();
     console.log("Respuesta:", result);
 
-    if (!result.success) {
-      mostrarNotificacion(result.error || "Error guardando aporte", "error");
+    if(!result.success){
+      mostrarNotificacion(result.error || "Error guardando aporte","error");
+      btn.disabled=false; btn.innerHTML=originalText;
       return;
     }
 
-    mostrarNotificacion("Aporte enviado correctamente", "success");
+    mostrarNotificacion("Aporte enviado correctamente","success");
     cerrarAporte();
     renderTabla();
-
-  } catch (error) {
-    console.error(error);
-    mostrarNotificacion("Error enviando aporte", "error");
+  } catch(e){
+    console.error(e);
+    mostrarNotificacion("Error enviando aporte","error");
+  } finally {
+    btn.disabled=false;
+    btn.innerHTML = 'Enviar';
   }
 }
 
-async function cargarHistorial(id) {
+async function cargarHistorial(id){
   const historial = document.getElementById("historialAportes");
   historial.innerHTML = "Cargando...";
-
-  try {
+  try{
     const res = await fetch(`${SCRIPT_URL_SOP_ADMIN}?aportes=${encodeURIComponent(id)}`);
     const data = await res.json();
     historial.innerHTML = data.length
-      ? data.map(a => `<div style="border-bottom:1px solid #eee;padding:6px 0;"><strong>${a.EMPLEADO}</strong><br><small>${a.FECHA}</small><br>${a.COMENTARIO || ""}</div>`).join("")
+      ? data.map(a=>{
+          const archivos = a.ARCHIVOS ? JSON.parse(a.ARCHIVOS) : [];
+          const archivosHTML = archivos.map(f=>`<a href="${f.data}" download="${f.name}" class="file-icon">${f.name}</a>`).join(" ");
+          return `<div style="border-bottom:1px solid #eee;padding:6px 0;">
+                    <strong>${a.EMPLEADO}</strong><br>
+                    <small>${a.FECHA}</small><br>
+                    ${a.COMENTARIO || ""}<br>
+                    ${archivosHTML}
+                  </div>`;
+        }).join("")
       : "Sin aportes aún";
-  } catch(e) {
+  }catch(e){
     historial.innerHTML = "Error cargando historial";
   }
 }
@@ -391,10 +317,9 @@ renderTabla();
 
 function adminLogin(){
   const password = prompt("Ingrese contraseña de administrador");
-  if(password === "Artemisa2026") window.location.href="/sop-site/admin/";
+  if(password==="Artemisa2026") window.location.href="/sop-site/admin/";
   else alert("Acceso denegado");
 }
 </script>
-
 </body>
 </html>
