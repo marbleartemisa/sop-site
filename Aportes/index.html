@@ -65,6 +65,66 @@
       <option value="Aprobado">Aprobado</option>
     </select>
 
+    /* Contenedor para scroll horizontal si la pantalla es pequeña */
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+/* Tabla principal */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezados de columna */
+table th {
+  background: #003366;
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;       /* Evita que se divida el texto */
+  overflow: hidden;          /* Oculta exceso de texto */
+  text-overflow: ellipsis;   /* Muestra "..." si no cabe */
+}
+
+/* Celdas de datos */
+table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;    /* Rompe palabras muy largas dentro de la celda */
+}
+
+/* Estado con colores */
+.estado {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: inline-block;
+}
+.pendiente { background: #fff3cd; color: #856404; }
+.tramite { background: #cce5ff; color: #004085; }
+.rechazado { background: #f8d7da; color: #721c24; }
+.aprobado { background: #d4edda; color: #155724; }
+
+/* Iconos de archivos */
+.file-icon {
+  font-size: 1.2rem;
+  margin-right: 5px;
+  cursor: pointer;
+}
+.file-icon:hover {
+  transform: scale(1.2);
+}
+
     <table>
       <thead>
         <tr>
@@ -92,9 +152,22 @@
       <input type="hidden" id="aporte_id_sop">
       <select id="aporte_employee">
         <option value="">Seleccione empleado</option>
-        <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-        <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-        <option value="Otros|otros|otros|otros">Otros</option>
+          <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
+          <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
+          <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
+          <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
+          <option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
+          <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
+          <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
+          <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
+          <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
+          <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
+          <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
+          <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
+          <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
+          <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
+          <option value="Otros|otros|otros|otros">Otros</option>
+
       </select>
       <textarea id="aporte_comentario" placeholder="Comentario u observación" rows="4"></textarea>
       <input type="file" id="aporte_archivos" multiple>
