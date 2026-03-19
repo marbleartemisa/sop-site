@@ -139,20 +139,30 @@
 
   <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
 
+
   <!-- MODAL APORTES -->
-  <div id="modalAporte">
-    <div class="modal-content">
-      <h3>Aportar a SOP</h3>
-      function abrirAporte(id) {
-      document.getElementById("modalAporte").style.display = "flex";
-      document.getElementById("aporte_id_sop").value = id;
-
-        // Mostrar Timestamp en el modal
-        document.getElementById("aporte_timestamp_display").innerText = id;
-
-        cargarHistorial(id);
-      }
-      <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:10px;">Cargando historial...</div>
+<div id="modalAporte">
+  <div class="modal-content">
+    <h3>Aportar a SOP</h3>
+    <p><strong>Timestamp SOP:</strong> <span id="aporte_timestamp_display">-</span></p>
+    <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:10px;">
+      Cargando historial...
+    </div>
+    <input type="hidden" id="aporte_id_sop">
+    <select id="aporte_employee">
+       <option value="">Seleccione empleado</option>
+       <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
+       <!-- resto de empleados -->
+    </select>
+    <textarea id="aporte_comentario" placeholder="Comentario u observación" rows="4"></textarea>
+    <input type="file" id="aporte_archivos" multiple>
+    <div style="display:flex; gap:10px;">
+      <button class="send" onclick="enviarAporte()">Enviar</button>
+      <button class="cancel" onclick="cerrarAporte()">Cancelar</button>
+    </div>
+  </div>
+</div>  
+  <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:10px;">Cargando historial...</div>
       <input type="hidden" id="aporte_id_sop">
       <select id="aporte_employee">
          <option value="">Seleccione empleado</option>
