@@ -176,6 +176,20 @@
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycby3ng7kFng6Xc7Zkg9ENkOnzKTMr9wwAZRgI-EebyCR3bsX1g0Tt44ASjvLcP0PQoC9/exec";
   document.getElementById("modalAporte").style.display = "none";
 
+  function archivosA_Base64(files){
+  return Promise.all(Array.from(files).map(file=>{
+    return new Promise((resolve)=>{
+      const reader=new FileReader();
+      reader.onload=()=>resolve({
+        name:file.name,
+        data:reader.result,
+        type:file.type
+      });
+      reader.readAsDataURL(file);
+    });
+  }));
+}
+
 function mostrarNotificacion(msg, tipo) {
   const notif = document.createElement("div");
   notif.className = "notification " + tipo;
@@ -261,7 +275,10 @@ function cerrarAporte() {
   document.getElementById("aporte_employee").value = "";
 }
 
-  async function enviarAporte() {
+  
+  
+async function enviarAporte() {
+
   const id = document.getElementById("aporte_id_sop").value;
   if (!id) {
     mostrarNotificacion("Error: SOP no identificado", "error");
@@ -274,10 +291,10 @@ function cerrarAporte() {
     return;
   }
 
-  const datosEmpleado = valor.split("|");
-  const nombre = datosEmpleado[0];
-  const correo = datosEmpleado[1];
-  const depto = datosEmpleado[3];
+  const datos = valor.split("|");
+  const nombre = datos[0];
+  const correo = datos[1];
+  const depto = datos[3];
 
   const comentario = document.getElementById("aporte_comentario").value;
   if (!comentario) {
@@ -286,8 +303,20 @@ function cerrarAporte() {
   }
 
   try {
+
+    // 🔥 CONVERTIR ARCHIVOS A BASE64 (CLAVE)
+    const archivosInput = document.getElementById("aporte_archivos");
+    let archivosBase64 = [];
+
+    if (archivosInput.files.length > 0) {
+      archivosBase64 = await archivosA_Base64(archivosInput.files);
+    }
+
     const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         action: "guardarAporte",
         id_sop: id,
@@ -295,12 +324,17 @@ function cerrarAporte() {
         correo: correo,
         departamento: depto,
         comentario: comentario,
-        archivos: ""
+        archivos: archivosBase64 // 🔥 AHORA SÍ ENVÍA ARCHIVOS
       })
     });
 
-    const text = await res.text(); // 👈 IMPORTANTE para debug
-    console.log("Respuesta:", text);
+    const result = await res.json();
+    console.log("Respuesta:", result);
+
+    if (!result.success) {
+      mostrarNotificacion(result.error || "Error guardando aporte", "error");
+      return;
+    }
 
     mostrarNotificacion("Aporte enviado correctamente", "success");
     cerrarAporte();
