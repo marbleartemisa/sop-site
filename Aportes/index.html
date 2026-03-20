@@ -224,7 +224,7 @@ async function renderTabla() {
         <td>${sop.Timestamp}</td>
         <td>${archivosHTML}</td>
         <td>
-          ${sop.Timestamp ? `<button onclick="abrirAporte('${sop.Timestamp}')">💬</button>` : ""}
+          ${sop.Timestamp ? `<button onclick="abrirAporte(`${String(sop.Timestamp).trim()}`)">💬</button>` : ""}
         </td>
       `;
       tabla.appendChild(fila);
