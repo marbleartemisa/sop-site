@@ -287,15 +287,14 @@ async function enviarAporte() {
     const input = document.getElementById("aporte_archivos");
 
     if (input.files.length > 0) {
-     payload.archivos = JSON.stringify(await archivosA_Base64(input.files));
       payload.archivos = await archivosA_Base64(input.files);
     }
 
     console.log("📤 Payload:", payload);
 
-const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
+
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     id_sop: id,
     employee: datos[0],
@@ -305,7 +304,6 @@ const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
     files: payload.archivos
   })
 });
-
     
     const text = await res.text();
     console.log("📥 RAW:", text);
