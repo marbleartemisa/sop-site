@@ -20,7 +20,20 @@
 
     table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
     th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    td { padding:10px 12px; border-bottom:1px solid #ddd; text-align:left; vertical-align:top; word-break:normal; white-space:nowrap; }
+    
+ 
+
+    td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+
+  word-break: break-word;   /* ✅ permite cortar texto */
+  white-space: normal;      /* ✅ evita tabla infinita */
+}
+    th:nth-child(3), td:nth-child(3) { max-width: 250px; } /* Objetivo */
+    th:nth-child(4), td:nth-child(4) { max-width: 200px; } /* Áreas */
 
     .estado { display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; border:1px solid transparent; }
     .pendiente { background:#fff4cc; color:#b38f00; border-color:#ffe58f; }
@@ -127,7 +140,12 @@
       <textarea id="aporte_comentario" placeholder="Comentario u observación" rows="4"></textarea>
       <input type="file" id="aporte_archivos" multiple>
       <div style="display:flex; gap:10px;">
-        <button class="send" id="btnEnviar" onclick="enviarAporte()">Enviar</button>
+        <button class="send" id="btnEnviarAporte" onclick="enviarAporte()">
+  <span class="texto">Enviar</span>
+  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
+</button>
+
+        
         <button class="cancel" onclick="cerrarAporte()">Cancelar</button>
       </div>
     </div>
@@ -215,13 +233,16 @@ async function renderTabla() {
   }
 }
 
-function abrirAporte(id){
+function abrirAporte(id) {
   document.getElementById("modalAporte").style.display = "flex";
   document.getElementById("aporte_id_sop").value = id;
-  document.getElementById("aporte_timestamp_display").innerText = "Timestamp: " + id;
+
+  // ✅ Mostrar timestamp
+  document.getElementById("aporte_timestamp_display").innerText = id;
+
   cargarHistorial(id);
 }
-
+  
 function cerrarAporte(){
   document.getElementById("modalAporte").style.display = "none";
   document.getElementById("aporte_comentario").value = "";
@@ -229,61 +250,85 @@ function cerrarAporte(){
   document.getElementById("aporte_employee").value = "";
 }
 
-async function enviarAporte(){
-  const btn = document.getElementById("btnEnviar");
-  btn.disabled = true;
-  const originalText = btn.innerHTML;
-  btn.innerHTML = '<span class="spinner"></span> Enviando...';
+async function enviarAporte() {
+
+  const btn = document.getElementById("btnEnviarAporte");
+  const texto = btn.querySelector(".texto");
+  const spinner = btn.querySelector(".spinner");
 
   const id = document.getElementById("aporte_id_sop").value;
-  if(!id){ mostrarNotificacion("Error: SOP no identificado","error"); btn.disabled=false; btn.innerHTML=originalText; return; }
+  if (!id) {
+    mostrarNotificacion("Error: SOP no identificado", "error");
+    return;
+  }
 
   const valor = document.getElementById("aporte_employee").value;
-  if(!valor){ mostrarNotificacion("Seleccione un empleado","error"); btn.disabled=false; btn.innerHTML=originalText; return; }
+  if (!valor) {
+    mostrarNotificacion("Seleccione un empleado", "error");
+    return;
+  }
 
   const datos = valor.split("|");
-  const nombre = datos[0], correo = datos[1], depto = datos[3];
+  const nombre = datos[0];
+  const correo = datos[1];
+  const depto = datos[3];
 
   const comentario = document.getElementById("aporte_comentario").value;
-  if(!comentario){ mostrarNotificacion("Debe escribir un comentario","error"); btn.disabled=false; btn.innerHTML=originalText; return; }
+  if (!comentario) {
+    mostrarNotificacion("Debe escribir un comentario", "error");
+    return;
+  }
+
+  // 🔥 ACTIVAR SPINNER
+  btn.disabled = true;
+  texto.innerText = "Enviando...";
+  spinner.style.display = "inline-block";
 
   try {
+
     const archivosInput = document.getElementById("aporte_archivos");
     let archivosBase64 = [];
-    if(archivosInput.files.length>0){ archivosBase64 = await archivosA_Base64(archivosInput.files); }
+
+    if (archivosInput.files.length > 0) {
+      archivosBase64 = await archivosA_Base64(archivosInput.files);
+    }
 
     const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
       method: "POST",
-      headers: { "Content-Type":"application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
-        action:"guardarAporte",
-        id_sop:id,
-        empleado:nombre,
-        correo:correo,
-        departamento:depto,
-        comentario:comentario,
-        archivos: JSON.stringify(archivosBase64)
+        action: "guardarAporte",
+        id_sop: id,
+        empleado: nombre,
+        correo: correo,
+        departamento: depto,
+        comentario: comentario,
+        archivos: JSON.stringify(archivosBase64) // 🔥 CLAVE
       })
     });
 
     const result = await res.json();
     console.log("Respuesta:", result);
 
-    if(!result.success){
-      mostrarNotificacion(result.error || "Error guardando aporte","error");
-      btn.disabled=false; btn.innerHTML=originalText;
+    if (!result.success) {
+      mostrarNotificacion(result.error || "Error guardando aporte", "error");
       return;
     }
 
-    mostrarNotificacion("Aporte enviado correctamente","success");
+    mostrarNotificacion("Aporte enviado correctamente", "success");
     cerrarAporte();
     renderTabla();
-  } catch(e){
-    console.error(e);
-    mostrarNotificacion("Error enviando aporte","error");
+
+  } catch (error) {
+    console.error(error);
+    mostrarNotificacion("Error enviando aporte", "error");
   } finally {
-    btn.disabled=false;
-    btn.innerHTML = 'Enviar';
+    // 🔥 APAGAR SPINNER
+    btn.disabled = false;
+    texto.innerText = "Enviar";
+    spinner.style.display = "none";
   }
 }
 
