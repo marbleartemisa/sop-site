@@ -51,17 +51,23 @@ th{background:#003366;color:white;}
     <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
-  <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
-  <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
   </div>
+  <div class="menu">
+  <a href="/sop-site/">Inicio</a>
+  <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+  <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+  <a href="#" onclick="adminLogin()">
+    <i class="fa-solid fa-user-shield"></i> Admin
+  </a>
 </div>
+</div>
+
 
 <!-- FORMULARIO -->
 <div class="container">
-<h1>Registrar Solicitud de SOP - Rev 4.0</h1>
+<h1>Registrar Solicitud de SOP - Rev 4.01</h1>
 <form id="sopForm" enctype="multipart/form-data">
 <label>Empleado</label>
 <select id="employee" required>
@@ -252,6 +258,23 @@ body:JSON.stringify({
     this.reset();
   }
 })
+
+  function adminLogin(){
+
+const password = prompt("Ingrese contraseña de administrador");
+
+if(password === "Artemisa2026"){   // puedes cambiar la clave
+
+    window.location.href="/sop-site/admin/";
+
+}else{
+
+    alert("Acceso denegado");
+
+}
+
+}
+
 
 function mostrarNotificacion(msg,tipo){
   const notif=document.createElement("div");
