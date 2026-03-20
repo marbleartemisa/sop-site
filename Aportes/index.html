@@ -81,7 +81,7 @@
   </div>
 
   <div class="overlay">
-    <h2>Historial de SOPs - Rev 3.0</h2>
+    <h2>Historial de SOPs - Rev 3.3</h2>
     <input type="text" id="buscarSOP" placeholder="Buscar...">
     <select id="filtroEstado">
       <option value="">Todos los estados</option>
@@ -210,7 +210,9 @@ async function renderTabla() {
       if (sop.estado === "Rechazado") estadoClass = "rechazado";
       if (sop.estado === "Aprobado") estadoClass = "aprobado";
 
-      const archivosHTML = sop.links ? sop.links.split(",").map(l => iconoArchivo(l.trim())).join(" ") : "";
+ const archivosHTML = sop.links 
+  ? sop.links.split("\n").map(l => iconoArchivo(l.trim())).join(" ")
+  : "";
 
       const fila = document.createElement("tr");
       fila.innerHTML = `
@@ -257,104 +259,100 @@ async function enviarAporte() {
   const spinner = btn.querySelector(".spinner");
 
   const id = document.getElementById("aporte_id_sop").value;
-  if (!id) {
-    mostrarNotificacion("Error: SOP no identificado", "error");
-    return;
-  }
-
   const valor = document.getElementById("aporte_employee").value;
-  if (!valor) {
-    mostrarNotificacion("Seleccione un empleado", "error");
-    return;
-  }
+  const comentario = document.getElementById("aporte_comentario").value;
+
+  if (!id) return mostrarNotificacion("SOP no identificado", "error");
+  if (!valor) return mostrarNotificacion("Seleccione empleado", "error");
+  if (!comentario) return mostrarNotificacion("Debe escribir un comentario", "error");
 
   const datos = valor.split("|");
-  const nombre = datos[0];
-  const correo = datos[1];
-  const depto = datos[3];
 
-  const comentario = document.getElementById("aporte_comentario").value;
-  if (!comentario) {
-    mostrarNotificacion("Debe escribir un comentario", "error");
-    return;
-  }
-
-  // 🔥 ACTIVAR SPINNER
-  btn.disabled = true;
-  texto.innerText = "Enviando...";
-  spinner.style.display = "inline-block";
+  const payload = {
+    action: "guardarAporte",
+    id_sop: id,
+    empleado: datos[0],
+    correo: datos[1],
+    departamento: datos[3],
+    comentario: comentario,
+    archivos: []
+  };
 
   try {
+    btn.disabled = true;
+    texto.innerText = "Enviando...";
+    spinner.style.display = "inline-block";
 
-    const archivosInput = document.getElementById("aporte_archivos");
-    let archivosBase64 = [];
+    // 🔥 convertir archivos
+    const input = document.getElementById("aporte_archivos");
 
-    if (archivosInput.files.length > 0) {
-      archivosBase64 = await archivosA_Base64(archivosInput.files);
+    if (input.files.length > 0) {
+     payload.archivos = JSON.stringify(await archivosA_Base64(input.files));
     }
+
+    console.log("📤 Payload:", payload);
 
     const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        action: "guardarAporte",
-        id_sop: id,
-        empleado: nombre,
-        correo: correo,
-        departamento: depto,
-        comentario: comentario,
-        archivos: JSON.stringify(archivosBase64) // 🔥 CLAVE
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     });
 
-    const result = await res.json();
-    console.log("Respuesta:", result);
+    const text = await res.text();
+    console.log("📥 RAW:", text);
+
+    const result = JSON.parse(text);
 
     if (!result.success) {
-      mostrarNotificacion(result.error || "Error guardando aporte", "error");
-      return;
+      throw new Error(result.error || "Error backend");
     }
 
     mostrarNotificacion("Aporte enviado correctamente", "success");
     cerrarAporte();
     renderTabla();
 
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     mostrarNotificacion("Error enviando aporte", "error");
   } finally {
-    // 🔥 APAGAR SPINNER
     btn.disabled = false;
     texto.innerText = "Enviar";
     spinner.style.display = "none";
   }
 }
-
+  
 async function cargarHistorial(id){
   const historial = document.getElementById("historialAportes");
   historial.innerHTML = "Cargando...";
+
   try{
     const res = await fetch(`${SCRIPT_URL_SOP_ADMIN}?aportes=${encodeURIComponent(id)}`);
     const data = await res.json();
+
     historial.innerHTML = data.length
       ? data.map(a=>{
-          const archivos = a.ARCHIVOS ? JSON.parse(a.ARCHIVOS) : [];
-          const archivosHTML = archivos.map(f=>`<a href="${f.data}" download="${f.name}" class="file-icon">${f.name}</a>`).join(" ");
-          return `<div style="border-bottom:1px solid #eee;padding:6px 0;">
-                    <strong>${a.EMPLEADO}</strong><br>
-                    <small>${a.FECHA}</small><br>
-                    ${a.COMENTARIO || ""}<br>
-                    ${archivosHTML}
-                  </div>`;
+
+          const archivosHTML = a.ARCHIVOS
+            ? a.ARCHIVOS.split("\n")
+                .map(link => `<a href="${link}" target="_blank" class="file-icon">📎</a>`)
+                .join(" ")
+            : "";
+
+          return `
+            <div style="border-bottom:1px solid #eee;padding:6px 0;">
+              <strong>${a.EMPLEADO}</strong><br>
+              <small>${a.FECHA}</small><br>
+              ${a.COMENTARIO || ""}<br>
+              ${archivosHTML}
+            </div>
+          `;
         }).join("")
       : "Sin aportes aún";
-  }catch(e){
+
+  } catch(e){
     historial.innerHTML = "Error cargando historial";
   }
 }
-
 document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 
