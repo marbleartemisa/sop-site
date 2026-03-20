@@ -295,7 +295,14 @@ async function enviarAporte() {
     const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+  id_sop: timestampSeleccionado, // 🔥 ESTE ES EL KEY
+  employee: nombre,
+  correo: correo,
+  departamento: depto,
+  comentario: comentario,
+  files: archivosBase64
+})
     });
 
     const text = await res.text();
