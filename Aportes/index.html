@@ -223,20 +223,21 @@ async function renderTabla() {
 
  const archivosHTML = sop.links 
   ? sop.links.split("\n").map(l => iconoArchivo(l.trim())).join(" ")
-  : "";
+  : ""
+const fecha = new Date(sop.Timestamp).toLocaleString();
 
-      const fila = document.createElement("tr");
-      fila.innerHTML = `
-        <td>${sop.empleado}</td>
-        <td>${sop.departamento}</td>
-        <td>${sop.objetivo}</td>
-        <td>${sop.areas}</td>
-        <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-        <td>${sop.Timestamp}</td>
-        <td>${archivosHTML}</td>
-        <td>
-          ${sop.Timestamp ? `<button onclick="abrirAporte(`${String(sop.Timestamp).trim()}`)">💬</button>` : ""}
-        </td>
+const fila = document.createElement("tr");
+fila.innerHTML = `
+  <td>${sop.empleado}</td>
+  <td>${sop.departamento}</td>
+  <td>${sop.objetivo}</td>
+  <td>${sop.areas}</td>
+  <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
+  <td>${fecha}</td>
+  <td>${archivosHTML}</td>
+  <td>
+    ${sop.Timestamp ? `<button onclick="abrirAporte('${new Date(sop.Timestamp).toISOString()}')">💬</button>` : ""}
+  </td>
       `;
       tabla.appendChild(fila);
     });
@@ -245,6 +246,8 @@ async function renderTabla() {
     mostrarNotificacion("Error cargando los SOPs","error");
   }
 }
+
+
 
 function abrirAporte(id) {
   document.getElementById("modalAporte").style.display = "flex";
