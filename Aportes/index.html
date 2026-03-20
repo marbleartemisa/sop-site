@@ -5,14 +5,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aportes SOP - ARTEMISA MARBLE & CABINETS</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <style>
-/* estilos existentes */
+/* === STYLES === */
+body { margin:0; font-family:'Segoe UI', Arial, sans-serif; background:#f5f5f5; }
+.navbar { position:sticky; top:0; background:#003366; color:white; padding:10px 30px; display:flex; justify-content:space-between; align-items:center; z-index:1000; }
+.navbar .logo { display:flex; align-items:center; gap:10px; }
+.navbar .logo img { height:40px; }
+.navbar .menu a { color:white; margin-left:20px; text-decoration:none; font-weight:bold; }
+.overlay { min-height:100vh; padding:20px; max-width:1200px; margin:auto; }
+h2 { margin-bottom:15px; color:#003366; }
+input, select { margin-bottom:15px; padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; }
+.table-container { overflow-x:auto; margin-bottom:20px; }
+table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+td { padding:10px 12px; border-bottom:1px solid #ddd; text-align:left; vertical-align:top; word-break:break-word; white-space:normal; }
+.estado { display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; border:1px solid transparent; }
+.pendiente { background:#fff4cc; color:#b38f00; border-color:#ffe58f; }
+.tramite { background:#e6f0ff; color:#1a5fd0; border-color:#99c2ff; }
+.rechazado { background:#fdecea; color:#c62828; border-color:#f5a5a0; }
+.aprobado { background:#e6f7ec; color:#1e7e34; border-color:#9dd8b1; }
+.footer { text-align:center; padding:20px; color:white; background:#003366; margin-top:30px; }
+.notification { position:fixed; top:20px; right:20px; padding:12px 20px; border-radius:12px; color:white; font-weight:bold; z-index:9999; opacity:0.95; }
+.notification.success { background:#28a745; }
+.notification.error { background:#dc3545; }
+.file-icon { font-size:1.2rem; margin-right:5px; cursor:pointer; }
+.file-icon:hover { transform:scale(1.2); }
+#modalAporte { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:9999; }
+#modalAporte .modal-content { background:white; padding:20px; border-radius:12px; width:400px; max-width:90%; }
+#modalAporte textarea, #modalAporte select, #modalAporte input { width:100%; margin-top:10px; padding:8px; border-radius:6px; border:1px solid #ccc; }
+#modalAporte button { margin-top:10px; padding:10px; border:none; border-radius:8px; cursor:pointer; }
+#modalAporte button.cancel { background:#999; color:white; }
+#modalAporte button.send { background:#0072C6; color:white; display:flex; align-items:center; justify-content:center; gap:5px; }
+.spinner { border:2px solid #f3f3f3; border-top:2px solid #fff; border-radius:50%; width:14px; height:14px; animation:spin 1s linear infinite; display:inline-block; vertical-align:middle; }
+@keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+#aporte_timestamp_display { font-size:0.8rem; color:#666; margin-bottom:5px; }
 </style>
 </head>
 <body>
+<div class="navbar">
+  <div class="logo"><img src="/sop-site/logo.png"><span>ARTEMISA MARBLE & CABINETS</span></div>
+  <div class="menu">
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/Aportes/">Aportes SOP</a>
+    <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
+    <a href="#" onclick="adminLogin()"><i class="fa-solid fa-user-shield"></i> Admin</a>
+  </div>
+</div>
 
 <div class="overlay">
-  <h2>Historial de SOPs</h2>
+  <h2>Historial de SOPs - Rev 3.3</h2>
   <input type="text" id="buscarSOP" placeholder="Buscar...">
   <select id="filtroEstado">
     <option value="">Todos los estados</option>
@@ -21,7 +64,6 @@
     <option value="Rechazado">Rechazado</option>
     <option value="Aprobado">Aprobado</option>
   </select>
-
   <div class="table-container">
     <table>
       <thead>
@@ -41,11 +83,13 @@
   </div>
 </div>
 
+<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
+
 <div id="modalAporte">
   <div class="modal-content">
     <h3>Aportar a SOP</h3>
     <div id="aporte_timestamp_display"></div>
-    <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px;"></div>
+    <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:10px;">Cargando historial...</div>
     <input type="hidden" id="aporte_id_sop">
     <select id="aporte_employee">
       <option value="">Seleccione empleado</option>
@@ -65,19 +109,31 @@
         <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
         <option value="Otros|otros|otros|otros">Otros</option>
     </select>
-    <textarea id="aporte_comentario" rows="4" placeholder="Comentario u observación"></textarea>
+    <textarea id="aporte_comentario" placeholder="Comentario u observación" rows="4"></textarea>
     <input type="file" id="aporte_archivos" multiple>
     <div style="display:flex; gap:10px;">
-      <button class="send" id="btnEnviarAporte" onclick="enviarAporte()">Enviar</button>
+      <button class="send" id="btnEnviarAporte" onclick="enviarAporte()">
+        <span class="texto">Enviar</span>
+        <span class="spinner" style="display:none;"></span>
+      </button>
       <button class="cancel" onclick="cerrarAporte()">Cancelar</button>
     </div>
   </div>
 </div>
 
 <script>
-const SCRIPT_URL_SOP_ADMIN = "TU_SCRIPT_DEPLOY_URL";
+const SCRIPT_URL_SOP_ADMIN = "TU_URL_DEPLOY_DEL_APPSCRIPT";
 
-// función para renderizar tabla usando ID_SOP
+function mostrarNotificacion(msg, tipo) {
+  const notif = document.createElement("div");
+  notif.className = "notification " + tipo;
+  notif.innerText = msg;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 4000);
+}
+
+function iconoArchivo(link) { return link ? `<a href="${link}" target="_blank" class="file-icon">📎</a>` : ""; }
+
 async function renderTabla() {
   const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML = "";
@@ -92,14 +148,12 @@ async function renderTabla() {
       const sop = {
         Timestamp: row.Timestamp || "",
         empleado: row.empleado || "",
-        correo: row.correo || "",
         departamento: row.departamento || "",
         objetivo: row.objetivo || "",
         areas: row.areas || "",
-        resumen: row.resumen || "",
         estado: row.estado || "Pendiente",
         links: row.links || "",
-        ID_SOP: row.ID_SOP || ""
+        ID_SOP: row.ID_SOP
       };
 
       if (filtroEstado && sop.estado !== filtroEstado) return;
@@ -110,9 +164,7 @@ async function renderTabla() {
       if (sop.estado === "Rechazado") estadoClass = "rechazado";
       if (sop.estado === "Aprobado") estadoClass = "aprobado";
 
-      const archivosHTML = sop.links ? sop.links.split("\n").map(l => `<a href="${l}" target="_blank">📎</a>`).join(" ") : "";
-      const fecha = sop.Timestamp ? new Date(sop.Timestamp).toLocaleString() : "";
-
+      const archivosHTML = sop.links ? sop.links.split("\n").map(l => iconoArchivo(l.trim())).join(" ") : "";
       const fila = document.createElement("tr");
       fila.innerHTML = `
         <td>${sop.empleado}</td>
@@ -120,20 +172,102 @@ async function renderTabla() {
         <td>${sop.objetivo}</td>
         <td>${sop.areas}</td>
         <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
-        <td>${fecha}</td>
+        <td>${sop.Timestamp}</td>
         <td>${archivosHTML}</td>
         <td>${sop.ID_SOP ? `<button onclick="abrirAporte('${sop.ID_SOP}')">💬</button>` : ""}</td>
       `;
       tabla.appendChild(fila);
     });
-
   } catch(e) {
     console.error(e);
-    alert("Error cargando SOPs");
+    mostrarNotificacion("Error cargando SOPs","error");
   }
 }
 
+function abrirAporte(id){
+  document.getElementById("modalAporte").style.display="flex";
+  document.getElementById("aporte_id_sop").value=id;
+  document.getElementById("aporte_timestamp_display").innerText=id;
+  cargarHistorial(id);
+}
+
+function cerrarAporte(){
+  document.getElementById("modalAporte").style.display="none";
+  document.getElementById("aporte_comentario").value="";
+  document.getElementById("aporte_archivos").value=null;
+  document.getElementById("aporte_employee").value="";
+}
+
+async function cargarHistorial(id){
+  const historial = document.getElementById("historialAportes");
+  historial.innerHTML="Cargando...";
+  try{
+    const res = await fetch(`${SCRIPT_URL_SOP_ADMIN}?aportes=${encodeURIComponent(id)}`);
+    const data = await res.json();
+    historial.innerHTML = data.length ? data.map(a=>{
+      const archivosHTML = a.ARCHIVOS ? a.ARCHIVOS.split("\n").map(link=>`<a href="${link}" target="_blank" class="file-icon">📎</a>`).join(" ") : "";
+      return `<div style="border-bottom:1px solid #eee;padding:6px 0;">
+        <strong>${a.EMPLEADO}</strong><br>
+        <small>${a.FECHA}</small><br>
+        ${a.COMENTARIO || ""}<br>${archivosHTML}
+      </div>`;
+    }).join("") : "Sin aportes aún";
+  } catch(e){ historial.innerHTML="Error cargando historial"; }
+}
+
+async function enviarAporte(){
+  const btn = document.getElementById("btnEnviarAporte");
+  const texto = btn.querySelector(".texto");
+  const spinner = btn.querySelector(".spinner");
+
+  const id = document.getElementById("aporte_id_sop").value;
+  const valor = document.getElementById("aporte_employee").value;
+  const comentario = document.getElementById("aporte_comentario").value;
+  if(!id) return mostrarNotificacion("SOP no identificado","error");
+  if(!valor) return mostrarNotificacion("Seleccione empleado","error");
+  if(!comentario) return mostrarNotificacion("Debe escribir un comentario","error");
+
+  const datos = valor.split("|");
+  const payload = { id_sop:id, employee:datos[0], correo:datos[1], departamento:datos[3], comentario:comentario, files:[] };
+  const input = document.getElementById("aporte_archivos");
+
+  if(input.files.length>0){
+    payload.files = await Promise.all(Array.from(input.files).map(file=>new Promise(res=>{
+      const reader=new FileReader();
+      reader.onload=()=>res({name:file.name, data:reader.result, type:file.type});
+      reader.readAsDataURL(file);
+    })));
+  }
+
+  try{
+    btn.disabled=true;
+    texto.innerText="Enviando...";
+    spinner.style.display="inline-block";
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN,{ method:"POST", body:JSON.stringify(payload) });
+    const result = await res.json();
+    if(!result.success) throw new Error(result.error||"Error backend");
+    mostrarNotificacion("Aporte enviado correctamente","success");
+    cerrarAporte();
+    renderTabla();
+  } catch(err){
+    console.error(err);
+    mostrarNotificacion("Error enviando aporte","error");
+  } finally{
+    btn.disabled=false;
+    texto.innerText="Enviar";
+    spinner.style.display="none";
+  }
+}
+
+document.getElementById("buscarSOP").addEventListener("input", renderTabla);
+document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
+
+function adminLogin(){
+  const password=prompt("Ingrese contraseña de administrador");
+  if(password==="Artemisa2026") window.location.href="/sop-site/admin/";
+  else alert("Acceso denegado");
+}
 </script>
 </body>
 </html>
