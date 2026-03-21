@@ -177,8 +177,10 @@ body:JSON.stringify({
         files:archivosBase64
       })
     });
-    const result=await response.json();
-    const links=result.links || [];
+    const text = await response.text();
+const result = JSON.parse(text);
+const links = result.links || [];
+    
 
     console.log("Links recibidos del endpoint:", links);
 
