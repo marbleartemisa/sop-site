@@ -177,31 +177,55 @@ body:JSON.stringify({
         files:archivosBase64
       })
     });
-    const result=await response.json();
-    const links=result.links || [];
 
-    console.log("Links recibidos del endpoint:", links);
 
-    // 2️⃣ Preparar HTML para email
-    let filesHTML = "";
-    if(Array.isArray(links) && links.length > 0){
-      filesHTML = links.map(l => `<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("");
-    }
+// ================== PREPARAR LINKS ==================
+const result = await response.json();
 
-    // 3️⃣ Enviar EmailJS
-    emailjs.send("service_vkt5xuo","template_vc7447e",{
-      employee:nombre,
-      department:depto,
-      cargo:cargo,
-      objective:objetivo,
-      areas:areas,
-      summary:resumen,
-      date:fechaActual,
-      files:filesHTML
-    })
-    .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-    .catch(err=>{console.error(err); mostrarNotificacion("Error enviando correo","error")});
+console.log("RESULT COMPLETO:", result);
 
+if(result.status !== "success"){
+  console.error("Error Apps Script:", result);
+  mostrarNotificacion("Error subiendo archivos","error");
+  return;
+}
+
+const links = result.links || [];
+
+console.log("LINKS RECIBIDOS:", links);
+
+// ================== GENERAR HTML PARA EMAIL ==================
+let filesHTML = "<p>No se adjuntaron archivos</p>";
+
+if (links && links.length > 0) {
+  filesHTML = links.map(link => 
+    `<p>📎 <a href="${link}" target="_blank">${link}</a></p>`
+  ).join("");
+}
+
+console.log("HTML enviado al correo:", filesHTML);
+
+// ================== ENVÍO EMAIL ==================
+emailjs.send("service_vkt5xuo","template_vc7447e",{
+  employee: nombre,
+  department: depto,
+  cargo: cargo,
+  objective: objetivo,
+  areas: areas,
+  summary: resumen,
+  date: fechaActual,
+  files: filesHTML
+})
+.then((response) => {
+  console.log("EMAIL ENVIADO:", response);
+  mostrarNotificacion("Solicitud enviada correctamente","success");
+})
+.catch((err) => {
+  console.error("ERROR EMAIL:", err);
+  mostrarNotificacion("Error enviando correo","error");
+});
+
+    
     // 4️⃣ Llenar Google Form con URLs
     try{
       const formData = new FormData();
