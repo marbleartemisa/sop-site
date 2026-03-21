@@ -69,7 +69,7 @@ th{background:#003366;color:white;}
 
 <!-- FORMULARIO -->
 <div class="container">
-<h1>Registrar Solicitud de SOP - Rev 4.03</h1>
+<h1>Registrar Solicitud de SOP - Rev 4.04</h1>
 <form id="sopForm" enctype="multipart/form-data">
 <label>Empleado</label>
 <select id="employee" required>
@@ -227,38 +227,64 @@ emailjs.send("service_vkt5xuo","template_vc7447e",{
 
     
     // 4️⃣ Llenar Google Form con URLs
-    try{
-      const formData = new FormData();
-      formData.append("entry.1393360085", nombre);
-      formData.append("entry.1363198453", correo);
-      formData.append("entry.1941994843", depto);
-      formData.append("entry.1015716567", objetivo);
-      formData.append("entry.949214050", areas);
-      formData.append("entry.619270886", resumen);
-      formData.append("entry.1989031957", "Pendiente");
-      formData.append("entry.1877018002", links.join("\n")); // usar saltos de línea para múltiples links
+// ================== ENVÍO A GOOGLE FORM ==================
+try {
 
-      fetch("https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse", {
-        method:"POST",
-        body:formData,
-        mode:"no-cors"
-      }).catch(err=>console.warn("Google Form falló:", err));
-
-    } catch(err){
-      console.warn("Error llenando Google Form:", err);
-    }
-
-  }catch(err){
-    console.error("Error al registrar SOP:", err);
-    mostrarNotificacion("Ocurrió un error al registrar SOP","error");
-  }finally{
-    btn.disabled=false; 
-    btnText.innerText="Registrar Solicitud"; 
-    spinner.style.display="none";
-    this.reset();
+  if (!links || !Array.isArray(links)) {
+    console.warn("Links inválidos, se enviará vacío");
   }
-})
 
+  const formData = new FormData();
+
+  formData.append("entry.1393360085", nombre || "");
+  formData.append("entry.1363198453", correo || "");
+  formData.append("entry.1941994843", depto || "");
+  formData.append("entry.1015716567", objetivo || "");
+  formData.append("entry.949214050", areas || "");
+  formData.append("entry.619270886", resumen || "");
+  formData.append("entry.1989031957", "Pendiente");
+
+  // 🔥 PROTECCIÓN PARA LINKS
+  const linksTexto = (links && links.length > 0) 
+    ? links.join("\n") 
+    : "Sin archivos adjuntos";
+
+  formData.append("entry.1877018002", linksTexto);
+
+  console.log("Enviando al Google Form:", {
+    nombre, correo, depto, objetivo, areas, resumen, linksTexto
+  });
+
+  await fetch("https://docs.google.com/forms/d/e/1FAIpQLSfIpOjZ5UeyaG0qjD43m49iIp_DRuD7l-Eg8feh1OMwMWAS2w/formResponse", {
+    method: "POST",
+    body: formData,
+    mode: "no-cors"
+  });
+
+  console.log("Formulario enviado (no-cors no devuelve respuesta)");
+
+} catch(err) {
+  console.warn("Error llenando Google Form:", err);
+}
+
+// ================== FIN PROCESO PRINCIPAL ==================
+
+} catch(err) {
+  console.error("Error al registrar SOP:", err);
+  mostrarNotificacion("Ocurrió un error al registrar SOP","error");
+
+} finally {
+  btn.disabled = false; 
+  btnText.innerText = "Registrar Solicitud"; 
+  spinner.style.display = "none";
+  document.getElementById("sopForm").reset();
+}
+
+
+  
+
+
+  
   function adminLogin(){
 
 const password = prompt("Ingrese contraseña de administrador");
