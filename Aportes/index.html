@@ -92,7 +92,7 @@
   </div>
 
   <div class="overlay">
-    <h2>Historial de SOPs - Rev 3.5</h2>
+    <h2>Historial de SOPs - Rev 3.6</h2>
     <input type="text" id="buscarSOP" placeholder="Buscar...">
     <select id="filtroEstado">
       <option value="">Todos los estados</option>
@@ -307,9 +307,11 @@ async function enviarAporte() {
 
     console.log("📤 Payload:", payload);
 
-
     const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
   method: "POST",
+  headers:{
+    "Content-Type":"application/json"
+  },
   body: JSON.stringify({
     id_sop: id,
     employee: datos[0],
