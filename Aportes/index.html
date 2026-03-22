@@ -92,7 +92,7 @@
   </div>
 
   <div class="overlay">
-    <h2>Historial de SOPs - Rev 3.6</h2>
+    <h2>Historial de SOPs - Rev 3.8</h2>
     <input type="text" id="buscarSOP" placeholder="Buscar...">
     <select id="filtroEstado">
       <option value="">Todos los estados</option>
@@ -197,22 +197,22 @@ async function renderTabla() {
   const buscar = document.getElementById("buscarSOP").value.toLowerCase();
 
   try {
-    const res = await fetch(SCRIPT_URL_SOP_ADMIN);
-    const data = await res.json();
-
-    data.forEach(row => {
-   const sop = {
-  Timestamp: row.Timestamp || row[0] || "",
-  empleado: row.empleado || row[1] || "",
-  correo: row.correo || row[2] || "",
-  departamento: row.departamento || row[3] || "",
-  objetivo: row.objetivo || row[4] || "",
-  areas: row.areas || row[5] || "",
-  resumen: row.resumen || row[6] || "",
-  estado: row.estado || row[7] || "Pendiente",
-  links: row.links || row[8] || "",
-  ID_SOP: row.ID_SOP || row[9] || ""   // ← ESTA LINEA FALTABA
-};
+const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    id_sop: id,
+    employee: datos[0],
+    correo: datos[1],
+    departamento: datos[3],
+    comentario: comentario,
+    files: payload.archivos
+  })
+});
+const result = await res.json();
+      
       
       if (filtroEstado && sop.estado !== filtroEstado) return;
       if (buscar && !(sop.empleado.toLowerCase() + sop.objetivo.toLowerCase() + sop.departamento.toLowerCase()).includes(buscar)) return;
@@ -321,11 +321,6 @@ async function enviarAporte() {
     files: payload.archivos
   })
 });
-    
-    const text = await res.text();
-    console.log("📥 RAW:", text);
-
-    const result = JSON.parse(text);
 
     if (!result.success) {
       throw new Error(result.error || "Error backend");
