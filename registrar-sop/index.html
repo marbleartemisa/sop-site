@@ -249,7 +249,7 @@
 
         <!-- FORMULARIO -->
         <div class="container">
-            <h1>Registrar Solicitud de SOP - Rev 4.1</h1>
+            <h1>Registrar Solicitud de SOP - Rev 4.2</h1>
             <form id="sopForm" enctype="multipart/form-data">
                 <label>Empleado</label>
                 <select id="employee" required>
@@ -365,23 +365,26 @@
                 files: archivosBase64
               })
             });
-        const text = await response.text();
-        console.log("RAW BACKEND:", text);          
-    let result;
-    try {
-      result = JSON.parse(text);
-        } catch (e) {
-          console.error("❌ JSON inválido:", text);
-          throw new Error("Respuesta inválida del servidor");
-        }
+const links = result.links || [];
+const text = await response.text();
+console.log("RAW BACKEND:", text);
 
-                const links = result.links || [];
+let result;
+try {
+  result = JSON.parse(text);
+} catch (e) {
+  console.error("❌ JSON inválido:", text);
+  throw new Error("Respuesta inválida del servidor");
+}
 
+if (result.status === "error") {
+  console.error("🔥 BACKEND ERROR:", result);
+  throw new Error(result.message);
+}
+     const links = result.links || [];
                 console.log("✅ LINKS:", links);
                 console.log("Links recibidos del endpoint:", links);
-
-               
-
+                
                 // 2️⃣ Preparar HTML para email
                 let filesHTML = "";
                 if (Array.isArray(links) && links.length > 0) {
