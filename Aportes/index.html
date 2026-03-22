@@ -92,7 +92,7 @@
   </div>
 
   <div class="overlay">
-    <h2>Historial de SOPs - Rev 3.3</h2>
+    <h2>Historial de SOPs - Rev 4.0</h2>
     <input type="text" id="buscarSOP" placeholder="Buscar...">
     <select id="filtroEstado">
       <option value="">Todos los estados</option>
@@ -285,16 +285,17 @@ async function enviarAporte() {
 
   const datos = valor.split("|");
 
-  const payload = {
-    action: "guardarAporte",
-    id_sop: id,
-    empleado: datos[0],
-    correo: datos[1],
-    departamento: datos[3],
-    comentario: comentario,
-    archivos: []
-  };
+const payload = {
+  id_sop: id.trim(),
+  empleado: datos[0],
+  correo: datos[1],
+  departamento: datos[3],
+  comentario: comentario,
+  archivos: []
+};
 
+
+  
   try {
     btn.disabled = true;
     texto.innerText = "Enviando...";
@@ -306,21 +307,13 @@ async function enviarAporte() {
     if (input.files.length > 0) {
       payload.archivos = await archivosA_Base64(input.files);
     }
-
+    
     console.log("📤 Payload:", payload);
 
-
-    const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
+ const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
   method: "POST",
-  body: JSON.stringify({
-    id_sop: id,
-    employee: datos[0],
-    correo: datos[1],
-    departamento: datos[3],
-    comentario: comentario,
-    files: payload.archivos
-  })
-});
+  body: JSON.stringify(payload)
+});   
     
     const text = await res.text();
     console.log("📥 RAW:", text);
