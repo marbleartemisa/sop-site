@@ -236,7 +236,7 @@ fila.innerHTML = `
   <td>${fecha}</td>
   <td>${archivosHTML}</td>
   <td>
-    ${sop.Timestamp ? `<button onclick="abrirAporte('${new Date(sop.Timestamp).toISOString()}')">💬</button>` : ""}
+    ${sop.Timestamp ? `<button onclick="abrirAporte('${sop.ID_SOP}')">💬</button>` : ""}
   </td>
       `;
       tabla.appendChild(fila);
@@ -246,7 +246,6 @@ fila.innerHTML = `
     mostrarNotificacion("Error cargando los SOPs","error");
   }
 }
-
 
 
 function abrirAporte(id) {
