@@ -92,7 +92,7 @@
   </div>
 
   <div class="overlay">
-    <h2>Historial de SOPs - Rev 3.8</h2>
+    <h2>Historial de SOPs - Rev 3.9</h2>
     <input type="text" id="buscarSOP" placeholder="Buscar...">
     <select id="filtroEstado">
       <option value="">Todos los estados</option>
@@ -247,18 +247,19 @@ fila.innerHTML = `
     mostrarNotificacion("Error cargando los SOPs","error");
   }
 }
-
-
-
+  
 function abrirAporte(id) {
+
+  id = String(id); // ← IMPORTANTE
+
   document.getElementById("modalAporte").style.display = "flex";
   document.getElementById("aporte_id_sop").value = id;
 
-  // ✅ Mostrar timestamp
   document.getElementById("aporte_timestamp_display").innerText = id;
 
   cargarHistorial(id);
 }
+
   
 function cerrarAporte(){
   document.getElementById("modalAporte").style.display = "none";
@@ -273,7 +274,7 @@ async function enviarAporte() {
   const texto = btn.querySelector(".texto");
   const spinner = btn.querySelector(".spinner");
 
-  const id = document.getElementById("aporte_id_sop").value;
+ const id = String(document.getElementById("aporte_id_sop").value);
   const valor = document.getElementById("aporte_employee").value;
   const comentario = document.getElementById("aporte_comentario").value;
 
