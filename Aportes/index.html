@@ -4,215 +4,239 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aportes SOP - ARTEMISA MARBLE & CABINETS</title>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
-  
-<style>
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background-image:url('/sop-site/wall0.png');
-  background-position:center;
-  background-repeat:no-repeat;
-  background-size:cover;
-  background-attachment:fixed;
 
-  color:#1f2937;
-}
- 
+  <style>
+    body {
+      margin:0;
+      font-family:'Segoe UI', Arial, sans-serif;
+      background:#f5f5f5;
+    }
 
-    
-body{
-  margin:0;
-  font-family:'Segoe UI',Arial,sans-serif;
-  background:url('/sop-site/wall0.png') no-repeat center top;
-  background-size:cover;
-}
+    .navbar {
+      position:sticky;
+      top:0;
+      background:#003366;
+      color:white;
+      padding:10px 30px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      z-index:1000;
+    }
 
+    .navbar .logo {
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
 
-/* NAVBAR */
-.navbar{
-  position:sticky;
-  top:0;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(8px);
-  padding:10px 30px;
-  color:white;
-  font-weight:bold;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:999;
-}
-.navbar .logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.navbar .logo img{
-  height:40px;
-}
-.navbar .menu a{
-  color:white;
-  text-decoration:none;
-  margin-left:25px;
-  font-weight:bold;
-  transition:0.3s;
-}
-.navbar .menu a:hover{
-  color:#00aaff;
-  transform:scale(1.05);
-}
+    .navbar .logo img {
+      height:40px;
+    }
 
+    .navbar .menu a {
+      color:white;
+      margin-left:20px;
+      text-decoration:none;
+      font-weight:bold;
+    }
 
-    h2 { margin-bottom:15px; color:#003366; }
-    input, select { margin-bottom:15px; padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; }
+    .overlay {
+      min-height:100vh;
+      padding:20px;
+      max-width:1200px;
+      margin:auto;
+    }
 
-    .table-container { overflow-x:auto; margin-bottom:20px; }
+    h2 {
+      margin-bottom:15px;
+      color:#003366;
+    }
 
-    table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
-    th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    
- 
+    input,
+    select {
+      margin-bottom:15px;
+      padding:8px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      width:100%;
+    }
+
+    .table-container {
+      overflow-x:auto;
+      margin-bottom:20px;
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      background:white;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    th {
+      background:#003366;
+      color:white;
+      padding:12px 15px;
+      text-align:left;
+      vertical-align:middle;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
 
     td {
-  padding: 10px 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-  vertical-align: top;
+      padding:10px 12px;
+      border-bottom:1px solid #ddd;
+      text-align:left;
+      vertical-align:top;
+      word-break: break-word;
+      white-space: normal;
+    }
 
-  word-break: break-word;   /* ✅ permite cortar texto */
-  white-space: normal;      /* ✅ evita tabla infinita */
-}
-    th:nth-child(3), td:nth-child(3) { max-width: 250px; } /* Objetivo */
-    th:nth-child(4), td:nth-child(4) { max-width: 200px; } /* Áreas */
+    th:nth-child(3),
+    td:nth-child(3) {
+      max-width:250px;
+    }
 
-    .estado { display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; border:1px solid transparent; }
+    th:nth-child(4),
+    td:nth-child(4) {
+      max-width:200px;
+    }
+
+    .estado {
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:20px;
+      font-size:0.75rem;
+      font-weight:600;
+      letter-spacing:0.5px;
+      text-transform:uppercase;
+      white-space:nowrap;
+      border:1px solid transparent;
+    }
+
     .pendiente { background:#fff4cc; color:#b38f00; border-color:#ffe58f; }
     .tramite { background:#e6f0ff; color:#1a5fd0; border-color:#99c2ff; }
     .rechazado { background:#fdecea; color:#c62828; border-color:#f5a5a0; }
     .aprobado { background:#e6f7ec; color:#1e7e34; border-color:#9dd8b1; }
 
-    .footer { text-align:center; padding:20px; color:white; background:#003366; margin-top:30px; }
+    .footer {
+      text-align:center;
+      padding:20px;
+      color:white;
+      background:#003366;
+      margin-top:30px;
+    }
 
-    .notification { position:fixed; top:20px; right:20px; padding:12px 20px; border-radius:12px; color:white; font-weight:bold; z-index:9999; opacity:0.95; }
+    .notification {
+      position:fixed;
+      top:20px;
+      right:20px;
+      padding:12px 20px;
+      border-radius:12px;
+      color:white;
+      font-weight:bold;
+      z-index:9999;
+      opacity:0.95;
+    }
+
     .notification.success { background:#28a745; }
     .notification.error { background:#dc3545; }
 
-    .file-icon { font-size:1.2rem; margin-right:5px; cursor:pointer; }
-    .file-icon:hover { transform:scale(1.2); }
+    .file-icon {
+      font-size:1.2rem;
+      margin-right:5px;
+      cursor:pointer;
+    }
 
-    #modalAporte { 
-  display:none; 
-  position:fixed; 
-  top:0; 
-  left:0; 
-  width:100%; 
-  height:100%; 
-  background:rgba(0,0,0,0.6); 
-  align-items:center; 
-  justify-content:center; 
-  z-index:9999; 
-}
-    #modalAporte .modal-content { background:white; padding:20px; border-radius:12px; width:400px; max-width:90%; }
-    #modalAporte textarea, #modalAporte select, #modalAporte input { width:100%; margin-top:10px; padding:8px; border-radius:6px; border:1px solid #ccc; }
-    #modalAporte button { margin-top:10px; padding:10px; border:none; border-radius:8px; cursor:pointer; }
-    #modalAporte button.cancel { background:#999; color:white; }
-    #modalAporte button.send { background:#0072C6; color:white; display:flex; align-items:center; justify-content:center; gap:5px; }
+    .file-icon:hover {
+      transform:scale(1.2);
+    }
 
-    .spinner { border:2px solid #f3f3f3; border-top:2px solid #fff; border-radius:50%; width:14px; height:14px; animation:spin 1s linear infinite; display:inline-block; vertical-align:middle; }
-    @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+    #modalAporte {
+      display:none;
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.6);
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+    }
 
-    #aporte_timestamp_display { font-size:0.8rem; color:#666; margin-bottom:5px; }
+    #modalAporte .modal-content {
+      background:white;
+      padding:20px;
+      border-radius:12px;
+      width:400px;
+      max-width:90%;
+    }
+
+    #modalAporte textarea,
+    #modalAporte select,
+    #modalAporte input {
+      width:100%;
+      margin-top:10px;
+      padding:8px;
+      border-radius:6px;
+      border:1px solid #ccc;
+    }
+
+    #modalAporte button {
+      margin-top:10px;
+      padding:10px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    #modalAporte button.cancel {
+      background:#999;
+      color:white;
+    }
+
+    #modalAporte button.send {
+      background:#0072C6;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:5px;
+    }
+
+    .spinner {
+      border:2px solid #f3f3f3;
+      border-top:2px solid #fff;
+      border-radius:50%;
+      width:14px;
+      height:14px;
+      animation:spin 1s linear infinite;
+      display:inline-block;
+      vertical-align:middle;
+    }
+
+    @keyframes spin {
+      0% { transform:rotate(0deg); }
+      100% { transform:rotate(360deg); }
+    }
+
+    #aporte_timestamp_display {
+      font-size:0.8rem;
+      color:#666;
+      margin-bottom:5px;
+    }
   </style>
 </head>
-<body>
 
-  <!-- NAVBAR -->
-  <div class="navbar">
-    <div class="logo">
-      <img src="/sop-site/logo.png">
-      <span>ARTEMISA MARBLE & CABINETS</span>
-    </div>
-    <div class="menu">
-      <a href="/sop-site/">Inicio</a>
-      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-      <a href="/sop-site/Aportes/">Aportes SOP</a>
-      <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
-      <a href="#" onclick="adminLogin()"><i class="fa-solid fa-user-shield"></i> Admin</a>
-    </div>
-  </div>
 
-  <div class="overlay">
-    <h2>Historial de SOPs - Rev 4.1</h2>
-    <input type="text" id="buscarSOP" placeholder="Buscar...">
-    <select id="filtroEstado">
-      <option value="">Todos los estados</option>
-      <option value="Pendiente">Pendiente</option>
-      <option value="Trámite">Trámite</option>
-      <option value="Rechazado">Rechazado</option>
-      <option value="Aprobado">Aprobado</option>
-    </select>
-
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Empleado</th>
-            <th>Departamento</th>
-            <th>Objetivo</th>
-            <th>Áreas</th>
-            <th>Estado</th>
-            <th>Fecha / Hora</th>
-            <th>Archivos</th>
-            <th>Aportar</th>
-          </tr>
-        </thead>
-        <tbody id="tablaSOP"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
-
-  <!-- MODAL APORTES -->
-  <div id="modalAporte">
-    <div class="modal-content">
-      <h3>Aportar a SOP</h3>
-      <div id="aporte_timestamp_display"></div>
-      <div id="historialAportes" style="max-height:200px; overflow:auto; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:10px;">Cargando historial...</div>
-      <input type="hidden" id="aporte_id_sop">
-      <select id="aporte_employee">
-        <option value="">Seleccione empleado</option>
-        <option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
-        <option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
-        <option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-        <option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-        <option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
-        <option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-        <option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-        <option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
-        <option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
-        <option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
-        <option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
-        <option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
-        <option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-        <option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-        <option value="Otros|otros|otros|otros">Otros</option>
-      </select>
-      <textarea id="aporte_comentario" placeholder="Comentario u observación" rows="4"></textarea>
-      <input type="file" id="aporte_archivos" multiple>
-      <div style="display:flex; gap:10px;">
-        <button class="send" id="btnEnviarAporte" onclick="enviarAporte()">
-  <span class="texto">Enviar</span>
-  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
-</button>
-
-        
-        <button class="cancel" onclick="cerrarAporte()">Cancelar</button>
-      </div>
-    </div>
-  </div>
 
 <script>
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
