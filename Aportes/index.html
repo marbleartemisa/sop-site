@@ -8,28 +8,36 @@
   <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
   
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: url('/sop-site/wall5.png') no-repeat center top;
-            background-size: cover;
+        body{
+          margin:0;
+          font-family:'Inter',sans-serif;
+          background-image:url('/sop-site/wall0.png');
+          background-position:center;
+          background-repeat:no-repeat;
+          background-size:cover;
+          background-attachment:fixed;
+        
+          color:#1f2937;
         }
-
-
-
-  .navbar {
-            position: sticky;
-            top: 0;
-            background:(0,0,0,0.65);
-            backdrop-filter: blur(8px);
-            padding: 10px 30px;
-            color: white;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 999;
-            font-family: 'Nuevo', 'Segoe UI', Arial;
+        
+        .overlay{
+          background:rgba(0,0,0,0.25);
+          min-height:100vh;
+        }
+        
+        /* ===== NAVBAR ===== */
+        .navbar{
+          position:sticky;
+          top:0;
+          background:rgba(0,0,0,0.65);
+          backdrop-filter:blur(8px);
+          padding:10px 30px;
+          color:white;
+          font-weight:bold;
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          z-index:999;
         }
     
    
