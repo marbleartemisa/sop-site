@@ -23,11 +23,7 @@ body{
   top:0;
   z-index:100;
 }
-
-.brand{
-  font-weight:600;
-  font-size:15px;
-}
+.brand{font-weight:600;font-size:15px;}
 .back{
   background:#2563eb;
   color:white;
@@ -39,11 +35,10 @@ body{
 /* BARRA DE HERRAMIENTAS DEBAJO DEL TOPBAR */
 .doc-header{
   max-width:1100px;
-  margin:70px auto 20px auto; /* 70px para dejar espacio debajo del topbar */
+  margin:70px auto 20px auto; 
   display:flex;
   justify-content:space-between;
   align-items:center;
-  transition:.3s;
 }
 .tool{
   background:white;
@@ -57,7 +52,6 @@ body{
 .doc-area{
   display:flex;
   justify-content:center;
-  transition:.3s;
 }
 .doc-frame{
   width:100%;
@@ -87,7 +81,7 @@ iframe{
 /* SIDEBAR */
 #commentSidebar{
   position:fixed;
-  top:60px; /* justo debajo del topbar */
+  top:60px;
   right:0;
   width:350px;
   height:calc(100% - 60px);
@@ -99,17 +93,9 @@ iframe{
   z-index:50;
   overflow:auto;
 }
-#commentSidebar.active{
-  transform:translateX(0);
-}
-
-/* EMPUJA CONTENIDO AL ABRIR SIDEBAR */
+#commentSidebar.active{transform:translateX(0);}
 body.sidebar-open .doc-area,
-body.sidebar-open .doc-header{
-  margin-right:350px;
-}
-
-/* COMMENT BOX */
+body.sidebar-open .doc-header{margin-right:350px;}
 .comment-box{
   border:1px solid #ddd;
   padding:8px;
@@ -128,13 +114,11 @@ body.sidebar-open .doc-header{
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
   <div class="brand">ARTEMISA SOP • VIEWER</div>
   <a class="back" href="/sop-site/">⬅ Biblioteca</a>
 </div>
 
-<!-- BARRA DE HERRAMIENTAS -->
 <div class="doc-header">
   <div id="title">Documento SOP</div>
   <div>
@@ -146,7 +130,6 @@ body.sidebar-open .doc-header{
   </div>
 </div>
 
-<!-- DOCUMENTO -->
 <div class="doc-area">
   <div class="doc-frame">
     <iframe id="frame"></iframe>
@@ -154,11 +137,9 @@ body.sidebar-open .doc-header{
   </div>
 </div>
 
-<!-- SIDEBAR -->
 <div id="commentSidebar">
   <span class="closeSidebar" onclick="closeSidebar()">⬅</span>
   <h3>Comentarios</h3>
-
   <label>Empleado</label>
   <select id="commentUser">
     <option value="">Seleccione</option>
@@ -196,6 +177,18 @@ let doc = params.get("doc");
 const frame = document.getElementById("frame");
 const overlay = document.getElementById("overlay");
 let editMode=false, commentMode=false;
+let currentUser="";
+
+// LISTA DE USUARIOS Y CONTRASEÑAS PROVISIONALES
+const users = {
+  "Damian Molina":"Dam1975",
+  "Alberto Molina":"Alb1975",
+  "Gabriel Batista":"Gab1975",
+  "Jenny Perez":"Jen1975",
+  "Yoandry Perez":"Yoa1975",
+  "Wendy Romanach":"Wen1975",
+  "Otros":"Otr1975"
+};
 
 if(doc) frame.src = doc;
 
@@ -204,17 +197,21 @@ function openNew(){window.open(doc,"_blank");}
 function downloadDoc(){const a=document.createElement("a"); a.href=doc;a.download=""; a.click();}
 function printDoc(){frame.contentWindow.print();}
 
-// LOGIN: pide usuario
+// LOGIN CON VALIDACION DE CONTRASEÑA
 function adminLogin(){
-  const user = prompt("Ingrese su nombre para editar");
-  if(user){
-    editMode=true;
-    document.getElementById("commentUser").value=user;
-    document.getElementById("commentSidebar").classList.add("active");
-    document.body.classList.add("sidebar-open");
-    loadComments();
-    alert("Modo edición activado");
-  }else alert("Debe ingresar su nombre");
+  const user = prompt("Ingrese su nombre de usuario:");
+  if(!user || !users[user]){
+    alert("Usuario no válido"); return;
+  }
+  const pass = prompt("Ingrese contraseña para " + user);
+  if(pass!==users[user]){ alert("Contraseña incorrecta"); return; }
+  editMode=true;
+  currentUser=user;
+  document.getElementById("commentUser").value=user;
+  document.getElementById("commentSidebar").classList.add("active");
+  document.body.classList.add("sidebar-open");
+  loadComments();
+  alert("Modo edición activado para " + user);
 }
 
 // CERRAR SIDEBAR
@@ -232,12 +229,12 @@ function activateComment(){
   alert("Selecciona texto dentro del documento");
 }
 
-// CLICK PARA COMENTAR (texto seleccionado)
+// CLICK PARA COMENTAR (TEXTO SELECCIONADO)
 overlay.addEventListener("click", function(e){
   if(!commentMode) return;
 
-  const user = document.getElementById("commentUser").value;
-  if(!user){alert("Selecciona empleado"); return;}
+  const user = currentUser;
+  if(!user){alert("Usuario no válido"); return;}
 
   const type = document.getElementById("commentType").value;
   const status = document.getElementById("commentStatus").value;
@@ -248,12 +245,18 @@ overlay.addEventListener("click", function(e){
 
   const now = new Date().toLocaleString();
 
-  saveComment({text,user,type,status,date:now});
+  // Guardar comentario
+  const comment = {text,user,type,status,date:now};
+  saveComment(comment);
+
+  // RESALTAR TEXTO
+  highlightSelection(sel, comment);
+
   renderComments();
   resetOverlay();
 });
 
-// RESET
+// RESET OVERLAY
 function resetOverlay(){
   commentMode=false;
   overlay.style.pointerEvents="none";
@@ -267,12 +270,8 @@ function saveComment(c){
   localStorage.setItem(doc,JSON.stringify(list));
 }
 
-// CARGAR
-function loadComments(){
-  renderComments();
-}
-
-// RENDER
+// CARGAR Y RENDER
+function loadComments(){ renderComments(); }
 function renderComments(){
   const list=document.getElementById("commentList");
   list.innerHTML="";
@@ -283,6 +282,18 @@ function renderComments(){
     div.innerHTML=`<b>${c.user}</b><br>${c.text}<br><small>📅 ${c.date}<br>🏷 ${c.type} | ${c.status}</small>`;
     list.appendChild(div);
   });
+}
+
+// FUNCION PARA RESALTAR TEXTO
+function highlightSelection(sel, comment){
+  if(sel.rangeCount){
+    const range=sel.getRangeAt(0);
+    const mark=document.createElement("mark");
+    mark.style.background="yellow";
+    mark.title=`${comment.user} | ${comment.type} | ${comment.status}`;
+    range.surroundContents(mark);
+    sel.removeAllRanges();
+  }
 }
 </script>
 </body>
