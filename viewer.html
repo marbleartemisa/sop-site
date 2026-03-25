@@ -19,12 +19,10 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  box-shadow:0 2px 10px rgba(0,0,0,.2);
 }
 
 .brand{
   font-weight:600;
-  letter-spacing:.4px;
   font-size:15px;
 }
 
@@ -37,30 +35,13 @@ body{
   font-size:13px;
 }
 
-.back:hover{
-  background:#3b82f6;
-}
-
-/* HEADER DOCUMENTO */
+/* HEADER */
 .doc-header{
   max-width:1100px;
   margin:20px auto;
-  padding:0 10px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-}
-
-.doc-title{
-  font-size:20px;
-  font-weight:600;
-  color:#0f172a;
-}
-
-.doc-tools{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
 }
 
 .tool{
@@ -68,30 +49,13 @@ body{
   border:1px solid #d1d5db;
   padding:6px 12px;
   border-radius:6px;
-  font-size:13px;
   cursor:pointer;
 }
 
-.tool:hover{
-  background:#f3f4f6;
-}
-
-/* NAV SOP */
-.doc-nav{
-  max-width:1100px;
-  margin:auto;
-  padding:0 10px 10px;
-  display:flex;
-  justify-content:space-between;
-  font-size:13px;
-  color:#374151;
-}
-
-/* AREA DOCUMENTO */
+/* DOCUMENTO */
 .doc-area{
   display:flex;
   justify-content:center;
-  padding:10px 20px 40px;
 }
 
 .doc-frame{
@@ -99,9 +63,9 @@ body{
   max-width:1100px;
   background:white;
   border-radius:10px;
-  box-shadow:0 10px 30px rgba(0,0,0,.15),
-             0 2px 8px rgba(0,0,0,.08);
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
   overflow:hidden;
+  position:relative;
 }
 
 iframe{
@@ -110,20 +74,53 @@ iframe{
   border:none;
 }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  .doc-header{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-  }
-  .doc-nav{
-    flex-direction:column;
-    gap:6px;
-  }
-  iframe{
-    height:85vh;
-  }
+/* OVERLAY */
+#overlay{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:none;
+  cursor:crosshair;
+}
+
+/* MARCADORES */
+.marker{
+  position:absolute;
+  width:14px;
+  height:14px;
+  background:red;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  cursor:pointer;
+}
+
+/* SIDEBAR */
+#commentSidebar{
+  position:fixed;
+  top:0;
+  right:-320px;
+  width:320px;
+  height:100%;
+  background:white;
+  box-shadow:-4px 0 10px rgba(0,0,0,.2);
+  padding:15px;
+  transition:.3s;
+  z-index:999;
+  overflow:auto;
+}
+
+#commentSidebar.active{
+  right:0;
+}
+
+.comment-box{
+  border:1px solid #ddd;
+  padding:8px;
+  margin-bottom:8px;
+  border-radius:6px;
+  font-size:13px;
 }
 </style>
 </head>
@@ -131,104 +128,136 @@ iframe{
 <body>
 
 <div class="topbar">
-  <div class="brand">ARTEMISA MARBLE & CABINETS • SOP LIBRARY</div>
+  <div class="brand">ARTEMISA SOP • VIEWER</div>
   <a class="back" href="/sop-site/">⬅ Biblioteca</a>
 </div>
 
 <div class="doc-header">
-  <div class="doc-title" id="title">Documento SOP</div>
-  <div class="doc-tools">
+  <div id="title">Documento SOP</div>
+  <div>
     <button class="tool" onclick="openNew()">Abrir</button>
     <button class="tool" onclick="downloadDoc()">Descargar</button>
     <button class="tool" onclick="printDoc()">Imprimir</button>
+    <button class="tool" onclick="adminLogin()">🔒 Editar</button>
   </div>
-</div>
-
-<div class="doc-nav">
-  <div id="prevDoc" onclick="prevSOP()" style="cursor:pointer;">← SOP anterior</div>
-  <div id="nextDoc" onclick="nextSOP()" style="cursor:pointer;">SOP siguiente →</div>
 </div>
 
 <div class="doc-area">
   <div class="doc-frame">
     <iframe id="frame"></iframe>
+    <div id="overlay"></div>
   </div>
 </div>
 
+<!-- SIDEBAR -->
+<div id="commentSidebar">
+  <h3>Comentarios</h3>
+  <div id="commentList"></div>
+</div>
+
 <script>
-// Obtener SOP desde URL
+
+// ================== VARIABLES ==================
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 
-// Mapa de departamentos legibles
-const deptMap = {
-  'produccion': 'Carpinteria',
-  'instalacion': 'Stone',
-  'administracion': 'Administracion',
-  'comercial': 'Comercial',
-  'houzz-pro': 'Houzz Pro',
-  'maquinarias': 'Maquinarias',
-   'medidas': 'Medidas',
-  'vehiculos': 'Vehiculos',
-  'taller': 'Taller',
-  'ecopower': 'Ecopower'
-};
-
-const prevBtn = document.getElementById("prevDoc");
-const nextBtn = document.getElementById("nextDoc");
 const frame = document.getElementById("frame");
-const titleEl = document.getElementById("title");
+const overlay = document.getElementById("overlay");
 
-// Cargar SOP_INDEX.json
-fetch('SOP_INDEX.json')
-  .then(res => res.json())
-  .then(data => {
-    if(!data.length){
-      titleEl.innerText = "No hay SOP disponibles";
-      return;
-    }
+let editMode = false;
 
-    // Si no hay doc en URL, cargar el primero
-    if(!doc) doc = data[0].url;
+// ================== CARGAR DOCUMENTO ==================
+if(doc){
+  frame.src = doc;
+}
 
-    const sopList = data.map(s => s.url);
-    let currentIndex = sopList.indexOf(doc);
-    if(currentIndex === -1) currentIndex = 0;
-    doc = sopList[currentIndex]; // asegurar URL válida
+// ================== BOTONES ==================
+function openNew(){ if(doc) window.open(doc,"_blank"); }
+function downloadDoc(){
+  if(doc){
+    const a=document.createElement("a");
+    a.href=doc;
+    a.download="";
+    a.click();
+  }
+}
+function printDoc(){ if(doc) frame.contentWindow.print(); }
 
-    // Cargar iframe y título
-    frame.src = doc;
-    const currentSOP = data[currentIndex];
-    titleEl.innerText = `${deptMap[currentSOP.department] || currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
+// ================== LOGIN ==================
+function adminLogin(){
+  const password = prompt("Ingrese contraseña");
 
-    // Funciones de navegación
-    window.prevSOP = function(){
-      if(currentIndex > 0){
-        window.location.href = `viewer.html?doc=${sopList[currentIndex-1]}`;
-      }
-    }
-    window.nextSOP = function(){
-      if(currentIndex < sopList.length - 1){
-        window.location.href = `viewer.html?doc=${sopList[currentIndex+1]}`;
-      }
-    }
+  if(password === "Artemisa2026"){
+    editMode = true;
+    document.getElementById("commentSidebar").classList.add("active");
+    overlay.style.display = "block";
+    loadComments();
+    alert("Modo edición activado");
+  }else{
+    alert("Acceso denegado");
+  }
+}
 
-    // Deshabilitar botones si es inicio/fin
-    prevBtn.style.opacity = currentIndex === 0 ? 0.5 : 1;
-    prevBtn.style.pointerEvents = currentIndex === 0 ? "none" : "auto";
-    nextBtn.style.opacity = currentIndex === sopList.length-1 ? 0.5 : 1;
-    nextBtn.style.pointerEvents = currentIndex === sopList.length-1 ? "none" : "auto";
+// ================== CREAR COMENTARIOS ==================
+overlay.addEventListener("click", function(e){
 
-  })
-  .catch(err => {
-    console.error("No se pudo cargar SOP_INDEX.json:", err);
-    titleEl.innerText = "Error cargando SOP";
+  if(!editMode) return;
+
+  const comment = prompt("Escribe el comentario:");
+  if(!comment) return;
+
+  const x = e.offsetX;
+  const y = e.offsetY;
+
+  const marker = document.createElement("div");
+  marker.className = "marker";
+  marker.style.left = x + "px";
+  marker.style.top = y + "px";
+
+  overlay.appendChild(marker);
+
+  saveComment({x,y,comment});
+  renderComments();
+});
+
+// ================== GUARDAR ==================
+function saveComment(c){
+  const list = JSON.parse(localStorage.getItem(doc) || "[]");
+  list.push(c);
+  localStorage.setItem(doc, JSON.stringify(list));
+}
+
+// ================== CARGAR ==================
+function loadComments(){
+  const comments = JSON.parse(localStorage.getItem(doc) || "[]");
+
+  comments.forEach(c=>{
+    const marker = document.createElement("div");
+    marker.className = "marker";
+    marker.style.left = c.x + "px";
+    marker.style.top = c.y + "px";
+    overlay.appendChild(marker);
   });
 
-// Funciones herramientas
-function openNew(){ if(doc) window.open(doc,"_blank"); }
-function downloadDoc(){ if(doc){ const a=document.createElement("a"); a.href=doc; a.download=""; a.click(); } }
-function printDoc(){ if(doc) frame.contentWindow.print(); }
+  renderComments();
+}
+
+// ================== SIDEBAR ==================
+function renderComments(){
+  const listEl = document.getElementById("commentList");
+  listEl.innerHTML = "";
+
+  const comments = JSON.parse(localStorage.getItem(doc) || "[]");
+
+  comments.forEach(c=>{
+    const div = document.createElement("div");
+    div.className = "comment-box";
+    div.innerText = c.comment;
+
+    listEl.appendChild(div);
+  });
+}
+
 </script>
 
 </body>
