@@ -307,17 +307,34 @@ function saveComment(c){
   localStorage.setItem(doc,JSON.stringify(list));
 }
 function loadComments(){ renderComments(); }
+
+// RENDER COMMENTS CON BOTÓN BORRAR INDIVIDUAL
 function renderComments(){
   const list=document.getElementById("commentList");
   list.innerHTML="";
   const comments=JSON.parse(localStorage.getItem(doc)||"[]");
-  comments.forEach(c=>{
+
+  comments.forEach((c,index)=>{
     const div=document.createElement("div");
     div.className="comment-box";
-    div.innerHTML=`<b>${c.user}</b> - <i>${c.commentText}</i><br><mark>${c.text}</mark><br>
-      <small>📅 ${c.date} | 🏷 ${c.type} | ${c.status}</small>`;
+    div.innerHTML=`
+      <b>${c.user}</b> - <i>${c.commentText}</i><br>
+      <mark>${c.text}</mark><br>
+      <small>📅 ${c.date} | 🏷 ${c.type} | ${c.status}</small><br>
+      <button style="margin-top:5px;font-size:12px;" onclick="deleteSingleComment(${index})">🗑 Borrar</button>
+    `;
     list.appendChild(div);
   });
+}
+
+// BORRAR COMENTARIO INDIVIDUAL
+function deleteSingleComment(index){
+  const comments = JSON.parse(localStorage.getItem(doc)||"[]");
+  if(confirm("¿Seguro que deseas borrar este comentario?")){
+    comments.splice(index,1);
+    localStorage.setItem(doc, JSON.stringify(comments));
+    renderComments();
+  }
 }
 
 // RESALTAR TEXTO SELECCIONADO
