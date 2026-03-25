@@ -14,7 +14,7 @@ body{
 .topbar{
   background:#0f172a;
   color:white;
-  padding:14px 28px;
+  padding:14px 20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -22,14 +22,20 @@ body{
   width:100%;
   top:0;
   z-index:100;
+  box-sizing:border-box;
 }
 .brand{font-weight:600;font-size:15px;}
 .back{
   background:#2563eb;
   color:white;
-  padding:6px 14px;
+  padding:6px 12px;
   border-radius:6px;
   text-decoration:none;
+  font-size:13px;
+  white-space:nowrap;
+  max-width:200px;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 /* BARRA DE HERRAMIENTAS DEBAJO DEL TOPBAR */
@@ -46,7 +52,9 @@ body{
   padding:6px 12px;
   border-radius:6px;
   cursor:pointer;
+  font-size:13px;
 }
+.tool:hover{background:#f3f4f6;}
 
 /* DOCUMENTO */
 .doc-area{
@@ -67,7 +75,7 @@ iframe{
   border:none;
 }
 
-/* OVERLAY PARA SELECCIÓN */
+/* OVERLAY */
 #overlay{
   position:absolute;
   top:0;
@@ -92,17 +100,21 @@ iframe{
   transition:.3s;
   z-index:50;
   overflow:auto;
+  font-size:14px;
 }
 #commentSidebar.active{transform:translateX(0);}
 body.sidebar-open .doc-area,
 body.sidebar-open .doc-header{margin-right:350px;}
 .comment-box{
   border:1px solid #ddd;
-  padding:8px;
+  padding:10px;
   margin-bottom:10px;
-  border-radius:6px;
-  font-size:13px;
+  border-radius:8px;
   background:#f9fafb;
+}
+.comment-box mark{
+  background:#fff176;
+  padding:0 2px;
 }
 .closeSidebar{
   cursor:pointer;
@@ -111,7 +123,18 @@ body.sidebar-open .doc-header{margin-right:350px;}
   font-size:16px;
 }
 
-/* LOGIN OVERLAY */
+/* ESTILO SELECT Y INPUT DEL SIDEBAR */
+#commentSidebar select, #commentSidebar input{
+  width:100%;
+  padding:6px 10px;
+  margin-bottom:10px;
+  border-radius:6px;
+  border:1px solid #cbd5e1;
+  font-size:13px;
+  background:#f8fafc;
+}
+
+/* LOGIN MODERNO */
 #loginOverlay{
   position:fixed;
   top:0; left:0;
@@ -124,14 +147,47 @@ body.sidebar-open .doc-header{margin-right:350px;}
 }
 #loginOverlay div{
   background:white;
-  padding:20px;
-  border-radius:8px;
-  min-width:300px;
+  padding:25px 30px;
+  border-radius:12px;
+  min-width:320px;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+  text-align:center;
+  position:relative;
 }
 #loginOverlay label, #loginOverlay input, #loginOverlay select{
   display:block;
   width:100%;
   margin-bottom:10px;
+  font-size:14px;
+}
+#loginOverlay input, #loginOverlay select{
+  padding:8px 10px;
+  border-radius:6px;
+  border:1px solid #cbd5e1;
+  background:#f8fafc;
+}
+#loginOverlay button{
+  padding:8px 14px;
+  margin:5px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#2563eb;
+  color:white;
+  font-weight:600;
+}
+#loginOverlay button:hover{background:#3b82f6;}
+#loginMessage{
+  color:red;
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .doc-header{flex-direction:column;align-items:flex-start;gap:10px;}
+  iframe{height:85vh;}
+  .back{max-width:150px;}
 }
 </style>
 </head>
@@ -201,6 +257,7 @@ body.sidebar-open .doc-header{margin-right:350px;}
 <div id="loginOverlay">
   <div>
     <h3>Login para edición</h3>
+    <div id="loginMessage"></div>
     <label>Usuario:</label>
     <select id="loginUser">
       <option value="">Seleccione usuario</option>
@@ -247,13 +304,17 @@ function downloadDoc(){const a=document.createElement("a"); a.href=doc;a.downloa
 function printDoc(){frame.contentWindow.print();}
 
 // LOGIN
-function showLogin(){ document.getElementById("loginOverlay").style.display="flex"; }
+function showLogin(){ 
+  document.getElementById("loginOverlay").style.display="flex"; 
+  document.getElementById("loginMessage").innerText="";
+}
 function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
 function checkLogin(){
   const user = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
-  if(!user){alert("Seleccione usuario"); return;}
-  if(users[user]!==pass){alert("Clave incorrecta"); return;}
+  const msg = document.getElementById("loginMessage");
+  if(!user){msg.innerText="Seleccione un usuario"; return;}
+  if(users[user]!==pass){msg.innerText="Clave incorrecta"; return;}
   editMode=true;
   currentUser=user;
   document.getElementById("commentUser").value=user;
@@ -273,31 +334,20 @@ function closeSidebar(){
 // COMENTARIOS
 function commentSelectedText(){
   if(!editMode){alert("Activa modo edición primero"); return;}
-
   const sel = frame.contentWindow.getSelection();
   const text = sel.toString().trim();
   if(!text){alert("Selecciona un texto válido dentro del documento"); return;}
-
   const commentText = prompt("Escribe tu comentario sobre el texto seleccionado:");
   if(commentText === null) return;
   if(commentText.trim()===""){alert("Comentario vacío"); return;}
-
   const user = currentUser;
   const type = document.getElementById("commentType").value;
   const status = document.getElementById("commentStatus").value;
   const now = new Date().toLocaleString();
-
   const comment = {text,commentText,user,type,status,date:now};
   saveComment(comment);
   highlightSelection(sel, comment);
   renderComments();
-}
-
-// RESET OVERLAY
-function resetOverlay(){
-  commentMode=false;
-  overlay.style.pointerEvents="none";
-  overlay.style.background="transparent";
 }
 
 // GUARDAR Y CARGAR
@@ -313,7 +363,6 @@ function renderComments(){
   const list=document.getElementById("commentList");
   list.innerHTML="";
   const comments=JSON.parse(localStorage.getItem(doc)||"[]");
-
   comments.forEach((c,index)=>{
     const div=document.createElement("div");
     div.className="comment-box";
@@ -342,7 +391,7 @@ function highlightSelection(sel, comment){
   if(sel.rangeCount){
     const range = sel.getRangeAt(0);
     const mark = document.createElement("mark");
-    mark.style.background="yellow";
+    mark.style.background="#fff176";
     mark.title=`${comment.user} | ${comment.type} | ${comment.status} | ${comment.commentText}`;
     range.surroundContents(mark);
     sel.removeAllRanges();
