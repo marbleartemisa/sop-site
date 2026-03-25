@@ -2,21 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Visor SOP PRO - Artemisa</title>
+<title>Visor SOP - Artemisa</title>
 
 <style>
 body{
   margin:0;
   background:#f1f5f9;
   font-family:"Segoe UI",Arial,sans-serif;
-  display:flex;
-}
-
-/* CONTENEDOR GENERAL */
-.main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
 }
 
 /* TOPBAR */
@@ -27,6 +19,13 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.2);
+}
+
+.brand{
+  font-weight:600;
+  letter-spacing:.4px;
+  font-size:15px;
 }
 
 .back{
@@ -38,12 +37,30 @@ body{
   font-size:13px;
 }
 
-/* HEADER */
+.back:hover{
+  background:#3b82f6;
+}
+
+/* HEADER DOCUMENTO */
 .doc-header{
-  padding:10px 20px;
+  max-width:1100px;
+  margin:20px auto;
+  padding:0 10px;
   display:flex;
   justify-content:space-between;
   align-items:center;
+}
+
+.doc-title{
+  font-size:20px;
+  font-weight:600;
+  color:#0f172a;
+}
+
+.doc-tools{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
 }
 
 .tool{
@@ -51,230 +68,167 @@ body{
   border:1px solid #d1d5db;
   padding:6px 12px;
   border-radius:6px;
+  font-size:13px;
   cursor:pointer;
 }
 
-/* DOCUMENTO */
+.tool:hover{
+  background:#f3f4f6;
+}
+
+/* NAV SOP */
+.doc-nav{
+  max-width:1100px;
+  margin:auto;
+  padding:0 10px 10px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:#374151;
+}
+
+/* AREA DOCUMENTO */
 .doc-area{
   display:flex;
   justify-content:center;
-  padding:10px;
+  padding:10px 20px 40px;
 }
 
 .doc-frame{
   width:100%;
-  max-width:900px;
+  max-width:1100px;
   background:white;
-  padding:30px;
   border-radius:10px;
-  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  box-shadow:0 10px 30px rgba(0,0,0,.15),
+             0 2px 8px rgba(0,0,0,.08);
+  overflow:hidden;
 }
 
-/* TEXTO SELECCIONADO */
-.comment-mark{
-  background:#fde68a;
-  cursor:pointer;
+iframe{
+  width:100%;
+  height:88vh;
+  border:none;
 }
 
-/* PANEL COMENTARIOS */
-.sidebar{
-  width:320px;
-  background:white;
-  border-left:1px solid #e5e7eb;
-  padding:10px;
-  overflow:auto;
-}
-
-.comment-box{
-  border:1px solid #e5e7eb;
-  padding:8px;
-  margin-bottom:8px;
-  border-radius:6px;
-  background:#f9fafb;
-}
-
-.comment-box:hover{
-  background:#f3f4f6;
+/* RESPONSIVE */
+@media(max-width:768px){
+  .doc-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .doc-nav{
+    flex-direction:column;
+    gap:6px;
+  }
+  iframe{
+    height:85vh;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="main">
-
 <div class="topbar">
-  <div>ARTEMISA SOP • VIEWER PRO</div>
+  <div class="brand">ARTEMISA MARBLE & CABINETS • SOP LIBRARY</div>
   <a class="back" href="/sop-site/">⬅ Biblioteca</a>
 </div>
 
 <div class="doc-header">
-  <div id="title">Documento SOP</div>
-  <div>
-    <button class="tool" onclick="addComment()">💬 Comentar</button>
-    <button class="tool" onclick="clearComments()">🗑 Limpiar</button>
+  <div class="doc-title" id="title">Documento SOP</div>
+  <div class="doc-tools">
+    <button class="tool" onclick="openNew()">Abrir</button>
+    <button class="tool" onclick="downloadDoc()">Descargar</button>
+    <button class="tool" onclick="printDoc()">Imprimir</button>
   </div>
 </div>
 
+<div class="doc-nav">
+  <div id="prevDoc" onclick="prevSOP()" style="cursor:pointer;">← SOP anterior</div>
+  <div id="nextDoc" onclick="nextSOP()" style="cursor:pointer;">SOP siguiente →</div>
+</div>
+
 <div class="doc-area">
-  <div class="doc-frame" id="docContent"></div>
-</div>
-
-</div>
-
-<!-- PANEL DERECHO -->
-<div class="sidebar">
-  <h3>Comentarios</h3>
-  <div id="commentList"></div>
+  <div class="doc-frame">
+    <iframe id="frame"></iframe>
+  </div>
 </div>
 
 <script>
-
-// ===============================
-// CARGAR DOCUMENTO
-// ===============================
+// Obtener SOP desde URL
 const params = new URLSearchParams(window.location.search);
-let doc = params.get("doc") || "sop.html";
+let doc = params.get("doc");
 
-const container = document.getElementById("docContent");
+// Mapa de departamentos legibles
+const deptMap = {
+  'produccion': 'Carpinteria',
+  'instalacion': 'Stone',
+  'administracion': 'Administracion',
+  'comercial': 'Comercial',
+  'houzz-pro': 'Houzz Pro',
+  'maquinarias': 'Maquinarias',
+   'medidas': 'Medidas',
+  'vehiculos': 'Vehiculos',
+  'taller': 'Taller',
+  'ecopower': 'Ecopower'
+};
 
-fetch(doc)
-  .then(res => res.text())
-  .then(html => {
-    container.innerHTML = html;
-    loadComments();
-  });
+const prevBtn = document.getElementById("prevDoc");
+const nextBtn = document.getElementById("nextDoc");
+const frame = document.getElementById("frame");
+const titleEl = document.getElementById("title");
 
+// Cargar SOP_INDEX.json
+fetch('SOP_INDEX.json')
+  .then(res => res.json())
+  .then(data => {
+    if(!data.length){
+      titleEl.innerText = "No hay SOP disponibles";
+      return;
+    }
 
-// ===============================
-// AGREGAR COMENTARIO
-// ===============================
-function addComment(){
-  const selection = window.getSelection();
+    // Si no hay doc en URL, cargar el primero
+    if(!doc) doc = data[0].url;
 
-  if(!selection.rangeCount){
-    alert("Selecciona texto");
-    return;
-  }
+    const sopList = data.map(s => s.url);
+    let currentIndex = sopList.indexOf(doc);
+    if(currentIndex === -1) currentIndex = 0;
+    doc = sopList[currentIndex]; // asegurar URL válida
 
-  const range = selection.getRangeAt(0);
+    // Cargar iframe y título
+    frame.src = doc;
+    const currentSOP = data[currentIndex];
+    titleEl.innerText = `${deptMap[currentSOP.department] || currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
 
-  if(range.collapsed){
-    alert("Selecciona texto válido");
-    return;
-  }
-
-  const text = selection.toString();
-  const comment = prompt("Escribe tu comentario:");
-  if(!comment) return;
-
-  const id = "c" + Date.now();
-
-  const span = document.createElement("span");
-  span.className = "comment-mark";
-  span.dataset.id = id;
-
-  try{
-    range.surroundContents(span);
-  }catch(e){
-    alert("No se puede comentar ese bloque (intenta seleccionar menos)");
-    return;
-  }
-
-  span.innerText = text;
-
-  saveComment({
-    id,
-    text,
-    comment
-  });
-
-  selection.removeAllRanges();
-  renderComments();
-}
-
-
-// ===============================
-// GUARDAR COMENTARIOS
-// ===============================
-function saveComment(data){
-  const comments = JSON.parse(localStorage.getItem(doc) || "[]");
-  comments.push(data);
-  localStorage.setItem(doc, JSON.stringify(comments));
-}
-
-
-// ===============================
-// CARGAR COMENTARIOS
-// ===============================
-function loadComments(){
-  const comments = JSON.parse(localStorage.getItem(doc) || "[]");
-
-  comments.forEach(c=>{
-    highlightText(c);
-  });
-
-  renderComments();
-}
-
-
-// ===============================
-// RESALTAR TEXTO GUARDADO
-// ===============================
-function highlightText(c){
-  const content = container.innerHTML;
-
-  if(content.includes(c.text)){
-    container.innerHTML = content.replace(
-      c.text,
-      `<span class="comment-mark" data-id="${c.id}">${c.text}</span>`
-    );
-  }
-}
-
-
-// ===============================
-// PANEL LATERAL
-// ===============================
-function renderComments(){
-  const list = document.getElementById("commentList");
-  list.innerHTML = "";
-
-  const comments = JSON.parse(localStorage.getItem(doc) || "[]");
-
-  comments.forEach(c=>{
-    const div = document.createElement("div");
-    div.className = "comment-box";
-
-    div.innerHTML = `
-      <b>${c.text}</b><br>
-      ${c.comment}
-    `;
-
-    div.onclick = ()=>{
-      const el = document.querySelector(`[data-id="${c.id}"]`);
-      if(el){
-        el.scrollIntoView({behavior:"smooth", block:"center"});
-        el.style.background = "#fca5a5";
-        setTimeout(()=> el.style.background="#fde68a", 1000);
+    // Funciones de navegación
+    window.prevSOP = function(){
+      if(currentIndex > 0){
+        window.location.href = `viewer.html?doc=${sopList[currentIndex-1]}`;
       }
-    };
+    }
+    window.nextSOP = function(){
+      if(currentIndex < sopList.length - 1){
+        window.location.href = `viewer.html?doc=${sopList[currentIndex+1]}`;
+      }
+    }
 
-    list.appendChild(div);
+    // Deshabilitar botones si es inicio/fin
+    prevBtn.style.opacity = currentIndex === 0 ? 0.5 : 1;
+    prevBtn.style.pointerEvents = currentIndex === 0 ? "none" : "auto";
+    nextBtn.style.opacity = currentIndex === sopList.length-1 ? 0.5 : 1;
+    nextBtn.style.pointerEvents = currentIndex === sopList.length-1 ? "none" : "auto";
+
+  })
+  .catch(err => {
+    console.error("No se pudo cargar SOP_INDEX.json:", err);
+    titleEl.innerText = "Error cargando SOP";
   });
-}
 
-
-// ===============================
-// LIMPIAR
-// ===============================
-function clearComments(){
-  if(confirm("Eliminar todos los comentarios?")){
-    localStorage.removeItem(doc);
-    location.reload();
-  }
-}
-
+// Funciones herramientas
+function openNew(){ if(doc) window.open(doc,"_blank"); }
+function downloadDoc(){ if(doc){ const a=document.createElement("a"); a.href=doc; a.download=""; a.click(); } }
+function printDoc(){ if(doc) frame.contentWindow.print(); }
 </script>
 
 </body>
