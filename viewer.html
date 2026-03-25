@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Viewer SOP Pro - Artemisa</title>
+<title>Visor SOP - Artemisa</title>
+
 <style>
 body{
   margin:0;
@@ -18,17 +19,10 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  position:relative;
   z-index:100;
-  position:fixed;
-  width:100%;
-  top:0;
 }
 
-/* BRAND Y BOTÓN BACK */
-.brand{
-  font-weight:600;
-  font-size:15px;
-}
 .back{
   background:#2563eb;
   color:white;
@@ -37,15 +31,16 @@ body{
   text-decoration:none;
 }
 
-/* HEADER DE HERRAMIENTAS */
+/* HEADER */
 .doc-header{
   max-width:1100px;
-  margin:80px auto 20px auto; /* debajo del topbar */
+  margin:20px auto;
   display:flex;
   justify-content:space-between;
   align-items:center;
   transition:.3s;
 }
+
 .tool{
   background:white;
   border:1px solid #d1d5db;
@@ -60,6 +55,7 @@ body{
   justify-content:center;
   transition:.3s;
 }
+
 .doc-frame{
   width:100%;
   max-width:1100px;
@@ -68,6 +64,7 @@ body{
   box-shadow:0 10px 30px rgba(0,0,0,.15);
   position:relative;
 }
+
 iframe{
   width:100%;
   height:88vh;
@@ -85,7 +82,7 @@ iframe{
   z-index:10;
 }
 
-/* MARKER */
+/* MARCADOR */
 .marker{
   position:absolute;
   width:14px;
@@ -98,10 +95,10 @@ iframe{
 /* SIDEBAR */
 #commentSidebar{
   position:fixed;
-  top:60px; /* empieza debajo del topbar */
+  top:0;
   right:0;
-  width:350px;
-  height:calc(100% - 60px);
+  width:320px;
+  height:100%;
   background:white;
   box-shadow:-4px 0 10px rgba(0,0,0,.2);
   padding:15px;
@@ -110,14 +107,15 @@ iframe{
   z-index:50;
   overflow:auto;
 }
+
 #commentSidebar.active{
   transform:translateX(0);
 }
 
-/* EMPUJA CONTENIDO AL ABRIR SIDEBAR */
+/* EMPUJA CONTENIDO */
 body.sidebar-open .doc-area,
 body.sidebar-open .doc-header{
-  margin-right:350px;
+  margin-right:320px;
 }
 
 /* COMMENT BOX */
@@ -129,23 +127,16 @@ body.sidebar-open .doc-header{
   font-size:13px;
   background:#f9fafb;
 }
-.closeSidebar{
-  cursor:pointer;
-  float:right;
-  font-weight:bold;
-  font-size:16px;
-}
 </style>
 </head>
+
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
-  <div class="brand">ARTEMISA SOP • VIEWER</div>
+  <div>ARTEMISA SOP • VIEWER</div>
   <a class="back" href="/sop-site/">⬅ Biblioteca</a>
 </div>
 
-<!-- HEADER HERRAMIENTAS -->
 <div class="doc-header">
   <div id="title">Documento SOP</div>
   <div>
@@ -157,7 +148,6 @@ body.sidebar-open .doc-header{
   </div>
 </div>
 
-<!-- DOCUMENTO -->
 <div class="doc-area">
   <div class="doc-frame">
     <iframe id="frame"></iframe>
@@ -167,7 +157,6 @@ body.sidebar-open .doc-header{
 
 <!-- SIDEBAR -->
 <div id="commentSidebar">
-  <span class="closeSidebar" onclick="closeSidebar()">⬅</span>
   <h3>Comentarios</h3>
 
   <label>Empleado</label>
@@ -197,104 +186,153 @@ body.sidebar-open .doc-header{
   </select>
 
   <hr>
+
   <div id="commentList"></div>
 </div>
 
 <script>
+
 // VARIABLES
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
+
 const frame = document.getElementById("frame");
 const overlay = document.getElementById("overlay");
-let editMode=false, commentMode=false;
+
+let editMode = false;
+let commentMode = false;
 
 if(doc) frame.src = doc;
 
 // BOTONES
-function openNew(){window.open(doc,"_blank");}
-function downloadDoc(){const a=document.createElement("a"); a.href=doc; a.download=""; a.click();}
-function printDoc(){frame.contentWindow.print();}
+function openNew(){ window.open(doc,"_blank"); }
+function downloadDoc(){
+  const a=document.createElement("a");
+  a.href=doc;
+  a.download="";
+  a.click();
+}
+function printDoc(){ frame.contentWindow.print(); }
 
-// LOGIN: pide usuario
+// LOGIN
 function adminLogin(){
-  const user = prompt("Ingrese su nombre para editar");
-  if(user){
-    editMode=true;
-    document.getElementById("commentUser").value=user;
+  const pass = prompt("Ingrese contraseña");
+
+  if(pass === "Artemisa2026"){
+    editMode = true;
     document.getElementById("commentSidebar").classList.add("active");
     document.body.classList.add("sidebar-open");
     loadComments();
     alert("Modo edición activado");
-  }else alert("Debe ingresar su nombre");
-}
-
-// CERRAR SIDEBAR
-function closeSidebar(){
-  document.getElementById("commentSidebar").classList.remove("active");
-  document.body.classList.remove("sidebar-open");
+  }else{
+    alert("Acceso denegado");
+  }
 }
 
 // ACTIVAR COMENTARIO
 function activateComment(){
-  if(!editMode){alert("Activa modo edición primero"); return;}
-  commentMode=true;
-  overlay.style.pointerEvents="auto";
-  overlay.style.background="rgba(0,0,0,0.05)";
-  alert("Selecciona texto dentro del documento");
+  if(!editMode){
+    alert("Activa modo edición primero");
+    return;
+  }
+
+  commentMode = true;
+  overlay.style.pointerEvents = "auto";
+  overlay.style.background = "rgba(0,0,0,0.05)";
 }
 
-// CLICK PARA COMENTAR (texto seleccionado)
+// CLICK
 overlay.addEventListener("click", function(e){
+
   if(!commentMode) return;
 
   const user = document.getElementById("commentUser").value;
-  if(!user){alert("Selecciona empleado"); return;}
-
   const type = document.getElementById("commentType").value;
   const status = document.getElementById("commentStatus").value;
 
-  const sel = frame.contentWindow.getSelection();
-  const text = sel.toString().trim();
-  if(!text){alert("Selecciona un texto válido"); resetOverlay(); return;}
+  if(!user){
+    alert("Selecciona empleado");
+    return;
+  }
+
+  const text = prompt("Comentario:");
+  if(!text){
+    resetOverlay();
+    return;
+  }
 
   const now = new Date().toLocaleString();
 
-  saveComment({text,user,type,status,date:now});
+  const x = e.offsetX;
+  const y = e.offsetY;
+
+  const marker = document.createElement("div");
+  marker.className = "marker";
+  marker.style.left = x + "px";
+  marker.style.top = y + "px";
+
+  overlay.appendChild(marker);
+
+  saveComment({x,y,text,user,type,status,date:now});
   renderComments();
+
   resetOverlay();
 });
 
 // RESET
 function resetOverlay(){
-  commentMode=false;
-  overlay.style.pointerEvents="none";
-  overlay.style.background="transparent";
+  commentMode = false;
+  overlay.style.pointerEvents = "none";
+  overlay.style.background = "transparent";
 }
 
 // GUARDAR
 function saveComment(c){
-  const list=JSON.parse(localStorage.getItem(doc)||"[]");
+  const list = JSON.parse(localStorage.getItem(doc) || "[]");
   list.push(c);
-  localStorage.setItem(doc,JSON.stringify(list));
+  localStorage.setItem(doc, JSON.stringify(list));
 }
 
 // CARGAR
 function loadComments(){
+  const comments = JSON.parse(localStorage.getItem(doc) || "[]");
+
+  comments.forEach(c=>{
+    const marker = document.createElement("div");
+    marker.className = "marker";
+    marker.style.left = c.x + "px";
+    marker.style.top = c.y + "px";
+    overlay.appendChild(marker);
+  });
+
   renderComments();
 }
 
 // RENDER
 function renderComments(){
-  const list=document.getElementById("commentList");
-  list.innerHTML="";
-  const comments=JSON.parse(localStorage.getItem(doc)||"[]");
+  const list = document.getElementById("commentList");
+  list.innerHTML = "";
+
+  const comments = JSON.parse(localStorage.getItem(doc) || "[]");
+
   comments.forEach(c=>{
-    const div=document.createElement("div");
-    div.className="comment-box";
-    div.innerHTML=`<b>${c.user}</b><br>${c.text}<br><small>📅 ${c.date}<br>🏷 ${c.type} | ${c.status}</small>`;
+    const div = document.createElement("div");
+    div.className = "comment-box";
+
+    div.innerHTML = `
+      <b>${c.user}</b><br>
+      ${c.text}<br>
+      <small>
+      📅 ${c.date}<br>
+      🏷 ${c.type} | ${c.status}
+      </small>
+    `;
+
     list.appendChild(div);
   });
 }
+
 </script>
+
 </body>
 </html>
