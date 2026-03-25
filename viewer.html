@@ -421,6 +421,7 @@ closeLogin();
 let pendingSelection=null;
 let pendingText="";
 
+
 function commentSelectedText(){
 
 if(!editMode){
@@ -439,39 +440,92 @@ return;
 pendingSelection=sel;
 pendingText=text;
 
+/* limpiar textarea */
+document.getElementById("commentInput").value="";
+
+document.getElementById("commentModal").style.display="flex";
+}
+
+  
+
+
+pendingSelection=sel;
+pendingText=text;
+
 document.getElementById("commentModal").style.display="flex";
 }
 
 function closeCommentModal(){
+
 document.getElementById("commentModal").style.display="none";
+
+document.getElementById("commentInput").value="";
+pendingText="";
+pendingSelection=null;
+
 }
+
 
 async function saveComment(){
 
-const commentText=document.getElementById("commentInput").value;
+const textarea = document.getElementById("commentInput");
+const commentText = textarea.value.trim();
 
-const payload={
+if(!commentText){
+alert("Escribe un comentario");
+return;
+}
+
+
+
+  
+const type = document.getElementById("commentType").value;
+const status = document.getElementById("commentStatus").value;
+
+const payload = {
 tipo:"comentario",
 id_sop:idSOP,
 usuario:currentUser,
 comentario:commentText,
-tipo_comentario:document.getElementById("commentType").value,
-estado:document.getElementById("commentStatus").value,
+tipo_comentario:type,
+estado:status,
 text_selected:pendingText,
 url_doc:doc
 };
 
-await fetch(SCRIPT_URL,{
+try{
+
+const res = await fetch(SCRIPT_URL,{
 method:"POST",
 body:JSON.stringify(payload)
 });
 
+const data = await res.json();
+
+if(!data.success){
+alert("Error guardando");
+return;
+}
+
 highlightSelection(pendingSelection,payload);
+
 loadComments();
+
+/* limpiar textarea */
+textarea.value="";
+
+/* limpiar variables */
+pendingText="";
+pendingSelection=null;
 
 closeCommentModal();
 
+}catch(err){
+alert("Error conexión");
 }
+
+}
+  
 
 function highlightSelection(sel){
 
