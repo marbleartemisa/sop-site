@@ -2,138 +2,34 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Visor SOP - Artemisa</title>
-
+<title>Viewer SOP Pro - Artemisa</title>
 <style>
-body{
-  margin:0;
-  background:#f1f5f9;
-  font-family:"Segoe UI",Arial,sans-serif;
-}
-
-/* TOPBAR */
+body{margin:0;background:#f1f5f9;font-family:"Segoe UI",Arial,sans-serif;}
 .topbar{
-  background:#0f172a;
-  color:white;
-  padding:14px 28px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:relative;
-  z-index:100;
+  background:#0f172a;color:white;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;z-index:100;position:fixed;width:100%;
 }
-
-.back{
-  background:#2563eb;
-  color:white;
-  padding:6px 14px;
-  border-radius:6px;
-  text-decoration:none;
-}
-
-/* HEADER */
-.doc-header{
-  max-width:1100px;
-  margin:20px auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  transition:.3s;
-}
-
-.tool{
-  background:white;
-  border:1px solid #d1d5db;
-  padding:6px 12px;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-/* DOCUMENTO */
-.doc-area{
-  display:flex;
-  justify-content:center;
-  transition:.3s;
-}
-
-.doc-frame{
-  width:100%;
-  max-width:1100px;
-  background:white;
-  border-radius:10px;
-  box-shadow:0 10px 30px rgba(0,0,0,.15);
-  position:relative;
-}
-
-iframe{
-  width:100%;
-  height:88vh;
-  border:none;
-}
-
-/* OVERLAY */
-#overlay{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-  z-index:10;
-}
-
-/* MARCADOR */
-.marker{
-  position:absolute;
-  width:14px;
-  height:14px;
-  background:red;
-  border-radius:50%;
-  transform:translate(-50%,-50%);
-}
-
-/* SIDEBAR */
+.brand{font-weight:600;font-size:15px;}
+.back{background:#2563eb;color:white;padding:6px 14px;border-radius:6px;text-decoration:none;}
+.doc-header{max-width:1100px;margin:80px auto 20px auto;display:flex;justify-content:space-between;align-items:center;transition:.3s;}
+.tool{background:white;border:1px solid #d1d5db;padding:6px 12px;border-radius:6px;cursor:pointer;}
+.doc-area{display:flex;justify-content:center;transition:.3s;}
+.doc-frame{width:100%;max-width:1100px;background:white;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.15);position:relative;}
+iframe{width:100%;height:88vh;border:none;}
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;}
+.marker{position:absolute;width:14px;height:14px;background:red;border-radius:50%;transform:translate(-50%,-50%);}
 #commentSidebar{
-  position:fixed;
-  top:0;
-  right:0;
-  width:320px;
-  height:100%;
-  background:white;
-  box-shadow:-4px 0 10px rgba(0,0,0,.2);
-  padding:15px;
-  transform:translateX(100%);
-  transition:.3s;
-  z-index:50;
-  overflow:auto;
+  position:fixed;top:60px;right:0;width:350px;height:calc(100% - 60px);background:white;box-shadow:-4px 0 10px rgba(0,0,0,.2);padding:15px;transform:translateX(100%);transition:.3s;z-index:50;overflow:auto;
 }
-
-#commentSidebar.active{
-  transform:translateX(0);
-}
-
-/* EMPUJA CONTENIDO */
-body.sidebar-open .doc-area,
-body.sidebar-open .doc-header{
-  margin-right:320px;
-}
-
-/* COMMENT BOX */
-.comment-box{
-  border:1px solid #ddd;
-  padding:8px;
-  margin-bottom:10px;
-  border-radius:6px;
-  font-size:13px;
-  background:#f9fafb;
-}
+#commentSidebar.active{transform:translateX(0);}
+body.sidebar-open .doc-area, body.sidebar-open .doc-header{margin-right:350px;}
+.comment-box{border:1px solid #ddd;padding:8px;margin-bottom:10px;border-radius:6px;font-size:13px;background:#f9fafb;}
+.closeSidebar{cursor:pointer;float:right;font-weight:bold;font-size:16px;}
 </style>
 </head>
-
 <body>
 
 <div class="topbar">
-  <div>ARTEMISA SOP • VIEWER</div>
+  <div class="brand">ARTEMISA SOP • VIEWER</div>
   <a class="back" href="/sop-site/">⬅ Biblioteca</a>
 </div>
 
@@ -155,10 +51,9 @@ body.sidebar-open .doc-header{
   </div>
 </div>
 
-<!-- SIDEBAR -->
 <div id="commentSidebar">
+  <span class="closeSidebar" onclick="closeSidebar()">⬅</span>
   <h3>Comentarios</h3>
-
   <label>Empleado</label>
   <select id="commentUser">
     <option value="">Seleccione</option>
@@ -186,153 +81,107 @@ body.sidebar-open .doc-header{
   </select>
 
   <hr>
-
   <div id="commentList"></div>
 </div>
 
 <script>
-
-// VARIABLES
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
-
 const frame = document.getElementById("frame");
 const overlay = document.getElementById("overlay");
-
 let editMode = false;
 let commentMode = false;
 
 if(doc) frame.src = doc;
 
 // BOTONES
-function openNew(){ window.open(doc,"_blank"); }
-function downloadDoc(){
-  const a=document.createElement("a");
-  a.href=doc;
-  a.download="";
-  a.click();
-}
-function printDoc(){ frame.contentWindow.print(); }
+function openNew(){window.open(doc,"_blank");}
+function downloadDoc(){const a=document.createElement("a");a.href=doc;a.download="";a.click();}
+function printDoc(){frame.contentWindow.print();}
 
-// LOGIN
+// LOGIN con solicitud de usuario
 function adminLogin(){
-  const pass = prompt("Ingrese contraseña");
-
-  if(pass === "Artemisa2026"){
+  const user = prompt("Ingrese su nombre para editar");
+  if(user){
     editMode = true;
+    document.getElementById("commentUser").value = user;
     document.getElementById("commentSidebar").classList.add("active");
     document.body.classList.add("sidebar-open");
     loadComments();
     alert("Modo edición activado");
   }else{
-    alert("Acceso denegado");
+    alert("Debe ingresar su nombre");
   }
+}
+
+// CERRAR SIDEBAR
+function closeSidebar(){
+  document.getElementById("commentSidebar").classList.remove("active");
+  document.body.classList.remove("sidebar-open");
 }
 
 // ACTIVAR COMENTARIO
 function activateComment(){
-  if(!editMode){
-    alert("Activa modo edición primero");
-    return;
-  }
-
+  if(!editMode){alert("Activa modo edición primero");return;}
   commentMode = true;
-  overlay.style.pointerEvents = "auto";
-  overlay.style.background = "rgba(0,0,0,0.05)";
+  overlay.style.pointerEvents="auto";
+  overlay.style.background="rgba(0,0,0,0.05)";
+  alert("Selecciona texto dentro del documento");
 }
 
-// CLICK
+// CLICK PARA MARCAR TEXTO
 overlay.addEventListener("click", function(e){
-
   if(!commentMode) return;
-
   const user = document.getElementById("commentUser").value;
+  if(!user){alert("Selecciona empleado");return;}
+
   const type = document.getElementById("commentType").value;
   const status = document.getElementById("commentStatus").value;
 
-  if(!user){
-    alert("Selecciona empleado");
-    return;
-  }
-
-  const text = prompt("Comentario:");
-  if(!text){
-    resetOverlay();
-    return;
-  }
+  const sel = frame.contentWindow.getSelection();
+  const text = sel.toString().trim();
+  if(!text){alert("Selecciona un texto válido"); resetOverlay(); return;}
 
   const now = new Date().toLocaleString();
 
-  const x = e.offsetX;
-  const y = e.offsetY;
-
-  const marker = document.createElement("div");
-  marker.className = "marker";
-  marker.style.left = x + "px";
-  marker.style.top = y + "px";
-
-  overlay.appendChild(marker);
-
-  saveComment({x,y,text,user,type,status,date:now});
+  saveComment({text,user,type,status,date:now});
   renderComments();
-
   resetOverlay();
 });
 
 // RESET
 function resetOverlay(){
-  commentMode = false;
-  overlay.style.pointerEvents = "none";
-  overlay.style.background = "transparent";
+  commentMode=false;
+  overlay.style.pointerEvents="none";
+  overlay.style.background="transparent";
 }
 
 // GUARDAR
 function saveComment(c){
-  const list = JSON.parse(localStorage.getItem(doc) || "[]");
+  const list=JSON.parse(localStorage.getItem(doc)||"[]");
   list.push(c);
-  localStorage.setItem(doc, JSON.stringify(list));
+  localStorage.setItem(doc,JSON.stringify(list));
 }
 
 // CARGAR
 function loadComments(){
-  const comments = JSON.parse(localStorage.getItem(doc) || "[]");
-
-  comments.forEach(c=>{
-    const marker = document.createElement("div");
-    marker.className = "marker";
-    marker.style.left = c.x + "px";
-    marker.style.top = c.y + "px";
-    overlay.appendChild(marker);
-  });
-
+  const comments=JSON.parse(localStorage.getItem(doc)||"[]");
   renderComments();
 }
 
 // RENDER
 function renderComments(){
   const list = document.getElementById("commentList");
-  list.innerHTML = "";
-
-  const comments = JSON.parse(localStorage.getItem(doc) || "[]");
-
+  list.innerHTML="";
+  const comments = JSON.parse(localStorage.getItem(doc)||"[]");
   comments.forEach(c=>{
     const div = document.createElement("div");
-    div.className = "comment-box";
-
-    div.innerHTML = `
-      <b>${c.user}</b><br>
-      ${c.text}<br>
-      <small>
-      📅 ${c.date}<br>
-      🏷 ${c.type} | ${c.status}
-      </small>
-    `;
-
+    div.className="comment-box";
+    div.innerHTML = `<b>${c.user}</b><br>${c.text}<br>
+      <small>📅 ${c.date}<br>🏷 ${c.type} | ${c.status}</small>`;
     list.appendChild(div);
   });
 }
-
 </script>
-
 </body>
 </html>
