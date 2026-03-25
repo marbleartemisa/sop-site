@@ -151,7 +151,7 @@ body.sidebar-open .doc-header{margin-right:350px;}
     <button class="tool" onclick="downloadDoc()">Descargar</button>
     <button class="tool" onclick="printDoc()">Imprimir</button>
     <button class="tool" onclick="showLogin()">🔒 Editar</button>
-    <button class="tool" onclick="activateComment()">💬 Comentar</button>
+    <button class="tool" onclick="commentSelectedText()">💬 Comentar</button>
   </div>
 </div>
 
@@ -210,13 +210,6 @@ body.sidebar-open .doc-header{margin-right:350px;}
       <option>Jenny Perez</option>
       <option>Yoandry Perez</option>
       <option>Wendy Romanach</option>
-      <option>Rolando Diaz</option>
-      <option>Krishna Camila Rojas</option>
-      <option>Gregorio Abreu</option>
-      <option>Juan Pablo Molina</option>
-      <option>Kevin Pastor</option>
-      <option>Eliana Pineda</option> 
-      <option>Carlos Herrera</option>
       <option>Otros</option>
     </select>
     <label>Clave:</label>
@@ -261,7 +254,6 @@ function checkLogin(){
   const pass = document.getElementById("loginPass").value;
   if(!user){alert("Seleccione usuario"); return;}
   if(users[user]!==pass){alert("Clave incorrecta"); return;}
-  // LOGIN OK
   editMode=true;
   currentUser=user;
   document.getElementById("commentUser").value=user;
@@ -279,36 +271,29 @@ function closeSidebar(){
 }
 
 // COMENTARIOS
-function activateComment(){
+function commentSelectedText(){
   if(!editMode){alert("Activa modo edición primero"); return;}
-  commentMode=true;
-  overlay.style.pointerEvents="auto";
-  overlay.style.background="rgba(0,0,0,0.05)";
-  alert("Selecciona texto dentro del documento");
-}
-
-overlay.addEventListener("click", function(){
-  if(!commentMode) return;
-
-  const user = currentUser;
-  if(!user){alert("Usuario no válido"); return;}
-
-  const type = document.getElementById("commentType").value;
-  const status = document.getElementById("commentStatus").value;
 
   const sel = frame.contentWindow.getSelection();
   const text = sel.toString().trim();
-  if(!text){alert("Selecciona un texto válido"); resetOverlay(); return;}
+  if(!text){alert("Selecciona un texto válido dentro del documento"); return;}
 
+  const commentText = prompt("Escribe tu comentario sobre el texto seleccionado:");
+  if(commentText === null) return;
+  if(commentText.trim()===""){alert("Comentario vacío"); return;}
+
+  const user = currentUser;
+  const type = document.getElementById("commentType").value;
+  const status = document.getElementById("commentStatus").value;
   const now = new Date().toLocaleString();
 
-  const comment = {text,user,type,status,date:now};
+  const comment = {text,commentText,user,type,status,date:now};
   saveComment(comment);
   highlightSelection(sel, comment);
   renderComments();
-  resetOverlay();
-});
+}
 
+// RESET OVERLAY
 function resetOverlay(){
   commentMode=false;
   overlay.style.pointerEvents="none";
@@ -329,7 +314,8 @@ function renderComments(){
   comments.forEach(c=>{
     const div=document.createElement("div");
     div.className="comment-box";
-    div.innerHTML=`<b>${c.user}</b><br>${c.text}<br><small>📅 ${c.date}<br>🏷 ${c.type} | ${c.status}</small>`;
+    div.innerHTML=`<b>${c.user}</b> - <i>${c.commentText}</i><br><mark>${c.text}</mark><br>
+      <small>📅 ${c.date} | 🏷 ${c.type} | ${c.status}</small>`;
     list.appendChild(div);
   });
 }
@@ -340,7 +326,7 @@ function highlightSelection(sel, comment){
     const range = sel.getRangeAt(0);
     const mark = document.createElement("mark");
     mark.style.background="yellow";
-    mark.title=`${comment.user} | ${comment.type} | ${comment.status}`;
+    mark.title=`${comment.user} | ${comment.type} | ${comment.status} | ${comment.commentText}`;
     range.surroundContents(mark);
     sel.removeAllRanges();
   }
