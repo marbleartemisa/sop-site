@@ -5,14 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP</title>
 
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-  
-  
 /* ===== BODY ===== */
 body{
   margin:0;
@@ -22,10 +18,8 @@ body{
   background-repeat:no-repeat;
   background-size:cover;
   background-attachment:fixed;
-
   color:#1f2937;
 }
-
 .overlay{
   background:rgba(0,0,0,0.25);
   min-height:100vh;
@@ -45,33 +39,27 @@ body{
   align-items:center;
   z-index:999;
 }
-
 .logo{
   display:flex;
   align-items:center;
   gap:10px;
 }
-
 .logo img{
   height:40px;
 }
-
 .menu{
   display:flex;
   gap:25px;
 }
-
 .menu a{
   color:white;
   text-decoration:none;
   font-weight:bold;
   transition:.3s;
 }
-
 .menu a:hover{
   color:#00aaff;
 }
-
 .menu-toggle{
   display:none;
   font-size:1.6rem;
@@ -84,17 +72,14 @@ body{
   padding:40px 20px 20px 20px;
   color:white;
 }
-
 .banner h1{
   margin:0;
   font-size:2.2rem;
 }
-
 .banner p{
   margin:4px 0;
   opacity:0.9;
 }
-
 .cta-btn{
   display:inline-block;
   margin-top:15px;
@@ -106,7 +91,6 @@ body{
   font-weight:bold;
   transition:.3s;
 }
-
 .cta-btn:hover{
   transform:scale(1.05);
 }
@@ -120,7 +104,6 @@ body{
   flex-direction:column;
   gap:15px;
 }
-
 .search-container input,
 .search-container select{
   width:100%;
@@ -133,205 +116,153 @@ body{
 }
 
 /* ===== SOP TABLE MODERN ===== */
-
 .dept-filter-bar{
-
-max-width:1050px;
-margin:20px auto;
-padding:0 20px;
-
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-
+  max-width:1050px;
+  margin:20px auto;
+  padding:0 20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
 }
-
 .dept-filter{
-
-padding:8px 16px;
-
-border-radius:20px;
-
-border:none;
-
-background:white;
-
-box-shadow:0 6px 14px rgba(0,0,0,0.15);
-
-font-size:.85rem;
-
-cursor:pointer;
-
-transition:.25s;
-
+  padding:8px 16px;
+  border-radius:20px;
+  border:none;
+  background:white;
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
+  font-size:.85rem;
+  cursor:pointer;
+  transition:.25s;
 }
-
 .dept-filter:hover{
-
-transform:scale(1.05);
-
+  transform:scale(1.05);
 }
-
 .dept-filter.active{
-
-background:#0072C6;
-
-color:white;
-
+  background:#0072C6;
+  color:white;
 }
-  
 .sop-info{
-background:white;
-padding:12px 18px;
-border-radius:12px;
-margin-bottom:10px;
-box-shadow:0 6px 20px rgba(0,0,0,0.15);
-font-size:.9rem;
-color:#374151;
+  background:white;
+  padding:12px 18px;
+  border-radius:12px;
+  margin-bottom:10px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.15);
+  font-size:.9rem;
+  color:#374151;
 }
 /* CONTENEDOR */
-
 .sop-container{
-max-width:1050px;
-margin:40px auto 80px auto;
-padding:0 20px;
+  max-width:1050px;
+  margin:40px auto 80px auto;
+  padding:0 20px;
 }
-
 /* TARJETA */
-
 .sop-card{
-background:white;
-border-radius:16px;
-box-shadow:0 15px 40px rgba(0,0,0,0.25);
-overflow:hidden;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.25);
+  overflow:hidden;
 }
-
 /* HEADER */
-
 .sop-card-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:18px 22px;
-background:#0f172a;
-color:white;
-font-weight:600;
-font-size:0.9rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 22px;
+  background:#0f172a;
+  color:white;
+  font-weight:600;
+  font-size:0.9rem;
 }
-
 .sop-count{
-opacity:.8;
-font-weight:400;
+  opacity:.8;
+  font-weight:400;
 }
-
 /* SCROLL */
-
 .table-scroll{
-max-height:550px;
-overflow-y:auto;
+  max-height:550px;
+  overflow-y:auto;
 }
-
 /* TABLA */
-
 .sop-table{
-width:100%;
-border-collapse:collapse;
+  width:100%;
+  border-collapse:collapse;
 }
-
 /* CABECERA */
-
 .sop-table thead th{
-position:sticky;
-top:0;
-background:#1e293b;
-color:#cbd5e1;
-padding:14px 18px;
-font-size:.75rem;
-letter-spacing:.08em;
-text-transform:uppercase;
-font-weight:600;
+  position:sticky;
+  top:0;
+  background:#1e293b;
+  color:#cbd5e1;
+  padding:14px 18px;
+  font-size:.75rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:600;
 }
-
 /* FILAS */
-
 .sop-table td{
-padding:16px 18px;
-border-bottom:1px solid #f1f5f9;
-font-size:.95rem;
+  padding:16px 18px;
+  border-bottom:1px solid #f1f5f9;
+  font-size:.95rem;
 }
-
 .sop-table tbody tr{
-transition:.2s;
+  transition:.2s;
 }
-
 .sop-table tbody tr:nth-child(even){
-background:#fafafa;
+  background:#fafafa;
 }
-
 .sop-table tbody tr:hover{
-background:#f1f5f9;
-transform:translateX(3px);
+  background:#f1f5f9;
+  transform:translateX(3px);
 }
-
 /* TITULO SOP */
-
 .sop-title{
-font-weight:600;
-color:#0f172a;
+  font-weight:600;
+  color:#0f172a;
 }
-
 /* BOTON */
-
 .sop-btn{
-display:inline-flex;
-align-items:center;
-gap:6px;
-padding:8px 16px;
-border-radius:10px;
-background:linear-gradient(135deg,#0072C6,#005a9e);
-color:white;
-text-decoration:none;
-font-size:.85rem;
-font-weight:500;
-transition:.25s;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 16px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#0072C6,#005a9e);
+  color:white;
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:500;
+  transition:.25s;
 }
-
 .sop-btn:hover{
-transform:scale(1.05);
-background:linear-gradient(135deg,#005a9e,#003f6b);
+  transform:scale(1.05);
+  background:linear-gradient(135deg,#005a9e,#003f6b);
 }
-
 /* SCROLLBAR */
-
 .table-scroll::-webkit-scrollbar{
-width:8px;
+  width:8px;
 }
-
 .table-scroll::-webkit-scrollbar-thumb{
-background:#cbd5e1;
-border-radius:10px;
+  background:#cbd5e1;
+  border-radius:10px;
 }
-  /* fondo sólido tabla */
-
+/* fondo sólido tabla */
 .sop-table tbody tr{
-background:white;
+  background:white;
 }
-
 .sop-table tbody tr:nth-child(even){
-background:#f8fafc;
+  background:#f8fafc;
 }
-
 .sop-table tbody tr:hover{
-background:#eef2f7;
+  background:#eef2f7;
 }
-
 /* asegurar fondo en celdas */
-
 .sop-table td{
-background:inherit;
+  background:inherit;
 }
-  
-  /* ===== VIDEOS ===== */
+
+/* ===== VIDEOS ===== */
 .video-section{
   max-width:1100px;
   margin:40px auto;
@@ -412,8 +343,9 @@ background:inherit;
 }
 
 }
-  
-/* ===== BADGES ===== */
+
+
+/* BADGES */
 .dept-badge{
   display:inline-flex;
   align-items:center;
@@ -423,9 +355,6 @@ background:inherit;
   font-size:.75rem;
   font-weight:600;
 }
-
-/* colores */
-
 .dept-carpinteria{background:#e0f2fe;color:#0369a1;}
 .dept-administracion{background:#ede9fe;color:#5b21b6;}
 .dept-comercial{background:#dcfce7;color:#166534;}
@@ -439,7 +368,6 @@ background:inherit;
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
-  /* Menu */
   .menu{
     display:none;
     flex-direction:column;
@@ -450,31 +378,23 @@ background:inherit;
     width:200px;
     padding:20px;
   }
-
   .menu.show{
     display:flex;
   }
-
   .menu-toggle{
     display:block;
   }
-
-  /* Tabla responsive */
   .sop-table, .sop-table thead, .sop-table tbody, .sop-table th, .sop-table td, .sop-table tr {
     display: block;
   }
 
-  .sop-table thead tr {
-    display: none; 
-  }
-
+  .sop-table thead tr { display: none; }
   .sop-table tbody tr {
     margin-bottom: 15px;
     background: #f9f9f9;
     border-radius: 12px;
     padding: 10px;
   }
-
   .sop-table tbody td {
     display: flex;
     justify-content: space-between;
@@ -482,7 +402,6 @@ background:inherit;
     border-bottom: none;
     font-size: 0.9rem;
   }
-
   .sop-table tbody td:before {
     content: attr(data-label);
     font-weight: 600;
@@ -507,14 +426,12 @@ background:inherit;
     <i class="fa-solid fa-bars"></i>
   </div>
   <div class="menu">
-  <a href="/sop-site/">Inicio</a>
-  <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-  <a href="/sop-site/Aportes/">Aportes SOP</a>   
-  <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>  
-  <a href="#" onclick="adminLogin()">
-    <i class="fa-solid fa-user-shield"></i> Admin
-  </a>
-</div>
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/Aportes/">Aportes SOP</a>   
+    <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>  
+    <a href="#" onclick="adminLogin()"><i class="fa-solid fa-user-shield"></i> Admin</a>
+  </div>
 </div>
 
 <!-- BANNER -->
@@ -539,56 +456,23 @@ background:inherit;
     <option value="ecopower">Ecopowertech</option>
     <option value="medidas">Medidas</option>
     <option value="taller">Taller</option>
-    
   </select>
 </div>
 
-  <div class="dept-filter-bar">
-
-<button onclick="filterDept('')" class="dept-filter active">
-Todos
-</button>
-
-<button onclick="filterDept('comercial')" class="dept-filter">
-Comercial
-</button>
-
-    
-<button onclick="filterDept('produccion')" class="dept-filter">
-Carpintería
-</button>
-
-<button onclick="filterDept('instalacion')" class="dept-filter">
-Stone
-</button>
-
-<button onclick="filterDept('administracion')" class="dept-filter">
-Administración
-</button>
-
-<button onclick="filterDept('maquinarias')" class="dept-filter">
-Maquinarias
-</button>
-
-<button onclick="filterDept('vehiculos')" class="dept-filter">
-Vehículos
-</button>
-
-<button onclick="filterDept('houzz-pro')" class="dept-filter">
-Houzz-Pro
-</button>
-
-<button onclick="filterDept('medidas')" class="dept-filter">
-Medidas
-</button>
-
-<button onclick="filterDept('taller')" class="dept-filter">
-Taller
-</button>
-
-
+<!-- DEPT FILTER BUTTONS -->
+<div class="dept-filter-bar">
+<button onclick="filterDept('')" class="dept-filter active">Todos</button>
+<button onclick="filterDept('comercial')" class="dept-filter">Comercial</button>
+<button onclick="filterDept('produccion')" class="dept-filter">Carpintería</button>
+<button onclick="filterDept('instalacion')" class="dept-filter">Stone</button>
+<button onclick="filterDept('administracion')" class="dept-filter">Administración</button>
+<button onclick="filterDept('maquinarias')" class="dept-filter">Maquinarias</button>
+<button onclick="filterDept('vehiculos')" class="dept-filter">Vehículos</button>
+<button onclick="filterDept('houzz-pro')" class="dept-filter">Houzz-Pro</button>
+<button onclick="filterDept('medidas')" class="dept-filter">Medidas</button>
+<button onclick="filterDept('taller')" class="dept-filter">Taller</button>
 </div>
-  
+
 <!-- TABLA -->
 <div class="sop-container" id="sopContainer"></div>
 
@@ -645,22 +529,36 @@ Taller
 </div>
 </div>
 
+
 <script>
 /* MENU */
-function toggleMenu(){
-  document.querySelector('.menu').classList.toggle('show');
+function toggleMenu(){ document.querySelector('.menu').classList.toggle('show'); }
+function adminLogin(){
+  const password = prompt("Ingrese contraseña de administrador");
+  if(password === "Artemisa2026"){ window.location.href="/sop-site/admin/"; }
+  else{ alert("Acceso denegado"); }
 }
 
-/* SOP DATA */
+/* ===== SOP DATA ===== */
 let SOP_INDEX = [];
+const SHEET_ID = "1zUZ37cWCS4N72AG5H2c_RRgjGhcQ5pj_D9qNBbRCRcI";
+const SHEET_NAME = "SOP_Admin";
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
-fetch('SOP_INDEX.json?v=' + Date.now())
-.then(res => res.json())
-.then(data=>{
-  SOP_INDEX = data;
-  sortByDepartment();
-  renderSOP();
-});
+fetch(SHEET_URL)
+  .then(res => res.text())
+  .then(data => {
+    const json = JSON.parse(data.substring(47).slice(0,-2));
+    SOP_INDEX = json.table.rows.map(row => ({
+      id: row.c[9]?.v || "SOP-"+Date.now(),  // 🔹 id_sop
+      title: row.c[6]?.v || "--",
+      department: row.c[3]?.v || "--",
+      url: row.c[8]?.v || "#",
+      keywords: (row.c[4]?.v || "") + " " + (row.c[5]?.v || "")
+    }));
+    sortByDepartment();
+    renderSOP();
+  });
 
 /* ORDEN */
 function sortByDepartment(){
@@ -675,79 +573,29 @@ function sortByDepartment(){
   });
 }
 
-/* RENDER TABLA + SCROLL SOLO DESPUÉS DE 20 FILAS */
+/* RENDER TABLA */
 function renderSOP(filtered){
-
   const container = document.getElementById("sopContainer");
   const list = filtered || SOP_INDEX;
 
-  let html = `
-  <div class="sop-info">
-  Mostrando <strong>${list.length}</strong> SOP
-  </div>
-
-  <div class="table-wrapper">
-
-  <table class="sop-table">
-
-  <thead>
-  <tr>
-  <th onclick="sortTable('department')">Departamento</th>
-  <th onclick="sortTable('title')">Procedimiento SOP</th>
-  <th>Acción</th>
-  </tr>
-  </thead>
-
-  <tbody>
-  `;
+  let html = `<div class="sop-info">Mostrando <strong>${list.length}</strong> SOP</div><div class="table-wrapper"><table class="sop-table"><thead><tr><th onclick="sortTable('department')">Departamento</th><th onclick="sortTable('title')">Procedimiento SOP</th><th>Acción</th></tr></thead><tbody>`;
 
   list.forEach(sop=>{
-
-  html+=`
-  <tr>
-
-  <td data-label="Departamento">
-  ${getDepartmentBadge(sop.department)}
-  </td>
-
-  <td data-label="Procedimiento">
-  <span class="sop-title">${sop.title}</span>
-  </td>
-
-  <td data-label="Acción">
-  <a class="sop-btn" href="/sop-site/viewer.html?doc=${sop.url}">
-  <i class="fa-solid fa-eye"></i> Ver
-  </a>
-  </td>
-
-  </tr>
-  `;
-
+    html += `<tr>
+      <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
+      <td data-label="Procedimiento"><span class="sop-title">${sop.title}</span></td>
+      <td data-label="Acción"><a class="sop-btn" href="/sop-site/viewer.html?doc=${encodeURIComponent(sop.url)}&id=${sop.id}"><i class="fa-solid fa-eye"></i> Ver</a></td>
+    </tr>`;
   });
 
-  html+=`
-  </tbody>
-  </table>
-
-  </div>
-  `;
-
+  html += `</tbody></table></div>`;
   container.innerHTML = html;
-
 }
-/* BADGE */
 
-  function getDepartmentBadge(dep){
-
-  // Alias visual
-  if(dep === "produccion"){
-    dep = "carpinteria";
-  }
-
-
-     if(dep === "instalacion"){
-    dep = "stone";
-  }
+/* BADGES */
+function getDepartmentBadge(dep){
+  if(dep === "produccion") dep = "carpinteria";
+  if(dep === "instalacion") dep = "stone";
 
   const map = {
     carpinteria:{name:"Carpintería",icon:"fa-hammer"},
@@ -764,30 +612,24 @@ function renderSOP(filtered){
 
   const d = map[dep];
   if(!d) return dep;
-
-  return `<span class="dept-badge dept-${dep}">
-  <i class="fa-solid ${d.icon}"></i> ${d.name}
-  </span>`;
+  return `<span class="dept-badge dept-${dep}"><i class="fa-solid ${d.icon}"></i> ${d.name}</span>`;
 }
 
-/* SEARCH */
-document.getElementById("searchInput").addEventListener("input",filterSOP);
-document.getElementById("deptFilter").addEventListener("change",filterSOP);
+/* SEARCH & FILTER */
+document.getElementById("searchInput").addEventListener("input", filterSOP);
+document.getElementById("deptFilter").addEventListener("change", filterSOP);
 
 function filterSOP(){
   const search = document.getElementById("searchInput").value.toLowerCase();
   const dept = document.getElementById("deptFilter").value;
   const filtered = SOP_INDEX.filter(sop=>{
     const matchDept = dept==="" || sop.department===dept;
-    const matchSearch =
-      (sop.title||"").toLowerCase().includes(search) ||
-      (sop.keywords||"").toLowerCase().includes(search);
+    const matchSearch = (sop.title||"").toLowerCase().includes(search) || (sop.keywords||"").toLowerCase().includes(search);
     return matchDept && matchSearch;
   });
   renderSOP(filtered);
 }
 
-/* SORT */
 function sortTable(field){
   SOP_INDEX.sort((a,b)=>{
     let A = (a[field]||"").toLowerCase();
@@ -798,65 +640,14 @@ function sortTable(field){
   });
   renderSOP();
 }
+
 function filterDept(dep){
-
-const buttons = document.querySelectorAll(".dept-filter");
-
-buttons.forEach(btn=>btn.classList.remove("active"));
-
-event.target.classList.add("active");
-
-document.getElementById("deptFilter").value = dep;
-
-filterSOP();
-
+  const buttons = document.querySelectorAll(".dept-filter");
+  buttons.forEach(btn=>btn.classList.remove("active"));
+  event.target.classList.add("active");
+  document.getElementById("deptFilter").value = dep;
+  filterSOP();
 }
-function adminLogin(){
-
-const password = prompt("Ingrese contraseña de administrador");
-
-if(password === "Artemisa2026"){   // puedes cambiar la clave
-
-    window.location.href="/sop-site/admin/";
-
-}else{
-
-    alert("Acceso denegado");
-
-}
-
-}
-
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
