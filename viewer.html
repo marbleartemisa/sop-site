@@ -23,7 +23,6 @@ body{
 
 .brand{
   font-weight:600;
-  font-size:15px;
 }
 
 .back{
@@ -32,7 +31,6 @@ body{
   padding:6px 14px;
   border-radius:6px;
   text-decoration:none;
-  font-size:13px;
 }
 
 /* HEADER */
@@ -74,18 +72,17 @@ iframe{
   border:none;
 }
 
-/* OVERLAY */
+/* OVERLAY (NO BLOQUEA SCROLL) */
 #overlay{
   position:absolute;
   top:0;
   left:0;
   width:100%;
   height:100%;
-  display:none;
-  cursor:crosshair;
+  pointer-events:none; /* 🔥 clave */
 }
 
-/* MARCADORES */
+/* MARCADOR */
 .marker{
   position:absolute;
   width:14px;
@@ -93,7 +90,6 @@ iframe{
   background:red;
   border-radius:50%;
   transform:translate(-50%,-50%);
-  cursor:pointer;
 }
 
 /* SIDEBAR */
@@ -120,7 +116,6 @@ iframe{
   padding:8px;
   margin-bottom:8px;
   border-radius:6px;
-  font-size:13px;
 }
 </style>
 </head>
@@ -133,12 +128,13 @@ iframe{
 </div>
 
 <div class="doc-header">
-  <div id="title">Documento SOP</div>
+  <div>Documento SOP</div>
   <div>
     <button class="tool" onclick="openNew()">Abrir</button>
     <button class="tool" onclick="downloadDoc()">Descargar</button>
     <button class="tool" onclick="printDoc()">Imprimir</button>
     <button class="tool" onclick="adminLogin()">🔒 Editar</button>
+    <button class="tool" onclick="activateComment()">💬 Comentar</button>
   </div>
 </div>
 
@@ -157,7 +153,7 @@ iframe{
 
 <script>
 
-// ================== VARIABLES ==================
+// ================= VARIABLES =================
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 
@@ -165,13 +161,14 @@ const frame = document.getElementById("frame");
 const overlay = document.getElementById("overlay");
 
 let editMode = false;
+let commentMode = false;
 
-// ================== CARGAR DOCUMENTO ==================
+// ================= CARGAR =================
 if(doc){
   frame.src = doc;
 }
 
-// ================== BOTONES ==================
+// ================= BOTONES =================
 function openNew(){ if(doc) window.open(doc,"_blank"); }
 function downloadDoc(){
   if(doc){
@@ -183,14 +180,13 @@ function downloadDoc(){
 }
 function printDoc(){ if(doc) frame.contentWindow.print(); }
 
-// ================== LOGIN ==================
+// ================= LOGIN =================
 function adminLogin(){
   const password = prompt("Ingrese contraseña");
 
   if(password === "Artemisa2026"){
     editMode = true;
     document.getElementById("commentSidebar").classList.add("active");
-    overlay.style.display = "block";
     loadComments();
     alert("Modo edición activado");
   }else{
@@ -198,13 +194,31 @@ function adminLogin(){
   }
 }
 
-// ================== CREAR COMENTARIOS ==================
+// ================= ACTIVAR COMENTARIO =================
+function activateComment(){
+  if(!editMode){
+    alert("Activa primero modo edición");
+    return;
+  }
+
+  commentMode = true;
+  overlay.style.pointerEvents = "auto";
+  overlay.style.cursor = "crosshair";
+  overlay.style.background = "rgba(0,0,0,0.05)";
+
+  alert("Haz click en el punto donde quieres comentar");
+}
+
+// ================= CLICK =================
 overlay.addEventListener("click", function(e){
 
-  if(!editMode) return;
+  if(!editMode || !commentMode) return;
 
   const comment = prompt("Escribe el comentario:");
-  if(!comment) return;
+  if(!comment){
+    resetMode();
+    return;
+  }
 
   const x = e.offsetX;
   const y = e.offsetY;
@@ -218,16 +232,26 @@ overlay.addEventListener("click", function(e){
 
   saveComment({x,y,comment});
   renderComments();
+
+  resetMode();
 });
 
-// ================== GUARDAR ==================
+// ================= RESET =================
+function resetMode(){
+  commentMode = false;
+  overlay.style.pointerEvents = "none";
+  overlay.style.cursor = "default";
+  overlay.style.background = "transparent";
+}
+
+// ================= GUARDAR =================
 function saveComment(c){
   const list = JSON.parse(localStorage.getItem(doc) || "[]");
   list.push(c);
   localStorage.setItem(doc, JSON.stringify(list));
 }
 
-// ================== CARGAR ==================
+// ================= CARGAR =================
 function loadComments(){
   const comments = JSON.parse(localStorage.getItem(doc) || "[]");
 
@@ -242,7 +266,7 @@ function loadComments(){
   renderComments();
 }
 
-// ================== SIDEBAR ==================
+// ================= SIDEBAR =================
 function renderComments(){
   const listEl = document.getElementById("commentList");
   listEl.innerHTML = "";
@@ -253,7 +277,6 @@ function renderComments(){
     const div = document.createElement("div");
     div.className = "comment-box";
     div.innerText = c.comment;
-
     listEl.appendChild(div);
   });
 }
