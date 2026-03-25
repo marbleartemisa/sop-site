@@ -4,35 +4,148 @@
 <meta charset="UTF-8">
 <title>Viewer SOP Pro - Artemisa</title>
 <style>
-body{margin:0;background:#f1f5f9;font-family:"Segoe UI",Arial,sans-serif;}
+body{
+  margin:0;
+  background:#f1f5f9;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+/* TOPBAR */
 .topbar{
-  background:#0f172a;color:white;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;z-index:100;position:fixed;width:100%;
+  background:#0f172a;
+  color:white;
+  padding:14px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:100;
+  position:fixed;
+  width:100%;
+  top:0;
 }
-.brand{font-weight:600;font-size:15px;}
-.back{background:#2563eb;color:white;padding:6px 14px;border-radius:6px;text-decoration:none;}
-.doc-header{max-width:1100px;margin:80px auto 20px auto;display:flex;justify-content:space-between;align-items:center;transition:.3s;}
-.tool{background:white;border:1px solid #d1d5db;padding:6px 12px;border-radius:6px;cursor:pointer;}
-.doc-area{display:flex;justify-content:center;transition:.3s;}
-.doc-frame{width:100%;max-width:1100px;background:white;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.15);position:relative;}
-iframe{width:100%;height:88vh;border:none;}
-#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;}
-.marker{position:absolute;width:14px;height:14px;background:red;border-radius:50%;transform:translate(-50%,-50%);}
+
+/* BRAND Y BOTÓN BACK */
+.brand{
+  font-weight:600;
+  font-size:15px;
+}
+.back{
+  background:#2563eb;
+  color:white;
+  padding:6px 14px;
+  border-radius:6px;
+  text-decoration:none;
+}
+
+/* HEADER DE HERRAMIENTAS */
+.doc-header{
+  max-width:1100px;
+  margin:80px auto 20px auto; /* debajo del topbar */
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:.3s;
+}
+.tool{
+  background:white;
+  border:1px solid #d1d5db;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* DOCUMENTO */
+.doc-area{
+  display:flex;
+  justify-content:center;
+  transition:.3s;
+}
+.doc-frame{
+  width:100%;
+  max-width:1100px;
+  background:white;
+  border-radius:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  position:relative;
+}
+iframe{
+  width:100%;
+  height:88vh;
+  border:none;
+}
+
+/* OVERLAY */
+#overlay{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:10;
+}
+
+/* MARKER */
+.marker{
+  position:absolute;
+  width:14px;
+  height:14px;
+  background:red;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+}
+
+/* SIDEBAR */
 #commentSidebar{
-  position:fixed;top:60px;right:0;width:350px;height:calc(100% - 60px);background:white;box-shadow:-4px 0 10px rgba(0,0,0,.2);padding:15px;transform:translateX(100%);transition:.3s;z-index:50;overflow:auto;
+  position:fixed;
+  top:60px; /* empieza debajo del topbar */
+  right:0;
+  width:350px;
+  height:calc(100% - 60px);
+  background:white;
+  box-shadow:-4px 0 10px rgba(0,0,0,.2);
+  padding:15px;
+  transform:translateX(100%);
+  transition:.3s;
+  z-index:50;
+  overflow:auto;
 }
-#commentSidebar.active{transform:translateX(0);}
-body.sidebar-open .doc-area, body.sidebar-open .doc-header{margin-right:350px;}
-.comment-box{border:1px solid #ddd;padding:8px;margin-bottom:10px;border-radius:6px;font-size:13px;background:#f9fafb;}
-.closeSidebar{cursor:pointer;float:right;font-weight:bold;font-size:16px;}
+#commentSidebar.active{
+  transform:translateX(0);
+}
+
+/* EMPUJA CONTENIDO AL ABRIR SIDEBAR */
+body.sidebar-open .doc-area,
+body.sidebar-open .doc-header{
+  margin-right:350px;
+}
+
+/* COMMENT BOX */
+.comment-box{
+  border:1px solid #ddd;
+  padding:8px;
+  margin-bottom:10px;
+  border-radius:6px;
+  font-size:13px;
+  background:#f9fafb;
+}
+.closeSidebar{
+  cursor:pointer;
+  float:right;
+  font-weight:bold;
+  font-size:16px;
+}
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="brand">ARTEMISA SOP • VIEWER</div>
   <a class="back" href="/sop-site/">⬅ Biblioteca</a>
 </div>
 
+<!-- HEADER HERRAMIENTAS -->
 <div class="doc-header">
   <div id="title">Documento SOP</div>
   <div>
@@ -44,6 +157,7 @@ body.sidebar-open .doc-area, body.sidebar-open .doc-header{margin-right:350px;}
   </div>
 </div>
 
+<!-- DOCUMENTO -->
 <div class="doc-area">
   <div class="doc-frame">
     <iframe id="frame"></iframe>
@@ -51,9 +165,11 @@ body.sidebar-open .doc-area, body.sidebar-open .doc-header{margin-right:350px;}
   </div>
 </div>
 
+<!-- SIDEBAR -->
 <div id="commentSidebar">
   <span class="closeSidebar" onclick="closeSidebar()">⬅</span>
   <h3>Comentarios</h3>
+
   <label>Empleado</label>
   <select id="commentUser">
     <option value="">Seleccione</option>
@@ -85,33 +201,31 @@ body.sidebar-open .doc-area, body.sidebar-open .doc-header{margin-right:350px;}
 </div>
 
 <script>
+// VARIABLES
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 const frame = document.getElementById("frame");
 const overlay = document.getElementById("overlay");
-let editMode = false;
-let commentMode = false;
+let editMode=false, commentMode=false;
 
 if(doc) frame.src = doc;
 
 // BOTONES
 function openNew(){window.open(doc,"_blank");}
-function downloadDoc(){const a=document.createElement("a");a.href=doc;a.download="";a.click();}
+function downloadDoc(){const a=document.createElement("a"); a.href=doc; a.download=""; a.click();}
 function printDoc(){frame.contentWindow.print();}
 
-// LOGIN con solicitud de usuario
+// LOGIN: pide usuario
 function adminLogin(){
   const user = prompt("Ingrese su nombre para editar");
   if(user){
-    editMode = true;
-    document.getElementById("commentUser").value = user;
+    editMode=true;
+    document.getElementById("commentUser").value=user;
     document.getElementById("commentSidebar").classList.add("active");
     document.body.classList.add("sidebar-open");
     loadComments();
     alert("Modo edición activado");
-  }else{
-    alert("Debe ingresar su nombre");
-  }
+  }else alert("Debe ingresar su nombre");
 }
 
 // CERRAR SIDEBAR
@@ -122,18 +236,19 @@ function closeSidebar(){
 
 // ACTIVAR COMENTARIO
 function activateComment(){
-  if(!editMode){alert("Activa modo edición primero");return;}
-  commentMode = true;
+  if(!editMode){alert("Activa modo edición primero"); return;}
+  commentMode=true;
   overlay.style.pointerEvents="auto";
   overlay.style.background="rgba(0,0,0,0.05)";
   alert("Selecciona texto dentro del documento");
 }
 
-// CLICK PARA MARCAR TEXTO
+// CLICK PARA COMENTAR (texto seleccionado)
 overlay.addEventListener("click", function(e){
   if(!commentMode) return;
+
   const user = document.getElementById("commentUser").value;
-  if(!user){alert("Selecciona empleado");return;}
+  if(!user){alert("Selecciona empleado"); return;}
 
   const type = document.getElementById("commentType").value;
   const status = document.getElementById("commentStatus").value;
@@ -165,20 +280,18 @@ function saveComment(c){
 
 // CARGAR
 function loadComments(){
-  const comments=JSON.parse(localStorage.getItem(doc)||"[]");
   renderComments();
 }
 
 // RENDER
 function renderComments(){
-  const list = document.getElementById("commentList");
+  const list=document.getElementById("commentList");
   list.innerHTML="";
-  const comments = JSON.parse(localStorage.getItem(doc)||"[]");
+  const comments=JSON.parse(localStorage.getItem(doc)||"[]");
   comments.forEach(c=>{
-    const div = document.createElement("div");
+    const div=document.createElement("div");
     div.className="comment-box";
-    div.innerHTML = `<b>${c.user}</b><br>${c.text}<br>
-      <small>📅 ${c.date}<br>🏷 ${c.type} | ${c.status}</small>`;
+    div.innerHTML=`<b>${c.user}</b><br>${c.text}<br><small>📅 ${c.date}<br>🏷 ${c.type} | ${c.status}</small>`;
     list.appendChild(div);
   });
 }
