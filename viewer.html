@@ -275,17 +275,29 @@ body.sidebar-open .doc-header{margin-right:350px;}
     <button onclick="closeLogin()">Cancelar</button>
   </div>
 </div>
-
 <script>
+// ===============================
+// CONFIG
+// ===============================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+
+// ===============================
 // VARIABLES
+// ===============================
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
+let idSOP = params.get("id"); // 🔥 IMPORTANTE
+
 const frame = document.getElementById("frame");
-const overlay = document.getElementById("overlay");
-let editMode=false, commentMode=false;
+
+let editMode=false;
 let currentUser="";
 
-// USUARIOS Y CLAVES PROVISIONALES
+if(doc) frame.src = doc;
+
+// ===============================
+// USUARIOS
+// ===============================
 const users = {
   "Damian Molina":"Dam1975",
   "Alberto Molina":"Alb1975",
@@ -296,107 +308,183 @@ const users = {
   "Otros":"Otr1975"
 };
 
-if(doc) frame.src = doc;
-
+// ===============================
 // BOTONES
+// ===============================
 function openNew(){window.open(doc,"_blank");}
 function downloadDoc(){const a=document.createElement("a"); a.href=doc;a.download=""; a.click();}
 function printDoc(){frame.contentWindow.print();}
 
+// ===============================
 // LOGIN
+// ===============================
 function showLogin(){ 
   document.getElementById("loginOverlay").style.display="flex"; 
   document.getElementById("loginMessage").innerText="";
 }
 function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
+
 function checkLogin(){
   const user = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
   const msg = document.getElementById("loginMessage");
+
   if(!user){msg.innerText="Seleccione un usuario"; return;}
   if(users[user]!==pass){msg.innerText="Clave incorrecta"; return;}
+
   editMode=true;
   currentUser=user;
+
   document.getElementById("commentUser").value=user;
   document.getElementById("commentSidebar").classList.add("active");
   document.body.classList.add("sidebar-open");
-  loadComments();
+
+  loadComments(); // 🔥 desde sheet
   closeLogin();
-  alert("Modo edición activado para " + user);
 }
 
+// ===============================
 // SIDEBAR
+// ===============================
 function closeSidebar(){
   document.getElementById("commentSidebar").classList.remove("active");
   document.body.classList.remove("sidebar-open");
 }
 
-// COMENTARIOS
-function commentSelectedText(){
-  if(!editMode){alert("Activa modo edición primero"); return;}
+// ===============================
+// GUARDAR COMENTARIO
+// ===============================
+async function commentSelectedText(){
+
+  if(!editMode){
+    alert("Activa modo edición primero");
+    return;
+  }
+
   const sel = frame.contentWindow.getSelection();
   const text = sel.toString().trim();
-  if(!text){alert("Selecciona un texto válido dentro del documento"); return;}
-  const commentText = prompt("Escribe tu comentario sobre el texto seleccionado:");
-  if(commentText === null) return;
-  if(commentText.trim()===""){alert("Comentario vacío"); return;}
-  const user = currentUser;
+
+  if(!text){
+    alert("Selecciona un texto válido");
+    return;
+  }
+
+  const commentText = prompt("Escribe tu comentario:");
+  if(!commentText || commentText.trim()===""){
+    alert("Comentario vacío");
+    return;
+  }
+
   const type = document.getElementById("commentType").value;
   const status = document.getElementById("commentStatus").value;
   const now = new Date().toLocaleString();
-  const comment = {text,commentText,user,type,status,date:now};
-  saveComment(comment);
-  highlightSelection(sel, comment);
-  renderComments();
+
+  const payload = {
+    tipo:"comentario",
+    id_sop: idSOP,
+    usuario: currentUser,
+    comentario: commentText,
+    tipo_comentario: type,
+    estado: status,
+    text_selected: text,
+    context_before: text.substring(0,20),
+    context_after: text.substring(text.length-20),
+    url_doc: doc
+  };
+
+  try{
+    const res = await fetch(SCRIPT_URL,{
+      method:"POST",
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+
+      // 🔹 guardar local backup
+      saveLocalComment({
+        ...payload,
+        date: now
+      });
+
+      highlightSelection(sel, payload);
+      loadComments();
+
+      alert("✅ Comentario guardado");
+
+    }else{
+      alert("❌ Error: " + data.error);
+    }
+
+  }catch(err){
+    alert("❌ Error conexión");
+  }
 }
 
-// GUARDAR Y CARGAR
-function saveComment(c){
+// ===============================
+// LOCAL STORAGE (backup)
+// ===============================
+function saveLocalComment(c){
   const list=JSON.parse(localStorage.getItem(doc)||"[]");
   list.push(c);
   localStorage.setItem(doc,JSON.stringify(list));
 }
-function loadComments(){ renderComments(); }
 
-// RENDER COMMENTS CON BOTÓN BORRAR INDIVIDUAL
-function renderComments(){
+// ===============================
+// CARGAR DESDE SHEET
+// ===============================
+async function loadComments(){
+
+  if(!idSOP) return;
+
+  try{
+    const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
+    const data = await res.json();
+
+    renderComments(data);
+
+  }catch(err){
+    console.error("Error cargando comentarios:", err);
+  }
+}
+
+// ===============================
+// RENDER
+// ===============================
+function renderComments(comments){
+
   const list=document.getElementById("commentList");
   list.innerHTML="";
-  const comments=JSON.parse(localStorage.getItem(doc)||"[]");
-  comments.forEach((c,index)=>{
+
+  comments.forEach(c=>{
     const div=document.createElement("div");
     div.className="comment-box";
+
     div.innerHTML=`
-      <b>${c.user}</b> - <i>${c.commentText}</i><br>
-      <mark>${c.text}</mark><br>
-      <small>📅 ${c.date} | 🏷 ${c.type} | ${c.status}</small><br>
-      <button style="margin-top:5px;font-size:12px;" onclick="deleteSingleComment(${index})">🗑 Borrar</button>
+      <b>${c.usuario}</b> - <i>${c.comentario}</i><br>
+      <mark>${c.texto}</mark><br>
+      <small>📅 ${c.fecha} | 🏷 ${c.tipo} | ${c.estado}</small>
     `;
+
     list.appendChild(div);
   });
 }
 
-// BORRAR COMENTARIO INDIVIDUAL
-function deleteSingleComment(index){
-  const comments = JSON.parse(localStorage.getItem(doc)||"[]");
-  if(confirm("¿Seguro que deseas borrar este comentario?")){
-    comments.splice(index,1);
-    localStorage.setItem(doc, JSON.stringify(comments));
-    renderComments();
-  }
-}
-
-// RESALTAR TEXTO SELECCIONADO
+// ===============================
+// RESALTADO
+// ===============================
 function highlightSelection(sel, comment){
   if(sel.rangeCount){
     const range = sel.getRangeAt(0);
     const mark = document.createElement("mark");
     mark.style.background="#fff176";
-    mark.title=`${comment.user} | ${comment.type} | ${comment.status} | ${comment.commentText}`;
+    mark.title = comment.comentario;
     range.surroundContents(mark);
     sel.removeAllRanges();
   }
 }
 </script>
+
 </body>
 </html>
