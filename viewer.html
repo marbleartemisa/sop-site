@@ -67,7 +67,7 @@ iframe{
   border:none;
 }
 
-/* OVERLAY */
+/* OVERLAY PARA SELECCIÓN */
 #overlay{
   position:absolute;
   top:0;
@@ -110,26 +110,52 @@ body.sidebar-open .doc-header{margin-right:350px;}
   font-weight:bold;
   font-size:16px;
 }
+
+/* LOGIN OVERLAY */
+#loginOverlay{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:200;
+}
+#loginOverlay div{
+  background:white;
+  padding:20px;
+  border-radius:8px;
+  min-width:300px;
+}
+#loginOverlay label, #loginOverlay input, #loginOverlay select{
+  display:block;
+  width:100%;
+  margin-bottom:10px;
+}
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="brand">ARTEMISA SOP • VIEWER</div>
   <a class="back" href="/sop-site/">⬅ Biblioteca</a>
 </div>
 
+<!-- HERRAMIENTAS -->
 <div class="doc-header">
   <div id="title">Documento SOP</div>
   <div>
     <button class="tool" onclick="openNew()">Abrir</button>
     <button class="tool" onclick="downloadDoc()">Descargar</button>
     <button class="tool" onclick="printDoc()">Imprimir</button>
-    <button class="tool" onclick="adminLogin()">🔒 Editar</button>
+    <button class="tool" onclick="showLogin()">🔒 Editar</button>
     <button class="tool" onclick="activateComment()">💬 Comentar</button>
   </div>
 </div>
 
+<!-- DOCUMENTO -->
 <div class="doc-area">
   <div class="doc-frame">
     <iframe id="frame"></iframe>
@@ -137,6 +163,7 @@ body.sidebar-open .doc-header{margin-right:350px;}
   </div>
 </div>
 
+<!-- SIDEBAR -->
 <div id="commentSidebar">
   <span class="closeSidebar" onclick="closeSidebar()">⬅</span>
   <h3>Comentarios</h3>
@@ -170,6 +197,35 @@ body.sidebar-open .doc-header{margin-right:350px;}
   <div id="commentList"></div>
 </div>
 
+<!-- LOGIN -->
+<div id="loginOverlay">
+  <div>
+    <h3>Login para edición</h3>
+    <label>Usuario:</label>
+    <select id="loginUser">
+      <option value="">Seleccione usuario</option>
+      <option>Damian Molina</option>
+      <option>Alberto Molina</option>
+      <option>Gabriel Batista</option>
+      <option>Jenny Perez</option>
+      <option>Yoandry Perez</option>
+      <option>Wendy Romanach</option>
+      <option>Rolando Diaz</option>
+      <option>Krishna Camila Rojas</option>
+      <option>Gregorio Abreu</option>
+      <option>Juan Pablo Molina</option>
+      <option>Kevin Pastor</option>
+      <option>Eliana Pineda</option> 
+      <option>Carlos Herrera</option>
+      <option>Otros</option>
+    </select>
+    <label>Clave:</label>
+    <input type="password" id="loginPass" placeholder="Ingrese clave">
+    <button onclick="checkLogin()">Iniciar sesión</button>
+    <button onclick="closeLogin()">Cancelar</button>
+  </div>
+</div>
+
 <script>
 // VARIABLES
 const params = new URLSearchParams(window.location.search);
@@ -179,7 +235,7 @@ const overlay = document.getElementById("overlay");
 let editMode=false, commentMode=false;
 let currentUser="";
 
-// LISTA DE USUARIOS Y CONTRASEÑAS PROVISIONALES
+// USUARIOS Y CLAVES PROVISIONALES
 const users = {
   "Damian Molina":"Dam1975",
   "Alberto Molina":"Alb1975",
@@ -197,30 +253,32 @@ function openNew(){window.open(doc,"_blank");}
 function downloadDoc(){const a=document.createElement("a"); a.href=doc;a.download=""; a.click();}
 function printDoc(){frame.contentWindow.print();}
 
-// LOGIN CON VALIDACION DE CONTRASEÑA
-function adminLogin(){
-  const user = prompt("Ingrese su nombre de usuario:");
-  if(!user || !users[user]){
-    alert("Usuario no válido"); return;
-  }
-  const pass = prompt("Ingrese contraseña para " + user);
-  if(pass!==users[user]){ alert("Contraseña incorrecta"); return; }
+// LOGIN
+function showLogin(){ document.getElementById("loginOverlay").style.display="flex"; }
+function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
+function checkLogin(){
+  const user = document.getElementById("loginUser").value;
+  const pass = document.getElementById("loginPass").value;
+  if(!user){alert("Seleccione usuario"); return;}
+  if(users[user]!==pass){alert("Clave incorrecta"); return;}
+  // LOGIN OK
   editMode=true;
   currentUser=user;
   document.getElementById("commentUser").value=user;
   document.getElementById("commentSidebar").classList.add("active");
   document.body.classList.add("sidebar-open");
   loadComments();
+  closeLogin();
   alert("Modo edición activado para " + user);
 }
 
-// CERRAR SIDEBAR
+// SIDEBAR
 function closeSidebar(){
   document.getElementById("commentSidebar").classList.remove("active");
   document.body.classList.remove("sidebar-open");
 }
 
-// ACTIVAR COMENTARIO
+// COMENTARIOS
 function activateComment(){
   if(!editMode){alert("Activa modo edición primero"); return;}
   commentMode=true;
@@ -229,8 +287,7 @@ function activateComment(){
   alert("Selecciona texto dentro del documento");
 }
 
-// CLICK PARA COMENTAR (TEXTO SELECCIONADO)
-overlay.addEventListener("click", function(e){
+overlay.addEventListener("click", function(){
   if(!commentMode) return;
 
   const user = currentUser;
@@ -245,32 +302,25 @@ overlay.addEventListener("click", function(e){
 
   const now = new Date().toLocaleString();
 
-  // Guardar comentario
   const comment = {text,user,type,status,date:now};
   saveComment(comment);
-
-  // RESALTAR TEXTO
   highlightSelection(sel, comment);
-
   renderComments();
   resetOverlay();
 });
 
-// RESET OVERLAY
 function resetOverlay(){
   commentMode=false;
   overlay.style.pointerEvents="none";
   overlay.style.background="transparent";
 }
 
-// GUARDAR
+// GUARDAR Y CARGAR
 function saveComment(c){
   const list=JSON.parse(localStorage.getItem(doc)||"[]");
   list.push(c);
   localStorage.setItem(doc,JSON.stringify(list));
 }
-
-// CARGAR Y RENDER
 function loadComments(){ renderComments(); }
 function renderComments(){
   const list=document.getElementById("commentList");
@@ -284,11 +334,11 @@ function renderComments(){
   });
 }
 
-// FUNCION PARA RESALTAR TEXTO
+// RESALTAR TEXTO SELECCIONADO
 function highlightSelection(sel, comment){
   if(sel.rangeCount){
-    const range=sel.getRangeAt(0);
-    const mark=document.createElement("mark");
+    const range = sel.getRangeAt(0);
+    const mark = document.createElement("mark");
     mark.style.background="yellow";
     mark.title=`${comment.user} | ${comment.type} | ${comment.status}`;
     range.surroundContents(mark);
