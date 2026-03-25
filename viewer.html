@@ -4,32 +4,188 @@
 <meta charset="UTF-8">
 <title>Viewer SOP Pro - Artemisa</title>
 <style>
-body{margin:0; background:#f1f5f9; font-family:"Segoe UI",Arial,sans-serif;}
-.topbar{background:#0f172a;color:white;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:fixed;width:100%;top:0;z-index:100;box-sizing:border-box;}
-.brand{font-weight:600;font-size:15px;}
-.back{background:#2563eb;color:white;padding:6px 12px;border-radius:6px;text-decoration:none;font-size:13px;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;}
-.doc-header{max-width:1100px;margin:70px auto 20px auto; display:flex; justify-content:space-between; align-items:center;}
-.tool{background:white;border:1px solid #d1d5db;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px;}
-.tool:hover{background:#f3f4f6;}
-.doc-area{display:flex;justify-content:center;}
-.doc-frame{width:100%;max-width:1100px;background:white;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.15);position:relative;}
-iframe{width:100%;height:88vh;border:none;}
-#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;}
-#commentSidebar{position:fixed;top:60px;right:0;width:350px;height:calc(100% - 60px);background:white;box-shadow:-4px 0 10px rgba(0,0,0,.2);padding:15px;transform:translateX(100%);transition:.3s;z-index:50;overflow:auto;font-size:14px;}
-#commentSidebar.active{transform:translateX(0);}
-body.sidebar-open .doc-area, body.sidebar-open .doc-header{margin-right:350px;}
-.comment-box{border:1px solid #ddd;padding:10px;margin-bottom:10px;border-radius:8px;background:#f9fafb;}
-.comment-box mark{background:#fff176;padding:0 2px;}
-.closeSidebar{cursor:pointer;float:right;font-weight:bold;font-size:16px;}
-#commentSidebar select, #commentSidebar input{width:100%;padding:6px 10px;margin-bottom:10px;border-radius:6px;border:1px solid #cbd5e1;font-size:13px;background:#f8fafc;}
-#loginOverlay{position:fixed;top:0; left:0;width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:200;}
-#loginOverlay div{background:white; padding:25px 30px; border-radius:12px; min-width:320px; box-shadow:0 8px 20px rgba(0,0,0,.25); text-align:center; position:relative;}
-#loginOverlay label, #loginOverlay input, #loginOverlay select{display:block;width:100%;margin-bottom:10px;font-size:14px;}
-#loginOverlay input, #loginOverlay select{padding:8px 10px; border-radius:6px; border:1px solid #cbd5e1; background:#f8fafc;}
-#loginOverlay button{padding:8px 14px; margin:5px; border:none; border-radius:6px; cursor:pointer; background:#2563eb; color:white; font-weight:600;}
-#loginOverlay button:hover{background:#3b82f6;}
-#loginMessage{color:red;font-size:13px;margin-bottom:8px;}
-@media(max-width:768px){.doc-header{flex-direction:column;align-items:flex-start;gap:10px;} iframe{height:85vh;} .back{max-width:150px;}}
+body{
+  margin:0;
+  background:#eef2f7;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+/* TOPBAR */
+.topbar{
+  background:#0f172a;
+  color:white;
+  padding:14px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:100;
+}
+
+/* BOTONES */
+.tool{
+  background:white;
+  border:1px solid #e2e8f0;
+  padding:7px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+  transition:.2s;
+}
+.tool:hover{
+  background:#2563eb;
+  color:white;
+}
+
+/* DOCUMENTO */
+.doc-frame{
+  width:100%;
+  max-width:1100px;
+  background:white;
+  border-radius:14px;
+  box-shadow:0 15px 40px rgba(0,0,0,.15);
+}
+
+/* SIDEBAR MODERNO */
+#commentSidebar{
+  position:fixed;
+  top:0;
+  right:0;
+  width:380px;
+  height:100%;
+  background:#ffffff;
+  box-shadow:-10px 0 30px rgba(0,0,0,.2);
+  padding:20px;
+  transform:translateX(100%);
+  transition:.35s ease;
+  z-index:200;
+  overflow-y:auto;
+}
+
+#commentSidebar.active{
+  transform:translateX(0);
+}
+
+/* BOTÓN FLOTANTE 💬 */
+#toggleSidebarBtn{
+  position:fixed;
+  right:15px;
+  top:50%;
+  transform:translateY(-50%);
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:50%;
+  width:50px;
+  height:50px;
+  font-size:20px;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,.3);
+  z-index:300;
+}
+
+/* FORMULARIOS BONITOS */
+select, input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+  background:#f8fafc;
+  margin-bottom:12px;
+  font-size:14px;
+  transition:.2s;
+}
+select:focus, input:focus{
+  border-color:#2563eb;
+  outline:none;
+  background:white;
+}
+
+/* CAJA COMENTARIOS */
+.comment-box{
+  border-radius:10px;
+  padding:12px;
+  margin-bottom:12px;
+  background:#f1f5f9;
+  border-left:4px solid #2563eb;
+}
+
+/* LOGIN MODERNO */
+#loginOverlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:500;
+}
+
+#loginOverlay .login-card{
+  background:white;
+  padding:35px;
+  border-radius:16px;
+  width:360px;
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+  text-align:center;
+  animation:fadeIn .3s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.login-card h3{
+  margin-bottom:15px;
+}
+
+.login-card button{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:5px;
+}
+.login-card button:hover{
+  background:#1d4ed8;
+}
+  .doc-header{
+  max-width:1100px;
+  margin:80px auto 20px auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.doc-area{
+  display:flex;
+  justify-content:center;
+}
+
+  .back{
+  background:#2563eb;
+  color:white;
+  padding:6px 12px;
+  border-radius:6px;
+  text-decoration:none;
+  font-size:13px;
+}
+
+#loginMessage{
+  color:red;
+  font-size:13px;
+  margin-bottom:10px;
+}
 </style>
 </head>
 <body>
@@ -62,8 +218,10 @@ body.sidebar-open .doc-area, body.sidebar-open .doc-header{margin-right:350px;}
 
 <!-- SIDEBAR -->
 <div id="commentSidebar">
-  <span class="closeSidebar" onclick="closeSidebar()">⬅</span>
-  <h3>Comentarios</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+  <h3 style="margin:0;">💬 Comentarios</h3>
+  <span style="cursor:pointer;font-size:18px;" onclick="closeSidebar()">✖</span>
+</div>
   <label>Empleado</label>
   <select id="commentUser">
     <option value="">Seleccione</option>
@@ -96,12 +254,13 @@ body.sidebar-open .doc-area, body.sidebar-open .doc-header{margin-right:350px;}
 
 <!-- LOGIN -->
 <div id="loginOverlay">
-  <div>
-    <h3>Login para edición</h3>
+  <div class="login-card">
+    <h3>🔒 Acceso de edición</h3>
+
     <div id="loginMessage"></div>
-    <label>Usuario:</label>
+
     <select id="loginUser">
-      <option value="">Seleccione usuario</option>
+      <option value="">Seleccionar usuario</option>
       <option>Damian Molina</option>
       <option>Alberto Molina</option>
       <option>Gabriel Batista</option>
@@ -110,10 +269,11 @@ body.sidebar-open .doc-area, body.sidebar-open .doc-header{margin-right:350px;}
       <option>Wendy Romanach</option>
       <option>Otros</option>
     </select>
-    <label>Clave:</label>
-    <input type="password" id="loginPass" placeholder="Ingrese clave">
-    <button onclick="checkLogin()">Iniciar sesión</button>
-    <button onclick="closeLogin()">Cancelar</button>
+
+    <input type="password" id="loginPass" placeholder="Contraseña">
+
+    <button onclick="checkLogin()">Ingresar</button>
+    <button onclick="closeLogin()" style="background:#e5e7eb;color:#111;">Cancelar</button>
   </div>
 </div>
 
@@ -165,7 +325,7 @@ function checkLogin(){
   currentUser=user;
   document.getElementById("commentUser").value=user;
   document.getElementById("commentSidebar").classList.add("active");
-  document.body.classList.add("sidebar-open");
+
 
   loadComments(); // cargar desde sheet
   closeLogin();
@@ -174,7 +334,7 @@ function checkLogin(){
 // sidebar
 function closeSidebar(){
   document.getElementById("commentSidebar").classList.remove("active");
-  document.body.classList.remove("sidebar-open");
+  
 }
 
 // guardar comentario
@@ -272,6 +432,22 @@ function highlightSelection(sel, comment){
     sel.removeAllRanges();
   }
 }
+
+
+function toggleSidebar(){
+  const sb = document.getElementById("commentSidebar");
+  const btn = document.getElementById("toggleSidebarBtn");
+
+  sb.classList.toggle("active");
+
+  if(sb.classList.contains("active")){
+    btn.style.right = "395px";
+  }else{
+    btn.style.right = "15px";
+  }
+}
+  
 </script>
+  <button id="toggleSidebarBtn" onclick="toggleSidebar()">💬</button>
 </body>
 </html>
