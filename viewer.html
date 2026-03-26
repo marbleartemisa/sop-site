@@ -10,9 +10,7 @@ body{
   font-family:"Segoe UI",Arial,sans-serif;
 }
 
-<!-- VISOR PARA GITHUB / HTML -->
-<iframe id="frameViewer" style="width:0;height:0;border:none;"></iframe>
-  
+
 /* TOPBAR */
 
 .topbar{
@@ -116,6 +114,36 @@ select:focus, input:focus{
   background:white;
 }
 
+.brand{
+  font-weight:600;
+  letter-spacing:.4px;
+  font-size:15px;
+}
+
+.doc-header{
+  max-width:1100px;
+  margin:90px auto 20px auto;
+  padding:0 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.doc-area{
+  display:flex;
+  justify-content:center;
+  padding:10px 20px 40px;
+}
+
+.doc-frame{
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  background:white;
+  border-radius:14px;
+  box-shadow:0 15px 40px rgba(0,0,0,.15);
+}
+  
 iframe{
   width:100%;
   height:80vh;
@@ -225,6 +253,8 @@ iframe{
 </style>
 </head>
 <body>
+
+  <iframe id="frameViewer" style="width:0;height:0;border:none;"></iframe>
 
 <!-- TOPBAR -->
 <div class="topbar">
