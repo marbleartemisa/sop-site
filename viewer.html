@@ -15,10 +15,10 @@ body{
   
 /* TOPBAR */
 
-  .topbar{
+.topbar{
   background:#0f172a;
   color:white;
-  padding:14px 20px;
+  padding:14px 28px;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -26,7 +26,8 @@ body{
   width:100%;
   top:0;
   z-index:100;
-  box-sizing:border-box; /* 🔥 CLAVE */
+  box-sizing:border-box;
+  box-shadow:0 2px 10px rgba(0,0,0,.2);
 }
 
 /* BOTONES */
@@ -50,7 +51,8 @@ pointer-events:none;
 }
 
 /* DOCUMENTO */
-.doc-frame{
+
+  .doc-frame{
   width:100%;
   max-width:1100px;
   background:white;
@@ -188,22 +190,30 @@ iframe{
   <div id="prevDoc" onclick="prevSOP()" class="tool disabled">← SOP anterior</div>
   <div id="nextDoc" onclick="nextSOP()" class="tool disabled">SOP siguiente →</div>
 </div>
+
+
   
+/* AREA DOCUMENTO centrada */
 .doc-area{
   display:flex;
   justify-content:center;
+  margin-top:90px; /* altura topbar */
 }
 
-  .back{
+  
+
+/* Botón de regreso */
+.back{
   background:#2563eb;
   color:white;
-  padding:6px 12px;
+  padding:6px 14px;
   border-radius:6px;
   text-decoration:none;
   font-size:13px;
-  white-space:nowrap;
 }
 
+
+  
 #loginMessage{
   color:red;
   font-size:13px;
