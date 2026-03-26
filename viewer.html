@@ -433,20 +433,38 @@ async function loadComments(){
 
 // render
 function renderComments(comments){
-  const list=document.getElementById("commentList");
-  list.innerHTML="";
+  const list = document.getElementById("commentList");
+  list.innerHTML = "";
+
+  // 🔵 si no hay comentarios
+  if(!comments || comments.length === 0){
+    list.innerHTML = `
+      <div style="
+        padding:20px;
+        text-align:center;
+        color:#64748b;
+        font-size:14px;
+      ">
+        💬 Este SOP no tiene comentarios
+      </div>
+    `;
+    return;
+  }
+
+  // 🔵 si hay comentarios
   comments.forEach(c=>{
-    const div=document.createElement("div");
-    div.className="comment-box";
-    div.innerHTML=`
+    const div = document.createElement("div");
+    div.className = "comment-box";
+
+    div.innerHTML = `
       <b>${c.usuario}</b> - <i>${c.comentario}</i><br>
-      <mark>${c.texto}</mark><br>
+      <mark>${c.texto || ""}</mark><br>
       <small>📅 ${c.fecha} | 🏷 ${c.tipo} | ${c.estado}</small>
     `;
+
     list.appendChild(div);
   });
 }
-
 // resaltado
 function highlightSelection(sel, comment){
   if(sel.rangeCount){
@@ -528,7 +546,6 @@ async function submitComment(){
     alert("❌ Error conexión");
   }
 }
-
 function toggleSidebar(){
   const sb = document.getElementById("commentSidebar");
   const btn = document.getElementById("toggleSidebarBtn");
@@ -537,6 +554,7 @@ function toggleSidebar(){
 
   if(sb.classList.contains("active")){
     btn.style.right = "395px";
+    loadComments(); // 🔥 cargar al abrir
   }else{
     btn.style.right = "15px";
   }
