@@ -317,8 +317,10 @@ let idSOP = params.get("id"); // id_sop 🔥
 
 const frame = document.getElementById("frame");
 let editMode=false;
-setEditModeUI(false);
 let currentUser="";
+// bloquear campos por defecto
+setEditModeUI(false);
+
 
 if(doc) frame.src = doc;
 
@@ -339,53 +341,18 @@ function openNew(){window.open(doc,"_blank");}
 
 function downloadDoc(){
 
-  if(!doc) return;
+  const frame = document.getElementById("frame");
 
-  let name = document.getElementById("title").innerText || "SOP";
-  name = name.replace(/[\\/:*?"<>|]/g,'');
+  if(!frame) return;
 
-  let pdfUrl = doc;
+  // usar nombre del SOP
+  const title = document.getElementById("title").innerText || "SOP";
+  document.title = title;
 
-  // Google Docs
-  if(doc.includes("docs.google.com/document")){
-    const id = doc.match(/\/d\/(.*?)\//);
-    if(id){
-      pdfUrl = `https://docs.google.com/document/d/${id[1]}/export?format=pdf`;
-    }
-  }
-
-  // Google Sheets
-  else if(doc.includes("docs.google.com/spreadsheets")){
-    const id = doc.match(/\/d\/(.*?)\//);
-    if(id){
-      pdfUrl = `https://docs.google.com/spreadsheets/d/${id[1]}/export?format=pdf`;
-    }
-  }
-
-  // Google Slides
-  else if(doc.includes("docs.google.com/presentation")){
-    const id = doc.match(/\/d\/(.*?)\//);
-    if(id){
-      pdfUrl = `https://docs.google.com/presentation/d/${id[1]}/export/pdf`;
-    }
-  }
-
-  // Drive file directo
-  else if(doc.includes("drive.google.com")){
-    const id = doc.match(/[-\w]{25,}/);
-    if(id){
-      pdfUrl = `https://drive.google.com/uc?export=download&id=${id[0]}`;
-    }
-  }
-
-  const link = document.createElement("a");
-  link.href = pdfUrl;
-  link.target = "_blank"; // 🔥 importante
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
+  // abrir guardar como PDF
+  frame.contentWindow.focus();
+  frame.contentWindow.print();
 }
-  
   
 function printDoc(){frame.contentWindow.print();}
 
@@ -483,17 +450,29 @@ function saveLocalComment(c){
 }
 
 // cargar comentarios desde sheet
+
+
 async function loadComments(){
-  if(!idSOP) return;
 
   try{
+
+    if(!idSOP){
+      renderComments([]);
+      return;
+    }
+
     const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
     const data = await res.json();
-    renderComments(data);
+
+    renderComments(data || []);
+
   }catch(err){
     console.error("Error cargando comentarios:", err);
+    renderComments([]);
   }
 }
+
+  
 
 // render
 function renderComments(comments){
@@ -625,19 +604,20 @@ function setEditModeUI(enabled){
   }
 }
   
+
 function toggleSidebar(){
   const sb = document.getElementById("commentSidebar");
   const btn = document.getElementById("toggleSidebarBtn");
 
-  sb.classList.toggle("active");
+  const open = sb.classList.toggle("active");
 
-  if(sb.classList.contains("active")){
-    btn.style.right = "395px";
-    loadComments(); // 🔥 cargar al abrir
-  }else{
-    btn.style.right = "15px";
+  btn.style.right = open ? "395px" : "15px";
+
+  if(open){
+    loadComments();
   }
 }
+  
 
 </script>
   <button id="toggleSidebarBtn" onclick="toggleSidebar()">💬</button>
