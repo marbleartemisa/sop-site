@@ -30,6 +30,32 @@ select:focus,input:focus,textarea:focus{border-color:#2563eb;outline:none;backgr
 #loginOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#0f172a,#1e293b);display:none;align-items:center;justify-content:center;z-index:500;}
 .login-card{background:white;padding:35px;border-radius:16px;width:360px;box-shadow:0 20px 50px rgba(0,0,0,.4);}
 #loginMessage{color:red;font-size:13px;margin-bottom:10px;}
+  #prevDocBtn, #nextDocBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 500;
+  transition: background 0.3s;
+}
+
+#prevDocBtn:hover, #nextDocBtn:hover {
+  background: rgba(0,0,0,0.7);
+}
+
+#prevDocBtn {
+  left: 0;
+}
+
+#nextDocBtn {
+  right: 0;
+}
 </style>
 </head>
 <body>
@@ -54,10 +80,15 @@ select:focus,input:focus,textarea:focus{border-color:#2563eb;outline:none;backgr
   </div>
 </div>
 
-<div class="doc-area">
-  <div class="doc-frame">
+
+  <div class="doc-area">
+  <div class="doc-frame" style="position:relative;">
     <iframe id="frame"></iframe>
     <div id="overlay"></div>
+
+    <!-- BOTONES FLOTANTES ANTERIOR/SIGUIENTE -->
+    <button id="prevDocBtn" onclick="prevSOP()">⬅</button>
+    <button id="nextDocBtn" onclick="nextSOP()">➡</button>
   </div>
 </div>
 
@@ -165,23 +196,71 @@ function setEditModeUI(enabled){document.getElementById("commentUser").disabled=
 // NAVIGACION SOP RESTAURADA
 // ======================
 fetch('SOP_INDEX.json')
-.then(res => res.json())
-.then(data => {
-  if(!data.length) return;
-  if(!doc) doc=data[0].url;
-  const sopList=data.map(s=>s.url);
-  let currentIndex=sopList.indexOf(doc);
-  if(currentIndex===-1)currentIndex=0;
-  const deptMap={'produccion':'Carpinteria','instalacion':'Stone','administracion':'Administracion','comercial':'Comercial','houzz-pro':'Houzz Pro','maquinarias':'Maquinarias','medidas':'Medidas','vehiculos':'Vehiculos','taller':'Taller','ecopower':'Ecopower'};
-  const currentSOP=data[currentIndex];
-  document.getElementById("title").innerText=`${deptMap[currentSOP.department]||currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
-  window.prevSOP=function(){if(currentIndex>0){const prev=data[currentIndex-1];window.location.href=`viewer.html?doc=${prev.url}&id=${prev.id}`;}};
-  window.nextSOP=function(){if(currentIndex<data.length-1){const next=data[currentIndex+1];window.location.href=`viewer.html?doc=${next.url}&id=${next.id}`;}};
-  document.getElementById("prevDoc").classList.toggle("disabled",currentIndex===0);
-  document.getElementById("nextDoc").classList.toggle("disabled",currentIndex===data.length-1);
-})
-.catch(err=>console.error("Error cargando SOP_INDEX.json:",err));
+  .then(res => res.json())
+  .then(data => {
+    if (!data.length) return;
+
+    if (!doc) doc = data[0].url;
+
+    const sopList = data.map(s => s.url);
+    let currentIndex = sopList.indexOf(doc);
+    if (currentIndex === -1) currentIndex = 0;
+
+    const deptMap = {
+      'produccion': 'Carpinteria',
+      'instalacion': 'Stone',
+      'administracion': 'Administracion',
+      'comercial': 'Comercial',
+      'houzz-pro': 'Houzz Pro',
+      'maquinarias': 'Maquinarias',
+      'medidas': 'Medidas',
+      'vehiculos': 'Vehiculos',
+      'taller': 'Taller',
+      'ecopower': 'Ecopower'
+    };
+
+    const currentSOP = data[currentIndex];
+    document.getElementById("title").innerText =
+      `${deptMap[currentSOP.department] || currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
+
+    // ← anterior
+    window.prevSOP = function() {
+      if (currentIndex > 0) {
+        const prev = data[currentIndex - 1];
+        window.location.href = `viewer.html?doc=${prev.url}&id=${prev.id}`;
+      }
+    };
+
+    // siguiente →
+    window.nextSOP = function() {
+      if (currentIndex < data.length - 1) {
+        const next = data[currentIndex + 1];
+        window.location.href = `viewer.html?doc=${next.url}&id=${next.id}`;
+      }
+    };
+
+    // deshabilitar botones si estamos en límites
+    const prevBtn = document.getElementById("prevDoc");
+    const nextBtn = document.getElementById("nextDoc");
+    if(prevBtn) prevBtn.classList.toggle("disabled", currentIndex === 0);
+    if(nextBtn) nextBtn.classList.toggle("disabled", currentIndex === data.length - 1);
+
+  })
+  .catch(err => console.error("Error cargando SOP_INDEX.json:", err));
+
+// Botón flotante historial de comentarios
+function toggleSidebar() {
+  const sb = document.getElementById("commentSidebar");
+  const btn = document.getElementById("toggleSidebarBtn");
+  const open = sb.classList.toggle("active");
+  btn.style.right = open ? "395px" : "15px";
+
+  if (open) loadComments();
+}
 </script>
+
+<!-- BOTÓN FLOTANTE PARA HISTORIAL -->
+<button id="toggleSidebarBtn" onclick="toggleSidebar()">💬</button>
 
 </body>
 </html>
