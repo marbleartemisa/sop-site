@@ -41,6 +41,11 @@ body{
   color:white;
 }
 
+.tool.disabled{
+opacity:.5;
+pointer-events:none;
+}
+
 /* DOCUMENTO */
 .doc-frame{
   width:100%;
@@ -312,6 +317,7 @@ let idSOP = params.get("id"); // id_sop 🔥
 
 const frame = document.getElementById("frame");
 let editMode=false;
+setEditModeUI(false);
 let currentUser="";
 
 if(doc) frame.src = doc;
@@ -339,6 +345,8 @@ function showLogin(){
 }
 function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
 
+
+
 function checkLogin(){
   const user = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
@@ -349,13 +357,18 @@ function checkLogin(){
 
   editMode=true;
   currentUser=user;
+
+  setEditModeUI(true); // 🔥 ACTIVAR CAMPOS
+
   document.getElementById("commentUser").value=user;
   document.getElementById("commentSidebar").classList.add("active");
 
-
-  loadComments(); // cargar desde sheet
+  loadComments();
   closeLogin();
 }
+
+  
+  
 
 // sidebar
 function closeSidebar(){
@@ -546,6 +559,25 @@ async function submitComment(){
     alert("❌ Error conexión");
   }
 }
+
+
+
+function setEditModeUI(enabled){
+  document.getElementById("commentUser").disabled = !enabled;
+  document.getElementById("commentType").disabled = !enabled;
+  document.getElementById("commentStatus").disabled = !enabled;
+
+  const btn = document.querySelector(".tool[onclick='commentSelectedText()']");
+  
+  if(enabled){
+    btn.classList.remove("disabled");
+  }else{
+    btn.classList.add("disabled");
+  }
+}
+
+
+  
 function toggleSidebar(){
   const sb = document.getElementById("commentSidebar");
   const btn = document.getElementById("toggleSidebarBtn");
@@ -559,7 +591,8 @@ function toggleSidebar(){
     btn.style.right = "15px";
   }
 }
-  
+
+
 </script>
   <button id="toggleSidebarBtn" onclick="toggleSidebar()">💬</button>
 </body>
