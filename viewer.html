@@ -183,6 +183,12 @@ iframe{
   align-items:center;
 }
 
+<!-- NAV SOP -->
+<div class="doc-nav" style="max-width:1100px;margin:10px auto;display:flex;justify-content:space-between;">
+  <div id="prevDoc" onclick="prevSOP()" class="tool disabled">← SOP anterior</div>
+  <div id="nextDoc" onclick="nextSOP()" class="tool disabled">SOP siguiente →</div>
+</div>
+  
 .doc-area{
   display:flex;
   justify-content:center;
@@ -665,6 +671,49 @@ function setEditModeUI(enabled){
     btn.classList.add("disabled");
   }
 }
+
+  // Cargar SOP_INDEX.json para navegación
+fetch('SOP_INDEX.json')
+  .then(res => res.json())
+  .then(data => {
+    if(!data.length) return;
+
+    const sopList = data.map(s => s.url);
+    let currentIndex = sopList.indexOf(doc);
+    if(currentIndex === -1) currentIndex = 0;
+
+    // Actualizar título con departamento
+    const deptMap = {
+      'produccion': 'Carpinteria',
+      'instalacion': 'Stone',
+      'administracion': 'Administracion',
+      'comercial': 'Comercial',
+      'houzz-pro': 'Houzz Pro',
+      'maquinarias': 'Maquinarias',
+      'medidas': 'Medidas',
+      'vehiculos': 'Vehiculos',
+      'taller': 'Taller',
+      'ecopower': 'Ecopower'
+    };
+    const currentSOP = data[currentIndex];
+    document.getElementById("title").innerText = `${deptMap[currentSOP.department] || currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
+
+    // Funciones de navegación
+    window.prevSOP = function(){
+      if(currentIndex > 0){
+        window.location.href = `viewer.html?doc=${sopList[currentIndex-1]}&id=${currentSOP.id}`;
+      }
+    }
+    window.nextSOP = function(){
+      if(currentIndex < sopList.length - 1){
+        window.location.href = `viewer.html?doc=${sopList[currentIndex+1]}&id=${currentSOP.id}`;
+      }
+    }
+
+    // Deshabilitar botones si inicio/fin
+    document.getElementById("prevDoc").classList.toggle("disabled", currentIndex === 0);
+    document.getElementById("nextDoc").classList.toggle("disabled", currentIndex === sopList.length-1);
+  });
   
 
 function toggleSidebar(){
