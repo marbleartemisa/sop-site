@@ -5,42 +5,87 @@
 <title>Viewer SOP Pro - Artemisa</title>
 <style>
 body{
-  margin:0;
-  background:#eef2f7;
-  font-family:"Segoe UI",Arial,sans-serif;
+margin:0;
+background:#eef2f7;
+font-family:"Segoe UI",Arial,sans-serif;
 }
-
 
 /* TOPBAR */
-
 .topbar{
-  background:#0f172a;
-  color:white;
-  padding:14px 28px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:fixed;
-  width:100%;
-  top:0;
-  z-index:100;
-  box-sizing:border-box;
+background:#0f172a;
+color:white;
+padding:14px 28px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:fixed;
+width:100%;
+top:0;
+z-index:100;
+box-sizing:border-box;
 }
 
+.brand{
+font-weight:600;
+letter-spacing:.4px;
+font-size:15px;
+}
+
+.back{
+background:#2563eb;
+color:white;
+padding:6px 12px;
+border-radius:6px;
+text-decoration:none;
+font-size:13px;
+}
+
+/* HEADER */
+.doc-header{
+max-width:1100px;
+margin:80px auto 10px auto;
+padding:0 10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* NAV SOP */
+.doc-nav{
+max-width:1100px;
+margin:0 auto 10px;
+padding:0 10px;
+display:flex;
+justify-content:space-between;
+}
+
+.doc-nav div{
+background:white;
+border:1px solid #e5e7eb;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+font-size:13px;
+}
+
+.doc-nav div:hover{
+background:#f3f4f6;
+}
 
 /* BOTONES */
 .tool{
-  background:white;
-  border:1px solid #e2e8f0;
-  padding:7px 14px;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:13px;
-  transition:.2s;
+background:white;
+border:1px solid #e2e8f0;
+padding:7px 14px;
+border-radius:8px;
+cursor:pointer;
+font-size:13px;
+transition:.2s;
 }
+
 .tool:hover{
-  background:#2563eb;
-  color:white;
+background:#2563eb;
+color:white;
 }
 
 .tool.disabled{
@@ -48,209 +93,147 @@ opacity:.5;
 pointer-events:none;
 }
 
-/* DOCUMENTO */
+/* AREA DOCUMENTO */
+.doc-area{
+display:flex;
+justify-content:center;
+padding:10px 20px 40px;
+}
 
 .doc-frame{
 width:100%;
 max-width:1100px;
 background:white;
-border-radius:10px;
-box-shadow:0 10px 30px rgba(0,0,0,.15);
-position:relative;}
+border-radius:12px;
+box-shadow:0 15px 40px rgba(0,0,0,.15);
+overflow:hidden;
+}
 
-  
-/* SIDEBAR MODERNO */
+iframe{
+width:100%;
+height:80vh;
+border:none;
+}
+
+/* SIDEBAR */
 #commentSidebar{
-  position:fixed;
-  top:0;
-  right:0;
-  width:380px;
-  height:100%;
-  background:#ffffff;
-  box-shadow:-10px 0 30px rgba(0,0,0,.2);
-  padding:20px;
-  transform:translateX(100%);
-  transition:.35s ease;
-  z-index:200;
-  overflow-y:auto;
+position:fixed;
+top:0;
+right:0;
+width:380px;
+height:100%;
+background:white;
+box-shadow:-10px 0 30px rgba(0,0,0,.2);
+padding:20px;
+transform:translateX(100%);
+transition:.35s ease;
+z-index:200;
+overflow-y:auto;
 }
 
 #commentSidebar.active{
-  transform:translateX(0);
+transform:translateX(0);
 }
 
-/* BOTÓN FLOTANTE 💬 */
+/* BOTON FLOTANTE */
 #toggleSidebarBtn{
-  position:fixed;
-  right:15px;
-  top:50%;
-  transform:translateY(-50%);
-  background:#2563eb;
-  color:white;
-  border:none;
-  border-radius:50%;
-  width:50px;
-  height:50px;
-  font-size:20px;
-  cursor:pointer;
-  box-shadow:0 8px 20px rgba(0,0,0,.3);
-  z-index:300;
+position:fixed;
+right:15px;
+top:50%;
+transform:translateY(-50%);
+background:#2563eb;
+color:white;
+border:none;
+border-radius:50%;
+width:50px;
+height:50px;
+font-size:20px;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,.3);
+z-index:300;
 }
 
-/* FORMULARIOS BONITOS */
-select, input{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #cbd5e1;
-  background:#f8fafc;
-  margin-bottom:12px;
-  font-size:14px;
-  transition:.2s;
-}
-select:focus, input:focus{
-  border-color:#2563eb;
-  outline:none;
-  background:white;
+/* FORM */
+select,input,textarea{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #cbd5e1;
+background:#f8fafc;
+margin-bottom:12px;
+font-size:14px;
 }
 
-.brand{
-  font-weight:600;
-  letter-spacing:.4px;
-  font-size:15px;
+select:focus,input:focus,textarea:focus{
+border-color:#2563eb;
+outline:none;
+background:white;
 }
 
-.doc-header{
-  max-width:1100px;
-  margin:90px auto 20px auto;
-  padding:0 10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.doc-area{
-  display:flex;
-  justify-content:center;
-  padding:10px 20px 40px;
-}
-
-.doc-frame{
-  width:100%;
-  max-width:1100px;
-  margin:auto;
-  background:white;
-  border-radius:14px;
-  box-shadow:0 15px 40px rgba(0,0,0,.15);
-}
-  
-iframe{
-  width:100%;
-  height:80vh;
-  border:none;
-}
-  
-/* CAJA COMENTARIOS */
+/* COMMENTS */
 .comment-box{
-  border-radius:10px;
-  padding:12px;
-  margin-bottom:12px;
-  background:#f1f5f9;
-  border-left:4px solid #2563eb;
+border-radius:10px;
+padding:12px;
+margin-bottom:12px;
+background:#f1f5f9;
+border-left:4px solid #2563eb;
 }
 
-/* LOGIN MODERNO */
+/* LOADER */
+.comments-loader{
+display:none;
+text-align:center;
+padding:18px;
+color:#6b7280;
+font-size:13px;
+}
+
+.spinner{
+width:22px;
+height:22px;
+border:3px solid #e5e7eb;
+border-top:3px solid #2563eb;
+border-radius:50%;
+margin:0 auto 8px;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+from{transform:rotate(0deg)}
+to{transform:rotate(360deg)}
+}
+
+/* LOGIN */
 #loginOverlay{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:500;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:500;
 }
 
-#loginOverlay .login-card{
-  background:white;
-  padding:35px;
-  border-radius:16px;
-  width:360px;
-  box-shadow:0 20px 50px rgba(0,0,0,.4);
-  text-align:center;
-  animation:fadeIn .3s ease;
+.login-card{
+background:white;
+padding:35px;
+border-radius:16px;
+width:360px;
+box-shadow:0 20px 50px rgba(0,0,0,.4);
 }
 
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-.login-card h3{
-  margin-bottom:15px;
-}
-
-.login-card button{
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:8px;
-  background:#2563eb;
-  color:white;
-  font-weight:600;
-  cursor:pointer;
-  margin-top:5px;
-}
-.login-card button:hover{
-  background:#1d4ed8;
-}
-  .doc-header{
-  max-width:1100px;
-  margin:80px auto 20px auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-<!-- NAV SOP -->
-<div class="doc-nav" style="max-width:1100px;margin:10px auto;display:flex;justify-content:space-between;">
-  <div id="prevDoc" onclick="prevSOP()" class="tool disabled">← SOP anterior</div>
-  <div id="nextDoc" onclick="nextSOP()" class="tool disabled">SOP siguiente →</div>
-</div>
-
-
-  
-/* AREA DOCUMENTO centrada */
-.doc-area{
-  display:flex;
-  justify-content:center;
-  margin-top:90px; /* altura topbar */
-}
-
-  
-
-/* Botón de regreso */
-
-.back{background:#2563eb;
-      color:white;
-      padding:6px 12px;
-      border-radius:6px;
-      text-decoration:none;
-      font-size:13px;
-      white-space:nowrap;
-      max-width:200px;
-      overflow:hidden;
-      text-overflow:ellipsis;}
-
-  
 #loginMessage{
-  color:red;
-  font-size:13px;
-  margin-bottom:10px;
+color:red;
+font-size:13px;
+margin-bottom:10px;
 }
 </style>
+
+
+
 </head>
 <body>
 
@@ -265,15 +248,25 @@ iframe{
 
 <!-- HERRAMIENTAS -->
 <div class="doc-header">
-  <div id="title">Documento SOP</div>
-  <div>
-    <button class="tool" onclick="openNew()">Abrir</button>
-    <button class="tool" onclick="downloadDoc()">Descargar</button>
-    <button class="tool" onclick="printDoc()">Imprimir</button>
-    <button class="tool" onclick="showLogin()">🔒 Editar</button>
-    <button class="tool" onclick="commentSelectedText()">💬 Comentar</button>
-  </div>
+<div id="title">Documento SOP</div>
+
+<div>
+<button class="tool" onclick="openNew()">Abrir</button>
+<button class="tool" onclick="downloadDoc()">Descargar</button>
+<button class="tool" onclick="printDoc()">Imprimir</button>
+<button class="tool" onclick="showLogin()">🔒 Editar</button>
+<button class="tool" onclick="commentSelectedText()">💬 Comentar</button>
 </div>
+</div>
+
+
+  
+ <div id="commentsLoader" class="comments-loader">
+  <div class="spinner"></div>
+  Cargando comentarios...
+</div>
+
+<div id="commentsContainer"></div> 
 
 <!-- DOCUMENTO -->
 <div class="doc-area">
@@ -285,6 +278,12 @@ iframe{
 
 <!-- SIDEBAR -->
 <div id="commentSidebar">
+<div id="commentsLoader" class="comments-loader">
+<div class="spinner"></div>
+Cargando comentarios...
+</div>
+
+<div id="commentList"></div>
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
   <h3 style="margin:0;">💬 Comentarios</h3>
   <span style="cursor:pointer;font-size:18px;" onclick="closeSidebar()">✖</span>
@@ -537,15 +536,18 @@ function saveLocalComment(c){
   localStorage.setItem(doc,JSON.stringify(list));
 }
 
+
 // cargar comentarios desde sheet
-
-
 async function loadComments(){
+
+  const loader = document.getElementById("commentsLoader");
+  loader.style.display = "block";
 
   try{
 
     if(!idSOP){
       renderComments([]);
+      loader.style.display = "none";
       return;
     }
 
@@ -558,43 +560,62 @@ async function loadComments(){
     console.error("Error cargando comentarios:", err);
     renderComments([]);
   }
-}
 
+  loader.style.display = "none";
+}
   
 
 // render
 function renderComments(comments){
+
   const list = document.getElementById("commentList");
+
+  // limpiar
   list.innerHTML = "";
 
-  // 🔵 si no hay comentarios
+  // sin comentarios
   if(!comments || comments.length === 0){
     list.innerHTML = `
-      <div style="
-        padding:20px;
-        text-align:center;
-        color:#64748b;
-        font-size:14px;
-      ">
+      <div class="no-comments">
         💬 Este SOP no tiene comentarios
       </div>
     `;
     return;
   }
 
-  // 🔵 si hay comentarios
+  // con comentarios
   comments.forEach(c=>{
+
     const div = document.createElement("div");
     div.className = "comment-box";
 
     div.innerHTML = `
-      <b>${c.usuario}</b> - <i>${c.comentario}</i><br>
-      <mark>${c.texto || ""}</mark><br>
-      <small>📅 ${c.fecha} | 🏷 ${c.tipo} | ${c.estado}</small>
+      <div class="comment-user">
+        <b>${c.usuario || "Usuario"}</b>
+      </div>
+
+      <div class="comment-text">
+        ${c.comentario || ""}
+      </div>
+
+      ${c.texto ? `
+      <div class="comment-selection">
+        ${c.texto}
+      </div>` : ""}
+
+      <div class="comment-meta">
+        📅 ${c.fecha || ""}
+        &nbsp; | &nbsp;
+        🏷 ${c.tipo || ""}
+        &nbsp; | &nbsp;
+        ${c.estado || ""}
+      </div>
     `;
 
     list.appendChild(div);
+
   });
+
 }
 // resaltado
 function highlightSelection(sel, comment){
@@ -716,49 +737,68 @@ function setEditModeUI(enabled){
   }
 }
 
-  // Cargar SOP_INDEX.json para navegación
+// Cargar SOP_INDEX.json para navegación
 fetch('SOP_INDEX.json')
-  .then(res => res.json())
-  .then(data => {
-    if(!data.length) return;
+.then(res => res.json())
+.then(data => {
 
-    const sopList = data.map(s => s.url);
-    let currentIndex = sopList.indexOf(doc);
-    if(currentIndex === -1) currentIndex = 0;
+  if(!data.length) return;
 
-    // Actualizar título con departamento
-    const deptMap = {
-      'produccion': 'Carpinteria',
-      'instalacion': 'Stone',
-      'administracion': 'Administracion',
-      'comercial': 'Comercial',
-      'houzz-pro': 'Houzz Pro',
-      'maquinarias': 'Maquinarias',
-      'medidas': 'Medidas',
-      'vehiculos': 'Vehiculos',
-      'taller': 'Taller',
-      'ecopower': 'Ecopower'
-    };
-    const currentSOP = data[currentIndex];
-    document.getElementById("title").innerText = `${deptMap[currentSOP.department] || currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
+  if(!doc) doc = data[0].url;
 
-    // Funciones de navegación
-    window.prevSOP = function(){
-      if(currentIndex > 0){
-        window.location.href = `viewer.html?doc=${sopList[currentIndex-1]}&id=${currentSOP.id}`;
-      }
+  const sopList = data.map(s => s.url);
+  let currentIndex = sopList.indexOf(doc);
+
+  if(currentIndex === -1) currentIndex = 0;
+
+  const deptMap = {
+    'produccion': 'Carpinteria',
+    'instalacion': 'Stone',
+    'administracion': 'Administracion',
+    'comercial': 'Comercial',
+    'houzz-pro': 'Houzz Pro',
+    'maquinarias': 'Maquinarias',
+    'medidas': 'Medidas',
+    'vehiculos': 'Vehiculos',
+    'taller': 'Taller',
+    'ecopower': 'Ecopower'
+  };
+
+  const currentSOP = data[currentIndex];
+
+  document.getElementById("title").innerText =
+  `${deptMap[currentSOP.department] || currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
+
+  // ← anterior
+  window.prevSOP = function(){
+    if(currentIndex > 0){
+      const prev = data[currentIndex-1];
+      window.location.href =
+      `viewer.html?doc=${prev.url}&id=${prev.id}`;
     }
-    window.nextSOP = function(){
-      if(currentIndex < sopList.length - 1){
-        window.location.href = `viewer.html?doc=${sopList[currentIndex+1]}&id=${currentSOP.id}`;
-      }
-    }
+  }
 
-    // Deshabilitar botones si inicio/fin
-    document.getElementById("prevDoc").classList.toggle("disabled", currentIndex === 0);
-    document.getElementById("nextDoc").classList.toggle("disabled", currentIndex === sopList.length-1);
-  });
-  
+  // siguiente →
+  window.nextSOP = function(){
+    if(currentIndex < data.length - 1){
+      const next = data[currentIndex+1];
+      window.location.href =
+      `viewer.html?doc=${next.url}&id=${next.id}`;
+    }
+  }
+
+  // deshabilitar botones
+  document.getElementById("prevDoc").classList.toggle(
+    "disabled",
+    currentIndex === 0
+  );
+
+  document.getElementById("nextDoc").classList.toggle(
+    "disabled",
+    currentIndex === data.length-1
+  );
+
+});
 
 function toggleSidebar(){
   const sb = document.getElementById("commentSidebar");
