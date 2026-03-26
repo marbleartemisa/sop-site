@@ -560,8 +560,6 @@ async function submitComment(){
   }
 }
 
-
-
 function setEditModeUI(enabled){
   document.getElementById("commentUser").disabled = !enabled;
   document.getElementById("commentType").disabled = !enabled;
@@ -575,8 +573,6 @@ function setEditModeUI(enabled){
     btn.classList.add("disabled");
   }
 }
-
-
   
 function toggleSidebar(){
   const sb = document.getElementById("commentSidebar");
@@ -591,7 +587,6 @@ function toggleSidebar(){
     btn.style.right = "15px";
   }
 }
-
 
 </script>
   <button id="toggleSidebarBtn" onclick="toggleSidebar()">💬</button>
