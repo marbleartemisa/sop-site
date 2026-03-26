@@ -284,6 +284,8 @@ select:focus, input:focus, textarea:focus {
   </div>
 </div>
 
+
+
 <div id="commentSidebar">
   <div id="commentsLoader" class="comments-loader">
     <div class="spinner"></div>
@@ -292,7 +294,9 @@ select:focus, input:focus, textarea:focus {
   <div id="commentList"></div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
     <h3 style="margin:0;">💬 Comentarios</h3>
-    <span style="cursor:pointer;font-size:18px;" onclick="closeSidebar()">✖</span>
+  
+          <!-- Botón de cerrar modal -->
+    <span style="cursor:pointer; font-size:18px;" onclick="closeViewComment()">✖</span>
   </div>
   <label>Empleado</label>
   <select id="commentUser">
@@ -337,6 +341,33 @@ select:focus, input:focus, textarea:focus {
     <input type="password" id="loginPass" placeholder="Contraseña">
     <button onclick="checkLogin()">Ingresar</button>
     <button onclick="closeLogin()" style="background:#e5e7eb;color:#111;">Cancelar</button>
+  </div>
+</div>
+    <!-- MODAL PARA VER COMENTARIOS -->
+<div id="viewCommentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+    background:rgba(0,0,0,0.6); z-index:700; align-items:center; justify-content:center;">
+  <div style="background:white; width:600px; max-width:95%; padding:25px; border-radius:14px; 
+      box-shadow:0 20px 50px rgba(0,0,0,.4); display:flex; flex-direction:column; max-height:90vh; overflow:hidden;">
+    
+    <!-- Encabezado fijo -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 id="viewCommentHeader" style="margin:0; font-size:16px;">Comentario SOP</h3>
+      <span style="cursor:pointer; font-size:18px;" onclick="closeViewCommentModal()">✖</span>
+    </div>
+
+    <!-- Contenido scrollable -->
+    <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px;">
+      <div>
+        <label style="font-weight:bold;">Fragmento comentado:</label>
+        <div id="viewCommentFragment" style="background:#f1f5f9; padding:10px; border-radius:8px; 
+            border:1px solid #cbd5e1; white-space:pre-wrap;"></div>
+      </div>
+      <div>
+        <label style="font-weight:bold;">Comentario:</label>
+        <div id="viewCommentText" style="background:#eef2f7; padding:10px; border-radius:8px; 
+            border:1px solid #cbd5e1; white-space:pre-wrap;"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -475,6 +506,10 @@ function saveLocalComment(c) {
     localStorage.setItem(doc, JSON.stringify(list));
 }
 
+
+    // ==========================
+// CARGAR COMENTARIOS
+// ==========================
 async function loadComments() {
     const loader = document.getElementById("commentsLoader");
     loader.style.display = "block";
@@ -488,15 +523,86 @@ async function loadComments() {
 
         const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
         const data = await res.json();
-        renderComments(data || []);
+
+        // Guardamos en global para viewComment
+        window.loadedComments = data || [];
+
+        renderComments(window.loadedComments);
     } catch (err) {
         console.error("Error cargando comentarios:", err);
         renderComments([]);
+    } finally {
+        loader.style.display = "none";
     }
-
-    loader.style.display = "none";
 }
 
+// ==========================
+// GUARDAR COMENTARIO NUEVO
+// ==========================
+async function submitComment() {
+    const commentText = document.getElementById("commentInput").value.trim();
+    if (!commentText) {
+        alert("Comentario vacío");
+        return;
+    }
+
+    const type = document.getElementById("commentType").value;
+    const status = document.getElementById("commentStatus").value;
+
+    // Crear payload
+    const payload = {
+        tipo: "comentario",
+        id_sop: idSOP,
+        usuario: currentUser,
+        comentario: commentText,
+        tipo_comentario: type,
+        estado: status,
+        text_selected: selectedTextGlobal,
+        context_before: selectedTextGlobal.substring(0, 20),
+        context_after: selectedTextGlobal.substring(selectedTextGlobal.length - 20),
+        url_doc: doc
+    };
+
+    try {
+        const res = await fetch(SCRIPT_URL, { 
+            method: "POST", 
+            body: JSON.stringify(payload) 
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            // Guardar id_comment que devuelva el servidor
+            payload.id_comment = data.id_comment || Date.now().toString();
+
+            // Guardar en localStorage
+            const localList = JSON.parse(localStorage.getItem(doc) || "[]");
+            localList.push(payload);
+            localStorage.setItem(doc, JSON.stringify(localList));
+
+            // Actualizar lista global
+            window.loadedComments.push(payload);
+
+            // Resaltar texto seleccionado
+            highlightSelection(frame.contentWindow.getSelection(), payload);
+
+            // Recargar comentarios
+            renderComments(window.loadedComments);
+
+            closeCommentModal();
+            alert("✅ Comentario guardado");
+        } else {
+            alert("❌ Error: " + data.error);
+        }
+    } catch (err) {
+        alert("❌ Error conexión: " + err);
+    }
+}
+
+// ==========================
+// FUNCIONES DE COMENTARIOS
+// ==========================
+
+// Renderiza la lista de comentarios en la barra lateral
 function renderComments(comments) {
     const list = document.getElementById("commentList");
     list.innerHTML = "";
@@ -506,31 +612,68 @@ function renderComments(comments) {
         return;
     }
 
+    // Guardamos los comentarios cargados globalmente
+    window.loadedComments = comments;
+
     comments.forEach(c => {
         const div = document.createElement("div");
         div.className = "comment-box";
-div.innerHTML = `
-  <div style="display:flex;justify-content:space-between;">
-    <b>${c.usuario||"Usuario"}</b>
-    <div>
-      <span onclick="viewComment('${c.ID}')" style="cursor:pointer;color:#3b82f6;font-weight:bold;margin-right:6px;">👁️</span>
-      ${editMode ? `<span onclick="deleteComment('${c.ID}')" style="cursor:pointer;color:#ef4444;font-weight:bold;">🗑</span>` : ""}
-    </div>
-  </div>
-  <div>${c.comentario.substring(0,100) || ""}...</div>
-  <div style="font-size:11px;color:#64748b;margin-top:6px;">
-    📅 ${c.fecha||""} | 🏷 ${c.tipo||""} | ${c.estado||""}
-  </div>
-`;
 
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;">
+            <b>${c.usuario || "Usuario"}</b>
+            <div>
+              <span onclick="viewComment('${c.id_comment || c.ID}')" 
+                    style="cursor:pointer;color:#3b82f6;font-weight:bold;margin-right:6px;">👁️</span>
+              ${editMode ? `<span onclick="deleteComment('${c.id_comment || c.ID}')" 
+                    style="cursor:pointer;color:#ef4444;font-weight:bold;">🗑</span>` : ""}
+            </div>
+          </div>
+          <div>${(c.comentario || "").substring(0, 100)}...</div>
+          <div style="font-size:11px;color:#64748b;margin-top:6px;">
+            📅 ${c.fecha || ""} | 🏷 ${c.tipo || ""} | ${c.estado || ""}
+          </div>
+        `;
 
         list.appendChild(div);
     });
 }
 
+// Mostrar modal con el comentario completo
+async function viewComment(id_comment) {
+    // Primero buscar en los comentarios cargados
+    let comment = window.loadedComments?.find(c => (c.id_comment || c.ID) === id_comment)
+                  || JSON.parse(localStorage.getItem(doc) || "[]").find(c => (c.id_comment || c.ID) === id_comment);
 
+    // Si no se encuentra, hacer fetch al servidor
+    if (!comment) {
+        try {
+            const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
+            const comments = await res.json();
+            comment = comments.find(c => (c.id_comment || c.ID) === id_comment);
+            if (!comment) return alert("Comentario no encontrado");
+        } catch(err) {
+            return alert("Error cargando comentario: " + err);
+        }
+    }
 
-  
+    // Llenar modal con datos del comentario
+    document.getElementById("viewCommentHeader").innerText = 
+        `${document.getElementById("title")?.innerText || "SOP"} | ID: ${comment.id_comment || comment.ID} | ${comment.usuario || "Usuario"} | ${comment.fecha || ""} | ${comment.estado_revision || comment.estado || ""}`;
+
+    document.getElementById("viewCommentFragment").innerText = 
+        `${comment.context_before || ""}${comment.text_selected || ""}${comment.context_after || ""}`;
+
+    document.getElementById("viewCommentText").innerText = comment.comentario || "";
+
+    // Mostrar modal
+    document.getElementById("viewCommentModal").style.display = "flex";
+}
+
+// Cerrar modal de comentario
+function closeViewComment() {
+    document.getElementById("viewCommentModal").style.display = "none";
+}
 
 async function deleteComment(id_comment) {
     if (!confirm("¿Seguro que quieres borrar este comentario?")) return;
@@ -588,46 +731,6 @@ function closeCommentModal() {
     document.getElementById("commentModal").style.display = "none";
 }
 
-async function submitComment() {
-    const commentText = document.getElementById("commentInput").value.trim();
-    if (!commentText) {
-        alert("Comentario vacío");
-        return;
-    }
-
-    const type = document.getElementById("commentType").value;
-    const status = document.getElementById("commentStatus").value;
-
-    const now = new Date().toLocaleString();
-    const payload = {
-        tipo: "comentario",
-        id_sop: idSOP,
-        usuario: currentUser,
-        comentario: commentText,
-        tipo_comentario: type,
-        estado: status,
-        text_selected: selectedTextGlobal,
-        context_before: selectedTextGlobal.substring(0, 20),
-        context_after: selectedTextGlobal.substring(selectedTextGlobal.length - 20),
-        url_doc: doc
-    };
-
-    try {
-        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-        const data = await res.json();
-
-        if (data.success) {
-            highlightSelection(frame.contentWindow.getSelection(), payload);
-            loadComments();
-            closeCommentModal();
-            alert("✅ Comentario guardado");
-        } else {
-            alert("❌ Error: " + data.error);
-        }
-    } catch (err) {
-        alert("❌ Error conexión");
-    }
-}
 
 function setEditModeUI(enabled) {
     document.getElementById("commentUser").disabled = !enabled;
@@ -639,13 +742,55 @@ function setEditModeUI(enabled) {
     else btn.classList.add("disabled");
 }
 
-  async function viewComment(id_comment) {
-  const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
-  const comments = await res.json();
-  const c = comments.find(x => x.ID === id_comment);
-  if (!c) return alert("Comentario no encontrado");
+    function viewComment(id) {
+  // Buscar el comentario en la lista cargada
+  const list = JSON.parse(localStorage.getItem(doc) || "[]"); 
+  const comment = list.find(c => c.id_comment === id) || window.loadedComments?.find(c => c.id_comment === id);
 
-  // Construir modal
+  if (!comment) {
+    alert("Comentario no encontrado");
+    return;
+  }
+
+  // Encabezado del modal: SOP, ID, usuario, fecha, estado_revision
+  const sopName = document.getElementById("title")?.innerText || "SOP";
+  document.getElementById("viewCommentHeader").innerText = 
+    `${sopName} | ID: ${comment.id_comment} | ${comment.usuario || "Usuario"} | ${comment.fecha || ""} | ${comment.estado_revision || ""}`;
+
+  // Fragmento del SOP sobre el que se hizo el comentario
+  const fragment = `${comment.context_before || ""}${comment.text_selected || ""}${comment.context_after || ""}`;
+  document.getElementById("viewCommentFragment").innerText = fragment;
+
+  // Comentario propiamente dicho
+  document.getElementById("viewCommentText").innerText = comment.comentario || "";
+
+  // Mostrar modal
+  document.getElementById("viewCommentModal").style.display = "flex";
+}
+
+// Función para cerrar el modal
+function closeViewComment() {
+  document.getElementById("viewCommentModal").style.display = "none";
+}
+
+async function viewComment(id_comment) {
+  // Intentar buscar en la lista ya cargada
+  let comment = window.loadedComments?.find(c => c.id_comment === id_comment) 
+                || JSON.parse(localStorage.getItem(doc) || "[]").find(c => c.id_comment === id_comment);
+
+  // Si no se encuentra, hacer fetch al servidor
+  if (!comment) {
+    try {
+      const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
+      const comments = await res.json();
+      comment = comments.find(c => c.id_comment === id_comment);
+      if (!comment) return alert("Comentario no encontrado");
+    } catch(err) {
+      return alert("Error cargando comentario: " + err);
+    }
+  }
+
+  // Construir modal (igual que tu versión)
   let modal = document.createElement("div");
   modal.id = "viewCommentModal";
   modal.style = `
@@ -654,18 +799,18 @@ function setEditModeUI(enabled) {
   `;
   modal.innerHTML = `
     <div style="background:white; width:600px; max-height:80%; overflow:auto; border-radius:10px; padding:20px; position:relative;">
-      <h3>Comentario de ${c.usuario}</h3>
-      <p><b>ID:</b> ${c.ID} | <b>SOP:</b> ${c.id_sop} | <b>Fecha:</b> ${c.fecha} | <b>Estado:</b> ${c.estado_revision || c.estado}</p>
+      <h3>Comentario de ${comment.usuario}</h3>
+      <p><b>ID:</b> ${comment.id_comment} | <b>SOP:</b> ${comment.id_sop} | <b>Fecha:</b> ${comment.fecha} | <b>Estado:</b> ${comment.estado_revision || comment.estado}</p>
       
       <hr>
       <h4>Fragmento comentado:</h4>
       <div style="border:1px solid #cbd5e1; padding:10px; border-radius:8px; max-height:150px; overflow:auto; background:#f9fafb;">
-        ${c.context_before || ""} <mark>${c.text_selected || ""}</mark> ${c.context_after || ""}
+        ${comment.context_before || ""} <mark>${comment.text_selected || ""}</mark> ${comment.context_after || ""}
       </div>
       
       <h4 style="margin-top:15px;">Comentario:</h4>
       <div style="border:1px solid #cbd5e1; padding:10px; border-radius:8px; max-height:150px; overflow:auto; background:#fefce8;">
-        ${c.comentario || ""}
+        ${comment.comentario || ""}
       </div>
       
       <button onclick="document.getElementById('viewCommentModal').remove()" 
