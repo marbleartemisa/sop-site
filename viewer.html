@@ -10,6 +10,9 @@ body{
   font-family:"Segoe UI",Arial,sans-serif;
 }
 
+<!-- VISOR PARA GITHUB / HTML -->
+<iframe id="frameViewer" style="width:0;height:0;border:none;"></iframe>
+  
 /* TOPBAR */
 
   .topbar{
@@ -314,7 +317,10 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwc
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 let idSOP = params.get("id"); // id_sop 🔥
-
+  
+const urlParams = new URLSearchParams(window.location.search);
+const SOP_URL = urlParams.get("doc"); // Esto viene de tu tabla
+  
 const frame = document.getElementById("frame");
 let editMode=false;
 let currentUser="";
@@ -339,21 +345,51 @@ const users = {
 function openNew(){window.open(doc,"_blank");}
 
 
-function downloadDoc(){
+function downloadDoc(url) {
+  if(!url) url = doc; // usa la variable global doc si no hay argumento
+  if(!url) return alert("No hay documento");
 
-  const frame = document.getElementById("frame");
+  const type = getDocumentType(url);
+  let pdfUrl = url;
 
-  if(!frame) return;
+  switch(type){
+    case "gdoc": // Google Docs
+      const idDoc = url.match(/\/d\/(.*?)\//);
+      if(idDoc) pdfUrl = `https://docs.google.com/document/d/${idDoc[1]}/export?format=pdf`;
+      break;
 
-  // usar nombre del SOP
-  const title = document.getElementById("title").innerText || "SOP";
-  document.title = title;
+    case "gsheet": // Google Sheets
+      const idSheet = url.match(/\/d\/(.*?)\//);
+      if(idSheet) pdfUrl = `https://docs.google.com/spreadsheets/d/${idSheet[1]}/export?format=pdf`;
+      break;
 
-  // abrir guardar como PDF
-  frame.contentWindow.focus();
-  frame.contentWindow.print();
+    case "gslides": // Google Slides
+      const idSlide = url.match(/\/d\/(.*?)\//);
+      if(idSlide) pdfUrl = `https://docs.google.com/presentation/d/${idSlide[1]}/export/pdf`;
+      break;
+
+    case "gdrive": // Google Drive file
+      const idDrive = url.match(/[-\w]{25,}/);
+      if(idDrive) pdfUrl = `https://drive.google.com/uc?export=download&id=${idDrive[0]}`;
+      break;
+
+    case "github": // GitHub Page HTML
+      openIframePrint(url);
+      return;
+
+    default:
+      alert("No se puede descargar este tipo de archivo");
+      return;
+  }
+
+  // Descargar PDF directo
+  const link = document.createElement("a");
+  link.href = pdfUrl;
+  link.target = "_blank";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
-  
 function printDoc(){frame.contentWindow.print();}
 
 // login
@@ -361,6 +397,8 @@ function showLogin(){
   document.getElementById("loginOverlay").style.display="flex"; 
   document.getElementById("loginMessage").innerText="";
 }
+
+  
 function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
 
 
@@ -538,6 +576,30 @@ function commentSelectedText(){
   document.getElementById("commentModal").style.display = "flex";
 }
 
+  function getDocumentType(url) {
+  if(!url) return null;
+  if(url.includes("docs.google.com/document")) return "gdoc";
+  if(url.includes("docs.google.com/spreadsheets")) return "gsheet";
+  if(url.includes("docs.google.com/presentation")) return "gslides";
+  if(url.includes("drive.google.com")) return "gdrive";
+  if(url.includes("github.io")) return "github";
+  return "other";
+}
+
+function openIframePrint(url){
+  const frame = document.getElementById("frameViewer");
+  if(!frame){
+    alert("No se encontró el visor (iframe).");
+    return;
+  }
+
+  frame.src = url;
+  frame.onload = ()=>{
+    frame.contentWindow.focus();
+    frame.contentWindow.print();
+  };
+}
+  
 function closeCommentModal(){
   document.getElementById("commentModal").style.display = "none";
 }
