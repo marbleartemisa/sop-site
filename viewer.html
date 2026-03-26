@@ -260,14 +260,6 @@ margin-bottom:10px;
 </div>
 
 
-  
- <div id="commentsLoader" class="comments-loader">
-  <div class="spinner"></div>
-  Cargando comentarios...
-</div>
-
-<div id="commentsContainer"></div> 
-
 <!-- DOCUMENTO -->
 <div class="doc-area">
   <div class="doc-frame">
@@ -569,11 +561,8 @@ async function loadComments(){
 function renderComments(comments){
 
   const list = document.getElementById("commentList");
-
-  // limpiar
   list.innerHTML = "";
 
-  // sin comentarios
   if(!comments || comments.length === 0){
     list.innerHTML = `
       <div class="no-comments">
@@ -583,31 +572,29 @@ function renderComments(comments){
     return;
   }
 
-  // con comentarios
   comments.forEach(c=>{
 
     const div = document.createElement("div");
     div.className = "comment-box";
 
     div.innerHTML = `
-      <div class="comment-user">
+      <div style="display:flex;justify-content:space-between;">
         <b>${c.usuario || "Usuario"}</b>
+
+        ${editMode ? `
+        <span 
+          onclick="deleteComment('${c.id}')"
+          style="cursor:pointer;color:#ef4444;font-weight:bold;">
+          🗑
+        </span>
+        ` : ""}
       </div>
 
-      <div class="comment-text">
-        ${c.comentario || ""}
-      </div>
+      <div>${c.comentario || ""}</div>
 
-      ${c.texto ? `
-      <div class="comment-selection">
-        ${c.texto}
-      </div>` : ""}
-
-      <div class="comment-meta">
-        📅 ${c.fecha || ""}
-        &nbsp; | &nbsp;
-        🏷 ${c.tipo || ""}
-        &nbsp; | &nbsp;
+      <div style="font-size:11px;color:#64748b;margin-top:6px;">
+        📅 ${c.fecha || ""} |
+        🏷 ${c.tipo || ""} |
         ${c.estado || ""}
       </div>
     `;
@@ -617,6 +604,34 @@ function renderComments(comments){
   });
 
 }
+
+  async function deleteComment(id){
+
+  if(!confirm("¿Borrar comentario?")) return;
+
+  try{
+
+    const res = await fetch(SCRIPT_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        action:"deleteComment",
+        id:id
+      })
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+      loadComments();
+    }
+
+  }catch(err){
+    alert("Error borrando comentario");
+  }
+
+}
+
+  
 // resaltado
 function highlightSelection(sel, comment){
   if(sel.rangeCount){
@@ -630,22 +645,6 @@ function highlightSelection(sel, comment){
 }
 
   let selectedTextGlobal = "";
-
-function commentSelectedText(){
-  if(!editMode){ alert("Activa modo edición primero"); return; }
-
-  const sel = frame.contentWindow.getSelection();
-  const text = sel.toString().trim();
-
-  if(!text){
-    alert("Selecciona un texto válido");
-    return;
-  }
-
-  selectedTextGlobal = text;
-
-  document.getElementById("commentModal").style.display = "flex";
-}
 
   function getDocumentType(url) {
   if(!url) return null;
