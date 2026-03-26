@@ -335,7 +335,58 @@ const users = {
 
 // botones
 function openNew(){window.open(doc,"_blank");}
-function downloadDoc(){const a=document.createElement("a"); a.href=doc;a.download=""; a.click();}
+
+
+function downloadDoc(){
+
+  if(!doc) return;
+
+  let name = document.getElementById("title").innerText || "SOP";
+  name = name.replace(/[\\/:*?"<>|]/g,'');
+
+  let pdfUrl = doc;
+
+  // Google Docs
+  if(doc.includes("docs.google.com/document")){
+    const id = doc.match(/\/d\/(.*?)\//);
+    if(id){
+      pdfUrl = `https://docs.google.com/document/d/${id[1]}/export?format=pdf`;
+    }
+  }
+
+  // Google Sheets
+  else if(doc.includes("docs.google.com/spreadsheets")){
+    const id = doc.match(/\/d\/(.*?)\//);
+    if(id){
+      pdfUrl = `https://docs.google.com/spreadsheets/d/${id[1]}/export?format=pdf`;
+    }
+  }
+
+  // Google Slides
+  else if(doc.includes("docs.google.com/presentation")){
+    const id = doc.match(/\/d\/(.*?)\//);
+    if(id){
+      pdfUrl = `https://docs.google.com/presentation/d/${id[1]}/export/pdf`;
+    }
+  }
+
+  // Drive file directo
+  else if(doc.includes("drive.google.com")){
+    const id = doc.match(/[-\w]{25,}/);
+    if(id){
+      pdfUrl = `https://drive.google.com/uc?export=download&id=${id[0]}`;
+    }
+  }
+
+  const link = document.createElement("a");
+  link.href = pdfUrl;
+  link.target = "_blank"; // 🔥 importante
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+  
+  
 function printDoc(){frame.contentWindow.print();}
 
 // login
