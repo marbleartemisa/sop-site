@@ -221,12 +221,14 @@ async function loadComments(){
   loader.style.display="none";
 }
 
-// --- RENDERIZAR COMENTARIOS ---
-function renderComments(comments) {
+// ========================
+// RENDER COMENTARIOS
+// ========================
+function renderComments(comments){ 
   const list = document.getElementById("commentList");
   list.innerHTML = "";
 
-  if (!comments || comments.length === 0) {
+  if(!comments || comments.length === 0){
     list.innerHTML = `<div class="no-comments">💬 Este SOP no tiene comentarios</div>`;
     return;
   }
@@ -234,12 +236,12 @@ function renderComments(comments) {
   comments.forEach(c => {
     const div = document.createElement("div");
     div.className = "comment-box";
-    div.dataset.id = c.id_comment || ""; // <-- Guardamos el ID real
 
+    // Nota: ahora usamos c.ID para el delete
     div.innerHTML = `
       <div style="display:flex;justify-content:space-between;">
         <b>${c.usuario || "Usuario"}</b>
-        ${editMode ? `<span onclick="deleteComment('${c.id_comment}')" style="cursor:pointer;color:#ef4444;font-weight:bold;">🗑</span>` : ""}
+        ${editMode ? `<span onclick="deleteComment('${c.ID}')" style="cursor:pointer;color:#ef4444;font-weight:bold;">🗑</span>` : ""}
       </div>
       <div>${c.comentario || ""}</div>
       <div style="font-size:11px;color:#64748b;margin-top:6px;">
@@ -250,36 +252,39 @@ function renderComments(comments) {
   });
 }
 
-// --- BORRAR COMENTARIO ---
-async function deleteComment(id_comment) {
-  if (!id_comment) {
-    alert("❌ ID de comentario no válido");
+// ========================
+// BORRAR COMENTARIO
+// ========================
+async function deleteComment(id_comment){
+  if(!confirm("¿Seguro que quieres borrar este comentario?")) return;
+
+  if(!id_comment){
+    alert("ID de comentario inválido");
     return;
   }
 
-  if (!confirm("¿Seguro que quieres borrar este comentario?")) return;
-
-  try {
+  try{
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tipo: "delete_comment", id_comment: id_comment })
+      body: JSON.stringify({
+        tipo: "delete_comment",
+        id_comment: id_comment
+      })
     });
 
     const data = await res.json();
 
-    if (data.success) {
+    if(data.success){
       alert("🗑 Comentario eliminado");
       loadComments();
     } else {
-      alert("❌ Error al eliminar comentario: " + (data.error || "No se pudo borrar"));
+      alert("❌ Error: " + (data.error || "No se pudo eliminar"));
     }
-  } catch (err) {
-    console.error(err);
+  }catch(err){
     alert("❌ Error de conexión al intentar borrar");
+    console.error(err);
   }
 }
-
 
   
 
