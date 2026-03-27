@@ -260,7 +260,7 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     <textarea id="commentInput" placeholder="Escribe tu comentario..." style="width:100%; height:120px; border-radius:10px; border:1px solid #cbd5e1; padding:10px; resize:none;"></textarea>
     <div style="margin-top:15px; text-align:right;">
       <button onclick="closeCommentModal()" style="margin-right:10px;">Cancelar</button>
-      <button onclick="submitComment()" style="background:#2563eb;color:white;border:none;padding:8px 14px;border-radius:8px;">Guardar</button>
+        <button onclick="submitComment()" style="background:#2563eb;color:white;border:none;padding:8px 14px;border-radius:8px;">Guardar</button>
     </div>
   </div>
 </div>
@@ -413,7 +413,7 @@ function submitComment() {
     }
 
     if (!editMode) {
-        alert("Activa modo edición primero");
+        alert("Activa el modo edición primero");
         return;
     }
 
@@ -422,9 +422,16 @@ function submitComment() {
     const estado = document.getElementById("commentStatus").value || "Pendiente";
 
     // Tomar texto seleccionado del iframe
+    const frame = document.getElementById("frame");
+    if (!frame || !frame.contentWindow) {
+        alert("No se encontró el documento para seleccionar texto");
+        return;
+    }
+
     const sel = frame.contentWindow.getSelection();
     const selectedText = sel ? sel.toString() : "";
 
+    // Crear comentario
     const newComment = {
         id_comment: Date.now().toString(),
         usuario: user,
@@ -439,17 +446,17 @@ function submitComment() {
     if (!window.loadedComments) window.loadedComments = [];
     window.loadedComments.push(newComment);
 
-    // Guardar en localStorage para persistencia temporal
+    // Guardar en localStorage
     const existing = JSON.parse(localStorage.getItem(doc) || "[]");
     existing.push(newComment);
     localStorage.setItem(doc, JSON.stringify(existing));
 
-    // Resaltar selección en el iframe si hay texto
+    // Resaltar selección en iframe si hay texto
     if (selectedText) {
         highlightSelection(sel, newComment);
     }
 
-    // Actualizar sidebar
+    // Actualizar lista en sidebar
     renderComments(window.loadedComments);
 
     // Limpiar y cerrar modal
