@@ -75,22 +75,33 @@ iframe {
 
 
 /* ===== COMMENTS LAYER ===== */
+
 #commentsLayer {
-    position: absolute;  /* Absoluto respecto al contenedor */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 450;
-    overflow: visible;
-}
-.floating-comment {
-    position: absolute;  /* Absoluto para que se mueva con el scroll */
-    pointer-events: auto;
-    z-index: 999;
+  position: absolute;  /* relativo al contenedor de la página */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 450;
 }
 
+.floating-comment {
+  position: absolute;  /* se mueve con el scroll de la página */
+  pointer-events: auto;
+  z-index: 999;
+}
+
+.floating-comment textarea {
+  width: 200px;
+  height: 60px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.9);
+  font-style: italic;
+  font-size: 12px;
+  resize: none;
+}    
     
 /* ===== CLICK LAYER ===== */
 #clickLayer {
@@ -207,6 +218,50 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     padding:25px;
     box-shadow:0 20px 50px rgba(0,0,0,.4);
 }
+    .login-card button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#loginOverlay .login-card button#loginBtn {
+  background: #2563eb;
+  color: white;
+}
+
+#loginOverlay .login-card button#loginBtn:hover {
+  background: #1e40af;
+}
+
+#loginOverlay .login-card button.cancelBtn {
+  background: #e5e7eb;
+  color: #111;
+}
+
+#loginOverlay .login-card button.cancelBtn:hover {
+  background: #cbd5e1;
+}
+
+.login-card select,
+.login-card input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.login-card select:focus,
+.login-card input:focus {
+  border-color: #2563eb;
+  outline: none;
+  background: white;
+}    
 </style>
 </head>
 <body>
@@ -272,10 +327,12 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
   </select>
 </div>
 
+
 <div id="loginOverlay">
   <div class="login-card">
     <h3>🔒 Acceso de edición</h3>
     <div id="loginMessage"></div>
+
     <select id="loginUser">
       <option value="">Seleccionar usuario</option>
       <option>Damian Molina</option>
@@ -286,12 +343,18 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
       <option>Wendy Romanach</option>
       <option>Otros</option>
     </select>
+
     <input type="password" id="loginPass" placeholder="Contraseña">
-    <button onclick="checkLogin()">Ingresar</button>
-    <button onclick="closeLogin()" style="background:#e5e7eb;color:#111;">Cancelar</button>
+
+    <div style="margin-top:15px;text-align:right;">
+         <button id="loginBtn" onclick="checkLogin()">Ingresar</button>
+        <button class="cancelBtn" onclick="closeLogin()">Cancelar</button>
+    </div>
   </div>
 </div>
 
+
+    
 <div id="commentModal">
   <h3>💬 Nuevo comentario</h3>
   <textarea id="commentInput" placeholder="Escribe tu comentario..."></textarea>
@@ -356,6 +419,8 @@ function checkLogin(){
   closeLogin();
 }
 
+
+    
 function setEditModeUI(enabled){
   document.getElementById("commentUser").disabled = !enabled;
   document.getElementById("commentType").disabled = !enabled;
@@ -376,19 +441,56 @@ document.getElementById("toggleSidebarBtn").addEventListener("click", ()=>{
 // CLICK PARA COMENTARIO
 // ======================
 
-    function commentSelectedText() {
-  if(!editMode){ alert("Activa modo edición"); return; }
-  const layer = document.getElementById("clickLayer");
-  layer.style.display = "block";
-  layer.onclick = (e) => {
-    const frameRect = document.querySelector(".doc-frame").getBoundingClientRect();
-    const x = e.clientX - frameRect.left;
-    const y = e.clientY - frameRect.top;
-    createFloatingComment(x, y);
-    layer.style.display = "none";
+// Variables globales
+let currentPage = 1;  // Número de página actual
+let editMode = false;
+let currentUser = "";
+
+// Abrir modal para ingresar comentario
+function commentSelectedText() {
+  if (!editMode) { alert("Activa modo edición"); return; }
+
+  const clickLayer = document.getElementById("clickLayer");
+  clickLayer.style.display = "block";
+
+  clickLayer.onclick = (e) => {
+    const docFrame = document.querySelector(".doc-frame");
+    const rect = docFrame.getBoundingClientRect();
+
+    // x, y relativos al contenedor del documento
+    const x = e.clientX - rect.left + docFrame.scrollLeft;
+    const y = e.clientY - rect.top + docFrame.scrollTop;
+
+    // Guardar texto seleccionado si hay
+    const text_selected = window.getSelection().toString() || "";
+
+    // Contexto antes y después (simple ejemplo)
+    const context_before = text_selected ? text_selected.substring(0,10) : "";
+    const context_after  = text_selected ? text_selected.substring(text_selected.length-10) : "";
+
+    // Abrir modal para escribir comentario
+    openCommentModal({x, y, text_selected, context_before, context_after, page: currentPage});
+    clickLayer.style.display = "none";
   };
+};
+
+ function openCommentModal(data) {
+  const modal = document.getElementById("commentModal");
+  modal.style.display = "block";
+  modal.dataset.x = data.x;
+  modal.dataset.y = data.y;
+  modal.dataset.text_selected = data.text_selected;
+  modal.dataset.context_before = data.context_before;
+  modal.dataset.context_after = data.context_after;
+  modal.dataset.page = data.page;
+  document.getElementById("commentInput").value = "";
 }
 
+// Cerrar modal
+function closeCommentModal() {
+  document.getElementById("commentModal").style.display = "none";
+}   
+    
 // ======================
 // CREAR COMENTARIO FLOTANTE
 // ======================
@@ -422,6 +524,43 @@ function createFloatingComment(x, y){
   container.appendChild(layer);
 }
 
+async function saveComment() {
+  const modal = document.getElementById("commentModal");
+  const text = document.getElementById("commentInput").value.trim();
+  if (!text) { alert("Comentario vacío"); return; }
+
+  const newComment = {
+    id_comment: Date.now().toString(),
+    usuario: currentUser || "Anónimo",
+    tipo: document.getElementById("commentType").value,
+    estado_revision: "Pendiente",
+    comentario: text,
+    text_selected: modal.dataset.text_selected,
+    context_before: modal.dataset.context_before,
+    context_after: modal.dataset.context_after,
+    x: parseInt(modal.dataset.x),
+    y: parseInt(modal.dataset.y),
+    page: parseInt(modal.dataset.page)
+  };
+
+  try {
+    const res = await fetch(SCRIPT_URL,{
+      method:"POST",
+      body: JSON.stringify({...newComment, id_sop:idSOP, tipo:"comentario"})
+    });
+    const result = await res.json();
+    if(result.success){
+      if(!window.loadedComments) window.loadedComments=[];
+      window.loadedComments.push(newComment);
+      renderCommentsForPage(currentPage);
+      closeCommentModal();
+    } else {
+      alert("Error guardando comentario: "+result.error);
+    }
+  } catch(err){
+    alert("Error guardando comentario: "+err);
+  }
+}
     
 // ======================
 // GUARDAR COMENTARIO
@@ -459,6 +598,48 @@ async function saveFloatingComment(btn){
   } catch(err){ alert("Error guardando comentario: "+err); btn.disabled=false; }
 }
 
+function renderCommentsForPage(pageNumber){
+  const container = document.getElementById("commentsLayer");
+  container.innerHTML = "";  // Limpiar capa
+
+  if(!window.loadedComments) return;
+
+  window.loadedComments
+    .filter(c => c.page === pageNumber && c.estado_revision !== "revisado")
+    .forEach(c => {
+      const el = document.createElement("div");
+      el.className = "floating-comment";
+      el.style.left = c.x + "px";
+      el.style.top  = c.y + "px";
+      el.style.zIndex = 999;
+
+      el.innerHTML = `
+        <div style="
+          background: rgba(255,255,255,0.8);
+          backdrop-filter: blur(4px);
+          border-left: 4px solid #dc2626;
+          padding: 6px;
+          border-radius: 6px;
+          font-size: 12px;
+          color:#dc2626;
+          min-width: 180px;
+        ">
+          ${c.comentario}
+        </div>
+      `;
+      container.appendChild(el);
+    });
+}    
+
+function goToPage(n){
+  currentPage = n;
+  // recargar iframe con la página
+  frame.src = getDocUrlForPage(n);
+  // renderizar comentarios cuando se cargue iframe
+  frame.onload = () => renderCommentsForPage(currentPage);
+}
+    
+ 
 // ======================
 // CARGAR / RENDER
 // ======================
@@ -511,8 +692,27 @@ function renderComments(comments){
 // ======================
 // NAV
 // ======================
-function prevSOP(){ alert("Anterior SOP"); }
-function nextSOP(){ alert("Siguiente SOP"); }
+function loadSOPPage(n){
+  // Aquí cargas el documento de la página n en el iframe
+  frame.src = getDocUrlForPage(n);  // tu función que retorna URL de la página n
+
+  // Cuando el iframe termina de cargar
+  frame.onload = () => {
+    // Renderiza los comentarios de esta página
+    renderCommentsForPage(currentPage);
+  };
+}
+
+function prevSOP(){
+  if(currentPage <= 1) return;
+  currentPage--;
+  loadSOPPage(currentPage);
+}
+
+function nextSOP(){
+  currentPage++;
+  loadSOPPage(currentPage);
+}
 
 </script>
 </body>
