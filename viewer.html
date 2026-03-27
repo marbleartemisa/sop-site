@@ -176,15 +176,16 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     display:none;
 }
     
+.doc-frame {
+    position: relative; /* 🔥 clave */
+}
+    
 #prevDocBtn:hover, #nextDocBtn:hover { background: rgba(0,0,0,0.7); }
 #prevDocBtn { left: 0; } #nextDocBtn { right: 0; }
 </style>
 </head>
 <body>
 
-.doc-frame {
-    position: relative; /* 🔥 clave */
-}
 
 <iframe id="frameViewer" style="width:0;height:0;border:none;"></iframe>
 
@@ -281,8 +282,7 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
   </div>
 </div>
 
-    document.getElementById("toggleSidebarBtn")?.addEventListener("click",()=>{
-    document.getElementById("commentSidebar").classList.toggle("active");
+  
 });
 
 // ENTER para login
@@ -308,6 +308,8 @@ document.getElementById("loginUser").addEventListener("keydown", function(e){
     </div>
   </div>
 </div>
+
+    
 
 <script>
 // ======================
@@ -385,7 +387,8 @@ function setEditModeUI(enabled){
 function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
 
 
-    function commentSelectedText(){
+      
+function commentSelectedText(){
 
     if(!editMode){
         alert("Activa modo edición");
@@ -394,24 +397,27 @@ function closeSidebar(){ document.getElementById("commentSidebar").classList.rem
 
     const layer = document.getElementById("clickLayer");
 
+    // activar capa
     layer.style.display = "block";
 
-    layer.onclick = function(e){
+    // limpiar eventos previos (clave)
+    layer.onclick = null;
 
-        const rect = layer.getBoundingClientRect();
+    layer.addEventListener("click", function(e){
 
         const x = e.clientX;
         const y = e.clientY;
-
-        selectedTextGlobal = "";
 
         createFloatingComment(x, y);
 
         // desactivar después del click
         layer.style.display = "none";
-        layer.onclick = null;
-    };
+
+    }, { once: true });
 }
+
+
+
     
 function createCorrectionLayer(selection){
     const range=selection.getRangeAt(0);
@@ -643,6 +649,13 @@ document.getElementById("saveCommentBtn").addEventListener("click", function() {
         return;
     }
 
+    document.addEventListener("DOMContentLoaded", function(){
+
+    document.getElementById("toggleSidebarBtn")?.addEventListener("click",()=>{
+        document.getElementById("commentSidebar").classList.toggle("active");
+    });
+
+});
     const commentText = commentInput.value.trim();
     if (!commentText) {
         alert("Escribe un comentario");
