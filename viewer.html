@@ -495,24 +495,36 @@ function saveFloatingComment(btn){
 // ======================
 // CARGAR / RENDER
 // ======================
+
+
 async function loadComments(){
 
-  const loader=document.getElementById("commentsLoader");
-  loader.style.display="block";
+  const loader = document.getElementById("commentsLoader");
+  loader.style.display = "block";
 
-  try{
-    const res=await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
-    const data=await res.json();
+  let serverComments = [];
+  let localComments = [];
 
-    window.loadedComments=(data||[]);
-    renderComments(window.loadedComments);
-
-  }catch(e){
-    console.error(e);
-    renderComments([]);
+  try {
+    const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
+    serverComments = await res.json();
+  } catch(e){
+    console.warn("Sin conexión a servidor");
   }
 
-  loader.style.display="none";
+  // 🔥 cargar localStorage
+  try {
+    localComments = JSON.parse(localStorage.getItem(doc) || "[]");
+  } catch(e){
+    localComments = [];
+  }
+
+  // 🔥 combinar ambos
+  window.loadedComments = [...serverComments, ...localComments];
+
+  renderComments(window.loadedComments);
+
+  loader.style.display = "none";
 }
 
 function renderComments(comments){
@@ -545,11 +557,10 @@ function renderComments(comments){
 
       const el=document.createElement("div");
       el.className="floating-comment";
-
-      el.style.position="fixed";
-      el.style.left=c.x;
-      el.style.top=c.y;
-      el.style.zIndex=9999;
+        el.style.position = "absolute";
+        el.style.left = c.x;   // ej: "120px"
+        el.style.top = c.y;    // ej: "300px"
+        el.style.zIndex = 9999;
 
       el.innerHTML=`
         <div style="
@@ -571,6 +582,8 @@ function renderComments(comments){
   });
 }
 
+
+    
 // ======================
 // NAV
 // ======================
