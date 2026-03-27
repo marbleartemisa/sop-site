@@ -163,11 +163,28 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     z-index: 500;
     transition: background 0.3s;
 }
+
+#clickLayer{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:400;
+    cursor: crosshair;
+    background: transparent;
+    display:none;
+}
+    
 #prevDocBtn:hover, #nextDocBtn:hover { background: rgba(0,0,0,0.7); }
 #prevDocBtn { left: 0; } #nextDocBtn { right: 0; }
 </style>
 </head>
 <body>
+
+.doc-frame {
+    position: relative; /* 🔥 clave */
+}
 
 <iframe id="frameViewer" style="width:0;height:0;border:none;"></iframe>
 
@@ -191,12 +208,22 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
 
 <div class="doc-area">
   <div class="doc-frame">
+    
     <iframe id="frame"></iframe>
+
+    <!-- 🔥 CAPA PARA CAPTURAR CLICKS -->
+    <div id="clickLayer"></div>
+
     <div id="overlay"></div>
+
     <button id="prevDocBtn" onclick="prevSOP()">⬅</button>
     <button id="nextDocBtn" onclick="nextSOP()">➡</button>
+
   </div>
 </div>
+
+
+    
 
 <div id="commentSidebar">
   <div id="commentsLoader" class="comments-loader">
@@ -357,30 +384,33 @@ function setEditModeUI(enabled){
 // ======================
 function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
 
-function commentSelectedText(){
+
+    function commentSelectedText(){
+
     if(!editMode){
         alert("Activa modo edición");
         return;
     }
 
-    const iframeRect = frame.getBoundingClientRect();
+    const layer = document.getElementById("clickLayer");
 
-    // Escuchar UN SOLO click dentro del iframe
-    frame.contentWindow.document.addEventListener("click", function handler(e){
+    layer.style.display = "block";
 
-        e.preventDefault();
+    layer.onclick = function(e){
+
+        const rect = layer.getBoundingClientRect();
 
         const x = e.clientX;
         const y = e.clientY;
 
-        selectedTextGlobal = ""; // ya no usamos selección
+        selectedTextGlobal = "";
 
         createFloatingComment(x, y);
 
-        // remover listener después de 1 click
-        frame.contentWindow.document.removeEventListener("click", handler);
-
-    }, { once: true });
+        // desactivar después del click
+        layer.style.display = "none";
+        layer.onclick = null;
+    };
 }
     
 function createCorrectionLayer(selection){
@@ -508,9 +538,12 @@ function renderComments(comments){
             layer.style.left = Math.min(window.innerWidth - 240, posX) + "px";
 
             // mantener posición vertical
-            layer.style.top = c.y;
+            layer.style.top = y + "px";
+            layer.style.left = x + "px";;
 
             layer.style.zIndex = 9999;
+
+
 
             layer.innerHTML = `
                 <div style="
