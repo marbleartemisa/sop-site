@@ -3,14 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Viewer SOP Pro - Artemisa</title>
-
 <style>
 body {
     margin: 0;
     background: #eef2f7;
     font-family: "Segoe UI", Arial, sans-serif;
 }
-
 .topbar {
     background: #0f172a;
     color: white;
@@ -24,13 +22,7 @@ body {
     z-index: 100;
     box-sizing: border-box;
 }
-
-.brand {
-    font-weight: 600;
-    letter-spacing: .4px;
-    font-size: 15px;
-}
-
+.brand { font-weight: 600; letter-spacing: .4px; font-size: 15px; }
 .back {
     background: #2563eb;
     color: white;
@@ -39,8 +31,7 @@ body {
     text-decoration: none;
     font-size: 13px;
 }
-
-.doc-header {
+.doc-header, .doc-nav {
     max-width: 1100px;
     margin: 80px auto 10px auto;
     padding: 0 10px;
@@ -48,15 +39,6 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-
-.doc-nav {
-    max-width: 1100px;
-    margin: 0 auto 10px;
-    padding: 0 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
 .doc-nav div {
     background: white;
     border: 1px solid #e5e7eb;
@@ -65,11 +47,7 @@ body {
     cursor: pointer;
     font-size: 13px;
 }
-
-.doc-nav div:hover {
-    background: #f3f4f6;
-}
-
+.doc-nav div:hover { background: #f3f4f6; }
 .tool {
     background: white;
     border: 1px solid #e2e8f0;
@@ -79,23 +57,9 @@ body {
     font-size: 13px;
     transition: .2s;
 }
-
-.tool:hover {
-    background: #2563eb;
-    color: white;
-}
-
-.tool.disabled {
-    opacity: .5;
-    pointer-events: none;
-}
-
-.doc-area {
-    display: flex;
-    justify-content: center;
-    padding: 10px 20px 40px;
-}
-
+.tool:hover { background: #2563eb; color: white; }
+.tool.disabled { opacity: .5; pointer-events: none; }
+.doc-area { display: flex; justify-content: center; padding: 10px 20px 40px; }
 .doc-frame {
     width: 100%;
     max-width: 1100px;
@@ -103,14 +67,9 @@ body {
     border-radius: 12px;
     box-shadow: 0 15px 40px rgba(0,0,0,.15);
     overflow: hidden;
+    position: relative;
 }
-
-iframe {
-    width: 100%;
-    height: 80vh;
-    border: none;
-}
-
+iframe { width: 100%; height: 80vh; border: none; }
 #commentSidebar {
     position: fixed;
     top: 0;
@@ -125,11 +84,7 @@ iframe {
     z-index: 200;
     overflow-y: auto;
 }
-
-#commentSidebar.active {
-    transform: translateX(0);
-}
-
+#commentSidebar.active { transform: translateX(0); }
 #toggleSidebarBtn {
     position: fixed;
     right: 15px;
@@ -146,7 +101,6 @@ iframe {
     box-shadow: 0 8px 20px rgba(0,0,0,.3);
     z-index: 300;
 }
-
 select, input, textarea {
     width: 100%;
     padding: 10px;
@@ -156,13 +110,7 @@ select, input, textarea {
     margin-bottom: 12px;
     font-size: 14px;
 }
-
-select:focus, input:focus, textarea:focus {
-    border-color: #2563eb;
-    outline: none;
-    background: white;
-}
-
+select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none; background: white; }
 .comment-box {
     border-radius: 10px;
     padding: 12px;
@@ -170,15 +118,7 @@ select:focus, input:focus, textarea:focus {
     background: #f1f5f9;
     border-left: 4px solid #2563eb;
 }
-
-.comments-loader {
-    display: none;
-    text-align: center;
-    padding: 18px;
-    color: #6b7280;
-    font-size: 13px;
-}
-
+.comments-loader { display: none; text-align: center; padding: 18px; color: #6b7280; font-size: 13px; }
 .spinner {
     width: 22px;
     height: 22px;
@@ -188,12 +128,7 @@ select:focus, input:focus, textarea:focus {
     margin: 0 auto 8px;
     animation: spin 1s linear infinite;
 }
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 #loginOverlay {
     position: fixed;
     top: 0;
@@ -206,7 +141,6 @@ select:focus, input:focus, textarea:focus {
     justify-content: center;
     z-index: 500;
 }
-
 .login-card {
     background: white;
     padding: 35px;
@@ -214,14 +148,7 @@ select:focus, input:focus, textarea:focus {
     width: 360px;
     box-shadow: 0 20px 50px rgba(0,0,0,.4);
 }
-
-#loginMessage {
-    color: red;
-    font-size: 13px;
-    margin-bottom: 10px;
-}
-
-/* BOTONES ANTERIOR / SIGUIENTE SOBRE EL VISOR */
+#loginMessage { color: red; font-size: 13px; margin-bottom: 10px; }
 #prevDocBtn, #nextDocBtn {
     position: absolute;
     top: 50%;
@@ -236,18 +163,8 @@ select:focus, input:focus, textarea:focus {
     z-index: 500;
     transition: background 0.3s;
 }
-
-#prevDocBtn:hover, #nextDocBtn:hover {
-    background: rgba(0,0,0,0.7);
-}
-
-#prevDocBtn {
-    left: 0;
-}
-
-#nextDocBtn {
-    right: 0;
-}
+#prevDocBtn:hover, #nextDocBtn:hover { background: rgba(0,0,0,0.7); }
+#prevDocBtn { left: 0; } #nextDocBtn { right: 0; }
 </style>
 </head>
 <body>
@@ -272,19 +189,14 @@ select:focus, input:focus, textarea:focus {
   </div>
 </div>
 
-
-  <div class="doc-area">
-  <div class="doc-frame" style="position:relative;">
+<div class="doc-area">
+  <div class="doc-frame">
     <iframe id="frame"></iframe>
     <div id="overlay"></div>
-
-    <!-- BOTONES FLOTANTES ANTERIOR/SIGUIENTE -->
     <button id="prevDocBtn" onclick="prevSOP()">⬅</button>
     <button id="nextDocBtn" onclick="nextSOP()">➡</button>
   </div>
 </div>
-
-
 
 <div id="commentSidebar">
   <div id="commentsLoader" class="comments-loader">
@@ -294,9 +206,7 @@ select:focus, input:focus, textarea:focus {
   <div id="commentList"></div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
     <h3 style="margin:0;">💬 Comentarios</h3>
-  
-          <!-- Botón de cerrar modal -->
-    <span style="cursor:pointer; font-size:18px;" onclick="closeViewComment()">✖</span>
+    <span style="cursor:pointer; font-size:18px;" onclick="closeSidebar()">✖</span>
   </div>
   <label>Empleado</label>
   <select id="commentUser">
@@ -343,33 +253,6 @@ select:focus, input:focus, textarea:focus {
     <button onclick="closeLogin()" style="background:#e5e7eb;color:#111;">Cancelar</button>
   </div>
 </div>
-    <!-- MODAL PARA VER COMENTARIOS -->
-<div id="viewCommentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
-    background:rgba(0,0,0,0.6); z-index:700; align-items:center; justify-content:center;">
-  <div style="background:white; width:600px; max-width:95%; padding:25px; border-radius:14px; 
-      box-shadow:0 20px 50px rgba(0,0,0,.4); display:flex; flex-direction:column; max-height:90vh; overflow:hidden;">
-    
-    <!-- Encabezado fijo -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <h3 id="viewCommentHeader" style="margin:0; font-size:16px;">Comentario SOP</h3>
-      <span style="cursor:pointer; font-size:18px;" onclick="closeViewCommentModal()">✖</span>
-    </div>
-
-    <!-- Contenido scrollable -->
-    <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px;">
-      <div>
-        <label style="font-weight:bold;">Fragmento comentado:</label>
-        <div id="viewCommentFragment" style="background:#f1f5f9; padding:10px; border-radius:8px; 
-            border:1px solid #cbd5e1; white-space:pre-wrap;"></div>
-      </div>
-      <div>
-        <label style="font-weight:bold;">Comentario:</label>
-        <div id="viewCommentText" style="background:#eef2f7; padding:10px; border-radius:8px; 
-            border:1px solid #cbd5e1; white-space:pre-wrap;"></div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div id="commentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:600; align-items:center; justify-content:center;">
   <div style="background:white; width:500px; padding:25px; border-radius:14px; box-shadow:0 20px 50px rgba(0,0,0,.4);">
@@ -383,6 +266,9 @@ select:focus, input:focus, textarea:focus {
 </div>
 
 <script>
+// ======================
+// CONFIGURACIÓN INICIAL
+// ======================
 let editMode = false;
 let currentUser = "";
 let selectedTextGlobal = "";
@@ -393,500 +279,159 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwc
 const frame = document.getElementById("frame");
 setEditModeUI(false);
 if(doc) frame.src = doc;
-
 const users = {"Damian Molina":"Dam1975","Alberto Molina":"Alb1975","Gabriel Batista":"Gab1975","Jenny Perez":"Jen1975","Yoandry Perez":"Yoa1975","Wendy Romanach":"Wen1975","Otros":"Otr1975"};
 
-function openNew() {
-    window.open(doc, "_blank");
-}
-
+// ======================
+// FUNCIONES VISOR / DOCUMENTOS
+// ======================
+function openNew() { if(doc) window.open(doc, "_blank"); }
 function downloadDoc(url) {
-    if (!url) url = doc;
-    if (!url) return alert("No hay documento");
-
-    const type = getDocumentType(url);
-    let pdfUrl = url;
-
-    switch (type) {
-        case "gdoc":
-            const idDoc = url.match(/\/d\/(.*?)\//);
-            if (idDoc) pdfUrl = `https://docs.google.com/document/d/${idDoc[1]}/export?format=pdf`;
-            break;
-        case "gsheet":
-            const idSheet = url.match(/\/d\/(.*?)\//);
-            if (idSheet) pdfUrl = `https://docs.google.com/spreadsheets/d/${idSheet[1]}/export?format=pdf`;
-            break;
-        case "gslides":
-            const idSlide = url.match(/\/d\/(.*?)\//);
-            if (idSlide) pdfUrl = `https://docs.google.com/presentation/d/${idSlide[1]}/export/pdf`;
-            break;
-        case "gdrive":
-            const idDrive = url.match(/[-\w]{25,}/);
-            if (idDrive) pdfUrl = `https://drive.google.com/uc?export=download&id=${idDrive[0]}`;
-            break;
-        case "github":
-            openIframePrint(url);
-            return;
-        default:
-            alert("No se puede descargar este tipo de archivo");
-            return;
+    if(!url) url=doc; if(!url) return alert("No hay documento");
+    const type=getDocumentType(url); let pdfUrl=url;
+    switch(type){
+        case "gdoc": { const idDoc=url.match(/\/d\/(.*?)\//); if(idDoc) pdfUrl=`https://docs.google.com/document/d/${idDoc[1]}/export?format=pdf`; break; }
+        case "gsheet": { const idSheet=url.match(/\/d\/(.*?)\//); if(idSheet) pdfUrl=`https://docs.google.com/spreadsheets/d/${idSheet[1]}/export?format=pdf`; break; }
+        case "gslides": { const idSlide=url.match(/\/d\/(.*?)\//); if(idSlide) pdfUrl=`https://docs.google.com/presentation/d/${idSlide[1]}/export/pdf`; break; }
+        case "gdrive": { const idDrive=url.match(/[-\w]{25,}/); if(idDrive) pdfUrl=`https://drive.google.com/uc?export=download&id=${idDrive[0]}`; break; }
+        case "github": openIframePrint(url); return;
+        default: alert("No se puede descargar este tipo de archivo"); return;
     }
-
-    const link = document.createElement("a");
-    link.href = pdfUrl;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    const link=document.createElement("a"); link.href=pdfUrl; link.target="_blank"; document.body.appendChild(link); link.click(); link.remove();
 }
-
-function printDoc() {
-    frame.contentWindow.print();
+function printDoc(){ frame.contentWindow.print(); }
+function getDocumentType(url){
+    if(!url) return null;
+    if(url.includes("docs.google.com/document")) return "gdoc";
+    if(url.includes("docs.google.com/spreadsheets")) return "gsheet";
+    if(url.includes("docs.google.com/presentation")) return "gslides";
+    if(url.includes("drive.google.com")) return "gdrive";
+    if(url.includes("github.io")) return "github";
+    return "other";
 }
+function openIframePrint(url){ const f=document.getElementById("frameViewer"); if(f){ f.src=url; f.onload=()=>{ f.contentWindow.focus(); f.contentWindow.print(); }; } else alert("No se encontró el visor (iframe)."); }
 
-function showLogin() {
-    document.getElementById("loginOverlay").style.display = "flex";
-    document.getElementById("loginMessage").innerText = "";
-}
-
-function closeLogin() {
-    document.getElementById("loginOverlay").style.display = "none";
-}
-
-function checkLogin() {
-    const user = document.getElementById("loginUser").value;
-    const pass = document.getElementById("loginPass").value;
-    const msg = document.getElementById("loginMessage");
-
-    if (!user) {
-        msg.innerText = "Seleccione un usuario";
-        return;
-    }
-
-    if (users[user] !== pass) {
-        msg.innerText = "Clave incorrecta";
-        return;
-    }
-
-    editMode = true;
-    currentUser = user;
-    setEditModeUI(true);
-    document.getElementById("commentUser").value = user;
+// ======================
+// LOGIN / EDICIÓN
+// ======================
+function showLogin(){ document.getElementById("loginOverlay").style.display="flex"; document.getElementById("loginMessage").innerText=""; }
+function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
+function checkLogin(){
+    const user=document.getElementById("loginUser").value;
+    const pass=document.getElementById("loginPass").value;
+    const msg=document.getElementById("loginMessage");
+    if(!user){ msg.innerText="Seleccione un usuario"; return; }
+    if(users[user]!==pass){ msg.innerText="Clave incorrecta"; return; }
+    editMode=true; currentUser=user; setEditModeUI(true);
+    document.getElementById("commentUser").value=user;
     document.getElementById("commentSidebar").classList.add("active");
     loadComments();
     closeLogin();
 }
-
-function closeSidebar() {
-    document.getElementById("commentSidebar").classList.remove("active");
+function setEditModeUI(enabled){
+    document.getElementById("commentUser").disabled=!enabled;
+    document.getElementById("commentType").disabled=!enabled;
+    document.getElementById("commentStatus").disabled=!enabled;
+    const btn=document.querySelector(".tool[onclick='commentSelectedText()']");
+    if(enabled) btn.classList.remove("disabled"); else btn.classList.add("disabled");
 }
 
-async function commentSelectedText() {
-    if (!editMode) {
-        alert("Activa modo edición primero");
-        return;
-    }
-
-    const sel = frame.contentWindow.getSelection();
-    const text = sel.toString().trim();
-
-    if (!text) {
-        alert("Selecciona un texto válido");
-        return;
-    }
-
-    selectedTextGlobal = text;
-    document.getElementById("commentInput").value = "";
-    document.getElementById("commentModal").style.display = "flex";
+// ======================
+// COMENTARIOS
+// ======================
+function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
+function commentSelectedText(){
+    if(!editMode){ alert("Activa modo edición"); return; }
+    const sel=frame.contentWindow.getSelection();
+    if(!sel.toString()){ alert("Selecciona texto"); return; }
+    selectedTextGlobal=sel.toString();
+    createCorrectionLayer(sel);
 }
-
-function saveLocalComment(c) {
-    const list = JSON.parse(localStorage.getItem(doc) || "[]");
-    list.push(c);
-    localStorage.setItem(doc, JSON.stringify(list));
+function createCorrectionLayer(selection){
+    const range=selection.getRangeAt(0);
+    const rect=range.getBoundingClientRect();
+    const iframeRect=frame.getBoundingClientRect();
+    const layer=document.createElement("div");
+    layer.style.position="fixed";
+    layer.style.top=(rect.top+iframeRect.top)+"px";
+    layer.style.left=(rect.left+iframeRect.left)+"px";
+    layer.style.zIndex=9999;
+    layer.innerHTML=`<div style="background:white;border:2px dashed red;padding:8px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,.3);width:260px;">
+        <div style="font-size:12px;color:#dc2626;font-weight:600;margin-bottom:4px;">Corrección propuesta</div>
+        <textarea style="width:100%;height:70px;border:none;outline:none;color:#dc2626;font-style:italic;resize:none;" placeholder="Escribe la corrección..."></textarea>
+        <div style="text-align:right;margin-top:5px;"><button onclick="saveCorrection(this)">Guardar</button></div>
+    </div>`;
+    document.body.appendChild(layer);
 }
-
-
-// ==========================
-// CARGAR COMENTARIOS
-// ==========================
-
-
-    async function loadComments() {
-    const loader = document.getElementById("commentsLoader");
-    loader.style.display = "block";
-
-    try {
-        const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
-        const data = await res.json();
-
-        // Normalizar IDs
-        window.loadedComments = (data || []).map(c => ({
-            ...c,
-            id_comment: c.id_comment || c.ID
-        }));
-
+function saveCorrection(btn){
+    const layer=btn.closest("div").parentElement;
+    const text=layer.querySelector("textarea").value;
+    if(!text){ alert("Comentario vacío"); return; }
+    layer.style.border="2px solid #dc2626";
+    layer.querySelector("textarea").disabled=true;
+}
+async function loadComments(){
+    const loader=document.getElementById("commentsLoader");
+    loader.style.display="block";
+    try{
+        const res=await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
+        const data=await res.json();
+        window.loadedComments=(data||[]).map(c=>({...c,id_comment:c.id_comment||c.ID}));
         renderComments(window.loadedComments);
-
-    } catch (err) {
-        console.error("Error cargando comentarios", err);
-        renderComments([]);
-    }
-
-    loader.style.display = "none";
+    }catch(err){ console.error("Error cargando comentarios",err); renderComments([]);}
+    loader.style.display="none";
 }
-
-// ==========================
-// GUARDAR COMENTARIO NUEVO
-// ==========================
-async function submitComment() {
-    const commentText = document.getElementById("commentInput").value.trim();
-    if (!commentText) {
-        alert("Comentario vacío");
+function renderComments(comments){
+    const list=document.getElementById("commentList");
+    list.innerHTML="";
+    if(!comments||comments.length===0){
+        list.innerHTML=`<div class="no-comments">Sin comentarios</div>`;
         return;
     }
-
-    const type = document.getElementById("commentType").value;
-    const status = document.getElementById("commentStatus").value;
-
-    // Crear payload
-    const payload = {
-        tipo: "comentario",
-        id_sop: idSOP,
-        usuario: currentUser,
-        comentario: commentText,
-        tipo_comentario: type,
-        estado: status,
-        text_selected: selectedTextGlobal,
-        context_before: selectedTextGlobal.substring(0, 20),
-        context_after: selectedTextGlobal.substring(selectedTextGlobal.length - 20),
-        url_doc: doc
-    };
-
-    try {
-        const res = await fetch(SCRIPT_URL, { 
-            method: "POST", 
-            body: JSON.stringify(payload) 
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            // Guardar id_comment que devuelva el servidor
-            payload.id_comment = data.id_comment || Date.now().toString();
-
-            // Guardar en localStorage
-            const localList = JSON.parse(localStorage.getItem(doc) || "[]");
-            localList.push(payload);
-            localStorage.setItem(doc, JSON.stringify(localList));
-
-            // Actualizar lista global
-            window.loadedComments.push(payload);
-
-            // Resaltar texto seleccionado
-            highlightSelection(frame.contentWindow.getSelection(), payload);
-
-            // Recargar comentarios
-            renderComments(window.loadedComments);
-
-            closeCommentModal();
-            alert("✅ Comentario guardado");
-        } else {
-            alert("❌ Error: " + data.error);
-        }
-    } catch (err) {
-        alert("❌ Error conexión: " + err);
-    }
-}
-
-// ==========================
-// FUNCIONES DE COMENTARIOS
-// ==========================
-
-// Renderiza la lista de comentarios en la barra lateral
-    
-function renderComments(comments) {
-    const list = document.getElementById("commentList");
-    list.innerHTML = "";
-
-    if (!comments || comments.length === 0) {
-        list.innerHTML = `<div class="no-comments">Sin comentarios</div>`;
-        return;
-    }
-
-    comments.forEach(c => {
-        const div = document.createElement("div");
-        div.className = "comment-box";
-
-        div.innerHTML = `
-            <div style="display:flex;justify-content:space-between;">
-                <b>${c.usuario || "Usuario"}</b>
-                <div>
-                    <span onclick="viewComment('${c.id_comment}')" 
-                        style="cursor:pointer;color:#2563eb;">👁</span>
-                </div>
-            </div>
-
-            <div style="margin-top:6px;">
-                ${(c.comentario || "").substring(0,80)}...
-            </div>
-
-            <div style="font-size:11px;color:#64748b;margin-top:6px;">
-                ${c.fecha || ""} | ${c.estado || ""}
-            </div>
+    comments.forEach(c=>{
+        const div=document.createElement("div");
+        div.className="comment-box";
+        div.innerHTML=`
+            <div><strong>${c.empleado || "Anónimo"}</strong> • <em>${c.tipo || "General"}</em></div>
+            <div>${c.comentario || ""}</div>
+            <div style="font-size:12px;color:#6b7280;margin-top:4px;">Estado: ${c.estado || "Pendiente"}</div>
         `;
-
         list.appendChild(div);
     });
 }
 
-
-    
-// Mostrar modal con el comentario completo
-
-
-async function viewComment(id_comment) {
-
-    let comment = window.loadedComments?.find(
-        c => c.id_comment == id_comment
-    );
-
-    if (!comment) {
-        alert("Comentario no encontrado");
-        return;
-    }
-   // Llenar modal con datos del comentario
-    document.getElementById("viewCommentHeader").innerText =
-        `ID: ${comment.id_comment} | ${comment.usuario} | ${comment.fecha}`;
-
-    document.getElementById("viewCommentFragment").innerText =
-        `${comment.context_before || ""}${comment.text_selected || ""}${comment.context_after || ""}`;
-
-    document.getElementById("viewCommentText").innerText =
-        comment.comentario || "";
-
-    document.getElementById("viewCommentModal").style.display = "flex";
-}
-
-// Cerrar modal de comentario
-
-function closeViewComment(){
-    document.getElementById("viewCommentModal").style.display="none";
-}
-
-async function deleteComment(id_comment) {
-    if (!confirm("¿Seguro que quieres borrar este comentario?")) return;
-
-    try {
-        const res = await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({ tipo: "delete_comment", id_comment })
-        });
-        const data = await res.json();
-        if (data.success) {
-            alert("🗑 Comentario eliminado");
-            loadComments();
-        } else alert("❌ Error: " + data.error);
-    } catch (err) {
-        alert("❌ Error de conexión");
-    }
-}
-
-function highlightSelection(sel, comment) {
-    if (sel.rangeCount) {
-        const range = sel.getRangeAt(0);
-        const mark = document.createElement("mark");
-        mark.style.background = "#fff176";
-        mark.title = comment.comentario;
-        range.surroundContents(mark);
-        sel.removeAllRanges();
-    }
-}
-
-function getDocumentType(url) {
-    if (!url) return null;
-    if (url.includes("docs.google.com/document")) return "gdoc";
-    if (url.includes("docs.google.com/spreadsheets")) return "gsheet";
-    if (url.includes("docs.google.com/presentation")) return "gslides";
-    if (url.includes("drive.google.com")) return "gdrive";
-    if (url.includes("github.io")) return "github";
-    return "other";
-}
-
-function openIframePrint(url) {
-    const frame = document.getElementById("frameViewer");
-    if (!frame) {
-        alert("No se encontró el visor (iframe).");
-        return;
-    }
-    frame.src = url;
-    frame.onload = () => {
-        frame.contentWindow.focus();
-        frame.contentWindow.print();
-    };
-}
-
-function closeCommentModal() {
-    document.getElementById("commentModal").style.display = "none";
-}
-
-
-function setEditModeUI(enabled) {
-    document.getElementById("commentUser").disabled = !enabled;
-    document.getElementById("commentType").disabled = !enabled;
-    document.getElementById("commentStatus").disabled = !enabled;
-
-    const btn = document.querySelector(".tool[onclick='commentSelectedText()']");
-    if (enabled) btn.classList.remove("disabled");
-    else btn.classList.add("disabled");
-}
-
-    function viewComment(id) {
-  // Buscar el comentario en la lista cargada
-  const list = JSON.parse(localStorage.getItem(doc) || "[]"); 
-  const comment = list.find(c => c.id_comment === id) || window.loadedComments?.find(c => c.id_comment === id);
-
-  if (!comment) {
-    alert("Comentario no encontrado");
-    return;
-  }
-
-  // Encabezado del modal: SOP, ID, usuario, fecha, estado_revision
-  const sopName = document.getElementById("title")?.innerText || "SOP";
-  document.getElementById("viewCommentHeader").innerText = 
-    `${sopName} | ID: ${comment.id_comment} | ${comment.usuario || "Usuario"} | ${comment.fecha || ""} | ${comment.estado_revision || ""}`;
-
-  // Fragmento del SOP sobre el que se hizo el comentario
-  const fragment = `${comment.context_before || ""}${comment.text_selected || ""}${comment.context_after || ""}`;
-  document.getElementById("viewCommentFragment").innerText = fragment;
-
-  // Comentario propiamente dicho
-  document.getElementById("viewCommentText").innerText = comment.comentario || "";
-
-  // Mostrar modal
-  document.getElementById("viewCommentModal").style.display = "flex";
-}
-
-// Función para cerrar el modal
-function closeViewComment() {
-  document.getElementById("viewCommentModal").style.display = "none";
-}
-
-async function viewComment(id_comment) {
-  // Intentar buscar en la lista ya cargada
-  let comment = window.loadedComments?.find(c => c.id_comment === id_comment) 
-                || JSON.parse(localStorage.getItem(doc) || "[]").find(c => c.id_comment === id_comment);
-
-  // Si no se encuentra, hacer fetch al servidor
-  if (!comment) {
-    try {
-      const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
-      const comments = await res.json();
-      comment = comments.find(c => c.id_comment === id_comment);
-      if (!comment) return alert("Comentario no encontrado");
-    } catch(err) {
-      return alert("Error cargando comentario: " + err);
-    }
-  }
-
-  // Construir modal (igual que tu versión)
-  let modal = document.createElement("div");
-  modal.id = "viewCommentModal";
-  modal.style = `
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:1000;
-  `;
-  modal.innerHTML = `
-    <div style="background:white; width:600px; max-height:80%; overflow:auto; border-radius:10px; padding:20px; position:relative;">
-      <h3>Comentario de ${comment.usuario}</h3>
-      <p><b>ID:</b> ${comment.id_comment} | <b>SOP:</b> ${comment.id_sop} | <b>Fecha:</b> ${comment.fecha} | <b>Estado:</b> ${comment.estado_revision || comment.estado}</p>
-      
-      <hr>
-      <h4>Fragmento comentado:</h4>
-      <div style="border:1px solid #cbd5e1; padding:10px; border-radius:8px; max-height:150px; overflow:auto; background:#f9fafb;">
-        ${comment.context_before || ""} <mark>${comment.text_selected || ""}</mark> ${comment.context_after || ""}
-      </div>
-      
-      <h4 style="margin-top:15px;">Comentario:</h4>
-      <div style="border:1px solid #cbd5e1; padding:10px; border-radius:8px; max-height:150px; overflow:auto; background:#fefce8;">
-        ${comment.comentario || ""}
-      </div>
-      
-      <button onclick="document.getElementById('viewCommentModal').remove()" 
-        style="position:absolute; top:10px; right:10px; background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Cerrar</button>
-    </div>
-  `;
-  document.body.appendChild(modal);
-}
-  
 // ======================
-// NAVIGACION SOP RESTAURADA
+// COMENTARIO MODAL
 // ======================
-fetch('SOP_INDEX.json')
-  .then(res => res.json())
-  .then(data => {
-    if (!data.length) return;
-
-    if (!doc) doc = data[0].url;
-
-    const sopList = data.map(s => s.url);
-    let currentIndex = sopList.indexOf(doc);
-    if (currentIndex === -1) currentIndex = 0;
-
-    const deptMap = {
-      'produccion': 'Carpinteria',
-      'instalacion': 'Stone',
-      'administracion': 'Administracion',
-      'comercial': 'Comercial',
-      'houzz-pro': 'Houzz Pro',
-      'maquinarias': 'Maquinarias',
-      'medidas': 'Medidas',
-      'vehiculos': 'Vehiculos',
-      'taller': 'Taller',
-      'ecopower': 'Ecopower'
-    };
-
-    const currentSOP = data[currentIndex];
-    document.getElementById("title").innerText =
-      `${deptMap[currentSOP.department] || currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
-
-    // ← anterior
-    window.prevSOP = function() {
-      if (currentIndex > 0) {
-        const prev = data[currentIndex - 1];
-        window.location.href = `viewer.html?doc=${prev.url}&id=${prev.id}`;
-      }
-    };
-
-    // siguiente →
-    window.nextSOP = function() {
-      if (currentIndex < data.length - 1) {
-        const next = data[currentIndex + 1];
-        window.location.href = `viewer.html?doc=${next.url}&id=${next.id}`;
-      }
-    };
-
-    // deshabilitar botones si estamos en límites
-    const prevBtn = document.getElementById("prevDoc");
-    const nextBtn = document.getElementById("nextDoc");
-    if(prevBtn) prevBtn.classList.toggle("disabled", currentIndex === 0);
-    if(nextBtn) nextBtn.classList.toggle("disabled", currentIndex === data.length - 1);
-
-  })
-  .catch(err => console.error("Error cargando SOP_INDEX.json:", err));
-
-// Botón flotante historial de comentarios
-function toggleSidebar() {
-  const sb = document.getElementById("commentSidebar");
-  const btn = document.getElementById("toggleSidebarBtn");
-  const open = sb.classList.toggle("active");
-  btn.style.right = open ? "395px" : "15px";
-
-  if (open) loadComments();
+function closeCommentModal(){ document.getElementById("commentModal").style.display="none"; }
+function submitComment(){
+    const text=document.getElementById("commentInput").value;
+    if(!text){ alert("Escribe un comentario"); return; }
+    const user=document.getElementById("commentUser").value;
+    const tipo=document.getElementById("commentType").value;
+    const estado=document.getElementById("commentStatus").value;
+    const newComment={ empleado:user, tipo:tipo, estado:estado, comentario:text };
+    window.loadedComments.push(newComment);
+    renderComments(window.loadedComments);
+    closeCommentModal();
+    document.getElementById("commentInput").value="";
 }
+
+// ======================
+// NAV SOP
+// ======================
+function prevSOP(){ alert("Navegar al SOP anterior"); }
+function nextSOP(){ alert("Navegar al SOP siguiente"); }
+
+// ======================
+// SIDEBAR
+// ======================
+document.getElementById("toggleSidebarBtn")?.addEventListener("click",()=>{
+    document.getElementById("commentSidebar").classList.toggle("active");
+});
 </script>
 
-<!-- BOTÓN FLOTANTE PARA HISTORIAL -->
-<button id="toggleSidebarBtn" onclick="toggleSidebar()">💬</button>
+<button id="toggleSidebarBtn">💬</button>
 
 </body>
 </html>
+                                       
