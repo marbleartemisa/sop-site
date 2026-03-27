@@ -403,19 +403,62 @@ function renderComments(comments){
 // COMENTARIO MODAL
 // ======================
 function closeCommentModal(){ document.getElementById("commentModal").style.display="none"; }
-function submitComment(){
-    const text=document.getElementById("commentInput").value;
-    if(!text){ alert("Escribe un comentario"); return; }
-    const user=document.getElementById("commentUser").value;
-    const tipo=document.getElementById("commentType").value;
-    const estado=document.getElementById("commentStatus").value;
-    const newComment={ empleado:user, tipo:tipo, estado:estado, comentario:text };
-    window.loadedComments.push(newComment);
-    renderComments(window.loadedComments);
-    closeCommentModal();
-    document.getElementById("commentInput").value="";
-}
 
+
+function submitComment() {
+    const commentText = document.getElementById("commentInput").value.trim();
+    if (!commentText) {
+        alert("Escribe un comentario");
+        return;
+    }
+
+    if (!editMode) {
+        alert("Activa modo edición primero");
+        return;
+    }
+
+    const user = document.getElementById("commentUser").value || currentUser || "Anónimo";
+    const tipo = document.getElementById("commentType").value || "General";
+    const estado = document.getElementById("commentStatus").value || "Pendiente";
+
+    // Tomar texto seleccionado del iframe
+    const sel = frame.contentWindow.getSelection();
+    const selectedText = sel ? sel.toString() : "";
+
+    const newComment = {
+        id_comment: Date.now().toString(),
+        usuario: user,
+        tipo: tipo,
+        estado: estado,
+        comentario: commentText,
+        text_selected: selectedText,
+        fecha: new Date().toLocaleString()
+    };
+
+    // Guardar en arreglo global
+    if (!window.loadedComments) window.loadedComments = [];
+    window.loadedComments.push(newComment);
+
+    // Guardar en localStorage para persistencia temporal
+    const existing = JSON.parse(localStorage.getItem(doc) || "[]");
+    existing.push(newComment);
+    localStorage.setItem(doc, JSON.stringify(existing));
+
+    // Resaltar selección en el iframe si hay texto
+    if (selectedText) {
+        highlightSelection(sel, newComment);
+    }
+
+    // Actualizar sidebar
+    renderComments(window.loadedComments);
+
+    // Limpiar y cerrar modal
+    document.getElementById("commentInput").value = "";
+    closeCommentModal();
+
+    alert("✅ Comentario guardado");
+}
+    
 // ======================
 // NAV SOP
 // ======================
