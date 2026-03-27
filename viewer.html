@@ -70,20 +70,21 @@ body {
     position: relative;
 }
 
-#commentsLayer{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-  z-index:450;
+#commentsLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 450;
+  overflow: visible; /* 🔑 para que no se corten */
 }
-
-.floating-comment{
-  position:absolute;
-  pointer-events:auto;
+.floating-comment {
+  position: absolute;
+  pointer-events: auto;
 }
+.doc-frame { position: relative; } /* ya lo tienes */
     
 iframe { width: 100%; height: 80vh; border: none; }
 #commentSidebar {
@@ -297,34 +298,18 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
   </div>
 </div>
 
-  
-});
-
-// ENTER para login
-document.getElementById("loginPass").addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        checkLogin();
-    }
-});
-
-document.getElementById("loginUser").addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        checkLogin();
-    }
-});    
+    
 
 <div id="commentModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:500px; max-width:90%; background:rgba(255,255,255,1); z-index:1000; border-radius:14px; padding:25px; box-shadow:0 20px 50px rgba(0,0,0,.4);">
-  <h3 style="margin-top:0;">💬 Nuevo comentario</h3>
-  <textarea id="commentInput" placeholder="Escribe tu comentario..." style="width:100%; height:120px; border-radius:10px; border:1px solid #cbd5e1; padding:10px; resize:none;"></textarea>
-  <div style="margin-top:15px; text-align:right;">
+  width:500px; max-width:90%; background:white; z-index:1000; border-radius:14px; padding:25px; box-shadow:0 20px 50px rgba(0,0,0,.4);">
+  <h3>💬 Nuevo comentario</h3>
+  <textarea id="commentInput" placeholder="Escribe tu comentario..." style="width:100%;height:120px;border-radius:10px;border:1px solid #cbd5e1;padding:10px;resize:none;"></textarea>
+  <div style="margin-top:15px;text-align:right;">
     <button onclick="closeCommentModal()" style="margin-right:10px;">Cancelar</button>
     <button id="saveCommentBtn" style="background:#2563eb;color:white;border:none;padding:8px 14px;border-radius:8px;">Guardar</button>
   </div>
-</div>  
 </div>
-
-  
+    
 
 <script>
 // ======================
@@ -364,6 +349,21 @@ function printDoc(){
   if(frame?.contentWindow) frame.contentWindow.print();
 }
 
+});
+
+// ENTER para login
+document.getElementById("loginPass").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        checkLogin();
+    }
+});
+
+document.getElementById("loginUser").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        checkLogin();
+    }
+});    
+    
 // ======================
 // LOGIN
 // ======================
@@ -422,128 +422,110 @@ document.getElementById("toggleSidebarBtn")?.addEventListener("click",()=>{
 // ======================
 // CLICK PARA CREAR COMENTARIO
 // ======================
+
 function commentSelectedText() {
-  if(!editMode){ alert("Activa modo edición"); return; }
+  if(!editMode){
+    alert("Activa modo edición");
+    return;
+  }
 
   const layer = document.getElementById("clickLayer");
   layer.style.display = "block";
 
-// cuando el usuario hace click para comentar
-layer.onclick = (e) => {
-  const frameRect = document.querySelector(".doc-frame").getBoundingClientRect();
-  const x = e.clientX - frameRect.left + document.querySelector(".doc-frame").scrollLeft;
-  const y = e.clientY - frameRect.top + document.querySelector(".doc-frame").scrollTop;
-  const page = 1; // ajustar según tu viewer si hay múltiples páginas
-  createFloatingComment(x, y, page);
-  layer.style.display = "none";
-};
+  layer.onclick = (e) => {
+    const frameRect = document.querySelector(".doc-frame").getBoundingClientRect();
+    const scrollTop = document.querySelector(".doc-frame").scrollTop || 0;
+    const scrollLeft = document.querySelector(".doc-frame").scrollLeft || 0;
+
+    const x = e.clientX - frameRect.left + scrollLeft;
+    const y = e.clientY - frameRect.top + scrollTop;
+
+    createFloatingComment(x, y);
+    layer.style.display = "none";
+  };
 }
-
-
     
 // ======================
 // CREAR COMENTARIO FLOTANTE
 // ======================
-function createFloatingComment(x, y, page){
+
+function createFloatingComment(x, y){
+  const container = document.getElementById("commentsLayer");
+
   const layer = document.createElement("div");
-  layer.classList.add("floating-comment");
-  
- layer.style.position = "absolute"; // dentro de #commentsLayer
- layer.style.left = x + "px";
- layer.style.top = y + "px";
- document.getElementById("commentsLayer").appendChild(layer);
+  layer.className = "floating-comment";
+  layer.style.left = x + "px";
+  layer.style.top = y + "px";
+  layer.style.zIndex = 999;
 
   layer.innerHTML = `
     <div style="
-      background: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.8);
       backdrop-filter: blur(4px);
-      border-left: 4px solid red;
-      padding: 8px;
-      border-radius: 8px;
-      width: 220px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+      border-left: 4px solid #dc2626;
+      padding: 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      color:#dc2626;
+      min-width: 180px;
     ">
-      <textarea placeholder="Comentario..."
-        style="width:100%;height:60px;border:none;outline:none;background:transparent;color:#dc2626;font-style:italic;"></textarea>
+      <textarea placeholder="Comentario..." style="width:100%;height:60px;border:none;outline:none;background:transparent;color:#dc2626;font-style:italic;"></textarea>
       <div style="text-align:right;margin-top:5px;">
-        <button onclick="saveFloatingComment(this, ${x}, ${y}, ${page})">Guardar</button>
+        <button onclick="saveFloatingComment(this)">Guardar</button>
       </div>
     </div>
   `;
-
-  document.getElementById("commentsLayer").appendChild(layer);
+  container.appendChild(layer);
 }
 
 
 // ======================
 // GUARDAR COMENTARIO FLOTANTE
 // ======================
-
-
-async function saveFloatingComment(btn, x, y, page){
-  btn.disabled = true; // 🔒 evitar múltiples clicks
-
+async function saveFloatingComment(btn){
+  btn.disabled = true; // 🔒 evita múltiples clicks
   const layer = btn.closest(".floating-comment");
   const text = layer.querySelector("textarea").value.trim();
-
   if(!text){
     alert("Comentario vacío");
     btn.disabled = false;
     return;
   }
- // ... resto del código de envío al backend
-  const commentData = {
-    tipo: "comentario",
-    id_sop: idSOP,
+
+  const newComment = {
+    id_comment: Date.now().toString(),
     usuario: currentUser || "Anónimo",
-    correo: "", // opcional
-    tipo_comentario: document.getElementById("commentType").value,
+    tipo: document.getElementById("commentType").value,
     estado: document.getElementById("commentStatus").value,
     comentario: text,
-    text_selected: selectedTextGlobal || "",
-    context_before: "", // si tienes contexto antes, asignar
-    context_after: "",  // si tienes contexto después, asignar
-    url_doc: doc || "",
-    estado_revision: "Pendiente",
-    x: x,
-    y: y,
-    page: page
+    x: parseInt(layer.style.left),
+    y: parseInt(layer.style.top),
+    fecha: new Date().toLocaleString()
   };
 
+  // Enviar al server
   try {
     const res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(commentData)
+      method:"POST",
+      body: JSON.stringify({...newComment, id_sop: idSOP, tipo:"comentario"}),
     });
     const result = await res.json();
-
     if(result.success){
-      alert("Comentario guardado");
-      // render flotante inmediato
-      layer.innerHTML = `
-        <div style="
-          background: rgba(255,255,255,0.6);
-          backdrop-filter: blur(4px);
-          border-left: 4px solid #dc2626;
-          padding: 6px;
-          border-radius: 6px;
-          font-size: 12px;
-          color:#dc2626;
-        ">
-          ${text}
-        </div>
-      `;
-      layer.style.pointerEvents = "none"; // ya no editable
+      if(!window.loadedComments) window.loadedComments = [];
+      window.loadedComments.push(newComment);
+      renderComments(window.loadedComments);
+      layer.remove();
     } else {
       alert("Error guardando comentario: " + result.error);
-      layer.remove();
+      btn.disabled = false;
     }
   } catch(err){
-    console.error(err);
-    alert("Error guardando comentario (offline)");
-    layer.remove();
+    alert("Error guardando comentario: " + err);
+    btn.disabled = false;
   }
-}    
+}
+
+ 
 
 
 // ======================
@@ -568,6 +550,7 @@ async function loadComments(){
   loader.style.display = "none";
 }
 
+    
 function renderComments(comments){
 
   const list=document.getElementById("commentList");
