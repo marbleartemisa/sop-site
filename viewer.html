@@ -353,7 +353,8 @@ let currentPage = 1;
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc") || "";       // URL del documento
 let idSOP = params.get("id") || "";
-const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_URL/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+
 
 const frame = document.getElementById("frame");
 if(doc) frame.src = doc;
