@@ -69,6 +69,22 @@ body {
     overflow: hidden;
     position: relative;
 }
+
+#commentsLayer{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:450;
+}
+
+.floating-comment{
+  position:absolute;
+  pointer-events:auto;
+}
+    
 iframe { width: 100%; height: 80vh; border: none; }
 #commentSidebar {
     position: fixed;
@@ -208,19 +224,18 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
 </div>
 
 <div class="doc-area">
-  <div class="doc-frame">
     
-    <iframe id="frame"></iframe>
+<div class="doc-frame">
+  <iframe id="frame"></iframe>
 
-    <!-- 🔥 CAPA PARA CAPTURAR CLICKS -->
-    <div id="clickLayer"></div>
+  <div id="clickLayer"></div>
 
-    <div id="overlay"></div>
+  <!-- 🔥 NUEVA CAPA -->
+  <div id="commentsLayer"></div>
 
-    <button id="prevDocBtn" onclick="prevSOP()">⬅</button>
-    <button id="nextDocBtn" onclick="nextSOP()">➡</button>
-
-  </div>
+  <button id="prevDocBtn" onclick="prevSOP()">⬅</button>
+  <button id="nextDocBtn" onclick="nextSOP()">➡</button>
+</div>
 </div>
 
 
@@ -416,11 +431,18 @@ function commentSelectedText(){
   const layer = document.getElementById("clickLayer");
   layer.style.display = "block";
 
-  layer.onclick = (e)=>{
-    createFloatingComment(e.clientX, e.clientY);
-    layer.style.display = "none";
-  };
+layer.onclick = (e)=>{
+  const rect = document.querySelector(".doc-frame").getBoundingClientRect();
+
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  createFloatingComment(x, y);
+  layer.style.display = "none";
+};
 }
+
+
 
 // ======================
 // CREAR COMENTARIO FLOTANTE
@@ -475,10 +497,12 @@ function saveFloatingComment(btn){
     tipo: document.getElementById("commentType").value,
     estado: document.getElementById("commentStatus").value,
     comentario: text,
-    x: layer.style.left,
-    y: layer.style.top,
+    x: parseInt(layer.style.left),
+    y: parseInt(layer.style.top),
     fecha: new Date().toLocaleString()
   };
+
+
 
   if (!window.loadedComments) window.loadedComments = [];
   window.loadedComments.push(newComment);
@@ -558,10 +582,13 @@ function renderComments(comments){
       const el=document.createElement("div");
       el.className="floating-comment";
         el.style.position = "absolute";
-        el.style.left = c.x;   // ej: "120px"
-        el.style.top = c.y;    // ej: "300px"
+        el.style.left = c.x + "px";   // ej: "120px"
+        el.style.top = c.y + "px";  // ej: "300px"
         el.style.zIndex = 9999;
 
+
+
+        
       el.innerHTML=`
         <div style="
           background: rgba(255,255,255,0.6);
@@ -576,7 +603,8 @@ function renderComments(comments){
         </div>
       `;
 
-      document.body.appendChild(el);
+    const container = document.getElementById("commentsLayer");
+    container.appendChild(el);
     }
 
   });
