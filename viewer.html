@@ -4,11 +4,14 @@
 <meta charset="UTF-8">
 <title>Viewer SOP Pro - Artemisa</title>
 <style>
+/* ===== BODY & GENERAL ===== */
 body {
     margin: 0;
     background: #eef2f7;
     font-family: "Segoe UI", Arial, sans-serif;
 }
+
+/* ===== TOPBAR ===== */
 .topbar {
     background: #0f172a;
     color: white;
@@ -20,7 +23,6 @@ body {
     width: 100%;
     top: 0;
     z-index: 100;
-    box-sizing: border-box;
 }
 .brand { font-weight: 600; letter-spacing: .4px; font-size: 15px; }
 .back {
@@ -31,7 +33,9 @@ body {
     text-decoration: none;
     font-size: 13px;
 }
-.doc-header, .doc-nav {
+
+/* ===== DOC HEADER & NAV ===== */
+.doc-header {
     max-width: 1100px;
     margin: 80px auto 10px auto;
     padding: 0 10px;
@@ -39,15 +43,6 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-.doc-nav div {
-    background: white;
-    border: 1px solid #e5e7eb;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-}
-.doc-nav div:hover { background: #f3f4f6; }
 .tool {
     background: white;
     border: 1px solid #e2e8f0;
@@ -59,34 +54,56 @@ body {
 }
 .tool:hover { background: #2563eb; color: white; }
 .tool.disabled { opacity: .5; pointer-events: none; }
+
+/* ===== DOC AREA ===== */
 .doc-area { display: flex; justify-content: center; padding: 10px 20px 40px; }
 .doc-frame {
+    position: relative;
     width: 100%;
     max-width: 1100px;
+    height: 80vh;
+    overflow: visible;
     background: white;
     border-radius: 12px;
     box-shadow: 0 15px 40px rgba(0,0,0,.15);
-    overflow: hidden;
-    position: relative;
+}
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
+/* ===== COMMENTS LAYER ===== */
 #commentsLayer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 450;
-  overflow: visible; /* 🔑 para que no se corten */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 450;
+    overflow: visible;
 }
 .floating-comment {
-  position: absolute;
-  pointer-events: auto;
+    position: absolute;
+    pointer-events: auto;
+    z-index: 999;
 }
-.doc-frame { position: relative; } /* ya lo tienes */
-    
-iframe { width: 100%; height: 80vh; border: none; }
+
+/* ===== CLICK LAYER ===== */
+#clickLayer {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:400;
+    cursor: crosshair;
+    background: transparent;
+    display:none;
+}
+
+/* ===== COMMENT SIDEBAR ===== */
 #commentSidebar {
     position: fixed;
     top: 0;
@@ -128,6 +145,8 @@ select, input, textarea {
     font-size: 14px;
 }
 select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none; background: white; }
+
+/* ===== COMMENT BOX ===== */
 .comment-box {
     border-radius: 10px;
     padding: 12px;
@@ -135,6 +154,8 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     background: #f1f5f9;
     border-left: 4px solid #2563eb;
 }
+
+/* ===== LOADER ===== */
 .comments-loader { display: none; text-align: center; padding: 18px; color: #6b7280; font-size: 13px; }
 .spinner {
     width: 22px;
@@ -146,6 +167,8 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     animation: spin 1s linear infinite;
 }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ===== LOGIN OVERLAY ===== */
 #loginOverlay {
     position: fixed;
     top: 0;
@@ -166,45 +189,25 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     box-shadow: 0 20px 50px rgba(0,0,0,.4);
 }
 #loginMessage { color: red; font-size: 13px; margin-bottom: 10px; }
-#prevDocBtn, #nextDocBtn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 50%;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 500;
-    transition: background 0.3s;
-}
 
-#clickLayer{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    z-index:400;
-    cursor: crosshair;
-    background: transparent;
+/* ===== MODAL NUEVO COMENTARIO ===== */
+#commentModal {
     display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:500px;
+    max-width:90%;
+    background:white;
+    z-index:1000;
+    border-radius:14px;
+    padding:25px;
+    box-shadow:0 20px 50px rgba(0,0,0,.4);
 }
-    
-.doc-frame {
-    position: relative; /* 🔥 clave */
-}
-    
-#prevDocBtn:hover, #nextDocBtn:hover { background: rgba(0,0,0,0.7); }
-#prevDocBtn { left: 0; } #nextDocBtn { right: 0; }
 </style>
 </head>
 <body>
-
-
-<iframe id="frameViewer" style="width:0;height:0;border:none;"></iframe>
 
 <div class="topbar">
   <div class="brand">ARTEMISA SOP • VIEWER</div>
@@ -225,33 +228,23 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
 </div>
 
 <div class="doc-area">
-    
-<div class="doc-frame">
-  <iframe id="frame"></iframe>
-
-  <div id="clickLayer"></div>
-
-  <!-- 🔥 NUEVA CAPA -->
-  <div id="commentsLayer"></div>
-
-  <button id="prevDocBtn" onclick="prevSOP()">⬅</button>
-  <button id="nextDocBtn" onclick="nextSOP()">➡</button>
+  <div class="doc-frame">
+    <iframe id="frame"></iframe>
+    <div id="clickLayer"></div>
+    <div id="commentsLayer"></div>
+  </div>
 </div>
-</div>
-
-
-    
 
 <div id="commentSidebar">
   <div id="commentsLoader" class="comments-loader">
     <div class="spinner"></div>
     Cargando comentarios...
   </div>
-  <div id="commentList"></div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
     <h3 style="margin:0;">💬 Comentarios</h3>
     <span style="cursor:pointer; font-size:18px;" onclick="closeSidebar()">✖</span>
   </div>
+  <div id="commentList"></div>
   <label>Empleado</label>
   <select id="commentUser">
     <option value="">Seleccione</option>
@@ -275,7 +268,6 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     <option value="Revisado">Revisado</option>
     <option value="Aprobado">Aprobado</option>
   </select>
-  <hr>
 </div>
 
 <div id="loginOverlay">
@@ -298,22 +290,20 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
   </div>
 </div>
 
-    
-
-<div id="commentModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:500px; max-width:90%; background:white; z-index:1000; border-radius:14px; padding:25px; box-shadow:0 20px 50px rgba(0,0,0,.4);">
+<div id="commentModal">
   <h3>💬 Nuevo comentario</h3>
-  <textarea id="commentInput" placeholder="Escribe tu comentario..." style="width:100%;height:120px;border-radius:10px;border:1px solid #cbd5e1;padding:10px;resize:none;"></textarea>
+  <textarea id="commentInput" placeholder="Escribe tu comentario..."></textarea>
   <div style="margin-top:15px;text-align:right;">
     <button onclick="closeCommentModal()" style="margin-right:10px;">Cancelar</button>
-    <button id="saveCommentBtn" style="background:#2563eb;color:white;border:none;padding:8px 14px;border-radius:8px;">Guardar</button>
+    <button id="saveCommentBtn">Guardar</button>
   </div>
 </div>
-    
+
+<button id="toggleSidebarBtn">💬</button>
 
 <script>
 // ======================
-// CONFIGURACIÓN INICIAL
+// CONFIG
 // ======================
 let editMode = false;
 let currentUser = "";
@@ -322,10 +312,9 @@ let selectedTextGlobal = "";
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 let idSOP = params.get("id");
-
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-const frame = document.getElementById("frame");
 
+const frame = document.getElementById("frame");
 if(doc) frame.src = doc;
 
 const users = {
@@ -344,120 +333,68 @@ setEditModeUI(false);
 // VISOR
 // ======================
 function openNew(){ if(doc) window.open(doc,"_blank"); }
+function printDoc(){ if(frame?.contentWindow) frame.contentWindow.print(); }
 
-function printDoc(){
-  if(frame?.contentWindow) frame.contentWindow.print();
-}
-
-});
-
-// ENTER para login
-document.getElementById("loginPass").addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        checkLogin();
-    }
-});
-
-document.getElementById("loginUser").addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        checkLogin();
-    }
-});    
-    
 // ======================
 // LOGIN
 // ======================
-function showLogin(){
-  document.getElementById("loginOverlay").style.display="flex";
-}
-
-function closeLogin(){
-  document.getElementById("loginOverlay").style.display="none";
-}
-
+function showLogin(){ document.getElementById("loginOverlay").style.display="flex"; }
+function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
 function checkLogin(){
-  const user=document.getElementById("loginUser").value;
-  const pass=document.getElementById("loginPass").value;
-  const msg=document.getElementById("loginMessage");
-
+  const user = document.getElementById("loginUser").value;
+  const pass = document.getElementById("loginPass").value;
+  const msg = document.getElementById("loginMessage");
   if(!user){ msg.innerText="Seleccione usuario"; return; }
   if(users[user]!==pass){ msg.innerText="Clave incorrecta"; return; }
-
-  editMode=true;
-  currentUser=user;
-
+  editMode = true; currentUser = user;
   setEditModeUI(true);
-
-  document.getElementById("commentUser").value=user;
+  document.getElementById("commentUser").value = user;
   document.getElementById("commentSidebar").classList.add("active");
-
   loadComments();
   closeLogin();
 }
 
 function setEditModeUI(enabled){
-  document.getElementById("commentUser").disabled=!enabled;
-  document.getElementById("commentType").disabled=!enabled;
-  document.getElementById("commentStatus").disabled=!enabled;
-
-  const btn=document.querySelector(".tool[onclick='commentSelectedText()']");
-  if(btn){
-    btn.classList.toggle("disabled", !enabled);
-  }
+  document.getElementById("commentUser").disabled = !enabled;
+  document.getElementById("commentType").disabled = !enabled;
+  document.getElementById("commentStatus").disabled = !enabled;
+  const btn = document.querySelector(".tool[onclick='commentSelectedText()']");
+  if(btn) btn.classList.toggle("disabled", !enabled);
 }
 
 // ======================
 // SIDEBAR
 // ======================
-function closeSidebar(){
-  document.getElementById("commentSidebar").classList.remove("active");
-}
-
-// botón flotante sidebar
-document.getElementById("toggleSidebarBtn")?.addEventListener("click",()=>{
+function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
+document.getElementById("toggleSidebarBtn").addEventListener("click", ()=>{
   document.getElementById("commentSidebar").classList.toggle("active");
 });
 
-
 // ======================
-// CLICK PARA CREAR COMENTARIO
+// CLICK PARA COMENTARIO
 // ======================
-
 function commentSelectedText() {
-  if(!editMode){
-    alert("Activa modo edición");
-    return;
-  }
-
+  if(!editMode){ alert("Activa modo edición"); return; }
   const layer = document.getElementById("clickLayer");
   layer.style.display = "block";
-
   layer.onclick = (e) => {
     const frameRect = document.querySelector(".doc-frame").getBoundingClientRect();
-    const scrollTop = document.querySelector(".doc-frame").scrollTop || 0;
-    const scrollLeft = document.querySelector(".doc-frame").scrollLeft || 0;
-
-    const x = e.clientX - frameRect.left + scrollLeft;
-    const y = e.clientY - frameRect.top + scrollTop;
-
+    const x = e.clientX - frameRect.left;
+    const y = e.clientY - frameRect.top;
     createFloatingComment(x, y);
     layer.style.display = "none";
   };
 }
-    
+
 // ======================
 // CREAR COMENTARIO FLOTANTE
 // ======================
-
 function createFloatingComment(x, y){
   const container = document.getElementById("commentsLayer");
-
   const layer = document.createElement("div");
   layer.className = "floating-comment";
   layer.style.left = x + "px";
   layer.style.top = y + "px";
-  layer.style.zIndex = 999;
-
   layer.innerHTML = `
     <div style="
       background: rgba(255,255,255,0.8);
@@ -478,20 +415,14 @@ function createFloatingComment(x, y){
   container.appendChild(layer);
 }
 
-
 // ======================
-// GUARDAR COMENTARIO FLOTANTE
+// GUARDAR COMENTARIO
 // ======================
 async function saveFloatingComment(btn){
-  btn.disabled = true; // 🔒 evita múltiples clicks
+  btn.disabled = true;
   const layer = btn.closest(".floating-comment");
   const text = layer.querySelector("textarea").value.trim();
-  if(!text){
-    alert("Comentario vacío");
-    btn.disabled = false;
-    return;
-  }
-
+  if(!text){ alert("Comentario vacío"); btn.disabled=false; return; }
   const newComment = {
     id_comment: Date.now().toString(),
     usuario: currentUser || "Anónimo",
@@ -502,93 +433,58 @@ async function saveFloatingComment(btn){
     y: parseInt(layer.style.top),
     fecha: new Date().toLocaleString()
   };
-
-  // Enviar al server
-  try {
-    const res = await fetch(SCRIPT_URL, {
+  try{
+    const res = await fetch(SCRIPT_URL,{
       method:"POST",
-      body: JSON.stringify({...newComment, id_sop: idSOP, tipo:"comentario"}),
+      body: JSON.stringify({...newComment, id_sop:idSOP, tipo:"comentario"})
     });
     const result = await res.json();
     if(result.success){
-      if(!window.loadedComments) window.loadedComments = [];
+      if(!window.loadedComments) window.loadedComments=[];
       window.loadedComments.push(newComment);
       renderComments(window.loadedComments);
       layer.remove();
     } else {
-      alert("Error guardando comentario: " + result.error);
-      btn.disabled = false;
+      alert("Error guardando comentario: "+result.error);
+      btn.disabled=false;
     }
-  } catch(err){
-    alert("Error guardando comentario: " + err);
-    btn.disabled = false;
-  }
+  } catch(err){ alert("Error guardando comentario: "+err); btn.disabled=false; }
 }
-
- 
-
 
 // ======================
 // CARGAR / RENDER
 // ======================
 async function loadComments(){
   const loader = document.getElementById("commentsLoader");
-  loader.style.display = "block";
-
-  let serverComments = [];
-
-  try {
+  loader.style.display="block";
+  let serverComments=[];
+  try{
     const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
     serverComments = await res.json();
-  } catch(e){
-    console.warn("Sin conexión a servidor");
-    serverComments = [];
-  }
-
+  } catch(e){ console.warn("Sin conexión a servidor"); serverComments=[]; }
   window.loadedComments = serverComments;
   renderComments(window.loadedComments);
-  loader.style.display = "none";
+  loader.style.display="none";
 }
 
-    
 function renderComments(comments){
-
   const list=document.getElementById("commentList");
   list.innerHTML="";
-
   document.querySelectorAll(".floating-comment").forEach(el=>el.remove());
-
-  if(!comments || comments.length===0){
-    list.innerHTML="Sin comentarios";
-    return;
-  }
-
+  if(!comments || comments.length===0){ list.innerHTML="Sin comentarios"; return; }
   comments.forEach(c=>{
-
     // sidebar
     const div=document.createElement("div");
     div.className="comment-box";
-
-    div.innerHTML=`
-      <strong>${c.usuario}</strong><br>
-      ${c.comentario}
-    `;
-
+    div.innerHTML=`<strong>${c.usuario}</strong><br>${c.comentario}`;
     list.appendChild(div);
-
     // flotante
     if(c.x && c.y){
-
       const el=document.createElement("div");
       el.className="floating-comment";
-        el.style.position = "absolute";
-        el.style.left = c.x + "px";   // ej: "120px"
-        el.style.top = c.y + "px";  // ej: "300px"
-        el.style.zIndex = 9999;
-
-
-
-        
+      el.style.left=c.x+"px";
+      el.style.top=c.y+"px";
+      el.style.zIndex=999;
       el.innerHTML=`
         <div style="
           background: rgba(255,255,255,0.6);
@@ -598,28 +494,18 @@ function renderComments(comments){
           border-radius: 6px;
           font-size: 12px;
           color:#dc2626;
-        ">
-          ${c.comentario}
-        </div>
-      `;
-
-    const container = document.getElementById("commentsLayer");
-    container.appendChild(el);
+        ">${c.comentario}</div>`;
+      document.getElementById("commentsLayer").appendChild(el);
     }
-
   });
 }
 
-
-    
 // ======================
 // NAV
 // ======================
-function prevSOP(){ alert("Anterior"); }
-function nextSOP(){ alert("Siguiente"); }
+function prevSOP(){ alert("Anterior SOP"); }
+function nextSOP(){ alert("Siguiente SOP"); }
 
 </script>
-<button id="toggleSidebarBtn">💬</button>
 </body>
 </html>
-                                       
