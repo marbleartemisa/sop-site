@@ -254,6 +254,23 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
   </div>
 </div>
 
+    document.getElementById("toggleSidebarBtn")?.addEventListener("click",()=>{
+    document.getElementById("commentSidebar").classList.toggle("active");
+});
+
+// ENTER para login
+document.getElementById("loginPass").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        checkLogin();
+    }
+});
+
+document.getElementById("loginUser").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        checkLogin();
+    }
+});    
+
 <div id="commentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:600; align-items:center; justify-content:center;">
   <div style="background:white; width:500px; padding:25px; border-radius:14px; box-shadow:0 20px 50px rgba(0,0,0,.4);">
     <h3 style="margin-top:0;">💬 Nuevo comentario</h3>
@@ -339,13 +356,33 @@ function setEditModeUI(enabled){
 // COMENTARIOS
 // ======================
 function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
+
 function commentSelectedText(){
-    if(!editMode){ alert("Activa modo edición"); return; }
-    const sel=frame.contentWindow.getSelection();
-    if(!sel.toString()){ alert("Selecciona texto"); return; }
-    selectedTextGlobal=sel.toString();
-    createCorrectionLayer(sel);
+    if(!editMode){
+        alert("Activa modo edición");
+        return;
+    }
+
+    const iframeRect = frame.getBoundingClientRect();
+
+    // Escuchar UN SOLO click dentro del iframe
+    frame.contentWindow.document.addEventListener("click", function handler(e){
+
+        e.preventDefault();
+
+        const x = e.clientX;
+        const y = e.clientY;
+
+        selectedTextGlobal = ""; // ya no usamos selección
+
+        createFloatingComment(x, y);
+
+        // remover listener después de 1 click
+        frame.contentWindow.document.removeEventListener("click", handler);
+
+    }, { once: true });
 }
+    
 function createCorrectionLayer(selection){
     const range=selection.getRangeAt(0);
     const rect=range.getBoundingClientRect();
@@ -420,22 +457,82 @@ async function loadComments(){
     }catch(err){ console.error("Error cargando comentarios",err); renderComments([]);}
     loader.style.display="none";
 }
+
 function renderComments(comments){
-    const list=document.getElementById("commentList");
-    list.innerHTML="";
-    if(!comments||comments.length===0){
-        list.innerHTML=`<div class="no-comments">Sin comentarios</div>`;
+
+    const list = document.getElementById("commentList");
+    list.innerHTML = "";
+
+    // 🔥 eliminar comentarios flotantes previos
+    document.querySelectorAll(".floating-comment").forEach(el => el.remove());
+
+    if(!comments || comments.length === 0){
+        list.innerHTML = `<div class="no-comments">Sin comentarios</div>`;
         return;
     }
-    comments.forEach(c=>{
-        const div=document.createElement("div");
-        div.className="comment-box";
-        div.innerHTML=`
-            <div><strong>${c.empleado || "Anónimo"}</strong> • <em>${c.tipo || "General"}</em></div>
+
+    comments.forEach(c => {
+
+        // =========================
+        // SIDEBAR
+        // =========================
+        const div = document.createElement("div");
+        div.className = "comment-box";
+
+        div.innerHTML = `
+            <div>
+                <strong>${c.usuario || c.empleado || "Anónimo"}</strong> • 
+                <em>${c.tipo || "General"}</em>
+            </div>
             <div>${c.comentario || ""}</div>
-            <div style="font-size:12px;color:#6b7280;margin-top:4px;">Estado: ${c.estado || "Pendiente"}</div>
+            <div style="font-size:12px;color:#6b7280;margin-top:4px;">
+                Estado: ${c.estado || "Pendiente"}
+            </div>
         `;
+
         list.appendChild(div);
+
+
+        // =========================
+        // FLOTANTE SOBRE EL SOP
+        // =========================
+        if(c.x && c.y){
+
+            const layer = document.createElement("div");
+            layer.className = "floating-comment";
+
+            layer.style.position = "fixed";
+
+            // 🔥 evitar que se salga por la derecha
+            const posX = parseInt(c.x) || 0;
+            layer.style.left = Math.min(window.innerWidth - 240, posX) + "px";
+
+            // mantener posición vertical
+            layer.style.top = c.y;
+
+            layer.style.zIndex = 9999;
+
+            layer.innerHTML = `
+                <div style="
+                    background: rgba(255,255,255,0.55);
+                    backdrop-filter: blur(4px);
+                    border-left: 4px solid #dc2626;
+                    padding: 6px 8px;
+                    border-radius: 6px;
+                    font-size: 12px;
+                    color:#dc2626;
+                    font-style: italic;
+                    max-width: 220px;
+                    box-shadow: 0 6px 15px rgba(0,0,0,.25);
+                    word-wrap: break-word;
+                ">
+                    ${c.comentario}
+                </div>
+            `;
+
+            document.body.appendChild(layer);
+        }
+
     });
 }
 
@@ -557,6 +654,101 @@ document.getElementById("saveCommentBtn").addEventListener("click", function() {
 
     alert("✅ Comentario guardado correctamente!");
 });    
+    function saveFloatingComment(btn){
+
+    const layer = btn.closest("div").parentElement;
+    const textArea = layer.querySelector("textarea");
+    const text = textArea.value.trim();
+
+    if(!text){
+        alert("Comentario vacío");
+        return;
+    }
+
+    const user = document.getElementById("commentUser").value || currentUser || "Anónimo";
+    const tipo = document.getElementById("commentType").value || "Nota";
+    const estado = document.getElementById("commentStatus").value || "Pendiente";
+
+    const newComment = {
+        id_comment: Date.now().toString(),
+        usuario: user,
+        tipo: tipo,
+        estado: estado,
+        comentario: text,
+        x: layer.style.left,
+        y: layer.style.top,
+        fecha: new Date().toLocaleString()
+    };
+
+    if (!window.loadedComments) window.loadedComments = [];
+    window.loadedComments.push(newComment);
+
+    const existing = JSON.parse(localStorage.getItem(doc) || "[]");
+    existing.push(newComment);
+    localStorage.setItem(doc, JSON.stringify(existing));
+
+    renderComments(window.loadedComments);
+
+    // 🔥 convertir a comentario visual fijo
+    textArea.remove();
+
+    const content = document.createElement("div");
+    content.innerText = text;
+
+    content.style.color = "#dc2626";
+    content.style.fontStyle = "italic";
+
+    layer.querySelector("div").appendChild(content);
+
+    btn.remove();
+
+}
+
+    function createFloatingComment(x, y){
+
+    const iframeRect = frame.getBoundingClientRect();
+
+    const layer = document.createElement("div");
+
+        layer.style.position = "fixed";
+        
+        // 🔥 limitar que no se salga por la derecha
+        layer.style.left = Math.min(window.innerWidth - 240, parseInt(c.x)) + "px";
+        
+        layer.style.top = c.y;
+        layer.style.zIndex = 9999;
+        
+    layer.innerHTML = `
+    <div style="
+        background: rgba(255,255,255,0.6);
+        backdrop-filter: blur(4px);
+        border-left: 4px solid red;
+        padding: 8px;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(0,0,0,.25);
+        width: 220px;
+        font-size: 13px;
+    ">
+        <textarea placeholder="Comentario..."
+            style="
+                width:100%;
+                height:60px;
+                border:none;
+                outline:none;
+                background:transparent;
+                color:#dc2626;
+                font-style:italic;
+                resize:none;
+            "></textarea>
+
+        <div style="text-align:right;margin-top:5px;">
+            <button onclick="saveFloatingComment(this)">Guardar</button>
+        </div>
+    </div>
+    `;
+
+    document.body.appendChild(layer);
+}
 // ======================
 // NAV SOP
 // ======================
