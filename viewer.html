@@ -84,10 +84,24 @@ iframe {
   z-index: 450;
 }
 
+    
+/* Comentario flotante */
 .floating-comment {
-  position: absolute;
+  position: absolute; /* relativo al contenedor de PDF */
   pointer-events: auto;
   z-index: 999;
+}
+
+.floating-comment div {
+  background: rgba(255,255,255,0.9);
+  border-left: 4px solid #dc2626; /* borde rojo */
+  color: #dc2626; /* texto rojo */
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-style: italic;
+  max-width: 220px;
+  word-wrap: break-word;
 }
 
 .floating-comment textarea {
@@ -100,6 +114,8 @@ iframe {
   font-size: 12px;
   resize: none;
 }    
+
+
 
 /* ===== CLICK LAYER ===== */
 #clickLayer {
@@ -442,13 +458,18 @@ function openCommentModal(data){
 }
 function closeCommentModal(){ document.getElementById("commentModal").style.display="none"; }
 
-async function saveComment(){
-  const modal=document.getElementById("commentModal");
-  const text=document.getElementById("commentInput").value.trim();
-  if(!text){ alert("Comentario vacío"); return; }
-  const newComment={
+async function saveComment() {
+  const modal = document.getElementById("commentModal");
+  const btn = document.getElementById("saveCommentBtn");
+  if(btn.disabled) return; // evita doble clic
+  btn.disabled = true;
+
+  const text = document.getElementById("commentInput").value.trim();
+  if (!text) { alert("Comentario vacío"); btn.disabled = false; return; }
+
+  const newComment = {
     id_comment: Date.now().toString(),
-    usuario: currentUser||"Anónimo",
+    usuario: currentUser || "Anónimo",
     tipo: document.getElementById("commentType").value,
     estado_revision: "Pendiente",
     comentario: text,
@@ -459,48 +480,62 @@ async function saveComment(){
     y: parseInt(modal.dataset.y),
     page: parseInt(modal.dataset.page)
   };
-  try{
-    const res=await fetch(SCRIPT_URL,{
-      method:"POST",
-      body: JSON.stringify({...newComment, id_sop:idSOP, tipo:"comentario"})
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ ...newComment, id_sop: idSOP, tipo: "comentario" })
     });
-    const result=await res.json();
+    const result = await res.json();
     if(result.success){
       if(!window.loadedComments) window.loadedComments=[];
       window.loadedComments.push(newComment);
       renderCommentsForPage(currentPage);
       closeCommentModal();
-    } else { alert("Error guardando comentario: "+result.error); }
-  } catch(err){ alert("Error guardando comentario: "+err); }
+    } else {
+      alert("Error guardando comentario: "+result.error);
+    }
+  } catch(err){
+    alert("Error guardando comentario: "+err);
+  } finally {
+    btn.disabled = false;
+  }
 }
-
+    
 function renderCommentsForPage(pageNumber){
-  const container=document.getElementById("commentsLayer");
-  container.innerHTML="";
+  const container = document.getElementById("commentsLayer");
+  container.innerHTML = "";
   if(!window.loadedComments) return;
+
   window.loadedComments
-    .filter(c=>c.page===pageNumber && c.estado_revision!=="Revisado")
-    .forEach(c=>{
-      const el=document.createElement("div");
-      el.className="floating-comment";
-      el.style.left=(parseInt(c.x)||0)+"px";
-      el.style.top=(parseInt(c.y)||0)+"px";
-      el.style.zIndex=999;
-      el.innerHTML=`<div style="background:rgba(255,255,255,0.9);padding:6px;border-radius:6px;font-size:12px;font-style:italic;border:1px solid #cbd5e1;">${c.comentario}</div>`;
+    .filter(c => Number(c.page) === pageNumber && c.estado_revision !== "Revisado")
+    .forEach(c => {
+      const el = document.createElement("div");
+      el.className = "floating-comment";
+      el.style.left = (parseInt(c.x) || 0) + "px";
+      el.style.top = (parseInt(c.y) || 0) + "px";
+      el.innerHTML = `<div>${c.comentario}</div>`;
       container.appendChild(el);
     });
-}
+}    
+
+
 
 // ====================== CARGAR COMENTARIOS ======================
+
 async function loadComments(){
-  document.getElementById("commentsLoader").style.display="block";
+  const loader = document.getElementById("commentsLoader");
+  loader.style.display="block";
   try{
-    const res=await fetch(SCRIPT_URL+"?id_sop="+idSOP+"&tipo=fetch");
-    const data=await res.json();
-    window.loadedComments=data.comments||[];
+    const res = await fetch(SCRIPT_URL + "?comments=" + idSOP);
+    const data = await res.json();
+    window.loadedComments = data || [];
     renderCommentsForPage(currentPage);
-  } catch(err){ console.error(err); }
-  document.getElementById("commentsLoader").style.display="none";
+  } catch(err){
+    console.error("Error cargando comentarios:", err);
+  } finally {
+    loader.style.display="none";
+  }
 }
 
 // ====================== DOC FUNCIONES ======================
