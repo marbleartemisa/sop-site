@@ -260,7 +260,7 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     <textarea id="commentInput" placeholder="Escribe tu comentario..." style="width:100%; height:120px; border-radius:10px; border:1px solid #cbd5e1; padding:10px; resize:none;"></textarea>
     <div style="margin-top:15px; text-align:right;">
       <button onclick="closeCommentModal()" style="margin-right:10px;">Cancelar</button>
-        <button onclick="submitComment()" style="background:#2563eb;color:white;border:none;padding:8px 14px;border-radius:8px;">Guardar</button>
+        <button id="saveCommentBtn" style="background:#2563eb;color:white;border:none;padding:8px 14px;border-radius:8px;">Guardar</button>
     </div>
   </div>
 </div>
@@ -359,6 +359,7 @@ function createCorrectionLayer(selection){
         <div style="font-size:12px;color:#dc2626;font-weight:600;margin-bottom:4px;">Corrección propuesta</div>
         <textarea style="width:100%;height:70px;border:none;outline:none;color:#dc2626;font-style:italic;resize:none;" placeholder="Escribe la corrección..."></textarea>
         <div style="text-align:right;margin-top:5px;"><button onclick="saveCorrection(this)">Guardar</button></div>
+        <button type="button" id="saveCommentBtn">Guardar</button>
     </div>`;
     document.body.appendChild(layer);
 }
@@ -465,7 +466,58 @@ function submitComment() {
 
     alert("✅ Comentario guardado");
 }
-    
+
+document.getElementById("saveCommentBtn").addEventListener("click", function() {
+    const commentInput = document.getElementById("commentInput");
+    if (!commentInput) {
+        alert("Error: no se encuentra el campo de comentario");
+        return;
+    }
+
+    const commentText = commentInput.value.trim();
+    if (!commentText) {
+        alert("Escribe un comentario");
+        return;
+    }
+
+    if (!editMode) {
+        alert("Activa el modo edición primero");
+        return;
+    }
+
+    const user = document.getElementById("commentUser").value || currentUser || "Anónimo";
+    const tipo = document.getElementById("commentType").value || "General";
+    const estado = document.getElementById("commentStatus").value || "Pendiente";
+
+    const frame = document.getElementById("frame");
+    const sel = frame?.contentWindow?.getSelection();
+    const selectedText = sel ? sel.toString() : "";
+
+    const newComment = {
+        id_comment: Date.now().toString(),
+        usuario: user,
+        tipo: tipo,
+        estado: estado,
+        comentario: commentText,
+        text_selected: selectedText,
+        fecha: new Date().toLocaleString()
+    };
+
+    if (!window.loadedComments) window.loadedComments = [];
+    window.loadedComments.push(newComment);
+
+    const existing = JSON.parse(localStorage.getItem(doc) || "[]");
+    existing.push(newComment);
+    localStorage.setItem(doc, JSON.stringify(existing));
+
+    if (selectedText) highlightSelection(sel, newComment);
+    renderComments(window.loadedComments);
+
+    commentInput.value = "";
+    closeCommentModal();
+
+    alert("✅ Comentario guardado correctamente!");
+});    
 // ======================
 // NAV SOP
 // ======================
