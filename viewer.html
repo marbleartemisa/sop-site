@@ -73,9 +73,9 @@ iframe {
     border: none;
 }
 
-/* ===== COMMENTS LAYER ===== */
+    /* ===== COMMENTS LAYER FIJO ===== */
 #commentsLayer {
-    position: absolute;
+    position: fixed;  /* <-- FIXED para que no se mueva */
     top: 0;
     left: 0;
     width: 100%;
@@ -85,7 +85,7 @@ iframe {
     overflow: visible;
 }
 .floating-comment {
-    position: absolute;
+    position: fixed;  /* <-- FIXED también */
     pointer-events: auto;
     z-index: 999;
 }
@@ -389,12 +389,17 @@ function commentSelectedText() {
 // ======================
 // CREAR COMENTARIO FLOTANTE
 // ======================
-function createFloatingComment(x, y){
+
+    function createFloatingComment(x, y){
   const container = document.getElementById("commentsLayer");
   const layer = document.createElement("div");
   layer.className = "floating-comment";
-  layer.style.left = x + "px";
-  layer.style.top = y + "px";
+  
+  // Ajuste para que los comentarios se queden fijos con respecto a la ventana
+  const frameRect = document.querySelector(".doc-frame").getBoundingClientRect();
+  layer.style.left = frameRect.left + x + "px";
+  layer.style.top  = frameRect.top  + y + "px";
+  
   layer.innerHTML = `
     <div style="
       background: rgba(255,255,255,0.8);
