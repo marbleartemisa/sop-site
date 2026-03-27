@@ -358,18 +358,57 @@ function createCorrectionLayer(selection){
     layer.innerHTML=`<div style="background:white;border:2px dashed red;padding:8px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,.3);width:260px;">
         <div style="font-size:12px;color:#dc2626;font-weight:600;margin-bottom:4px;">Corrección propuesta</div>
         <textarea style="width:100%;height:70px;border:none;outline:none;color:#dc2626;font-style:italic;resize:none;" placeholder="Escribe la corrección..."></textarea>
-        <div style="text-align:right;margin-top:5px;"><button onclick="saveCorrection(this)">Guardar</button></div>
-        <button type="button" id="saveCommentBtn">Guardar</button>
+        <button onclick="saveCorrection(this)">Guardar</button>
+      
     </div>`;
     document.body.appendChild(layer);
 }
+
+
 function saveCorrection(btn){
-    const layer=btn.closest("div").parentElement;
-    const text=layer.querySelector("textarea").value;
-    if(!text){ alert("Comentario vacío"); return; }
-    layer.style.border="2px solid #dc2626";
-    layer.querySelector("textarea").disabled=true;
+    const layer = btn.closest("div").parentElement;
+    const text = layer.querySelector("textarea").value.trim();
+
+    if(!text){
+        alert("Comentario vacío");
+        return;
+    }
+
+    if (!editMode) {
+        alert("Activa el modo edición primero");
+        return;
+    }
+
+    const user = document.getElementById("commentUser").value || currentUser || "Anónimo";
+    const tipo = document.getElementById("commentType").value || "Corrección";
+    const estado = document.getElementById("commentStatus").value || "Pendiente";
+
+    const newComment = {
+        id_comment: Date.now().toString(),
+        usuario: user,
+        tipo: tipo,
+        estado: estado,
+        comentario: text,
+        text_selected: selectedTextGlobal,
+        fecha: new Date().toLocaleString()
+    };
+
+    if (!window.loadedComments) window.loadedComments = [];
+    window.loadedComments.push(newComment);
+
+    const existing = JSON.parse(localStorage.getItem(doc) || "[]");
+    existing.push(newComment);
+    localStorage.setItem(doc, JSON.stringify(existing));
+
+    renderComments(window.loadedComments);
+
+    // UI feedback
+    layer.style.border = "2px solid #16a34a";
+    layer.querySelector("textarea").disabled = true;
+
+    alert("✅ Corrección guardada");
 }
+    
 async function loadComments(){
     const loader=document.getElementById("commentsLoader");
     loader.style.display="block";
