@@ -418,41 +418,36 @@ document.getElementById("toggleSidebarBtn")?.addEventListener("click",()=>{
   document.getElementById("commentSidebar").classList.toggle("active");
 });
 
+
 // ======================
 // CLICK PARA CREAR COMENTARIO
 // ======================
-function commentSelectedText(){
-
-  if(!editMode){
-    alert("Activa modo edición");
-    return;
-  }
+function commentSelectedText() {
+  if(!editMode){ alert("Activa modo edición"); return; }
 
   const layer = document.getElementById("clickLayer");
   layer.style.display = "block";
 
-layer.onclick = (e)=>{
-  const rect = document.querySelector(".doc-frame").getBoundingClientRect();
+  layer.onclick = (e) => {
+    const rect = document.querySelector(".doc-frame").getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+    // página actual (si es PDF o multi-page, ajustar según tu viewer)
+    const page = 1; // por ahora fijo, ajustar si puedes obtener el número real
 
-  createFloatingComment(x, y);
-  layer.style.display = "none";
-};
+    createFloatingComment(x, y, page);
+    layer.style.display = "none";
+  };
 }
-
-
 
 // ======================
 // CREAR COMENTARIO FLOTANTE
 // ======================
-function createFloatingComment(x, y){
-
+function createFloatingComment(x, y, page){
   const layer = document.createElement("div");
-
-  layer.style.position = "fixed";
-  layer.style.left = Math.min(window.innerWidth - 240, x) + "px";
+  layer.classList.add("floating-comment");
+  layer.style.left = x + "px";
   layer.style.top = y + "px";
   layer.style.zIndex = 9999;
 
@@ -468,53 +463,78 @@ function createFloatingComment(x, y){
     ">
       <textarea placeholder="Comentario..."
         style="width:100%;height:60px;border:none;outline:none;background:transparent;color:#dc2626;font-style:italic;"></textarea>
-
       <div style="text-align:right;margin-top:5px;">
-        <button onclick="saveFloatingComment(this)">Guardar</button>
+        <button onclick="saveFloatingComment(this, ${x}, ${y}, ${page})">Guardar</button>
       </div>
     </div>
   `;
 
-  document.body.appendChild(layer);
+  document.getElementById("commentsLayer").appendChild(layer);
 }
+
 
 // ======================
 // GUARDAR COMENTARIO FLOTANTE
 // ======================
-function saveFloatingComment(btn){
-
-  const layer = btn.closest("div").parentElement;
+async function saveFloatingComment(btn, x, y, page){
+  const layer = btn.closest(".floating-comment");
   const text = layer.querySelector("textarea").value.trim();
 
-  if(!text){
-    alert("Comentario vacío");
-    return;
-  }
+  if(!text){ alert("Comentario vacío"); return; }
 
-  const newComment = {
-    id_comment: Date.now().toString(),
+  const commentData = {
+    tipo: "comentario",
+    id_sop: idSOP,
     usuario: currentUser || "Anónimo",
-    tipo: document.getElementById("commentType").value,
+    correo: "", // opcional
+    tipo_comentario: document.getElementById("commentType").value,
     estado: document.getElementById("commentStatus").value,
     comentario: text,
-    x: parseInt(layer.style.left),
-    y: parseInt(layer.style.top),
-    fecha: new Date().toLocaleString()
+    text_selected: selectedTextGlobal || "",
+    context_before: "", // si tienes contexto antes, asignar
+    context_after: "",  // si tienes contexto después, asignar
+    url_doc: doc || "",
+    estado_revision: "Pendiente",
+    x: x,
+    y: y,
+    page: page
   };
 
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(commentData)
+    });
+    const result = await res.json();
 
+    if(result.success){
+      alert("Comentario guardado");
+      // render flotante inmediato
+      layer.innerHTML = `
+        <div style="
+          background: rgba(255,255,255,0.6);
+          backdrop-filter: blur(4px);
+          border-left: 4px solid #dc2626;
+          padding: 6px;
+          border-radius: 6px;
+          font-size: 12px;
+          color:#dc2626;
+        ">
+          ${text}
+        </div>
+      `;
+      layer.style.pointerEvents = "none"; // ya no editable
+    } else {
+      alert("Error guardando comentario: " + result.error);
+      layer.remove();
+    }
+  } catch(err){
+    console.error(err);
+    alert("Error guardando comentario (offline)");
+    layer.remove();
+  }
+}    
 
-  if (!window.loadedComments) window.loadedComments = [];
-  window.loadedComments.push(newComment);
-
-  const existing = JSON.parse(localStorage.getItem(doc) || "[]");
-  existing.push(newComment);
-  localStorage.setItem(doc, JSON.stringify(existing));
-
-  renderComments(window.loadedComments);
-
-  layer.remove();
-}
 
 // ======================
 // CARGAR / RENDER
