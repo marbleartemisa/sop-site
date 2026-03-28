@@ -435,8 +435,8 @@ function commentSelectedText() {
   clickLayer.style.display="block";
   clickLayer.onclick = (e)=>{
     const rect = document.querySelector(".doc-frame").getBoundingClientRect();
-    const x = e.clientX - rect.left + frame.scrollLeft;
-    const y = e.clientY - rect.top + frame.scrollTop;
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;  
     const text_selected = window.getSelection().toString() || "";
     const context_before = text_selected.substring(0,10);
     const context_after  = text_selected.slice(-10);
@@ -476,8 +476,8 @@ async function saveComment() {
     text_selected: modal.dataset.text_selected,
     context_before: modal.dataset.context_before,
     context_after: modal.dataset.context_after,
-    x: parseInt(modal.dataset.x),
-    y: parseInt(modal.dataset.y),
+    x: parseFloat(modal.dataset.x),
+    y: parseFloat(modal.dataset.y),
     page: parseInt(modal.dataset.page)
   };
 
@@ -512,13 +512,13 @@ function renderCommentsForPage(pageNumber){
     .forEach(c => {
       const el = document.createElement("div");
       el.className = "floating-comment";
-      el.style.left = (parseInt(c.x) || 0) + "px";
-      el.style.top = (parseInt(c.y) || 0) + "px";
+    const frameRect = document.querySelector(".doc-frame");
+    el.style.left = (c.x * frameRect.clientWidth) + "px";
+    el.style.top  = (c.y * frameRect.clientHeight) + "px";
       el.innerHTML = `<div>${c.comentario}</div>`;
       container.appendChild(el);
     });
 }    
-
 
 
 // ====================== CARGAR COMENTARIOS ======================
@@ -542,6 +542,12 @@ async function loadComments(){
 function openNew(){ window.open(doc,"_blank"); }
 function downloadDoc(){ window.open(doc,"_blank"); }
 function printDoc(){ frame.contentWindow.print(); }
+    window.addEventListener("resize", () => {
+  renderCommentsForPage(currentPage);
+});
+    document.querySelector(".doc-frame").addEventListener("scroll", () => {
+  renderCommentsForPage(currentPage);
+});
 </script>
 </body>
 </html>
