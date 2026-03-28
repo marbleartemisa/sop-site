@@ -370,8 +370,8 @@ let currentUser = "";
 let currentPage = 1;
 
 const params = new URLSearchParams(window.location.search);
-let doc = params.get("doc") || "";   // URL del documento SOP
-let idSOP = params.get("id") || "";  // ID del SOP
+let doc = params.get("doc") || "";
+let idSOP = params.get("id") || "";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
 const frame = document.getElementById("frame");
@@ -415,7 +415,6 @@ function setEditModeUI(enabled) {
   if(btn) btn.classList.toggle("disabled", !enabled);
 }
 
-// Enter para login
 document.getElementById("loginPass").addEventListener("keypress", e => {
   if(e.key === "Enter") checkLogin();
 });
@@ -426,37 +425,38 @@ document.getElementById("toggleSidebarBtn").addEventListener("click", () => {
   document.getElementById("commentSidebar").classList.toggle("active");
 });
 
-// ====================== CARGA DOCUMENTO ======================
-function getDocUrlForPage(n){ return doc; } 
+// ====================== NAVEGACIÓN ======================
+function getDocUrlForPage(n){ return doc; }
 function loadSOPPage(n){ currentPage=n; frame.src=getDocUrlForPage(n); }
 function prevSOP(){ if(currentPage>1){ currentPage--; loadSOPPage(currentPage); } }
 function nextSOP(){ currentPage++; loadSOPPage(currentPage); }
 
 frame.addEventListener("load", ()=> renderCommentsForPage(currentPage));
 
-// ====================== SELECCIÓN Y COMENTARIOS ======================
+// ====================== ACTIVAR CLICK PARA COMENTARIO ======================
 function commentSelectedText() {
   if(!editMode){ alert("Activa modo edición"); return; }
-  const iframeDoc = frame.contentDocument || frame.contentWindow.document;
-  const selection = iframeDoc.getSelection();
-  const text_selected = selection.toString().trim();
-  if(!text_selected){ alert("Seleccione texto"); return; }
 
-  const range = selection.getRangeAt(0);
-  const rect = range.getBoundingClientRect();
-  const frameRect = frame.getBoundingClientRect();
-  const x = (rect.left - frameRect.left) / frame.clientWidth;
-  const y = (rect.top - frameRect.top) / frame.clientHeight;
+  const clickLayer = document.getElementById("clickLayer");
+  clickLayer.style.display="block";
+  clickLayer.style.cursor="crosshair";
 
-  openCommentModal({x,y,text_selected,page:currentPage});
+  clickLayer.onclick = e => {
+    const rect = clickLayer.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+
+    openCommentModal({x,y,page:currentPage});
+    clickLayer.style.display="none";
+  };
 }
 
+// ====================== MODAL ======================
 function openCommentModal(data){
   const modal = document.getElementById("commentModal");
   modal.style.display="block";
   modal.dataset.x = data.x;
   modal.dataset.y = data.y;
-  modal.dataset.text_selected = data.text_selected;
   modal.dataset.page = data.page;
   document.getElementById("commentInput").value = "";
 }
@@ -465,6 +465,7 @@ function closeCommentModal(){
   document.getElementById("commentModal").style.display = "none"; 
 }
 
+// ====================== GUARDAR COMENTARIO ======================
 async function saveComment() {
   const modal = document.getElementById("commentModal");
   const btn = document.getElementById("saveCommentBtn");
@@ -480,7 +481,6 @@ async function saveComment() {
     tipo: document.getElementById("commentType").value,
     estado_revision: "Pendiente",
     comentario: text,
-    text_selected: modal.dataset.text_selected,
     x: parseFloat(modal.dataset.x),
     y: parseFloat(modal.dataset.y),
     page: parseInt(modal.dataset.page)
@@ -542,13 +542,10 @@ async function loadComments(){
   }
 }
 
-// ====================== ESCUCHAR SCROLL Y RESIZE ======================
-frame.addEventListener("load", () => {
-    renderCommentsForPage(currentPage);
-});
+// ====================== ESCUCHAR RESIZE ======================
 window.addEventListener("resize", () => renderCommentsForPage(currentPage));
 
-// ====================== FUNCIONES DOC ======================
+// ====================== DOC FUNCIONES ======================
 function openNew(){ window.open(doc,"_blank"); }
 function downloadDoc(){
   const a = document.createElement("a");
