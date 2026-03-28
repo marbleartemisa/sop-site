@@ -363,14 +363,12 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
 // ====================== VARIABLES GLOBALES ======================
 let editMode = false;
 let currentUser = "";
-let selectedTextGlobal = "";
 let currentPage = 1;
 
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc") || "";       // URL del documento
 let idSOP = params.get("id") || "";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-
 
 const frame = document.getElementById("frame");
 if(doc) frame.src = doc;
@@ -386,16 +384,18 @@ const users = {
 };
 
 // ====================== LOGIN ======================
-function showLogin(){ document.getElementById("loginOverlay").style.display="flex"; }
-function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
+function showLogin() { document.getElementById("loginOverlay").style.display="flex"; }
+function closeLogin() { document.getElementById("loginOverlay").style.display="none"; }
 
-function checkLogin(){
+function checkLogin() {
   const user = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
   const msg = document.getElementById("loginMessage");
   if(!user){ msg.innerText="Seleccione usuario"; return; }
   if(users[user]!==pass){ msg.innerText="Clave incorrecta"; return; }
-  editMode = true; currentUser = user;
+
+  editMode = true; 
+  currentUser = user;
   document.getElementById("commentUser").value = user;
   setEditModeUI(true);
   document.getElementById("commentSidebar").classList.add("active");
@@ -403,7 +403,7 @@ function checkLogin(){
   closeLogin();
 }
 
-function setEditModeUI(enabled){
+function setEditModeUI(enabled) {
   document.getElementById("commentUser").disabled = !enabled;
   document.getElementById("commentType").disabled = !enabled;
   document.getElementById("commentStatus").disabled = !enabled;
@@ -412,13 +412,15 @@ function setEditModeUI(enabled){
 }
 
 // Permitir login con Enter
-document.getElementById("loginPass").addEventListener("keypress", function(e){
+document.getElementById("loginPass").addEventListener("keypress", e => {
   if(e.key === "Enter") checkLogin();
 });
 
 // ====================== SIDEBAR ======================
-function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
-document.getElementById("toggleSidebarBtn").addEventListener("click", ()=>{ document.getElementById("commentSidebar").classList.toggle("active"); });
+function closeSidebar() { document.getElementById("commentSidebar").classList.remove("active"); }
+document.getElementById("toggleSidebarBtn").addEventListener("click", () => {
+  document.getElementById("commentSidebar").classList.toggle("active");
+});
 
 // ====================== CARGAR DOCUMENTO ======================
 function getDocUrlForPage(n){ return doc; } // ajustar si cada página es diferente
@@ -433,7 +435,7 @@ function commentSelectedText() {
   if(!editMode){ alert("Activa modo edición"); return; }
   const clickLayer = document.getElementById("clickLayer");
   clickLayer.style.display="block";
-  clickLayer.onclick = (e)=>{
+  clickLayer.onclick = e => {
     const rect = document.querySelector(".doc-frame").getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;  
@@ -448,24 +450,27 @@ function commentSelectedText() {
 function openCommentModal(data){
   const modal = document.getElementById("commentModal");
   modal.style.display="block";
-  modal.dataset.x=data.x;
-  modal.dataset.y=data.y;
-  modal.dataset.text_selected=data.text_selected;
-  modal.dataset.context_before=data.context_before;
-  modal.dataset.context_after=data.context_after;
-  modal.dataset.page=data.page;
-  document.getElementById("commentInput").value="";
+  modal.dataset.x = data.x;
+  modal.dataset.y = data.y;
+  modal.dataset.text_selected = data.text_selected;
+  modal.dataset.context_before = data.context_before;
+  modal.dataset.context_after = data.context_after;
+  modal.dataset.page = data.page;
+  document.getElementById("commentInput").value = "";
 }
-function closeCommentModal(){ document.getElementById("commentModal").style.display="none"; }
+
+function closeCommentModal(){ 
+  document.getElementById("commentModal").style.display = "none"; 
+}
 
 async function saveComment() {
   const modal = document.getElementById("commentModal");
   const btn = document.getElementById("saveCommentBtn");
-  if(btn.disabled) return; // evita doble clic
+  if(btn.disabled) return;
   btn.disabled = true;
 
   const text = document.getElementById("commentInput").value.trim();
-  if (!text) { alert("Comentario vacío"); btn.disabled = false; return; }
+  if(!text){ alert("Comentario vacío"); btn.disabled=false; return; }
 
   const newComment = {
     id_comment: Date.now().toString(),
@@ -484,7 +489,7 @@ async function saveComment() {
   try {
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
-      body: JSON.stringify({ ...newComment, id_sop: idSOP, tipo: "comentario" })
+      body: JSON.stringify({...newComment, id_sop: idSOP, tipo:"comentario"})
     });
     const result = await res.json();
     if(result.success){
@@ -495,38 +500,45 @@ async function saveComment() {
     } else {
       alert("Error guardando comentario: "+result.error);
     }
-  } catch(err){
+  } catch(err) {
     alert("Error guardando comentario: "+err);
   } finally {
-    btn.disabled = false;
+    btn.disabled=false;
   }
 }
-    
+
 function renderCommentsForPage(pageNumber){
   const container = document.getElementById("commentsLayer");
-  container.innerHTML = "";
+  const frameBox = document.querySelector(".doc-frame");
+
+  container.innerHTML="";
   if(!window.loadedComments) return;
+
+  const scrollTop = frameBox.scrollTop;
+  const scrollLeft = frameBox.scrollLeft;
 
   window.loadedComments
     .filter(c => Number(c.page) === pageNumber && c.estado_revision !== "Revisado")
     .forEach(c => {
       const el = document.createElement("div");
       el.className = "floating-comment";
-    const frameRect = document.querySelector(".doc-frame");
-    el.style.left = (c.x * frameRect.clientWidth) + "px";
-    el.style.top  = (c.y * frameRect.clientHeight) + "px";
+
+      const x = c.x * frameBox.scrollWidth;
+      const y = c.y * frameBox.scrollHeight;
+
+      el.style.left = (x - scrollLeft) + "px";
+      el.style.top  = (y - scrollTop) + "px";
+
       el.innerHTML = `<div>${c.comentario}</div>`;
       container.appendChild(el);
     });
-}    
-
+}
 
 // ====================== CARGAR COMENTARIOS ======================
-
 async function loadComments(){
   const loader = document.getElementById("commentsLoader");
   loader.style.display="block";
-  try{
+  try {
     const res = await fetch(SCRIPT_URL + "?comments=" + idSOP);
     const data = await res.json();
     window.loadedComments = data || [];
@@ -538,16 +550,15 @@ async function loadComments(){
   }
 }
 
+// ====================== LISTENER SCROLL Y RESIZE ======================
+const docFrame = document.querySelector(".doc-frame");
+docFrame.addEventListener("scroll", () => renderCommentsForPage(currentPage));
+window.addEventListener("resize", () => renderCommentsForPage(currentPage));
+
 // ====================== DOC FUNCIONES ======================
 function openNew(){ window.open(doc,"_blank"); }
 function downloadDoc(){ window.open(doc,"_blank"); }
 function printDoc(){ frame.contentWindow.print(); }
-    window.addEventListener("resize", () => {
-  renderCommentsForPage(currentPage);
-});
-    document.querySelector(".doc-frame").addEventListener("scroll", () => {
-  renderCommentsForPage(currentPage);
-});
 </script>
 </body>
 </html>
