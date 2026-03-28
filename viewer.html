@@ -442,7 +442,7 @@ function commentSelectedText() {
   clickLayer.style.cursor="crosshair";
 
   clickLayer.onclick = e => {
-    const rect = clickLayer.getBoundingClientRect();
+    const rect = frame.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
 
@@ -507,22 +507,41 @@ async function saveComment() {
   }
 }
 
-// ====================== RENDER COMENTARIOS ======================
+// ====================== RENDER COMENTARIOS DENTRO DEL IFRAME ======================
 function renderCommentsForPage(pageNumber){
-  const container = document.getElementById("commentsLayer");
-  container.innerHTML = "";
-
   if(!window.loadedComments) return;
+
+  const iframeDoc = frame.contentDocument || frame.contentWindow.document;
+  if(!iframeDoc) return;
+
+  // Crear contenedor dentro del iframe si no existe
+  let commentsContainer = iframeDoc.getElementById("commentsLayerInside");
+  if(!commentsContainer){
+    commentsContainer = iframeDoc.createElement("div");
+    commentsContainer.id = "commentsLayerInside";
+    commentsContainer.style.position = "absolute";
+    commentsContainer.style.top = 0;
+    commentsContainer.style.left = 0;
+    commentsContainer.style.width = "100%";
+    commentsContainer.style.height = "100%";
+    commentsContainer.style.pointerEvents = "none";
+    iframeDoc.body.style.position = "relative";
+    iframeDoc.body.appendChild(commentsContainer);
+  }
+  commentsContainer.innerHTML = "";
 
   window.loadedComments
     .filter(c => Number(c.page) === pageNumber)
     .forEach(c => {
-      const el = document.createElement("div");
+      const el = iframeDoc.createElement("div");
       el.className = "floating-comment";
       el.innerHTML = `<div>${c.comentario}</div>`;
-      el.style.left = (c.x * frame.clientWidth) + "px";
-      el.style.top  = (c.y * frame.clientHeight) + "px";
-      container.appendChild(el);
+      el.style.position = "absolute";
+      el.style.pointerEvents = "auto";
+      el.style.left = (c.x * iframeDoc.body.clientWidth) + "px";
+      el.style.top = (c.y * iframeDoc.body.clientHeight) + "px";
+      el.style.zIndex = 9999;
+      commentsContainer.appendChild(el);
     });
 }
 
@@ -554,6 +573,7 @@ function downloadDoc(){
   a.click();
 }
 function printDoc(){ frame.contentWindow.print(); }
+
 </script>
 </body>
 </html>
