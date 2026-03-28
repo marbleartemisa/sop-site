@@ -3,141 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Biblioteca SOP - ARTEMISA MARBLE & CABINETS</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Leer y Comentar SOP</title>
 <style>
-body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f0f0f0; }
-table { width:100%; border-collapse: collapse; margin-top:20px; background:#fff; }
-th, td { padding:10px; border:1px solid #ccc; text-align:left; }
-th { background:#333; color:#fff; }
-input[type="text"] { padding:5px; width:200px; margin-bottom:10px; }
-.btn-abrir-sop { padding:5px 10px; background:#007bff; color:#fff; border:none; cursor:pointer; border-radius:4px; }
-.modal { display:none; position:fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.5); }
-.modal-content { background:#fff; margin:50px auto; padding:20px; border-radius:8px; width:90%; max-width:1000px; position:relative; }
-.modal-content iframe { border:0; }
-.close { position:absolute; top:10px; right:20px; font-size:28px; font-weight:bold; cursor:pointer; }
-.comment-marker { position:absolute; width:10px; height:10px; background:red; border-radius:50%; cursor:pointer; z-index:10; }
+  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f0f0f0; }
+  #sop-container { position: relative; width: 80%; margin: 20px auto; border: 1px solid #ccc; background:#fff; overflow: auto; }
+  #sop-copy { position: relative; padding:20px; min-height:600px; }
+  .comentario { position: absolute; color: red; font-weight: bold; cursor: pointer; }
+  #modal { display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); justify-content:center; align-items:center; }
+  #modal-content { background:#fff; padding:20px; border-radius:5px; width:300px; }
+  #comentario-text { width:100%; height:80px; }
+  #btn-save { margin-top:10px; }
 </style>
 </head>
 <body>
 
-<h2>Biblioteca SOP</h2>
-<input type="text" id="search-input" placeholder="Buscar SOP por resumen o departamento...">
+<h2 style="text-align:center;">Leer y Comentar SOP</h2>
 
-<table id="sop-table">
-  <thead>
-    <tr>
-      <th>Fecha</th>
-      <th>Departamento</th>
-      <th>Resumen</th>
-      <th>Estado</th>
-      <th>Acción</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<div id="sop-container">
+  <div id="sop-copy"></div>
+</div>
 
-<!-- Modal SOP -->
-<div id="modal-sop" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <iframe id="iframe-sop" src="" width="100%" height="600px"></iframe>
+<!-- Modal para escribir comentario -->
+<div id="modal">
+  <div id="modal-content">
+    <h3>Escribe tu comentario</h3>
+    <textarea id="comentario-text"></textarea>
+    <button id="btn-save">Guardar</button>
+    <button id="btn-cancel">Cancelar</button>
   </div>
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec';
+const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
-// Cargar SOP
+// Configura aquí la URL del SOP desde tu tabla
+const SOP_URL = "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html"; 
+const ID_SOP = "SOP-1774461381359-0";
+const USUARIO = "TuNombre"; // Opcional
+const CORREO = "tucorreo@empresa.com";
+
+// Variables para crear comentario
+let clickX = 0;
+let clickY = 0;
+
+// Función para cargar el SOP dentro de #sop-copy
 async function cargarSOP() {
-  const res = await fetch(SCRIPT_URL);
-  const data = await res.json();
-  const tbody = document.querySelector('#sop-table tbody');
-  tbody.innerHTML = '';
-  data.forEach(sop => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${sop.Timestamp}</td>
-      <td>${sop.departamento}</td>
-      <td>${sop.resumen}</td>
-      <td>${sop.estado}</td>
-      <td><button class="btn-abrir-sop" data-link="${sop.links}" data-id="${sop.ID_SOP}">Leer y Comentar</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-  activarBotones();
+  try {
+    const response = await fetch(SOP_URL);
+    const html = await response.text();
+    const container = document.getElementById('sop-copy');
+    container.innerHTML = html;
+    container.addEventListener('click', activarComentario);
+    cargarComentariosExistentes();
+  } catch(err) {
+    document.getElementById('sop-copy').innerHTML = "<p style='color:red;'>No se pudo cargar el SOP. Verifica la URL.</p>";
+    console.error(err);
+  }
 }
 
-// Filtrado
-document.getElementById('search-input').addEventListener('input', function(){
-  const val = this.value.toLowerCase();
-  document.querySelectorAll('#sop-table tbody tr').forEach(tr => {
-    tr.style.display = tr.innerText.toLowerCase().includes(val) ? '' : 'none';
-  });
-});
+// Activar modal para comentario
+function activarComentario(e) {
+  // Evita que al hacer clic en un comentario existente se abra otro modal
+  if(e.target.classList.contains('comentario')) return;
 
-// Modal
-const modal = document.getElementById('modal-sop');
-const iframe = document.getElementById('iframe-sop');
-document.querySelector('.close').addEventListener('click', () => {
-  modal.style.display = 'none';
-  iframe.src = '';
-});
+  const rect = e.currentTarget.getBoundingClientRect();
+  clickX = e.clientX - rect.left;
+  clickY = e.clientY - rect.top;
 
-// Abrir SOP
-function activarBotones() {
-  document.querySelectorAll('.btn-abrir-sop').forEach(btn => {
-    btn.addEventListener('click', () => {
-      iframe.src = btn.dataset.link;
-      modal.style.display = 'block';
-      activarComentarios(btn.dataset.id);
+  document.getElementById('modal').style.display = 'flex';
+}
+
+// Guardar comentario
+document.getElementById('btn-save').addEventListener('click', async () => {
+  const texto = document.getElementById('comentario-text').value.trim();
+  if(!texto) return alert("Escribe algo antes de guardar");
+
+  const comentarioDiv = document.createElement('div');
+  comentarioDiv.className = "comentario";
+  comentarioDiv.style.left = clickX + 'px';
+  comentarioDiv.style.top = clickY + 'px';
+  comentarioDiv.textContent = texto;
+  document.getElementById('sop-copy').appendChild(comentarioDiv);
+
+  document.getElementById('modal').style.display = 'none';
+  document.getElementById('comentario-text').value = "";
+
+  // Guardar en Sheet
+  try {
+    await fetch(SHEET_API, {
+      method:"POST",
+      body: JSON.stringify({
+        tipo: "comentario",
+        id_sop: ID_SOP,
+        usuario: USUARIO,
+        correo: CORREO,
+        comentario: texto,
+        x: clickX,
+        y: clickY,
+        page: 1,
+        url_doc: SOP_URL
+      })
     });
-  });
+    console.log("Comentario guardado en Sheet");
+  } catch(err) {
+    console.error("Error guardando comentario:", err);
+  }
+});
+
+// Cancelar comentario
+document.getElementById('btn-cancel').addEventListener('click', () => {
+  document.getElementById('modal').style.display = 'none';
+  document.getElementById('comentario-text').value = "";
+});
+
+// Cargar comentarios existentes desde Sheet
+async function cargarComentariosExistentes() {
+  try {
+    const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
+    const data = await res.json();
+    const container = document.getElementById('sop-copy');
+
+    data.forEach(c => {
+      const comentarioDiv = document.createElement('div');
+      comentarioDiv.className = "comentario";
+      comentarioDiv.style.left = c.x + 'px';
+      comentarioDiv.style.top = c.y + 'px';
+      comentarioDiv.textContent = c.comentario;
+      container.appendChild(comentarioDiv);
+    });
+
+  } catch(err) {
+    console.error("Error cargando comentarios:", err);
+  }
 }
 
-// Comentarios flotantes
-function activarComentarios(id_sop) {
-  iframe.onload = () => {
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-    // Hacer clic en el documento para crear comentario
-    doc.body.addEventListener('click', e => {
-      const x = e.pageX;
-      const y = e.pageY;
-
-      const marker = doc.createElement('div');
-      marker.className = 'comment-marker';
-      marker.style.left = (x - doc.body.getBoundingClientRect().left - 5) + 'px';
-      marker.style.top = (y - doc.body.getBoundingClientRect().top - 5) + 'px';
-      doc.body.appendChild(marker);
-
-      const texto = prompt('Escribe tu comentario:');
-      if(texto) {
-        // Guardar comentario en Google Sheets
-        fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify({
-            tipo: 'comentario',
-            id_sop: id_sop,
-            usuario: 'UsuarioPrueba',
-            comentario: texto,
-            x: x,
-            y: y,
-            page: 1,
-            url_doc: iframe.src
-          })
-        }).then(res => res.json()).then(res => {
-          if(res.success) alert('Comentario guardado');
-        });
-      } else {
-        marker.remove();
-      }
-    }, { once: true });
-  };
-}
-
-// Inicializar
+// Iniciar
 cargarSOP();
 </script>
+
 </body>
 </html>
