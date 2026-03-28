@@ -77,7 +77,8 @@ async function loadSOPs() {
 }
 
 // ===== Renderizar tabla =====
-function renderTable(data) {
+
+    function renderTable(data) {
     const tbody = document.querySelector("#sopTable tbody");
     tbody.innerHTML = "";
     data.forEach(sop => {
@@ -88,10 +89,20 @@ function renderTable(data) {
             <td>${sop.departamento || "--"}</td>
             <td>${sop.areas || "--"}</td>
             <td>${sop.estado || "--"}</td>
-            <td><button onclick="openViewer('${encodeURIComponent(sop.links)}','${sop.ID_SOP}')">Leer y Comentar</button></td>
+            <td>
+                <button onclick="openViewer('${sop.links}', '${sop.ID_SOP}')">
+                    Leer y Comentar
+                </button>
+            </td>
         `;
         tbody.appendChild(tr);
     });
+}
+
+// ===== Abrir SOP editable =====
+function openViewer(doc, id) {
+    // Abrir el SOP directamente en nueva pestaña
+    window.open(doc, "_blank");
 }
 
 // ===== Abrir SOP editable =====
