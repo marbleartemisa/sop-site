@@ -49,27 +49,6 @@ body {
     align-items: center;
 }
 
-.doc-nav {
-    max-width: 1100px;
-    margin: 0 auto 10px;
-    padding: 0 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.doc-nav div {
-    background: white;
-    border: 1px solid #e5e7eb;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.doc-nav div:hover {
-    background: #f3f4f6;
-}
-
 .tool {
     background: white;
     border: 1px solid #e2e8f0;
@@ -103,122 +82,13 @@ body {
     border-radius: 12px;
     box-shadow: 0 15px 40px rgba(0,0,0,.15);
     overflow: hidden;
+    position: relative;
 }
 
 iframe {
     width: 100%;
     height: 80vh;
     border: none;
-}
-
-#commentSidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 380px;
-    height: 100%;
-    background: white;
-    box-shadow: -10px 0 30px rgba(0,0,0,.2);
-    padding: 20px;
-    transform: translateX(100%);
-    transition: .35s ease;
-    z-index: 200;
-    overflow-y: auto;
-}
-
-#commentSidebar.active {
-    transform: translateX(0);
-}
-
-#toggleSidebarBtn {
-    position: fixed;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-    cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0,0,0,.3);
-    z-index: 300;
-}
-
-select, input, textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    background: #f8fafc;
-    margin-bottom: 12px;
-    font-size: 14px;
-}
-
-select:focus, input:focus, textarea:focus {
-    border-color: #2563eb;
-    outline: none;
-    background: white;
-}
-
-.comment-box {
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 12px;
-    background: #f1f5f9;
-    border-left: 4px solid #2563eb;
-}
-
-.comments-loader {
-    display: none;
-    text-align: center;
-    padding: 18px;
-    color: #6b7280;
-    font-size: 13px;
-}
-
-.spinner {
-    width: 22px;
-    height: 22px;
-    border: 3px solid #e5e7eb;
-    border-top: 3px solid #2563eb;
-    border-radius: 50%;
-    margin: 0 auto 8px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-#loginOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg,#0f172a,#1e293b);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 500;
-}
-
-.login-card {
-    background: white;
-    padding: 35px;
-    border-radius: 16px;
-    width: 360px;
-    box-shadow: 0 20px 50px rgba(0,0,0,.4);
-}
-
-#loginMessage {
-    color: red;
-    font-size: 13px;
-    margin-bottom: 10px;
 }
 
 /* BOTONES ANTERIOR / SIGUIENTE SOBRE EL VISOR */
@@ -241,18 +111,11 @@ select:focus, input:focus, textarea:focus {
     background: rgba(0,0,0,0.7);
 }
 
-#prevDocBtn {
-    left: 0;
-}
-
-#nextDocBtn {
-    right: 0;
-}
+#prevDocBtn { left: 0; }
+#nextDocBtn { right: 0; }
 </style>
 </head>
 <body>
-
-<iframe id="frameViewer" style="width:0;height:0;border:none;"></iframe>
 
 <div class="topbar">
   <div class="brand">ARTEMISA SOP • VIEWER</div>
@@ -265,374 +128,47 @@ select:focus, input:focus, textarea:focus {
     <button class="tool" onclick="openNew()">Abrir</button>
     <button class="tool" onclick="downloadDoc()">Descargar</button>
     <button class="tool" onclick="printDoc()">Imprimir</button>
-    <button class="tool" onclick="showLogin()">🔒 Editar</button>
-    <button class="tool" onclick="commentSelectedText()">💬 Comentar</button>
     <button class="tool" id="prevDoc" onclick="prevSOP()">← Anterior</button>
     <button class="tool" id="nextDoc" onclick="nextSOP()">Siguiente →</button>
   </div>
 </div>
 
-
-  <div class="doc-area">
-  <div class="doc-frame" style="position:relative;">
+<div class="doc-area">
+  <div class="doc-frame">
     <iframe id="frame"></iframe>
-    <div id="overlay"></div>
-
     <!-- BOTONES FLOTANTES ANTERIOR/SIGUIENTE -->
     <button id="prevDocBtn" onclick="prevSOP()">⬅</button>
     <button id="nextDocBtn" onclick="nextSOP()">➡</button>
   </div>
 </div>
 
-<div id="commentSidebar">
-  <div id="commentsLoader" class="comments-loader">
-    <div class="spinner"></div>
-    Cargando comentarios...
-  </div>
-  <div id="commentList"></div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <h3 style="margin:0;">💬 Comentarios</h3>
-    <span style="cursor:pointer;font-size:18px;" onclick="closeSidebar()">✖</span>
-  </div>
-  <label>Empleado</label>
-  <select id="commentUser">
-    <option value="">Seleccione</option>
-    <option>Damian Molina</option>
-    <option>Alberto Molina</option>
-    <option>Gabriel Batista</option>
-    <option>Jenny Perez</option>
-    <option>Yoandry Perez</option>
-    <option>Wendy Romanach</option>
-    <option>Otros</option>
-  </select>
-  <label>Tipo</label>
-  <select id="commentType">
-    <option value="Error">Error</option>
-    <option value="Mejora">Mejora</option>
-    <option value="Sugerencia">Sugerencia</option>
-  </select>
-  <label>Estado</label>
-  <select id="commentStatus">
-    <option value="Pendiente">Pendiente</option>
-    <option value="Revisado">Revisado</option>
-    <option value="Aprobado">Aprobado</option>
-  </select>
-  <hr>
-</div>
-
-<div id="loginOverlay">
-  <div class="login-card">
-    <h3>🔒 Acceso de edición</h3>
-    <div id="loginMessage"></div>
-    <select id="loginUser">
-      <option value="">Seleccionar usuario</option>
-      <option>Damian Molina</option>
-      <option>Alberto Molina</option>
-      <option>Gabriel Batista</option>
-      <option>Jenny Perez</option>
-      <option>Yoandry Perez</option>
-      <option>Wendy Romanach</option>
-      <option>Otros</option>
-    </select>
-    <input type="password" id="loginPass" placeholder="Contraseña">
-    <button onclick="checkLogin()">Ingresar</button>
-    <button onclick="closeLogin()" style="background:#e5e7eb;color:#111;">Cancelar</button>
-  </div>
-</div>
-
-<div id="commentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:600; align-items:center; justify-content:center;">
-  <div style="background:white; width:500px; padding:25px; border-radius:14px; box-shadow:0 20px 50px rgba(0,0,0,.4);">
-    <h3 style="margin-top:0;">💬 Nuevo comentario</h3>
-    <textarea id="commentInput" placeholder="Escribe tu comentario..." style="width:100%; height:120px; border-radius:10px; border:1px solid #cbd5e1; padding:10px; resize:none;"></textarea>
-    <div style="margin-top:15px; text-align:right;">
-      <button onclick="closeCommentModal()" style="margin-right:10px;">Cancelar</button>
-      <button onclick="submitComment()" style="background:#2563eb;color:white;border:none;padding:8px 14px;border-radius:8px;">Guardar</button>
-    </div>
-  </div>
-</div>
-
 <script>
-let editMode = false;
-let currentUser = "";
-let selectedTextGlobal = "";
 const params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 let idSOP = params.get("id");
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 const frame = document.getElementById("frame");
-setEditModeUI(false);
 if(doc) frame.src = doc;
 
-const users = {"Damian Molina":"Dam1975","Alberto Molina":"Alb1975","Gabriel Batista":"Gab1975","Jenny Perez":"Jen1975","Yoandry Perez":"Yoa1975","Wendy Romanach":"Wen1975","Otros":"Otr1975"};
+// ABRIR EN NUEVA PESTAÑA
+function openNew() { window.open(doc, "_blank"); }
 
-function openNew() {
-    window.open(doc, "_blank");
-}
-
+// DESCARGAR
 function downloadDoc(url) {
     if (!url) url = doc;
     if (!url) return alert("No hay documento");
-
-    const type = getDocumentType(url);
-    let pdfUrl = url;
-
-    switch (type) {
-        case "gdoc":
-            const idDoc = url.match(/\/d\/(.*?)\//);
-            if (idDoc) pdfUrl = `https://docs.google.com/document/d/${idDoc[1]}/export?format=pdf`;
-            break;
-        case "gsheet":
-            const idSheet = url.match(/\/d\/(.*?)\//);
-            if (idSheet) pdfUrl = `https://docs.google.com/spreadsheets/d/${idSheet[1]}/export?format=pdf`;
-            break;
-        case "gslides":
-            const idSlide = url.match(/\/d\/(.*?)\//);
-            if (idSlide) pdfUrl = `https://docs.google.com/presentation/d/${idSlide[1]}/export/pdf`;
-            break;
-        case "gdrive":
-            const idDrive = url.match(/[-\w]{25,}/);
-            if (idDrive) pdfUrl = `https://drive.google.com/uc?export=download&id=${idDrive[0]}`;
-            break;
-        case "github":
-            openIframePrint(url);
-            return;
-        default:
-            alert("No se puede descargar este tipo de archivo");
-            return;
-    }
-
     const link = document.createElement("a");
-    link.href = pdfUrl;
+    link.href = url;
     link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     link.remove();
 }
 
-function printDoc() {
-    frame.contentWindow.print();
-}
+// IMPRIMIR
+function printDoc() { frame.contentWindow.print(); }
 
-function showLogin() {
-    document.getElementById("loginOverlay").style.display = "flex";
-    document.getElementById("loginMessage").innerText = "";
-}
-
-function closeLogin() {
-    document.getElementById("loginOverlay").style.display = "none";
-}
-
-function checkLogin() {
-    const user = document.getElementById("loginUser").value;
-    const pass = document.getElementById("loginPass").value;
-    const msg = document.getElementById("loginMessage");
-
-    if (!user) {
-        msg.innerText = "Seleccione un usuario";
-        return;
-    }
-
-    if (users[user] !== pass) {
-        msg.innerText = "Clave incorrecta";
-        return;
-    }
-
-    editMode = true;
-    currentUser = user;
-    setEditModeUI(true);
-    document.getElementById("commentUser").value = user;
-    document.getElementById("commentSidebar").classList.add("active");
-    loadComments();
-    closeLogin();
-}
-
-function closeSidebar() {
-    document.getElementById("commentSidebar").classList.remove("active");
-}
-
-async function commentSelectedText() {
-    if (!editMode) {
-        alert("Activa modo edición primero");
-        return;
-    }
-
-    const sel = frame.contentWindow.getSelection();
-    const text = sel.toString().trim();
-
-    if (!text) {
-        alert("Selecciona un texto válido");
-        return;
-    }
-
-    selectedTextGlobal = text;
-    document.getElementById("commentInput").value = "";
-    document.getElementById("commentModal").style.display = "flex";
-}
-
-function saveLocalComment(c) {
-    const list = JSON.parse(localStorage.getItem(doc) || "[]");
-    list.push(c);
-    localStorage.setItem(doc, JSON.stringify(list));
-}
-
-async function loadComments() {
-    const loader = document.getElementById("commentsLoader");
-    loader.style.display = "block";
-
-    try {
-        if (!idSOP) {
-            renderComments([]);
-            loader.style.display = "none";
-            return;
-        }
-
-        const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
-        const data = await res.json();
-        renderComments(data || []);
-    } catch (err) {
-        console.error("Error cargando comentarios:", err);
-        renderComments([]);
-    }
-
-    loader.style.display = "none";
-}
-
-function renderComments(comments) {
-    const list = document.getElementById("commentList");
-    list.innerHTML = "";
-
-    if (!comments || comments.length === 0) {
-        list.innerHTML = `<div class="no-comments">💬 Este SOP no tiene comentarios</div>`;
-        return;
-    }
-
-    comments.forEach(c => {
-        const div = document.createElement("div");
-        div.className = "comment-box";
-        div.innerHTML = `
-            <div style="display:flex;justify-content:space-between;">
-                <b>${c.usuario || "Usuario"}</b>
-                ${editMode ? `<span onclick="deleteComment('${c.ID}')" style="cursor:pointer;color:#ef4444;font-weight:bold;">🗑</span>` : ""}
-            </div>
-            <div>${c.comentario || ""}</div>
-            <div style="font-size:11px;color:#64748b;margin-top:6px;">
-                📅 ${c.fecha || ""} | 🏷 ${c.tipo || ""} | ${c.estado || ""}
-            </div>
-        `;
-
-        list.appendChild(div);
-    });
-}
-
-async function deleteComment(id_comment) {
-    if (!confirm("¿Seguro que quieres borrar este comentario?")) return;
-
-    try {
-        const res = await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({ tipo: "delete_comment", id_comment })
-        });
-        const data = await res.json();
-        if (data.success) {
-            alert("🗑 Comentario eliminado");
-            loadComments();
-        } else alert("❌ Error: " + data.error);
-    } catch (err) {
-        alert("❌ Error de conexión");
-    }
-}
-
-function highlightSelection(sel, comment) {
-    if (sel.rangeCount) {
-        const range = sel.getRangeAt(0);
-        const mark = document.createElement("mark");
-        mark.style.background = "#fff176";
-        mark.title = comment.comentario;
-        range.surroundContents(mark);
-        sel.removeAllRanges();
-    }
-}
-
-function getDocumentType(url) {
-    if (!url) return null;
-    if (url.includes("docs.google.com/document")) return "gdoc";
-    if (url.includes("docs.google.com/spreadsheets")) return "gsheet";
-    if (url.includes("docs.google.com/presentation")) return "gslides";
-    if (url.includes("drive.google.com")) return "gdrive";
-    if (url.includes("github.io")) return "github";
-    return "other";
-}
-
-function openIframePrint(url) {
-    const frame = document.getElementById("frameViewer");
-    if (!frame) {
-        alert("No se encontró el visor (iframe).");
-        return;
-    }
-    frame.src = url;
-    frame.onload = () => {
-        frame.contentWindow.focus();
-        frame.contentWindow.print();
-    };
-}
-
-function closeCommentModal() {
-    document.getElementById("commentModal").style.display = "none";
-}
-
-async function submitComment() {
-    const commentText = document.getElementById("commentInput").value.trim();
-    if (!commentText) {
-        alert("Comentario vacío");
-        return;
-    }
-
-    const type = document.getElementById("commentType").value;
-    const status = document.getElementById("commentStatus").value;
-
-    const now = new Date().toLocaleString();
-    const payload = {
-        tipo: "comentario",
-        id_sop: idSOP,
-        usuario: currentUser,
-        comentario: commentText,
-        tipo_comentario: type,
-        estado: status,
-        text_selected: selectedTextGlobal,
-        context_before: selectedTextGlobal.substring(0, 20),
-        context_after: selectedTextGlobal.substring(selectedTextGlobal.length - 20),
-        url_doc: doc
-    };
-
-    try {
-        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-        const data = await res.json();
-
-        if (data.success) {
-            highlightSelection(frame.contentWindow.getSelection(), payload);
-            loadComments();
-            closeCommentModal();
-            alert("✅ Comentario guardado");
-        } else {
-            alert("❌ Error: " + data.error);
-        }
-    } catch (err) {
-        alert("❌ Error conexión");
-    }
-}
-
-function setEditModeUI(enabled) {
-    document.getElementById("commentUser").disabled = !enabled;
-    document.getElementById("commentType").disabled = !enabled;
-    document.getElementById("commentStatus").disabled = !enabled;
-
-    const btn = document.querySelector(".tool[onclick='commentSelectedText()']");
-    if (enabled) btn.classList.remove("disabled");
-    else btn.classList.add("disabled");
-}
-  
 // ======================
-// NAVIGACION SOP RESTAURADA
+// NAVIGACION SOP
 // ======================
 fetch('SOP_INDEX.json')
   .then(res => res.json())
@@ -645,22 +181,8 @@ fetch('SOP_INDEX.json')
     let currentIndex = sopList.indexOf(doc);
     if (currentIndex === -1) currentIndex = 0;
 
-    const deptMap = {
-      'produccion': 'Carpinteria',
-      'instalacion': 'Stone',
-      'administracion': 'Administracion',
-      'comercial': 'Comercial',
-      'houzz-pro': 'Houzz Pro',
-      'maquinarias': 'Maquinarias',
-      'medidas': 'Medidas',
-      'vehiculos': 'Vehiculos',
-      'taller': 'Taller',
-      'ecopower': 'Ecopower'
-    };
-
     const currentSOP = data[currentIndex];
-    document.getElementById("title").innerText =
-      `${deptMap[currentSOP.department] || currentSOP.department} - ${currentSOP.title.toUpperCase()}`;
+    document.getElementById("title").innerText = currentSOP.title.toUpperCase();
 
     // ← anterior
     window.prevSOP = function() {
@@ -686,20 +208,7 @@ fetch('SOP_INDEX.json')
 
   })
   .catch(err => console.error("Error cargando SOP_INDEX.json:", err));
-
-// Botón flotante historial de comentarios
-function toggleSidebar() {
-  const sb = document.getElementById("commentSidebar");
-  const btn = document.getElementById("toggleSidebarBtn");
-  const open = sb.classList.toggle("active");
-  btn.style.right = open ? "395px" : "15px";
-
-  if (open) loadComments();
-}
 </script>
-
-<!-- BOTÓN FLOTANTE PARA HISTORIAL -->
-<button id="toggleSidebarBtn" onclick="toggleSidebar()">💬</button>
 
 </body>
 </html>
