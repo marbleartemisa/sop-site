@@ -110,120 +110,186 @@ button {
 </div>
 
 <script>
-const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+// ====================== VARIABLES GLOBALES ======================
+let editMode = false;
+let currentUser = "";
+let selectedTextGlobal = "";
+let currentPage = 1;
 
-const SOP_URL = "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html";
-const ID_SOP = "SOP-1774461381359-0";
+const params = new URLSearchParams(window.location.search);
+let doc = params.get("doc") || "";       // URL del documento
+let idSOP = params.get("id") || "";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
-let clickX = 0;
-let clickY = 0;
-let modoComentario = false;
+const frame = document.getElementById("frame");
+if(doc) frame.src = doc;
 
-const overlay = document.getElementById('overlay');
+const users = {
+  "Damian Molina":"Dam1975",
+  "Alberto Molina":"Alb1975",
+  "Gabriel Batista":"Gab1975",
+  "Jenny Perez":"Jen1975",
+  "Yoandry Perez":"Yoa1975",
+  "Wendy Romanach":"Wen1975",
+  "Otros":"Otr1975"
+};
 
-/* cargar SOP */
-document.getElementById('sop-frame').src = SOP_URL;
+// ====================== LOGIN ======================
+function showLogin(){ document.getElementById("loginOverlay").style.display="flex"; }
+function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
 
-/* toggle modo */
-document.getElementById('modo-btn').addEventListener('click', () => {
-  modoComentario = !modoComentario;
-
-  overlay.style.pointerEvents = modoComentario ? 'auto' : 'none';
-
-  document.getElementById('modo-btn').textContent =
-    modoComentario ? "Modo: Comentar" : "Modo: Leer";
-});
-
-/* click */
-overlay.addEventListener('click', (e) => {
-  if(!modoComentario) return;
-  if(e.target.classList.contains('comentario')) return;
-
-  const rect = overlay.getBoundingClientRect();
-  clickX = e.clientX - rect.left;
-  clickY = e.clientY - rect.top;
-
-  document.getElementById('modal').style.display = 'flex';
-});
-
-/* guardar */
-document.getElementById('btn-save').addEventListener('click', async () => {
-  const texto = document.getElementById('comentario-text').value.trim();
-  if(!texto) return alert("Escribe algo");
-
-  const xRel = clickX / overlay.clientWidth;
-  const yRel = clickY / overlay.clientHeight;
-
-  crearComentario(texto, xRel, yRel);
-
-  document.getElementById('modal').style.display = 'none';
-  document.getElementById('comentario-text').value = "";
-
-  try {
-    await fetch(SHEET_API, {
-      method:"POST",
-      body: JSON.stringify({
-        tipo: "comentario",
-        id_sop: ID_SOP,
-        comentario: texto,
-        x: xRel,
-        y: yRel
-      })
-    });
-  } catch(err) {
-    console.error(err);
-  }
-});
-
-/* crear comentario */
-function crearComentario(texto, xRel, yRel){
-  const div = document.createElement('div');
-  div.className = "comentario";
-
-  div.dataset.x = xRel;
-  div.dataset.y = yRel;
-
-  div.style.left = (xRel * overlay.clientWidth) + "px";
-  div.style.top = (yRel * overlay.clientHeight) + "px";
-
-  div.innerHTML = `<strong>💬</strong><br>${texto}`;
-
-  overlay.appendChild(div);
+function checkLogin(){
+  const user = document.getElementById("loginUser").value;
+  const pass = document.getElementById("loginPass").value;
+  const msg = document.getElementById("loginMessage");
+  if(!user){ msg.innerText="Seleccione usuario"; return; }
+  if(users[user]!==pass){ msg.innerText="Clave incorrecta"; return; }
+  editMode = true; currentUser = user;
+  document.getElementById("commentUser").value = user;
+  setEditModeUI(true);
+  document.getElementById("commentSidebar").classList.add("active");
+  loadComments();
+  closeLogin();
 }
 
-/* cancelar */
-document.getElementById('btn-cancel').addEventListener('click', () => {
-  document.getElementById('modal').style.display = 'none';
+function setEditModeUI(enabled){
+  document.getElementById("commentUser").disabled = !enabled;
+  document.getElementById("commentType").disabled = !enabled;
+  document.getElementById("commentStatus").disabled = !enabled;
+  const btn = document.getElementById("commentBtn");
+  if(btn) btn.classList.toggle("disabled", !enabled);
+}
+
+// Permitir login con Enter
+document.getElementById("loginPass").addEventListener("keypress", function(e){
+  if(e.key === "Enter") checkLogin();
 });
 
-/* cargar comentarios */
-async function cargarComentarios(){
+// ====================== SIDEBAR ======================
+function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
+document.getElementById("toggleSidebarBtn").addEventListener("click", ()=>{ document.getElementById("commentSidebar").classList.toggle("active"); });
+
+// ====================== CARGAR DOCUMENTO ======================
+function getDocUrlForPage(n){ return doc; } // ajustar si cada página es diferente
+function loadSOPPage(n){ currentPage=n; frame.src=getDocUrlForPage(n); }
+function prevSOP(){ if(currentPage>1){ currentPage--; loadSOPPage(currentPage); } }
+function nextSOP(){ currentPage++; loadSOPPage(currentPage); }
+
+frame.addEventListener("load", ()=> renderCommentsForPage(currentPage));
+
+// ====================== COMENTARIOS ======================
+function commentSelectedText() {
+  if(!editMode){ alert("Activa modo edición"); return; }
+  const clickLayer = document.getElementById("clickLayer");
+  clickLayer.style.display="block";
+  clickLayer.onclick = (e)=>{
+    const rect = document.querySelector(".doc-frame").getBoundingClientRect();
+    const x = e.clientX - rect.left + frame.scrollLeft;
+    const y = e.clientY - rect.top + frame.scrollTop;
+    const text_selected = window.getSelection().toString() || "";
+    const context_before = text_selected.substring(0,10);
+    const context_after  = text_selected.slice(-10);
+    openCommentModal({x,y,text_selected,context_before,context_after,page:currentPage});
+    clickLayer.style.display="none";
+  };
+}
+
+function openCommentModal(data){
+  const modal = document.getElementById("commentModal");
+  modal.style.display="block";
+  modal.dataset.x=data.x;
+  modal.dataset.y=data.y;
+  modal.dataset.text_selected=data.text_selected;
+  modal.dataset.context_before=data.context_before;
+  modal.dataset.context_after=data.context_after;
+  modal.dataset.page=data.page;
+  document.getElementById("commentInput").value="";
+}
+function closeCommentModal(){ document.getElementById("commentModal").style.display="none"; }
+
+// ====================== GUARDAR COMENTARIO ======================
+async function saveComment() {
+  const modal = document.getElementById("commentModal");
+  const btn = document.getElementById("saveCommentBtn");
+  if(btn.disabled) return; // evita doble clic
+  btn.disabled = true;
+
+  const text = document.getElementById("commentInput").value.trim();
+  if (!text) { alert("Comentario vacío"); btn.disabled = false; return; }
+
+  const newComment = {
+    id_comment: Date.now().toString(),
+    usuario: currentUser || "Anónimo",
+    tipo: document.getElementById("commentType").value,
+    estado_revision: "Pendiente",
+    comentario: text,
+    text_selected: modal.dataset.text_selected,
+    context_before: modal.dataset.context_before,
+    context_after: modal.dataset.context_after,
+    x: parseInt(modal.dataset.x),
+    y: parseInt(modal.dataset.y),
+    page: parseInt(modal.dataset.page)
+  };
+
   try {
-    const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
-    const data = await res.json();
-
-    data.forEach(c => {
-      crearComentario(c.comentario, c.x, c.y);
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ ...newComment, id_sop: idSOP, tipo: "comentario" })
     });
-
+    const result = await res.json();
+    if(result.success){
+      if(!window.loadedComments) window.loadedComments=[];
+      window.loadedComments.push(newComment);
+      renderCommentsForPage(currentPage);
+      closeCommentModal();
+    } else {
+      alert("Error guardando comentario: "+result.error);
+    }
   } catch(err){
-    console.error(err);
+    alert("Error guardando comentario: "+err);
+  } finally {
+    btn.disabled = false;
   }
 }
 
-/* resize */
-window.addEventListener('resize', () => {
-  document.querySelectorAll('.comentario').forEach(div => {
-    const x = div.dataset.x;
-    const y = div.dataset.y;
+// ====================== RENDER COMENTARIOS ======================
+function renderCommentsForPage(pageNumber){
+  const container = document.getElementById("commentsLayer");
+  container.innerHTML = "";
+  if(!window.loadedComments) return;
 
-    div.style.left = (x * overlay.clientWidth) + "px";
-    div.style.top = (y * overlay.clientHeight) + "px";
-  });
-});
+  window.loadedComments
+    .filter(c => Number(c.page) === pageNumber && c.estado_revision !== "Revisado")
+    .forEach(c => {
+      const el = document.createElement("div");
+      el.className = "floating-comment";
+      el.style.left = (parseInt(c.x) || 0) + "px";
+      el.style.top = (parseInt(c.y) || 0) + "px";
+      el.innerHTML = `<div>${c.comentario}</div>`;
+      container.appendChild(el);
+    });
+}
 
-/* iniciar */
-cargarComentarios();
+// ====================== CARGAR COMENTARIOS DESDE SHEET ======================
+async function loadComments(){
+  const loader = document.getElementById("commentsLoader");
+  loader.style.display="block";
+  try{
+    const res = await fetch(SCRIPT_URL + "?comments=" + idSOP);
+    const data = await res.json();
+    window.loadedComments = data || [];
+    renderCommentsForPage(currentPage);
+  } catch(err){
+    console.error("Error cargando comentarios:", err);
+  } finally {
+    loader.style.display="none";
+  }
+}
+
+// ====================== DOC FUNCIONES ======================
+function openNew(){ window.open(doc,"_blank"); }
+function downloadDoc(){ window.open(doc,"_blank"); }
+function printDoc(){ frame.contentWindow.print(); }
 </script>
 
 </body>
