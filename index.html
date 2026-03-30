@@ -414,7 +414,7 @@ body{
 </head>
 
 <body>
-<div class="overlay">
+<div class="overlay"> 
 
 <!-- NAVBAR -->
 <div class="navbar">
@@ -429,12 +429,12 @@ body{
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
     <a href="/sop-site/Aportes/">Aportes SOP</a>    
-    <a href="/sop-site/sop-viewer-edit/">Editar</a>  
+    <a href="#" onclick="openLogin('editor')">Editar SOP</a>  
+    <a href="#" onclick="openLogin('admin')"><i class="fa-solid fa-user-shield"></i> Admin</a>
     <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>  
-    <a href="#" onclick="adminLogin()"><i class="fa-solid fa-user-shield"></i> Admin</a>
   </div>
 </div>
-
+  
 <!-- BANNER -->
 <div class="banner">
   <h1>Biblioteca de Procedimientos Operativos Estándar</h1>
@@ -463,17 +463,17 @@ body{
 <!-- DEPT FILTER BUTTONS -->
 <div class="dept-filter-bar">
 <button onclick="filterDept('')" class="dept-filter active">Todos</button>
-<button onclick="filterDept('comercial')" class="dept-filter">Comercial</button>
-<button onclick="filterDept('produccion')" class="dept-filter">Carpintería</button>
-<button onclick="filterDept('instalacion')" class="dept-filter">Stone</button>
-<button onclick="filterDept('administracion')" class="dept-filter">Administración</button>
-<button onclick="filterDept('maquinarias')" class="dept-filter">Maquinarias</button>
-<button onclick="filterDept('vehiculos')" class="dept-filter">Vehículos</button>
-<button onclick="filterDept('houzz-pro')" class="dept-filter">Houzz-Pro</button>
-<button onclick="filterDept('medidas')" class="dept-filter">Medidas</button>
-<button onclick="filterDept('taller')" class="dept-filter">Taller</button>
+<button onclick="filterDept('comercial',this)" class="dept-filter">Comercial</button>
+<button onclick="filterDept('produccion',this)" class="dept-filter">Carpintería</button>
+<button onclick="filterDept('instalacion',this)" class="dept-filter">Stone</button>
+<button onclick="filterDept('administracion',this)" class="dept-filter">Administración</button>
+<button onclick="filterDept('maquinarias',this)" class="dept-filter">Maquinarias</button>
+<button onclick="filterDept('vehiculos',this)" class="dept-filter">Vehículos</button>
+<button onclick="filterDept('houzz-pro',this)" class="dept-filter">Houzz-Pro</button>
+<button onclick="filterDept('medidas',this)" class="dept-filter">Medidas</button>
+<button onclick="filterDept('taller',this)" class="dept-filter">Taller</button>
 </div>
-
+  
 <!-- TABLA -->
 <div class="sop-container" id="sopContainer"></div>
 
@@ -534,11 +534,7 @@ body{
 <script>
 /* MENU */
 function toggleMenu(){ document.querySelector('.menu').classList.toggle('show'); }
-function adminLogin(){
-  const password = prompt("Ingrese contraseña de administrador");
-  if(password === "Artemisa2026"){ window.location.href="/sop-site/admin/"; }
-  else{ alert("Acceso denegado"); }
-}
+
 
 /* ===== SOP DATA ===== */
 let SOP_INDEX = [];
@@ -642,13 +638,133 @@ function sortTable(field){
   renderSOP();
 }
 
-function filterDept(dep){
+function filterDept(dep, el){
   const buttons = document.querySelectorAll(".dept-filter");
   buttons.forEach(btn=>btn.classList.remove("active"));
-  event.target.classList.add("active");
+  el.classList.add("active");
   document.getElementById("deptFilter").value = dep;
   filterSOP();
 }
+const API_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+
+let loginType = "editor"; // o admin
+
+function openLogin(type){
+  loginType = type;
+  document.getElementById("loginModal").style.display = "flex";
+}
+
+
+
+function closeLogin(){
+  const modal = document.getElementById("loginModal");
+  if(modal) modal.style.display = "none";
+
+  document.getElementById("loginUser").value = "";
+  document.getElementById("loginPass").value = "";
+}
+
+/* Cerrar con ESC SOLO si el modal está abierto */
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){
+    const modal = document.getElementById("loginModal");
+    if(modal && modal.style.display === "flex"){
+      closeLogin();
+    }
+  }
+});
+
+function doLogin(e){
+
+  const btn = e ? e.target : document.querySelector("#loginModal button");
+  const originalText = btn.innerText;
+
+  btn.innerText = "Validando...";
+  btn.disabled = true;
+
+  const usuario = document.getElementById("loginUser").value.trim();
+  const clave   = document.getElementById("loginPass").value.trim();
+
+  if(!usuario || !clave){
+    alert("Complete usuario y clave");
+    btn.innerText = originalText;
+    btn.disabled = false;
+    return;
+  }
+
+  const tipo = (loginType === "admin") ? "login_admin" : "login_edit_sop";
+
+  fetch(API_URL,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify({
+      tipo: tipo,
+      usuario: usuario,
+      clave: clave
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+
+    if(!res.success){
+      alert(res.error || "Acceso denegado");
+      btn.innerText = originalText;
+      btn.disabled = false;
+      return;
+    }
+
+    // 🔐 guardar sesión
+    localStorage.setItem("rol", res.rol);
+
+    // 🔀 redirección
+    if(res.rol === "admin"){
+      window.location.href = "/sop-site/admin/";
+    } else {
+      window.location.href = "/sop-site/sop-viewer-edit/";
+    }
+
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Error de conexión");
+    btn.innerText = originalText;
+    btn.disabled = false;
+  });
+}
+  
 </script>
+  <div id="loginModal" style="
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:9999;
+  justify-content:center;
+  align-items:center;
+">
+
+  <div style="
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    width:300px;
+    text-align:center;
+  ">
+    <h3>Acceso</h3>
+
+    <input id="loginUser" placeholder="Usuario" style="width:100%;margin:10px 0;padding:10px;">
+    <input id="loginPass" type="password" placeholder="Clave" style="width:100%;margin:10px 0;padding:10px;">
+
+    <button onclick="doLogin()" style="padding:10px 20px;background:#0072C6;color:white;border:none;border-radius:8px;">
+      Entrar
+    </button>
+
+    <br><br>
+    <button onclick="closeLogin()" style="background:none;border:none;color:#555;">Cancelar</button>
+  </div>
+</div>
 </body>
 </html>
