@@ -2,65 +2,32 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Viewer SOP Pro - Artemisa</title>
 <style>
-/* ===== BODY & GENERAL ===== */
-body { margin:0; background:#eef2f7; font-family:"Segoe UI", Arial, sans-serif; }
-
-/* ===== TOPBAR ===== */
-.topbar {
-    background: #0f172a;
-    color: white;
-    padding: 14px 28px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 100;
-}
-.brand { font-weight: 600; letter-spacing: .4px; font-size: 15px; }
-.back { background: #2563eb; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; }
-
-/* ===== DOC HEADER & NAV ===== */
-.doc-header { max-width:1100px; margin:80px auto 10px auto; padding:0 10px; display:flex; justify-content:space-between; align-items:center; }
-.tool { background:white; border:1px solid #e2e8f0; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; transition:.2s; }
-.tool:hover { background:#2563eb; color:white; }
-.tool.disabled { opacity:.5; pointer-events:none; }
-
-/* ===== DOC AREA ===== */
-.doc-area { display:flex; justify-content:center; padding:10px 20px 40px; }
+body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:#eef2f7; }
+.topbar { background:#0f172a; color:white; padding:14px 28px; display:flex; justify-content:space-between; align-items:center; position:fixed; width:100%; top:0; z-index:100; }
+.brand { font-weight:600; letter-spacing:.4px; font-size:15px; }
+.back { background:#2563eb; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:13px; }
+.sop-list { margin:100px auto 20px; width:90%; max-width:1100px; }
+.sop-list table { width:100%; border-collapse:collapse; background:white; border-radius:8px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,.1);}
+.sop-list th, .sop-list td { padding:12px 10px; border-bottom:1px solid #e2e8f0; text-align:left; font-size:14px;}
+.sop-list th { background:#f1f5f9; }
+.sop-list tr:hover { background:#f0f9ff; cursor:pointer; }
+.doc-area { display:none; justify-content:center; padding:10px 20px 40px; margin-top:80px; }
 .doc-frame { position:relative; width:100%; max-width:1100px; height:80vh; overflow:visible; background:white; border-radius:12px; box-shadow:0 15px 40px rgba(0,0,0,.15); }
 iframe { width:100%; height:100%; border:none; }
-
-/* ===== COMMENTS LAYER ===== */
-.floating-comment {
-    position:absolute; pointer-events:auto; z-index:999;
-}
-.floating-comment div {
-    background: rgba(255,255,255,0.9); border-left:4px solid #dc2626; color:#dc2626;
-    padding:6px; border-radius:6px; font-size:12px; font-style:italic; max-width:220px; word-wrap:break-word;
-}
-.floating-comment textarea { width:200px; height:60px; border:none; outline:none; background:rgba(255,255,255,0.9); font-style:italic; font-size:12px; resize:none; }
-
-/* ===== CLICK LAYER ===== */
-#clickLayer { position:absolute; top:0; left:0; width:100%; height:100%; z-index:400; cursor:crosshair; background:transparent; display:none; }
-
-/* ===== SIDEBAR ===== */
-#commentSidebar { position:fixed; top:0; right:0; width:380px; height:100%; background:white; box-shadow:-10px 0 30px rgba(0,0,0,.2); padding:20px; transform:translateX(100%); transition:.35s ease; z-index:200; overflow-y:auto; }
-#commentSidebar.active { transform:translateX(0); }
-#toggleSidebarBtn { position:fixed; right:15px; top:50%; transform:translateY(-50%); background:#2563eb; color:white; border:none; border-radius:50%; width:50px; height:50px; font-size:20px; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.3); z-index:300; }
-
-select, input, textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; margin-bottom:12px; font-size:14px; }
-select:focus, input:focus, textarea:focus { border-color:#2563eb; outline:none; background:white; }
-
-/* ===== MODAL LOGIN ===== */
+#commentsLayer { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:450; }
+.floating-comment { position:absolute; pointer-events:auto; z-index:999; }
+.floating-comment div { background:rgba(255,255,255,0.9); border-left:4px solid #dc2626; color:#dc2626; padding:6px; border-radius:6px; font-size:12px; font-style:italic; max-width:220px; word-wrap:break-word; }
 #loginOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg,#0f172a,#1e293b); display:none; align-items:center; justify-content:center; z-index:500; }
 .login-card { background:white; padding:35px; border-radius:16px; width:360px; box-shadow:0 20px 50px rgba(0,0,0,.4); }
-#loginMessage { color:red; font-size:13px; margin-bottom:10px; }
-
-/* ===== MODAL NUEVO COMENTARIO ===== */
+.login-card button { padding:10px 20px; border-radius:8px; font-size:14px; border:none; cursor:pointer; transition:0.2s; }
+#loginOverlay .login-card button#loginBtn { background:#2563eb; color:white; }
+#loginOverlay .login-card button#loginBtn:hover { background:#1e40af; }
+#loginOverlay .login-card button.cancelBtn { background:#e5e7eb; color:#111; }
+#loginOverlay .login-card button.cancelBtn:hover { background:#cbd5e1; }
+.login-card select, .login-card input[type="password"] { width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:12px; font-size:14px; box-sizing:border-box; }
 #commentModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:500px; max-width:90%; background:white; z-index:1000; border-radius:14px; padding:25px; box-shadow:0 20px 50px rgba(0,0,0,.4); }
 </style>
 </head>
@@ -68,56 +35,47 @@ select:focus, input:focus, textarea:focus { border-color:#2563eb; outline:none; 
 
 <div class="topbar">
   <div class="brand">ARTEMISA SOP • VIEWER</div>
-  <a class="back" href="/sop-site/">⬅ Biblioteca</a>
+  <a class="back" href="#" id="backBtn" style="display:none;">⬅ Volver</a>
 </div>
 
-<div class="doc-header">
-  <div id="title">Documento SOP</div>
-  <div>
-    <button class="tool" onclick="openNew()">Abrir</button>
-    <button class="tool" onclick="downloadDoc()">Descargar</button>
-    <button class="tool" onclick="printDoc()">Imprimir</button>
-    <button class="tool" onclick="showLogin()">🔒 Editar</button>
-    <button class="tool" id="commentBtn" onclick="commentSelectedText()">💬 Comentar</button>
-    <button class="tool" id="prevDoc" onclick="prevSOP()">← Anterior</button>
-    <button class="tool" id="nextDoc" onclick="nextSOP()">Siguiente →</button>
-  </div>
+<!-- Lista de SOPs -->
+<div class="sop-list" id="sopListContainer">
+  <h2>📄 Lista de SOPs</h2>
+  <table id="sopTable">
+    <thead>
+      <tr><th>Empleado</th><th>Objetivo</th><th>Areas</th><th>Estado</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </div>
 
-<div class="doc-area">
+<!-- Viewer -->
+<div class="doc-area" id="docArea">
   <div class="doc-frame">
     <iframe id="frame"></iframe>
-    <div id="clickLayer"></div>
+    <div id="commentsLayer"></div>
+  </div>
+  <div style="margin-top:10px; text-align:right;">
+    <button onclick="showLogin()">🔒 Editar</button>
+    <button onclick="closeViewer()">⬅ Volver al listado</button>
   </div>
 </div>
 
-<div id="commentSidebar">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <h3 style="margin:0;">💬 Comentarios</h3>
-    <span style="cursor:pointer; font-size:18px;" onclick="closeSidebar()">✖</span>
-  </div>
-  <div id="commentList"></div>
-  <label>Empleado</label>
-  <select id="commentUser"></select>
-  <label>Tipo</label>
-  <select id="commentType"><option value="Error">Error</option><option value="Mejora">Mejora</option><option value="Sugerencia">Sugerencia</option></select>
-  <label>Estado</label>
-  <select id="commentStatus"><option value="Pendiente">Pendiente</option><option value="Revisado">Revisado</option><option value="Aprobado">Aprobado</option></select>
-</div>
-
+<!-- Login -->
 <div id="loginOverlay">
   <div class="login-card">
     <h3>🔒 Acceso de edición</h3>
-    <div id="loginMessage"></div>
-    <select id="loginUser"></select>
+    <div id="loginMessage" style="color:red;font-size:13px;margin-bottom:10px;"></div>
+    <select id="loginUser"><option value="">Seleccionar usuario</option></select>
     <input type="password" id="loginPass" placeholder="Contraseña">
     <div style="margin-top:15px;text-align:right;">
-      <button id="loginBtn" onclick="checkLogin()">Ingresar</button>
-      <button class="cancelBtn" onclick="closeLogin()">Cancelar</button>
+         <button id="loginBtn" onclick="checkLogin()">Ingresar</button>
+        <button class="cancelBtn" onclick="closeLogin()">Cancelar</button>
     </div>
   </div>
 </div>
 
+<!-- Modal comentario -->
 <div id="commentModal">
   <h3>💬 Nuevo comentario</h3>
   <textarea id="commentInput" placeholder="Escribe tu comentario..."></textarea>
@@ -127,154 +85,139 @@ select:focus, input:focus, textarea:focus { border-color:#2563eb; outline:none; 
   </div>
 </div>
 
-<button id="toggleSidebarBtn">💬</button>
-
 <script>
-// ====================== VARIABLES ======================
+// ====================== CONFIG ======================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+let sopData = [];
+let loadedComments = [];
 let editMode = false;
 let currentUser = "";
-let currentPage = 1;
+let currentSOP = null;
 
-const params = new URLSearchParams(window.location.search);
-let doc = params.get("doc") || "";
-let idSOP = params.get("id") || "";
-const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+const users = {
+  "Damian Molina":"Dam1975",
+  "Alberto Molina":"Alb1975",
+  "Gabriel Batista":"Gab1975",
+  "Jenny Perez":"Jen1975",
+  "Yoandry Perez":"Yoa1975",
+  "Wendy Romanach":"Wen1975",
+  "Otros":"Otr1975"
+};
 
-const frame = document.getElementById("frame");
-if(doc) frame.src = doc;
+// Llenar select usuarios
+const loginSelect = document.getElementById("loginUser");
+for(const u in users){
+    const opt = document.createElement("option");
+    opt.value = u;
+    opt.textContent = u;
+    loginSelect.appendChild(opt);
+}
 
-// ====================== CARGAR USUARIOS EN LOGIN ======================
+// ====================== FUNCIONES ======================
+async function loadSOPs(){
+  try{
+    const res = await fetch(SCRIPT_URL + "?listSOPs=true");
+    sopData = await res.json();
+    const tbody = document.querySelector("#sopTable tbody");
+    tbody.innerHTML = "";
+    sopData.forEach(sop=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${sop.empleado}</td><td>${sop.objetivo}</td><td>${sop.areas}</td><td>${sop.estado}</td>`;
+      tr.onclick = ()=> openViewer(sop);
+      tbody.appendChild(tr);
+    });
+  }catch(err){ console.error("Error cargando SOPs:",err); }
+}
 
-    
-<div id="loginOverlay">
-  <div>
-    <h3>Login para edición</h3>
-    <div id="loginMessage"></div>
-    <label>Usuario:</label>
-    <select id="loginUser">
-      <option value="">Seleccione usuario</option>
-      <option>Damian Molina</option>
-      <option>Alberto Molina</option>
-      <option>Gabriel Batista</option>
-      <option>Jenny Perez</option>
-      <option>Yoandry Perez</option>
-      <option>Wendy Romanach</option>
-      <option>Otros</option>
-    </select>
-    <label>Clave:</label>
-    <input type="password" id="loginPass" placeholder="Ingrese clave">
-    <button onclick="checkLogin()">Iniciar sesión</button>
-    <button onclick="closeLogin()">Cancelar</button>
-  </div>
-</div>
+function openViewer(sop){
+  currentSOP = sop;
+  document.getElementById("sopListContainer").style.display="none";
+  document.getElementById("docArea").style.display="flex";
+  document.getElementById("backBtn").style.display="inline";
+  document.getElementById("frame").src = sop.links;
+  loadComments();
+}
 
+function closeViewer(){
+  currentSOP=null;
+  document.getElementById("docArea").style.display="none";
+  document.getElementById("sopListContainer").style.display="block";
+  document.getElementById("backBtn").style.display="none";
+}
 
-
-// ====================== LOGIN ======================
 function showLogin(){ document.getElementById("loginOverlay").style.display="flex"; }
 function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
+
 function checkLogin(){
   const user = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
   const msg = document.getElementById("loginMessage");
   if(!user){ msg.innerText="Seleccione usuario"; return; }
   if(users[user]!==pass){ msg.innerText="Clave incorrecta"; return; }
-  editMode=true; currentUser=user;
-  setEditModeUI(true);
-  loadComments();
+  editMode = true; currentUser=user;
   closeLogin();
-}
-function setEditModeUI(enabled){
-  document.getElementById("commentBtn").classList.toggle("disabled",!enabled);
-}
-document.getElementById("loginPass").addEventListener("keypress", e => { if(e.key==="Enter") checkLogin(); });
-
-// ====================== COMMENTS ======================
-function commentSelectedText(){
-  if(!editMode){ alert("Activa modo edición"); return; }
-  const clickLayer = document.getElementById("clickLayer");
-  clickLayer.style.display="block"; clickLayer.style.cursor="crosshair";
-  clickLayer.onclick = e => {
-    const rect = frame.getBoundingClientRect();
-    const x = (e.clientX - rect.left)/rect.width;
-    const y = (e.clientY - rect.top)/rect.height;
-    openCommentModal({x,y,page:currentPage});
-    clickLayer.style.display="none";
-  };
+  alert("Modo edición activado. Ahora puede hacer comentarios.");
 }
 
+// ====================== COMENTARIOS ======================
 function openCommentModal(data){
   const modal = document.getElementById("commentModal");
   modal.style.display="block";
   modal.dataset.x = data.x;
   modal.dataset.y = data.y;
-  modal.dataset.page = data.page;
-  document.getElementById("commentInput").value="";
 }
-function closeCommentModal(){ document.getElementById("commentModal").style.display="none"; }
+
+function closeCommentModal(){ 
+  document.getElementById("commentModal").style.display="none"; 
+}
 
 async function saveComment(){
-  const modal = document.getElementById("commentModal");
+  if(!currentSOP){ alert("Seleccione un SOP"); return; }
   const text = document.getElementById("commentInput").value.trim();
   if(!text){ alert("Comentario vacío"); return; }
-  const newComment={id_comment:Date.now().toString(), usuario:currentUser||"Anónimo", tipo:"Comentario", comentario:text, x:parseFloat(modal.dataset.x), y:parseFloat(modal.dataset.y), page:parseInt(modal.dataset.page)};
+  const newComment = {
+    id_comment: Date.now().toString(),
+    usuario: currentUser || "Anónimo",
+    comentario: text,
+    x: 0.5, // simplificado: centro del iframe
+    y:0.5,
+    page:1
+  };
   try{
-    const res = await fetch(SCRIPT_URL,{method:"POST",body:JSON.stringify({...newComment,id_sop:idSOP,tipo:"comentario"})});
-    const result = await res.json();
-    if(result.success){
-      if(!window.loadedComments) window.loadedComments=[];
-      window.loadedComments.push(newComment);
-      renderCommentsForPage(currentPage);
-      closeCommentModal();
-    } else alert("Error guardando comentario: "+result.error);
-  }catch(err){ alert("Error guardando comentario: "+err); }
+    await fetch(SCRIPT_URL, {method:"POST", body:JSON.stringify({...newComment, id_sop:currentSOP.id_sop, tipo:"comentario"})});
+    loadedComments.push(newComment);
+    renderComments();
+    closeCommentModal();
+    document.getElementById("commentInput").value="";
+  }catch(err){ console.error(err); alert("Error guardando comentario"); }
 }
 
-// ====================== RENDER ======================
-function renderCommentsForPage(page){
-  if(!window.loadedComments) return;
-  const iframeDoc = frame.contentDocument || frame.contentWindow.document;
-  if(!iframeDoc||!iframeDoc.body) return;
-  iframeDoc.body.style.position="relative";
-  let commentsContainer = iframeDoc.getElementById("commentsLayerInside");
-  if(!commentsContainer){
-    commentsContainer = iframeDoc.createElement("div");
-    commentsContainer.id="commentsLayerInside";
-    commentsContainer.style.position="absolute";
-    commentsContainer.style.top="0"; commentsContainer.style.left="0";
-    commentsContainer.style.width="100%"; commentsContainer.style.height="100%";
-    commentsContainer.style.pointerEvents="none"; commentsContainer.style.zIndex="9998";
-    iframeDoc.body.appendChild(commentsContainer);
+function renderComments(){
+  const iframeDoc = document.getElementById("frame").contentDocument || document.getElementById("frame").contentWindow.document;
+  const containerId = "commentsLayerInside";
+  let container = iframeDoc.getElementById(containerId);
+  if(!container){
+    container = iframeDoc.createElement("div");
+    container.id = containerId;
+    container.style.position="absolute";
+    container.style.top="0"; container.style.left="0"; container.style.width="100%"; container.style.height="100%"; container.style.pointerEvents="none";
+    iframeDoc.body.style.position="relative";
+    iframeDoc.body.appendChild(container);
   }
-  commentsContainer.innerHTML="";
-  const docWidth = iframeDoc.documentElement.scrollWidth;
-  const docHeight = iframeDoc.documentElement.scrollHeight;
-  window.loadedComments.filter(c=>Number(c.page)===page).forEach(c=>{
+  container.innerHTML="";
+  loadedComments.forEach(c=>{
     const el = iframeDoc.createElement("div");
-    el.className="floating-comment"; el.innerHTML=`<div>${c.comentario}</div>`;
-    el.style.left=(c.x*docWidth)+"px"; el.style.top=(c.y*docHeight)+"px"; el.style.pointerEvents="auto"; commentsContainer.appendChild(el);
+    el.className="floating-comment";
+    el.innerHTML=`<div>${c.comentario}</div>`;
+    el.style.left = (c.x*iframeDoc.body.scrollWidth)+"px";
+    el.style.top = (c.y*iframeDoc.body.scrollHeight)+"px";
+    container.appendChild(el);
   });
 }
 
-// ====================== LOAD COMMENTS ======================
-async function loadComments(){
-  try{
-    const res=await fetch(SCRIPT_URL+"?comments="+idSOP);
-    const data=await res.json();
-    window.loadedComments=data||[];
-    renderCommentsForPage(currentPage);
-  }catch(err){ console.error(err); }
-}
-
-// ====================== UTIL ======================
-function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
-document.getElementById("toggleSidebarBtn").addEventListener("click",()=>document.getElementById("commentSidebar").classList.toggle("active"));
-
-// ====================== DOC FUNCIONES ======================
-function openNew(){ window.open(doc,"_blank"); }
-function downloadDoc(){ const a=document.createElement("a"); a.href=doc; a.download=doc.split("/").pop(); a.click(); }
-function printDoc(){ frame.contentWindow.print(); }
-
+// ====================== INICIAR ======================
+loadSOPs();
 </script>
+
 </body>
 </html>
