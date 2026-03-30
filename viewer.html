@@ -32,6 +32,7 @@ body {
     border-radius: 6px;
     text-decoration: none;
     font-size: 13px;
+    margin-left: 0; /* margen para que no quede al borde */
 }
 
 /* ===== DOC HEADER & NAV ===== */
@@ -82,7 +83,7 @@ iframe {
 </div>
 
 <div class="doc-header">
-  <div id="title">Documento SOP</div>
+  <div id="title">Cargando...</div>
   <div>
     <button class="tool" onclick="openNew()">Abrir</button>
     <button class="tool" onclick="downloadDoc()">Descargar</button>
@@ -100,27 +101,42 @@ iframe {
 
 <script>
 // ===== VARIABLES =====
-let currentPage = 1;
-const params = new URLSearchParams(window.location.search);
-let doc = params.get("doc") || "";
+let currentPage = 0;
+
+// Lista de SOPs (reemplazar con tus URLs reales)
+const SOPs = [
+  {url:"/sop-site/sop1.pdf", title:"SOP 001 - Procedimiento Inicial"},
+  {url:"/sop-site/sop2.pdf", title:"SOP 002 - Control de Calidad"},
+  {url:"/sop-site/sop3.pdf", title:"SOP 003 - Seguridad"}
+];
+
 const frame = document.getElementById("frame");
-if(doc) frame.src = doc;
+const titleDiv = document.getElementById("title");
 
-// ===== NAVIGATION =====
-function getDocUrlForPage(n){ return doc; }
-function loadSOPPage(n){ currentPage=n; frame.src=getDocUrlForPage(n); }
-function prevSOP(){ if(currentPage>1){ currentPage--; loadSOPPage(currentPage); } }
-function nextSOP(){ currentPage++; loadSOPPage(currentPage); }
+// ===== FUNCIONES =====
+function loadSOPPage(n){
+  if(n<0) n=0;
+  if(n>=SOPs.length) n=SOPs.length-1;
+  currentPage = n;
+  const sop = SOPs[currentPage];
+  frame.src = sop.url;
+  titleDiv.innerText = sop.title;
+}
 
-// ===== DOC FUNCTIONS =====
-function openNew(){ window.open(doc,"_blank"); }
+function prevSOP(){ if(currentPage>0) loadSOPPage(currentPage-1); }
+function nextSOP(){ if(currentPage<SOPs.length-1) loadSOPPage(currentPage+1); }
+
+function openNew(){ window.open(SOPs[currentPage].url,"_blank"); }
 function downloadDoc(){
   const a = document.createElement("a");
-  a.href = doc;
-  a.download = doc.split("/").pop();
+  a.href = SOPs[currentPage].url;
+  a.download = SOPs[currentPage].url.split("/").pop();
   a.click();
 }
 function printDoc(){ frame.contentWindow.print(); }
+
+// ===== CARGAR PRIMER SOP =====
+loadSOPPage(0);
 </script>
 
 </body>
