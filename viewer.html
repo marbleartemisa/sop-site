@@ -111,15 +111,16 @@ iframe {
 }
 
 /* ===== CLICK LAYER ===== */
+
 #clickLayer {
     position:absolute;
     top:0;
     left:0;
     width:100%;
     height:100%;
-    z-index:400;
+    z-index:9999; /* 🔥 subirlo */
     cursor: crosshair;
-    background: transparent;
+    background: rgba(255,0,0,0.0); /* invisible pero activo */
     display:none;
 }
 
@@ -268,6 +269,7 @@ select:focus, input:focus, textarea:focus { border-color: #2563eb; outline: none
     <button class="tool" onclick="printDoc()">Imprimir</button>
     <button class="tool" onclick="showLogin()">🔒 Editar</button>
     <button class="tool" id="commentBtn" onclick="commentSelectedText()">💬 Comentar</button>
+      <button class="tool" onclick="exitEditMode()">❌ Salir edición</button>
   </div>
 </div>
 
@@ -366,33 +368,49 @@ function checkLogin(){
   const user = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
   const msg = document.getElementById("loginMessage");
+
   if(!user){ msg.innerText="Seleccione usuario"; return; }
   if(users[user]!==pass){ msg.innerText="Clave incorrecta"; return; }
 
   editMode = true; 
   currentUser = user;
-  document.getElementById("commentUser").innerHTML = `<option>${user}</option>`;
-  document.getElementById("commentUser").value = user;
+
   setEditModeUI(true);
 
-  // ✅ Activar clickLayer para agregar comentarios
   const clickLayer = document.getElementById("clickLayer");
-  clickLayer.style.display = "block"; 
-  clickLayer.style.pointerEvents = "auto"; 
-  clickLayer.onclick = e=>{
+  clickLayer.style.display = "block";
+
+  // 🔥 CLAVE
+  frame.style.pointerEvents = "none";
+
+  clickLayer.onclick = function(e){
     const rect = frame.getBoundingClientRect();
+
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
+
     openCommentModal({x, y, page: currentPage});
   };
 
-  // ✅ Abrir sidebar y cargar comentarios
   document.getElementById("commentSidebar").classList.add("active");
   loadComments();
 
   closeLogin();
 }
 
+// ====================== EDIT MODE ======================
+function exitEditMode(){
+  editMode = false;
+
+  document.getElementById("clickLayer").style.display = "none";
+  frame.style.pointerEvents = "auto";
+
+  document.getElementById("commentSidebar").classList.remove("active");
+
+  // opcional: reset UI
+  setEditModeUI(false);
+}
+    
 function setEditModeUI(enabled){
   document.getElementById("commentUser").disabled = !enabled;
   document.getElementById("commentType").disabled = !enabled;
@@ -409,8 +427,11 @@ document.getElementById("loginPass").addEventListener("keypress", e => {
 function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
 document.getElementById("toggleSidebarBtn").addEventListener("click", () => {
   document.getElementById("commentSidebar").classList.toggle("active");
+     // 🔥 salir de edición también
+  exitEditMode();
 });
 
+    
 // ====================== MODAL ======================
 function openCommentModal(data){
   const modal = document.getElementById("commentModal");
