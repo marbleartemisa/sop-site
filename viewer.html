@@ -5,62 +5,63 @@
 <title>Viewer SOP Pro - Artemisa</title>
 <style>
 /* ===== BODY & GENERAL ===== */
-body { margin:0; font-family: "Segoe UI", Arial, sans-serif; background:#eef2f7; }
+body { margin:0; background:#eef2f7; font-family:"Segoe UI", Arial, sans-serif; }
 
 /* ===== TOPBAR ===== */
 .topbar {
-    background:#0f172a; color:white; padding:14px 28px;
-    display:flex; justify-content:space-between; align-items:center;
-    position:fixed; width:100%; top:0; z-index:100;
+    background: #0f172a;
+    color: white;
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
 }
-.brand { font-weight:600; letter-spacing:.4px; font-size:15px; }
-.back { background:#2563eb; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:13px; }
+.brand { font-weight: 600; letter-spacing: .4px; font-size: 15px; }
+.back { background: #2563eb; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; }
+
+/* ===== DOC HEADER & NAV ===== */
+.doc-header { max-width:1100px; margin:80px auto 10px auto; padding:0 10px; display:flex; justify-content:space-between; align-items:center; }
+.tool { background:white; border:1px solid #e2e8f0; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; transition:.2s; }
+.tool:hover { background:#2563eb; color:white; }
+.tool.disabled { opacity:.5; pointer-events:none; }
 
 /* ===== DOC AREA ===== */
-.doc-area { display:flex; justify-content:center; padding:80px 20px 40px; }
-.doc-frame { position:relative; width:100%; max-width:1100px; height:80vh; overflow:visible; background:white; border-radius:12px; box-shadow:0 15px 40px rgba(0,0,0,.15);}
+.doc-area { display:flex; justify-content:center; padding:10px 20px 40px; }
+.doc-frame { position:relative; width:100%; max-width:1100px; height:80vh; overflow:visible; background:white; border-radius:12px; box-shadow:0 15px 40px rgba(0,0,0,.15); }
 iframe { width:100%; height:100%; border:none; }
 
 /* ===== COMMENTS LAYER ===== */
 .floating-comment {
-  position:absolute;
-  pointer-events:auto;
-  z-index:999;
+    position:absolute; pointer-events:auto; z-index:999;
 }
 .floating-comment div {
-  background: rgba(255,255,255,0.9);
-  border-left:4px solid #dc2626;
-  color:#dc2626; padding:6px; border-radius:6px; font-size:12px; font-style:italic; max-width:220px; word-wrap:break-word;
+    background: rgba(255,255,255,0.9); border-left:4px solid #dc2626; color:#dc2626;
+    padding:6px; border-radius:6px; font-size:12px; font-style:italic; max-width:220px; word-wrap:break-word;
 }
+.floating-comment textarea { width:200px; height:60px; border:none; outline:none; background:rgba(255,255,255,0.9); font-style:italic; font-size:12px; resize:none; }
 
 /* ===== CLICK LAYER ===== */
-#clickLayer {
-    position:absolute; top:0; left:0; width:100%; height:100%; z-index:400;
-    cursor: crosshair; background: transparent; display:none;
-}
+#clickLayer { position:absolute; top:0; left:0; width:100%; height:100%; z-index:400; cursor:crosshair; background:transparent; display:none; }
 
-/* ===== LOGIN OVERLAY ===== */
-#loginOverlay {
-  position:fixed; top:0; left:0; width:100%; height:100%;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-  display:none; align-items:center; justify-content:center; z-index:500;
-}
+/* ===== SIDEBAR ===== */
+#commentSidebar { position:fixed; top:0; right:0; width:380px; height:100%; background:white; box-shadow:-10px 0 30px rgba(0,0,0,.2); padding:20px; transform:translateX(100%); transition:.35s ease; z-index:200; overflow-y:auto; }
+#commentSidebar.active { transform:translateX(0); }
+#toggleSidebarBtn { position:fixed; right:15px; top:50%; transform:translateY(-50%); background:#2563eb; color:white; border:none; border-radius:50%; width:50px; height:50px; font-size:20px; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.3); z-index:300; }
+
+select, input, textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; margin-bottom:12px; font-size:14px; }
+select:focus, input:focus, textarea:focus { border-color:#2563eb; outline:none; background:white; }
+
+/* ===== MODAL LOGIN ===== */
+#loginOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg,#0f172a,#1e293b); display:none; align-items:center; justify-content:center; z-index:500; }
 .login-card { background:white; padding:35px; border-radius:16px; width:360px; box-shadow:0 20px 50px rgba(0,0,0,.4); }
 #loginMessage { color:red; font-size:13px; margin-bottom:10px; }
-.login-card button { padding:10px 20px; border-radius:8px; font-size:14px; border:none; cursor:pointer; transition:.2s; }
-#loginOverlay .login-card button#loginBtn { background:#2563eb; color:white; }
-#loginOverlay .login-card button#loginBtn:hover { background:#1e40af; }
-#loginOverlay .login-card button.cancelBtn { background:#e5e7eb; color:#111; }
-#loginOverlay .login-card button.cancelBtn:hover { background:#cbd5e1; }
-.login-card select, .login-card input[type="password"] { width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:12px; font-size:14px; box-sizing:border-box; }
 
 /* ===== MODAL NUEVO COMENTARIO ===== */
-#commentModal {
-  display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:500px; max-width:90%; background:white; z-index:1000; border-radius:14px; padding:25px; box-shadow:0 20px 50px rgba(0,0,0,.4);
-}
-#commentModal textarea { width:100%; height:80px; padding:8px; border-radius:8px; border:1px solid #cbd5e1; resize:none; }
-
+#commentModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:500px; max-width:90%; background:white; z-index:1000; border-radius:14px; padding:25px; box-shadow:0 20px 50px rgba(0,0,0,.4); }
 </style>
 </head>
 <body>
@@ -68,7 +69,19 @@ iframe { width:100%; height:100%; border:none; }
 <div class="topbar">
   <div class="brand">ARTEMISA SOP • VIEWER</div>
   <a class="back" href="/sop-site/">⬅ Biblioteca</a>
-  <button onclick="enableEditMode()">🔒 Editar</button>
+</div>
+
+<div class="doc-header">
+  <div id="title">Documento SOP</div>
+  <div>
+    <button class="tool" onclick="openNew()">Abrir</button>
+    <button class="tool" onclick="downloadDoc()">Descargar</button>
+    <button class="tool" onclick="printDoc()">Imprimir</button>
+    <button class="tool" onclick="showLogin()">🔒 Editar</button>
+    <button class="tool" id="commentBtn" onclick="commentSelectedText()">💬 Comentar</button>
+    <button class="tool" id="prevDoc" onclick="prevSOP()">← Anterior</button>
+    <button class="tool" id="nextDoc" onclick="nextSOP()">Siguiente →</button>
+  </div>
 </div>
 
 <div class="doc-area">
@@ -78,21 +91,25 @@ iframe { width:100%; height:100%; border:none; }
   </div>
 </div>
 
-<!-- LOGIN -->
+<div id="commentSidebar">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <h3 style="margin:0;">💬 Comentarios</h3>
+    <span style="cursor:pointer; font-size:18px;" onclick="closeSidebar()">✖</span>
+  </div>
+  <div id="commentList"></div>
+  <label>Empleado</label>
+  <select id="commentUser"></select>
+  <label>Tipo</label>
+  <select id="commentType"><option value="Error">Error</option><option value="Mejora">Mejora</option><option value="Sugerencia">Sugerencia</option></select>
+  <label>Estado</label>
+  <select id="commentStatus"><option value="Pendiente">Pendiente</option><option value="Revisado">Revisado</option><option value="Aprobado">Aprobado</option></select>
+</div>
+
 <div id="loginOverlay">
   <div class="login-card">
     <h3>🔒 Acceso de edición</h3>
     <div id="loginMessage"></div>
-    <select id="loginUser">
-      <option value="">Seleccionar usuario</option>
-      <option>Damian Molina</option>
-      <option>Alberto Molina</option>
-      <option>Gabriel Batista</option>
-      <option>Jenny Perez</option>
-      <option>Yoandry Perez</option>
-      <option>Wendy Romanach</option>
-      <option>Otros</option>
-    </select>
+    <select id="loginUser"></select>
     <input type="password" id="loginPass" placeholder="Contraseña">
     <div style="margin-top:15px;text-align:right;">
       <button id="loginBtn" onclick="checkLogin()">Ingresar</button>
@@ -101,7 +118,6 @@ iframe { width:100%; height:100%; border:none; }
   </div>
 </div>
 
-<!-- MODAL COMENTARIO -->
 <div id="commentModal">
   <h3>💬 Nuevo comentario</h3>
   <textarea id="commentInput" placeholder="Escribe tu comentario..."></textarea>
@@ -111,21 +127,22 @@ iframe { width:100%; height:100%; border:none; }
   </div>
 </div>
 
-<script>
-const frame = document.getElementById("frame");
-const clickLayer = document.getElementById("clickLayer");
-const commentModal = document.getElementById("commentModal");
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+<button id="toggleSidebarBtn">💬</button>
 
+<script>
+// ====================== VARIABLES ======================
 let editMode = false;
 let currentUser = "";
-let idSOP = new URLSearchParams(window.location.search).get("id") || "";
-let docURL = new URLSearchParams(window.location.search).get("doc") || "";
-let loadedComments = [];
+let currentPage = 1;
 
-if(docURL) frame.src = docURL;
+const params = new URLSearchParams(window.location.search);
+let doc = params.get("doc") || "";
+let idSOP = params.get("id") || "";
+const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
 
-// Usuarios y contraseñas
+const frame = document.getElementById("frame");
+if(doc) frame.src = doc;
+
 const users = {
   "Damian Molina":"Dam1975",
   "Alberto Molina":"Alb1975",
@@ -137,109 +154,110 @@ const users = {
 };
 
 // ====================== LOGIN ======================
-function enableEditMode(){ document.getElementById("loginOverlay").style.display="flex"; }
+function showLogin(){ document.getElementById("loginOverlay").style.display="flex"; }
 function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
-
 function checkLogin(){
   const user = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
   const msg = document.getElementById("loginMessage");
   if(!user){ msg.innerText="Seleccione usuario"; return; }
   if(users[user]!==pass){ msg.innerText="Clave incorrecta"; return; }
-
-  editMode = true;
-  currentUser = user;
-  closeLogin();
-  alert("Modo edición activado. Haga clic sobre el documento para agregar comentarios.");
+  editMode=true; currentUser=user;
+  setEditModeUI(true);
   loadComments();
+  closeLogin();
 }
+function setEditModeUI(enabled){
+  document.getElementById("commentBtn").classList.toggle("disabled",!enabled);
+}
+document.getElementById("loginPass").addEventListener("keypress", e => { if(e.key==="Enter") checkLogin(); });
 
-// ====================== CLICK PARA COMENTARIO ======================
-clickLayer.addEventListener("click", e => {
-  if(!editMode) return;
-
-  const rect = frame.getBoundingClientRect();
-  const x = (e.clientX - rect.left)/rect.width;
-  const y = (e.clientY - rect.top)/rect.height;
-
-  openCommentModal({x,y});
-  clickLayer.style.display="none";
-});
+// ====================== COMMENTS ======================
+function commentSelectedText(){
+  if(!editMode){ alert("Activa modo edición"); return; }
+  const clickLayer = document.getElementById("clickLayer");
+  clickLayer.style.display="block"; clickLayer.style.cursor="crosshair";
+  clickLayer.onclick = e => {
+    const rect = frame.getBoundingClientRect();
+    const x = (e.clientX - rect.left)/rect.width;
+    const y = (e.clientY - rect.top)/rect.height;
+    openCommentModal({x,y,page:currentPage});
+    clickLayer.style.display="none";
+  };
+}
 
 function openCommentModal(data){
-  commentModal.style.display="block";
-  commentModal.dataset.x = data.x;
-  commentModal.dataset.y = data.y;
-  document.getElementById("commentInput").value = "";
+  const modal = document.getElementById("commentModal");
+  modal.style.display="block";
+  modal.dataset.x = data.x;
+  modal.dataset.y = data.y;
+  modal.dataset.page = data.page;
+  document.getElementById("commentInput").value="";
 }
-function closeCommentModal(){ commentModal.style.display="none"; }
+function closeCommentModal(){ document.getElementById("commentModal").style.display="none"; }
 
-// ====================== GUARDAR COMENTARIO ======================
 async function saveComment(){
+  const modal = document.getElementById("commentModal");
   const text = document.getElementById("commentInput").value.trim();
   if(!text){ alert("Comentario vacío"); return; }
-
-  const newComment = {
-    id_comment: Date.now().toString(),
-    id_sop: idSOP,
-    usuario: currentUser,
-    comentario: text,
-    x: parseFloat(commentModal.dataset.x),
-    y: parseFloat(commentModal.dataset.y)
-  };
-
+  const newComment={id_comment:Date.now().toString(), usuario:currentUser||"Anónimo", tipo:"Comentario", comentario:text, x:parseFloat(modal.dataset.x), y:parseFloat(modal.dataset.y), page:parseInt(modal.dataset.page)};
   try{
-    await fetch(SCRIPT_URL,{
-      method:"POST",
-      body: JSON.stringify({...newComment, tipo:"comentario"})
-    });
-    loadedComments.push(newComment);
-    drawCommentInIframe(newComment);
-    closeCommentModal();
-  }catch(err){
-    alert("Error guardando comentario: "+err);
-  }
+    const res = await fetch(SCRIPT_URL,{method:"POST",body:JSON.stringify({...newComment,id_sop:idSOP,tipo:"comentario"})});
+    const result = await res.json();
+    if(result.success){
+      if(!window.loadedComments) window.loadedComments=[];
+      window.loadedComments.push(newComment);
+      renderCommentsForPage(currentPage);
+      closeCommentModal();
+    } else alert("Error guardando comentario: "+result.error);
+  }catch(err){ alert("Error guardando comentario: "+err); }
 }
 
-// ====================== CARGAR COMENTARIOS ======================
+// ====================== RENDER ======================
+function renderCommentsForPage(page){
+  if(!window.loadedComments) return;
+  const iframeDoc = frame.contentDocument || frame.contentWindow.document;
+  if(!iframeDoc||!iframeDoc.body) return;
+  iframeDoc.body.style.position="relative";
+  let commentsContainer = iframeDoc.getElementById("commentsLayerInside");
+  if(!commentsContainer){
+    commentsContainer = iframeDoc.createElement("div");
+    commentsContainer.id="commentsLayerInside";
+    commentsContainer.style.position="absolute";
+    commentsContainer.style.top="0"; commentsContainer.style.left="0";
+    commentsContainer.style.width="100%"; commentsContainer.style.height="100%";
+    commentsContainer.style.pointerEvents="none"; commentsContainer.style.zIndex="9998";
+    iframeDoc.body.appendChild(commentsContainer);
+  }
+  commentsContainer.innerHTML="";
+  const docWidth = iframeDoc.documentElement.scrollWidth;
+  const docHeight = iframeDoc.documentElement.scrollHeight;
+  window.loadedComments.filter(c=>Number(c.page)===page).forEach(c=>{
+    const el = iframeDoc.createElement("div");
+    el.className="floating-comment"; el.innerHTML=`<div>${c.comentario}</div>`;
+    el.style.left=(c.x*docWidth)+"px"; el.style.top=(c.y*docHeight)+"px"; el.style.pointerEvents="auto"; commentsContainer.appendChild(el);
+  });
+}
+
+// ====================== LOAD COMMENTS ======================
 async function loadComments(){
   try{
-    const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
-    const data = await res.json();
-    loadedComments = data || [];
-    loadedComments.forEach(drawCommentInIframe);
+    const res=await fetch(SCRIPT_URL+"?comments="+idSOP);
+    const data=await res.json();
+    window.loadedComments=data||[];
+    renderCommentsForPage(currentPage);
   }catch(err){ console.error(err); }
 }
 
-// ====================== DIBUJAR COMENTARIO EN IFRAME ======================
-function drawCommentInIframe(comment){
-  const iframeDoc = frame.contentDocument || frame.contentWindow.document;
-  if(!iframeDoc.body) return;
+// ====================== UTIL ======================
+function closeSidebar(){ document.getElementById("commentSidebar").classList.remove("active"); }
+document.getElementById("toggleSidebarBtn").addEventListener("click",()=>document.getElementById("commentSidebar").classList.toggle("active"));
 
-  // Contenedor de comentarios
-  let container = iframeDoc.getElementById("commentsLayerInside");
-  if(!container){
-    container = iframeDoc.createElement("div");
-    container.id="commentsLayerInside";
-    container.style.position="absolute";
-    container.style.top=0;
-    container.style.left=0;
-    container.style.width="100%";
-    container.style.height="100%";
-    container.style.pointerEvents="none";
-    iframeDoc.body.appendChild(container);
-  }
+// ====================== DOC FUNCIONES ======================
+function openNew(){ window.open(doc,"_blank"); }
+function downloadDoc(){ const a=document.createElement("a"); a.href=doc; a.download=doc.split("/").pop(); a.click(); }
+function printDoc(){ frame.contentWindow.print(); }
 
-  const docWidth = iframeDoc.documentElement.scrollWidth;
-  const docHeight = iframeDoc.documentElement.scrollHeight;
-
-  const el = document.createElement("div");
-  el.className="floating-comment";
-  el.style.left = (comment.x*docWidth) + "px";
-  el.style.top = (comment.y*docHeight) + "px";
-  el.innerHTML = `<div>${comment.comentario}</div>`;
-  container.appendChild(el);
-}
 </script>
 </body>
 </html>
