@@ -12,7 +12,6 @@ body {
   background:#f0f0f0;
 }
 
-/* CONTENEDOR PRINCIPAL */
 #sop-container {
   width: 90%;
   margin: 20px auto;
@@ -20,44 +19,41 @@ body {
   border:1px solid #ccc;
 }
 
-/* WRAPPER */
 #sop-wrapper {
   position: relative;
   width: 100%;
   height: 800px;
 }
 
-/* IFRAME (DOCUMENTO REAL) */
 #sop-frame {
   width: 100%;
   height: 100%;
   border: none;
 }
 
-/* CAPA DE COMENTARIOS */
+/* 🔥 overlay desactivado por defecto */
 #overlay {
   position: absolute;
   top:0;
   left:0;
   width:100%;
   height:100%;
-  cursor: crosshair;
+  pointer-events: none;
 }
 
-/* COMENTARIOS */
+/* comentarios */
 .comentario {
   position: absolute;
-  color: red;
-  font-weight: bold;
-  background: rgba(255,255,255,0.9);
-  padding: 4px 6px;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
+  background: #fff;
   border:1px solid red;
+  border-radius:6px;
+  padding:5px;
+  font-size:11px;
+  max-width:160px;
+  pointer-events: auto;
 }
 
-/* MODAL */
+/* modal */
 #modal {
   display:none;
   position: fixed;
@@ -93,6 +89,10 @@ button {
 
 <h2 style="text-align:center;">Leer y Comentar SOP</h2>
 
+<div style="text-align:center;">
+  <button id="modo-btn">Modo: Leer</button>
+</div>
+
 <div id="sop-container">
   <div id="sop-wrapper">
     <iframe id="sop-frame"></iframe>
@@ -100,7 +100,6 @@ button {
   </div>
 </div>
 
-<!-- MODAL -->
 <div id="modal">
   <div id="modal-content">
     <h3>Escribe tu comentario</h3>
@@ -115,19 +114,29 @@ const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcT
 
 const SOP_URL = "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html";
 const ID_SOP = "SOP-1774461381359-0";
-const USUARIO = "TuNombre";
-const CORREO = "tucorreo@empresa.com";
 
 let clickX = 0;
 let clickY = 0;
+let modoComentario = false;
 
 const overlay = document.getElementById('overlay');
 
-/* CARGAR SOP EN IFRAME */
+/* cargar SOP */
 document.getElementById('sop-frame').src = SOP_URL;
 
-/* CLICK PARA CREAR COMENTARIO */
+/* toggle modo */
+document.getElementById('modo-btn').addEventListener('click', () => {
+  modoComentario = !modoComentario;
+
+  overlay.style.pointerEvents = modoComentario ? 'auto' : 'none';
+
+  document.getElementById('modo-btn').textContent =
+    modoComentario ? "Modo: Comentar" : "Modo: Leer";
+});
+
+/* click */
 overlay.addEventListener('click', (e) => {
+  if(!modoComentario) return;
   if(e.target.classList.contains('comentario')) return;
 
   const rect = overlay.getBoundingClientRect();
@@ -137,7 +146,7 @@ overlay.addEventListener('click', (e) => {
   document.getElementById('modal').style.display = 'flex';
 });
 
-/* GUARDAR COMENTARIO */
+/* guardar */
 document.getElementById('btn-save').addEventListener('click', async () => {
   const texto = document.getElementById('comentario-text').value.trim();
   if(!texto) return alert("Escribe algo");
@@ -156,13 +165,9 @@ document.getElementById('btn-save').addEventListener('click', async () => {
       body: JSON.stringify({
         tipo: "comentario",
         id_sop: ID_SOP,
-        usuario: USUARIO,
-        correo: CORREO,
         comentario: texto,
         x: xRel,
-        y: yRel,
-        page: 1,
-        url_doc: SOP_URL
+        y: yRel
       })
     });
   } catch(err) {
@@ -170,27 +175,28 @@ document.getElementById('btn-save').addEventListener('click', async () => {
   }
 });
 
-/* CREAR COMENTARIO EN PANTALLA */
+/* crear comentario */
 function crearComentario(texto, xRel, yRel){
   const div = document.createElement('div');
   div.className = "comentario";
 
+  div.dataset.x = xRel;
+  div.dataset.y = yRel;
+
   div.style.left = (xRel * overlay.clientWidth) + "px";
   div.style.top = (yRel * overlay.clientHeight) + "px";
 
-  div.textContent = "💬";
-
-  div.title = texto;
+  div.innerHTML = `<strong>💬</strong><br>${texto}`;
 
   overlay.appendChild(div);
 }
 
-/* CANCELAR */
+/* cancelar */
 document.getElementById('btn-cancel').addEventListener('click', () => {
   document.getElementById('modal').style.display = 'none';
 });
 
-/* CARGAR COMENTARIOS */
+/* cargar comentarios */
 async function cargarComentarios(){
   try {
     const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
@@ -205,21 +211,18 @@ async function cargarComentarios(){
   }
 }
 
-/* REAJUSTAR POSICIONES AL REDIMENSIONAR */
+/* resize */
 window.addEventListener('resize', () => {
-  const comentarios = document.querySelectorAll('.comentario');
+  document.querySelectorAll('.comentario').forEach(div => {
+    const x = div.dataset.x;
+    const y = div.dataset.y;
 
-  comentarios.forEach((div, i) => {
-    const data = div.dataset;
-
-    if(data.x && data.y){
-      div.style.left = (data.x * overlay.clientWidth) + "px";
-      div.style.top = (data.y * overlay.clientHeight) + "px";
-    }
+    div.style.left = (x * overlay.clientWidth) + "px";
+    div.style.top = (y * overlay.clientHeight) + "px";
   });
 });
 
-/* INICIAR */
+/* iniciar */
 cargarComentarios();
 </script>
 
