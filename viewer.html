@@ -513,7 +513,9 @@ async function loadComments(){
 }
 
 // ====================== DOC ======================
-frame.src = `/sop-site/sops/${doc}`;
+if(doc){
+  frame.src = decodeURIComponent(doc);
+}
 </script>
 
 </body>
