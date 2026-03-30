@@ -3,34 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <title>Viewer SOP Pro - Artemisa</title>
+
 <style>
 body {
     margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
     background: #eef2f7;
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
     background: #0f172a;
     color: white;
-    padding: 12px 20px;
-    z-index: 100;
+    padding: 14px 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
     box-sizing: border-box;
 }
 
-.topbar .brand {
+.brand {
     font-weight: 600;
+    letter-spacing: .4px;
     font-size: 15px;
 }
 
-.topbar .back {
+.back {
     background: #2563eb;
     color: white;
     padding: 6px 12px;
@@ -39,49 +40,52 @@ body {
     font-size: 13px;
 }
 
-.viewer-container {
+.doc-header {
     max-width: 1100px;
-    margin: 70px auto 40px auto;
-    position: relative;
-}
-
-iframe {
-    width: 100%;
-    height: 80vh;
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0,0,0,.15);
-}
-
-.buttons-top {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    margin: 80px auto 10px auto;
+    padding: 0 10px;
     display: flex;
-    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.tool {
+.doc-header .tool {
     background: white;
     border: 1px solid #e2e8f0;
-    padding: 6px 12px;
+    padding: 7px 14px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
     transition: .2s;
 }
 
-.tool:hover {
+.doc-header .tool:hover {
     background: #2563eb;
     color: white;
 }
 
-.tool.disabled {
-    opacity: 0.5;
-    pointer-events: none;
+.doc-area {
+    display: flex;
+    justify-content: center;
+    padding: 10px 20px 40px;
 }
 
-/* Botones flotantes Anterior / Siguiente */
+.doc-frame {
+    width: 100%;
+    max-width: 1100px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.15);
+    overflow: hidden;
+    position: relative;
+}
+
+iframe {
+    width: 100%;
+    height: 95vh; /* <- altura casi completa de la pantalla */
+    border: none;
+}
+
 #prevDocBtn, #nextDocBtn {
     position: absolute;
     top: 50%;
@@ -93,6 +97,7 @@ iframe {
     border-radius: 50%;
     font-size: 20px;
     cursor: pointer;
+    z-index: 500;
     transition: background 0.3s;
 }
 
@@ -100,39 +105,52 @@ iframe {
     background: rgba(0,0,0,0.7);
 }
 
-#prevDocBtn { left: -10px; }
-#nextDocBtn { right: -10px; }
+#prevDocBtn { left: 0; }
+#nextDocBtn { right: 0; }
+
+.tool.disabled {
+    opacity: .5;
+    pointer-events: none;
+}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-    <div class="brand" id="title">Documento SOP</div>
-    <a class="back" href="/sop-site/">⬅ Biblioteca</a>
+  <div class="brand">ARTEMISA SOP • VIEWER</div>
+  <a class="back" href="/sop-site/">⬅ Biblioteca</a>
 </div>
 
-<div class="viewer-container">
+<div class="doc-header">
+  <div id="title">Documento SOP</div>
+  <div>
+    <button class="tool" onclick="openNew()">Abrir</button>
+    <button class="tool" onclick="downloadDoc()">Descargar</button>
+    <button class="tool" onclick="printDoc()">Imprimir</button>
+    <button class="tool" id="prevDoc" onclick="prevSOP()">← Anterior</button>
+    <button class="tool" id="nextDoc" onclick="nextSOP()">Siguiente →</button>
+  </div>
+</div>
+
+<div class="doc-area">
+  <div class="doc-frame">
     <iframe id="frame"></iframe>
-    <div class="buttons-top">
-        <button class="tool" onclick="openNew()">Abrir</button>
-        <button class="tool" onclick="downloadDoc()">Descargar</button>
-        <button class="tool" onclick="printDoc()">Imprimir</button>
-    </div>
     <button id="prevDocBtn" onclick="prevSOP()">⬅</button>
     <button id="nextDocBtn" onclick="nextSOP()">➡</button>
+  </div>
 </div>
 
 <script>
-const params = new URLSearchParams(window.location.search);
+let params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 let idSOP = params.get("id");
 const frame = document.getElementById("frame");
 if(doc) frame.src = doc;
 
-// Abrir en nueva pestaña
-function openNew() { if(doc) window.open(doc, "_blank"); }
+function openNew() {
+    if(doc) window.open(doc, "_blank");
+}
 
-// Descargar
 function downloadDoc(url) {
     if (!url) url = doc;
     if (!url) return alert("No hay documento");
@@ -144,46 +162,46 @@ function downloadDoc(url) {
     link.remove();
 }
 
-// Imprimir
-function printDoc() { frame.contentWindow.print(); }
+function printDoc() {
+    if(frame.contentWindow) frame.contentWindow.print();
+}
 
 // ======================
-// Navegación SOP
+// NAVIGACION SOP
 // ======================
 fetch('SOP_INDEX.json')
-.then(res => res.json())
-.then(data => {
+  .then(res => res.json())
+  .then(data => {
     if (!data.length) return;
 
     if (!doc) doc = data[0].url;
 
     const sopList = data.map(s => s.url);
     let currentIndex = sopList.indexOf(doc);
-    if(currentIndex === -1) currentIndex = 0;
+    if (currentIndex === -1) currentIndex = 0;
 
     const currentSOP = data[currentIndex];
     document.getElementById("title").innerText = currentSOP.title.toUpperCase();
 
     window.prevSOP = function() {
-        if (currentIndex > 0) {
-            const prev = data[currentIndex - 1];
-            window.location.href = `viewer.html?doc=${prev.url}&id=${prev.id}`;
-        }
+      if(currentIndex > 0) {
+        const prev = data[currentIndex-1];
+        window.location.href = `viewer.html?doc=${prev.url}&id=${prev.id}`;
+      }
     };
 
     window.nextSOP = function() {
-        if (currentIndex < data.length - 1) {
-            const next = data[currentIndex + 1];
-            window.location.href = `viewer.html?doc=${next.url}&id=${next.id}`;
-        }
+      if(currentIndex < data.length-1) {
+        const next = data[currentIndex+1];
+        window.location.href = `viewer.html?doc=${next.url}&id=${next.id}`;
+      }
     };
 
-    const prevBtn = document.getElementById("prevDocBtn");
-    const nextBtn = document.getElementById("nextDocBtn");
-    prevBtn.disabled = currentIndex === 0;
-    nextBtn.disabled = currentIndex === data.length - 1;
-})
-.catch(err => console.error("Error cargando SOP_INDEX.json:", err));
+    // deshabilitar botones si estamos en límites
+    document.getElementById("prevDoc").classList.toggle("disabled", currentIndex === 0);
+    document.getElementById("nextDoc").classList.toggle("disabled", currentIndex === data.length-1);
+  })
+  .catch(err => console.error("Error cargando SOP_INDEX.json:", err));
 </script>
 
 </body>
