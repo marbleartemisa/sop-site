@@ -529,9 +529,21 @@ body{
 © 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
 </div>
 </div>
-
+<!-- LOGIN MODAL -->
+<div id="loginModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center;">
+  <div style="background:white; padding:30px; border-radius:8px; width:300px; text-align:center; position:relative;">
+    <h3>Ingresar</h3>
+    <select id="loginUser" style="width:100%; padding:8px; margin-bottom:15px;">
+      <option value="">Seleccione usuario</option>
+    </select>
+    <input type="password" id="loginPass" placeholder="Clave" style="width:100%; padding:8px; margin-bottom:15px;">
+    <button id="loginBtn" style="width:100%; padding:10px;">Entrar</button>
+    <button onclick="closeLogin()" style="position:absolute; top:5px; right:10px; background:none; border:none; font-size:18px; cursor:pointer;">&times;</button>
+  </div>
+</div>
 
 <script>
+
 /* MENU */
 function toggleMenu(){ document.querySelector('.menu').classList.toggle('show'); }
 
@@ -656,127 +668,90 @@ function openLogin(type){
   loadUsers(); // cargar usuarios cuando se abre el modal
 }
 
-function closeLogin(){
+  function closeLogin(){
   document.getElementById("loginModal").style.display = "none";
-  document.getElementById("loginUser").value = "";
   document.getElementById("loginPass").value = "";
 }
+document.addEventListener("keydown", e => { if(e.key==="Escape") closeLogin(); });
 
-document.addEventListener("keydown", e=>{
-  if(e.key === "Escape") closeLogin();
-});
-
+  
 // cargar usuarios desde Sheet
-function loadUsers(){
-  const select = document.getElementById("loginUser");
-  // limpiar opciones excepto la primera
-  select.querySelectorAll("option:not(:first-child)").forEach(opt=>opt.remove());
-
-  fetch(API_URL+"?action=getUsers")
-    .then(res=>res.json())
-    .then(data=>{
-      if(!data.users) return;
-      data.users.forEach(u=>{
-        const opt = document.createElement("option");
-        opt.value = u.username;
-        opt.textContent = u.username;
-        select.appendChild(opt);
-      });
-    })
-    .catch(err=>{
-      console.error("Error cargando usuarios:", err);
+// Llenar combo de usuarios
+async function loadUsuarios(){
+  try{
+    const res = await fetch(API_URL+"?usuarios");
+    const data = await res.json();
+    const select = document.getElementById("loginUser");
+    data.forEach(u => {
+      const opt = document.createElement("option");
+      opt.value = u.usuario;
+      opt.textContent = u.usuario + " (" + u.rol + ")";
+      select.appendChild(opt);
     });
+  }catch(err){
+    console.error("Error cargando usuarios:", err);
+  }
 }
 
-// hacer login
-function doLogin(e){
-  e.preventDefault();
-  const btn = e.target;
-  btn.innerText = "Validando...";
-  btn.disabled = true;
 
-  const usuario = document.getElementById("loginUser").value.trim();
-  const clave   = document.getElementById("loginPass").value.trim();
+
+// hacer login
+// Login
+async function doLogin(){
+  const select = document.getElementById("loginUser");
+  const btn = document.getElementById("loginBtn");
+  const usuario = select.value;
+  const clave = document.getElementById("loginPass").value.trim();
 
   if(!usuario || !clave){
-    alert("Seleccione usuario y escriba la clave");
-    btn.innerText = "Entrar";
-    btn.disabled = false;
+    alert("Seleccione usuario e ingrese la clave");
     return;
   }
 
-  const tipo = (loginType === "admin") ? "login_admin" : "login_edit_sop";
+  btn.innerText = "Validando...";
+  btn.disabled = true;
 
-  fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({tipo, usuario, clave})
-  })
-  .then(res=>res.json())
-  .then(res=>{
-    if(!res.success){
-      alert(res.error || "Acceso denegado");
+  try{
+    const res = await fetch(API_URL,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ tipo:"login_admin", usuario, clave })
+    });
+    const data = await res.json();
+
+    if(!data.success){
+      alert(data.error || "Acceso denegado");
       btn.innerText = "Entrar";
       btn.disabled = false;
       return;
     }
 
-    // guardar sesión
-    localStorage.setItem("rol", res.rol);
-
-    // redirección según rol
-    if(res.rol === "admin"){
+    localStorage.setItem("rol", data.rol);
+    alert("Login exitoso! Rol: " + data.rol);
+    // 🔀 redirección según rol
+    if(data.rol === "admin"){
       window.location.href = "/sop-site/admin/";
     } else {
       window.location.href = "/sop-site/sop-viewer-edit/";
     }
-  })
-  .catch(err=>{
+
+  }catch(err){
     console.error(err);
-    alert("Error de conexión al servidor");
+    alert("Error de conexión");
     btn.innerText = "Entrar";
     btn.disabled = false;
-  });
+  }
 }
 
+// Eventos
+document.getElementById("loginBtn").addEventListener("click", doLogin);
+
+// Inicializar
+loadUsuarios();
 
   
 </script>
-<!-- LOGIN MODAL -->
-<div id="loginModal" style="
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.6);
-  z-index:9999;
-  justify-content:center;
-  align-items:center;
-">
-  <div style="
-    background:white;
-    padding:30px;
-    border-radius:12px;
-    width:300px;
-    text-align:center;
-  ">
-    <h3>Acceso</h3>
 
-    <!-- Usuario como select -->
-    <select id="loginUser" style="width:100%;margin:10px 0;padding:10px;">
-      <option value="">Seleccione usuario</option>
-    </select>
-
-    <input id="loginPass" type="password" placeholder="Clave" style="width:100%;margin:10px 0;padding:10px;">
-
-    <button id="loginBtn" onclick="doLogin(event)" style="padding:10px 20px;background:#0072C6;color:white;border:none;border-radius:8px;">
-      Entrar
-    </button>
-
-    <br><br>
-    <button onclick="closeLogin()" style="background:none;border:none;color:#555;">Cancelar</button>
-  </div>
-</div>
 
   
 </body>
