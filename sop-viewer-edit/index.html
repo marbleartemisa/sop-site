@@ -3,159 +3,255 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leer y Comentar SOP</title>
+<title>Viewer SOP con Comentarios - Artemisa</title>
 <style>
-body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f0f0f0; }
-h2 { text-align:center; margin-top:20px; }
-table { border-collapse: collapse; width: 90%; margin: 0 auto 20px auto; background:#fff; }
-th, td { border: 1px solid #ccc; padding: 8px; text-align:left; }
-th { background:#2563eb; color:white; }
-tr:hover { background:#e2e8f0; cursor:pointer; }
+body {
+    font-family: Arial, sans-serif;
+    margin:0;
+    padding:0;
+    background:#f0f0f0;
+}
 
-#sop-container { display:none; position:fixed; top:50px; left:50%; transform:translateX(-50%); width:80%; height:80%; z-index:1000; border:1px solid #ccc; background:#fff; box-shadow:0 10px 30px rgba(0,0,0,.3); }
-#sop-frame { width:100%; height:100%; border:none; }
-#comments-layer { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+/* ===== TABLA SOP ===== */
+#tabla-sop {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,.1);
+}
+#tabla-sop th, #tabla-sop td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+#tabla-sop th {
+    background: #2563eb;
+    color: white;
+}
+#tabla-sop tr:hover { background: #f0f8ff; cursor: pointer; }
 
-.comentario { position:absolute; color:red; font-weight:bold; font-size:14px; background:rgba(255,255,255,0.8); padding:2px 5px; border-radius:4px; pointer-events:auto; cursor:pointer; }
+/* ===== CONTENEDOR SOP ===== */
+#sop-container {
+    position: relative;
+    width: 90%;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    background:#fff;
+    min-height: 600px;
+    overflow: auto;
+}
 
-#modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:2000; }
-#modal-content { background:#fff; padding:20px; border-radius:5px; width:300px; }
-#comentario-text { width:100%; height:80px; }
-#btn-save, #btn-cancel { margin-top:10px; }
+/* ===== COMENTARIOS ===== */
+.comentario {
+    position: absolute;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-size: 12px;
+    font-style: italic;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* ===== MODAL ===== */
+#modal {
+    display:none;
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.5);
+    justify-content:center;
+    align-items:center;
+}
+#modal-content {
+    background:#fff;
+    padding:20px;
+    border-radius:6px;
+    width: 300px;
+}
+#comentario-text {
+    width:100%;
+    height:80px;
+}
+#btn-save, #btn-cancel {
+    margin-top:10px;
+}
 </style>
 </head>
 <body>
 
-<h2>Leer y Comentar SOP</h2>
+<h2 style="text-align:center;">Leer y Comentar SOP</h2>
 
-<table id="sop-table">
-  <thead>
-    <tr>
-      <th>Empleado</th>
-      <th>Objetivo</th>
-      <th>Área</th>
-      <th>Resumen</th>
-      <th>Estado</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
+<!-- TABLA SOP -->
+<table id="tabla-sop">
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>Departamento</th>
+            <th>Objetivo</th>
+            <th>Resumen</th>
+        </tr>
+    </thead>
+    <tbody id="tabla-body">
+        <!-- Se llenará con JS -->
+    </tbody>
 </table>
 
-<!-- Viewer SOP -->
-<div id="sop-container">
-  <iframe id="sop-frame"></iframe>
-  <div id="comments-layer"></div>
-</div>
+<!-- CONTENEDOR SOP -->
+<div id="sop-container"></div>
 
-<!-- Modal para comentario -->
+<!-- MODAL COMENTARIO -->
 <div id="modal">
-  <div id="modal-content">
-    <h3>Escribe tu comentario</h3>
-    <textarea id="comentario-text"></textarea>
-    <button id="btn-save">Guardar</button>
-    <button id="btn-cancel">Cancelar</button>
-  </div>
+    <div id="modal-content">
+        <h3>Escribe tu comentario</h3>
+        <textarea id="comentario-text"></textarea>
+        <button id="btn-save">Guardar</button>
+        <button id="btn-cancel">Cancelar</button>
+    </div>
 </div>
 
 <script>
-// --- DATOS DE PRUEBA ---
-let SOP_LIST = [
-  {
-    id_sop: "SOP-001",
-    empleado: "Damian Molina",
-    objetivo: "Optimizar compras",
-    areas: "Compras, Logística",
-    resumen: "Proceso de compra de slabs de mármol",
-    estado: "Pendiente",
-    links: "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html"
-  },
-  {
-    id_sop: "SOP-002",
-    empleado: "Alberto Molina",
-    objetivo: "Control de inventario",
-    areas: "Almacén, Producción",
-    resumen: "Registro de entradas y salidas",
-    estado: "Aprobado",
-    links: "https://marbleartemisa.github.io/sop-site/administracion/SOP-INVENTARIO/index.html"
-  }
-];
+// ===== CONFIG =====
+const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
-let CURRENT_SOP = null;
-let clickX = 0, clickY = 0;
+// Usuario actual (puede venir de login)
+const USUARIO = "TuNombre";
+const CORREO = "tucorreo@empresa.com";
 
-const sopContainer = document.getElementById("sop-container");
-const sopFrame = document.getElementById("sop-frame");
-const commentsLayer = document.getElementById("comments-layer");
+// ===== VARIABLES =====
+let SOPs = [];       // Lista de SOP desde la Sheet
+let ID_SOP = "";     // SOP seleccionado
+let SOP_URL = "";    // URL del SOP seleccionado
+let clickX = 0;
+let clickY = 0;
 
-// --- Rellenar la tabla con datos de prueba ---
-function cargarSOPs() {
-  const tbody = document.querySelector("#sop-table tbody");
-  tbody.innerHTML = "";
-  SOP_LIST.forEach(sop => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${sop.empleado}</td>
-      <td>${sop.objetivo}</td>
-      <td>${sop.areas}</td>
-      <td>${sop.resumen}</td>
-      <td>${sop.estado}</td>
-    `;
-    tr.addEventListener("click", ()=>abrirSOP(sop));
-    tbody.appendChild(tr);
-  });
+// ===== CARGAR LISTA DE SOP =====
+async function cargarSOPs() {
+    try {
+        const res = await fetch(`${SHEET_API}?tipo=fetch_sop`);
+        const data = await res.json();
+        SOPs = data.sops || [];
+        const tbody = document.getElementById("tabla-body");
+        tbody.innerHTML = "";
+        SOPs.forEach(sop => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${sop.empleado}</td>
+                <td>${sop.departamento}</td>
+                <td>${sop.objetivo}</td>
+                <td>${sop.resumen}</td>
+            `;
+            tr.addEventListener("click", () => seleccionarSOP(sop));
+            tbody.appendChild(tr);
+        });
+    } catch(err) {
+        console.error("Error cargando SOPs:", err);
+    }
 }
 
-// --- ABRIR SOP EN IFRAME ---
-function abrirSOP(sop){
-  CURRENT_SOP = sop;
-  sopContainer.style.display = "block";
-  sopFrame.src = sop.links;
-  commentsLayer.innerHTML = "";
-  sopFrame.onload = () => {
-    cargarComentariosExistentes();
-    activarClicParaComentario();
-  }
+// ===== SELECCIONAR SOP =====
+function seleccionarSOP(sop) {
+    ID_SOP = sop.id_sop;
+    SOP_URL = sop.links;
+    cargarSOP();
 }
 
-// --- DETECTAR CLIC PARA COMENTARIO ---
-function activarClicParaComentario(){
-  const iframeDoc = sopFrame.contentDocument || sopFrame.contentWindow.document;
-  iframeDoc.body.addEventListener("click", e=>{
-    if(e.target.classList.contains("comentario")) return;
-    const rect = sopFrame.getBoundingClientRect();
-    clickX = e.clientX - rect.left;
-    clickY = e.clientY - rect.top;
-    document.getElementById("modal").style.display = "flex";
-  });
+// ===== CARGAR SOP EN CONTENEDOR =====
+async function cargarSOP() {
+    try {
+        const res = await fetch(SOP_URL);
+        const html = await res.text();
+        const container = document.getElementById('sop-container');
+        container.innerHTML = html;
+
+        // Activar clic para comentarios
+        container.addEventListener('click', activarComentario);
+
+        // Cargar comentarios existentes
+        cargarComentariosExistentes();
+    } catch(err) {
+        console.error("Error cargando SOP:", err);
+        document.getElementById('sop-container').innerHTML = "<p style='color:red;'>No se pudo cargar el SOP.</p>";
+    }
 }
 
-// --- GUARDAR COMENTARIO ---
-document.getElementById("btn-save").addEventListener("click", ()=>{
-  const texto = document.getElementById("comentario-text").value.trim();
-  if(!texto) return alert("Escribe un comentario");
+// ===== ACTIVAR COMENTARIO =====
+function activarComentario(e) {
+    if(e.target.classList.contains('comentario')) return; // no sobre otro comentario
 
-  const div = document.createElement("div");
-  div.className = "comentario";
-  div.style.left = clickX + "px";
-  div.style.top = clickY + "px";
-  div.textContent = texto;
-  commentsLayer.appendChild(div);
+    const rect = e.currentTarget.getBoundingClientRect();
+    clickX = e.clientX - rect.left + e.currentTarget.scrollLeft;
+    clickY = e.clientY - rect.top + e.currentTarget.scrollTop;
 
-  document.getElementById("modal").style.display = "none";
-  document.getElementById("comentario-text").value = "";
+    document.getElementById('modal').style.display = "flex";
+}
+
+// ===== GUARDAR COMENTARIO =====
+document.getElementById('btn-save').addEventListener('click', async () => {
+    const texto = document.getElementById('comentario-text').value.trim();
+    if(!texto) return alert("Escribe algo antes de guardar");
+
+    const container = document.getElementById('sop-container');
+    const comentarioDiv = document.createElement('div');
+    comentarioDiv.className = "comentario";
+    comentarioDiv.style.left = clickX + "px";
+    comentarioDiv.style.top = clickY + "px";
+    comentarioDiv.textContent = texto;
+    container.appendChild(comentarioDiv);
+
+    // Guardar en Sheet
+    try {
+        await fetch(SHEET_API, {
+            method:"POST",
+            body: JSON.stringify({
+                tipo: "comentario",
+                id_sop: ID_SOP,
+                usuario: USUARIO,
+                correo: CORREO,
+                comentario: texto,
+                x: clickX,
+                y: clickY,
+                page: 1,
+                url_doc: SOP_URL
+            })
+        });
+        console.log("Comentario guardado en Sheet");
+    } catch(err) {
+        console.error("Error guardando comentario:", err);
+    }
+
+    document.getElementById('modal').style.display = "none";
+    document.getElementById('comentario-text').value = "";
 });
 
-// --- CANCELAR COMENTARIO ---
-document.getElementById("btn-cancel").addEventListener("click", ()=>{
-  document.getElementById("modal").style.display = "none";
-  document.getElementById("comentario-text").value = "";
+// ===== CANCELAR COMENTARIO =====
+document.getElementById('btn-cancel').addEventListener('click', () => {
+    document.getElementById('modal').style.display = "none";
+    document.getElementById('comentario-text').value = "";
 });
 
-// --- CARGAR COMENTARIOS EXISTENTES DE PRUEBA ---
-function cargarComentariosExistentes(){
-  // Para demo, dejamos vacío. Luego se reemplaza con fetch a Sheet
+// ===== CARGAR COMENTARIOS EXISTENTES =====
+async function cargarComentariosExistentes() {
+    try {
+        const res = await fetch(`${SHEET_API}?tipo=fetch_comentarios&id_sop=${ID_SOP}`);
+        const data = await res.json();
+        const container = document.getElementById('sop-container');
+        data.comentarios.forEach(c => {
+            const comentarioDiv = document.createElement('div');
+            comentarioDiv.className = "comentario";
+            comentarioDiv.style.left = c.x + "px";
+            comentarioDiv.style.top = c.y + "px";
+            comentarioDiv.textContent = c.comentario;
+            container.appendChild(comentarioDiv);
+        });
+    } catch(err) {
+        console.error("Error cargando comentarios:", err);
+    }
 }
 
+// ===== INICIO =====
 cargarSOPs();
 </script>
 
