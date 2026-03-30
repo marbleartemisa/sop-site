@@ -649,36 +649,52 @@ const API_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwK
 
 let loginType = "editor"; // o admin
 
+// --------- LOGIN JS ---------
+const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+let loginType = "editor"; // o admin
+
 function openLogin(type){
   loginType = type;
   document.getElementById("loginModal").style.display = "flex";
+  loadUsers(); // cargar usuarios cuando se abre el modal
 }
 
-
-
 function closeLogin(){
-  const modal = document.getElementById("loginModal");
-  if(modal) modal.style.display = "none";
-
+  document.getElementById("loginModal").style.display = "none";
   document.getElementById("loginUser").value = "";
   document.getElementById("loginPass").value = "";
 }
 
-/* Cerrar con ESC SOLO si el modal está abierto */
 document.addEventListener("keydown", e=>{
-  if(e.key === "Escape"){
-    const modal = document.getElementById("loginModal");
-    if(modal && modal.style.display === "flex"){
-      closeLogin();
-    }
-  }
+  if(e.key === "Escape") closeLogin();
 });
 
+// cargar usuarios desde Sheet
+function loadUsers(){
+  const select = document.getElementById("loginUser");
+  // limpiar opciones excepto la primera
+  select.querySelectorAll("option:not(:first-child)").forEach(opt=>opt.remove());
+
+  fetch(API_URL+"?action=getUsers")
+    .then(res=>res.json())
+    .then(data=>{
+      if(!data.users) return;
+      data.users.forEach(u=>{
+        const opt = document.createElement("option");
+        opt.value = u.username;
+        opt.textContent = u.username;
+        select.appendChild(opt);
+      });
+    })
+    .catch(err=>{
+      console.error("Error cargando usuarios:", err);
+    });
+}
+
+// hacer login
 function doLogin(e){
-
-  const btn = e ? e.target : document.querySelector("#loginModal button");
-  const originalText = btn.innerText;
-
+  e.preventDefault();
+  const btn = e.target;
   btn.innerText = "Validando...";
   btn.disabled = true;
 
@@ -686,8 +702,8 @@ function doLogin(e){
   const clave   = document.getElementById("loginPass").value.trim();
 
   if(!usuario || !clave){
-    alert("Complete usuario y clave");
-    btn.innerText = originalText;
+    alert("Seleccione usuario y escriba la clave");
+    btn.innerText = "Entrar";
     btn.disabled = false;
     return;
   }
@@ -696,56 +712,50 @@ function doLogin(e){
 
   fetch(API_URL,{
     method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body: JSON.stringify({
-      tipo: tipo,
-      usuario: usuario,
-      clave: clave
-    })
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({tipo, usuario, clave})
   })
-  .then(res => res.json())
-  .then(res => {
-
+  .then(res=>res.json())
+  .then(res=>{
     if(!res.success){
       alert(res.error || "Acceso denegado");
-      btn.innerText = originalText;
+      btn.innerText = "Entrar";
       btn.disabled = false;
       return;
     }
 
-    // 🔐 guardar sesión
+    // guardar sesión
     localStorage.setItem("rol", res.rol);
 
-    // 🔀 redirección
+    // redirección según rol
     if(res.rol === "admin"){
       window.location.href = "/sop-site/admin/";
     } else {
       window.location.href = "/sop-site/sop-viewer-edit/";
     }
-
   })
-  .catch(err => {
+  .catch(err=>{
     console.error(err);
-    alert("Error de conexión");
-    btn.innerText = originalText;
+    alert("Error de conexión al servidor");
+    btn.innerText = "Entrar";
     btn.disabled = false;
   });
 }
+
+
   
 </script>
-  <div id="loginModal" style="
+<!-- LOGIN MODAL -->
+<div id="loginModal" style="
   display:none;
   position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
+  top:0; left:0;
+  width:100%; height:100%;
   background:rgba(0,0,0,0.6);
   z-index:9999;
   justify-content:center;
   align-items:center;
 ">
-
   <div style="
     background:white;
     padding:30px;
@@ -755,10 +765,14 @@ function doLogin(e){
   ">
     <h3>Acceso</h3>
 
-    <input id="loginUser" placeholder="Usuario" style="width:100%;margin:10px 0;padding:10px;">
+    <!-- Usuario como select -->
+    <select id="loginUser" style="width:100%;margin:10px 0;padding:10px;">
+      <option value="">Seleccione usuario</option>
+    </select>
+
     <input id="loginPass" type="password" placeholder="Clave" style="width:100%;margin:10px 0;padding:10px;">
 
-    <button onclick="doLogin()" style="padding:10px 20px;background:#0072C6;color:white;border:none;border-radius:8px;">
+    <button id="loginBtn" onclick="doLogin(event)" style="padding:10px 20px;background:#0072C6;color:white;border:none;border-radius:8px;">
       Entrar
     </button>
 
@@ -766,5 +780,7 @@ function doLogin(e){
     <button onclick="closeLogin()" style="background:none;border:none;color:#555;">Cancelar</button>
   </div>
 </div>
+
+  
 </body>
 </html>
