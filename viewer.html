@@ -67,11 +67,14 @@ body {
     border-radius: 12px;
     box-shadow: 0 15px 40px rgba(0,0,0,.15);
 }
+
 iframe {
     width: 100%;
     height: 100%;
     border: none;
-}
+    position: relative;
+    z-index: 1; /* 👈 IMPORTANTE */
+}    
 
 /* ===== COMMENTS LAYER ===== */
 #commentsLayer {
@@ -118,9 +121,8 @@ iframe {
     left:0;
     width:100%;
     height:100%;
-    z-index:9999; /* 🔥 subirlo */
+    z-index:9999;
     cursor: crosshair;
-    background: rgba(255,0,0,0.0); /* invisible pero activo */
     display:none;
 }
 
@@ -379,16 +381,21 @@ function checkLogin(){
 
   const clickLayer = document.getElementById("clickLayer");
   clickLayer.style.display = "block";
+  clickLayer.style.pointerEvents = "auto"; // 🔥 ESTE FALTABA
 
-  // 🔥 CLAVE
-  frame.style.pointerEvents = "none";
+  frame.style.pointerEvents = "none"; // desactiva iframe
 
   clickLayer.onclick = function(e){
-    const rect = frame.getBoundingClientRect();
+  const iframeDoc = frame.contentWindow;
+  const scrollX = iframeDoc.scrollX || iframeDoc.pageXOffset;
+  const scrollY = iframeDoc.scrollY || iframeDoc.pageYOffset;
 
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
+  const rect = frame.getBoundingClientRect();
 
+ const x = (e.clientX - rect.left + scrollX) / frame.scrollWidth;
+ const y = (e.clientY - rect.top + scrollY) / frame.scrollHeight;
+
+      
     openCommentModal({x, y, page: currentPage});
   };
 
@@ -398,6 +405,9 @@ function checkLogin(){
   closeLogin();
 }
 
+
+    
+    
 // ====================== EDIT MODE ======================
 function exitEditMode(){
   editMode = false;
