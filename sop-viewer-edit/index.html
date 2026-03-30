@@ -58,39 +58,51 @@ tr:hover { background:#e2e8f0; cursor:pointer; }
 </div>
 
 <script>
-// --- CONFIGURACIONES ---
-const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-let SOP_LIST = [];   // Lista de SOP
-let CURRENT_SOP = null;
+// --- DATOS DE PRUEBA ---
+let SOP_LIST = [
+  {
+    id_sop: "SOP-001",
+    empleado: "Damian Molina",
+    objetivo: "Optimizar compras",
+    areas: "Compras, Logística",
+    resumen: "Proceso de compra de slabs de mármol",
+    estado: "Pendiente",
+    links: "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html"
+  },
+  {
+    id_sop: "SOP-002",
+    empleado: "Alberto Molina",
+    objetivo: "Control de inventario",
+    areas: "Almacén, Producción",
+    resumen: "Registro de entradas y salidas",
+    estado: "Aprobado",
+    links: "https://marbleartemisa.github.io/sop-site/administracion/SOP-INVENTARIO/index.html"
+  }
+];
 
-// --- VARIABLES DE COMENTARIOS ---
+let CURRENT_SOP = null;
 let clickX = 0, clickY = 0;
 
 const sopContainer = document.getElementById("sop-container");
 const sopFrame = document.getElementById("sop-frame");
 const commentsLayer = document.getElementById("comments-layer");
 
-// --- CARGAR SOP DESDE SHEET ---
-async function cargarSOPs() {
-  try {
-    const res = await fetch(`${SHEET_API}?tipo=fetch_sops`);
-    const data = await res.json();
-    SOP_LIST = data.sops || [];
-    const tbody = document.querySelector("#sop-table tbody");
-    tbody.innerHTML = "";
-    SOP_LIST.forEach(sop => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${sop.empleado}</td>
-        <td>${sop.objetivo}</td>
-        <td>${sop.areas}</td>
-        <td>${sop.resumen}</td>
-        <td>${sop.estado}</td>
-      `;
-      tr.addEventListener("click", ()=>abrirSOP(sop));
-      tbody.appendChild(tr);
-    });
-  } catch(err) { console.error("Error cargando SOPs:", err); }
+// --- Rellenar la tabla con datos de prueba ---
+function cargarSOPs() {
+  const tbody = document.querySelector("#sop-table tbody");
+  tbody.innerHTML = "";
+  SOP_LIST.forEach(sop => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${sop.empleado}</td>
+      <td>${sop.objetivo}</td>
+      <td>${sop.areas}</td>
+      <td>${sop.resumen}</td>
+      <td>${sop.estado}</td>
+    `;
+    tr.addEventListener("click", ()=>abrirSOP(sop));
+    tbody.appendChild(tr);
+  });
 }
 
 // --- ABRIR SOP EN IFRAME ---
@@ -109,7 +121,6 @@ function abrirSOP(sop){
 function activarClicParaComentario(){
   const iframeDoc = sopFrame.contentDocument || sopFrame.contentWindow.document;
   iframeDoc.body.addEventListener("click", e=>{
-    // Evitar clic sobre comentario existente
     if(e.target.classList.contains("comentario")) return;
     const rect = sopFrame.getBoundingClientRect();
     clickX = e.clientX - rect.left;
@@ -119,11 +130,10 @@ function activarClicParaComentario(){
 }
 
 // --- GUARDAR COMENTARIO ---
-document.getElementById("btn-save").addEventListener("click", async ()=>{
+document.getElementById("btn-save").addEventListener("click", ()=>{
   const texto = document.getElementById("comentario-text").value.trim();
   if(!texto) return alert("Escribe un comentario");
 
-  // Crear div flotante
   const div = document.createElement("div");
   div.className = "comentario";
   div.style.left = clickX + "px";
@@ -133,24 +143,6 @@ document.getElementById("btn-save").addEventListener("click", async ()=>{
 
   document.getElementById("modal").style.display = "none";
   document.getElementById("comentario-text").value = "";
-
-  // Guardar en Sheet
-  try {
-    await fetch(SHEET_API, {
-      method:"POST",
-      body: JSON.stringify({
-        tipo:"comentario",
-        id_sop: CURRENT_SOP.id_sop,
-        usuario:"UsuarioX",
-        correo:"usuario@empresa.com",
-        comentario:texto,
-        x: clickX,
-        y: clickY,
-        page:1,
-        url_doc: CURRENT_SOP.links
-      })
-    });
-  } catch(err){ console.error("Error guardando comentario:", err); }
 });
 
 // --- CANCELAR COMENTARIO ---
@@ -159,24 +151,11 @@ document.getElementById("btn-cancel").addEventListener("click", ()=>{
   document.getElementById("comentario-text").value = "";
 });
 
-// --- CARGAR COMENTARIOS EXISTENTES ---
-async function cargarComentariosExistentes(){
-  if(!CURRENT_SOP) return;
-  try{
-    const res = await fetch(`${SHEET_API}?comments=${CURRENT_SOP.id_sop}`);
-    const data = await res.json();
-    data.forEach(c=>{
-      const div = document.createElement("div");
-      div.className="comentario";
-      div.style.left = c.x + "px";
-      div.style.top = c.y + "px";
-      div.textContent = c.comentario;
-      commentsLayer.appendChild(div);
-    });
-  }catch(err){ console.error("Error cargando comentarios:", err); }
+// --- CARGAR COMENTARIOS EXISTENTES DE PRUEBA ---
+function cargarComentariosExistentes(){
+  // Para demo, dejamos vacío. Luego se reemplaza con fetch a Sheet
 }
 
-// --- INICIAR ---
 cargarSOPs();
 </script>
 
