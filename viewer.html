@@ -2,35 +2,49 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Viewer SOP Pro - Artemisa</title>
 <style>
 /* ===== BODY & GENERAL ===== */
-body { margin:0; background:#eef2f7; font-family:"Segoe UI", Arial, sans-serif; }
-.topbar { background:#0f172a; color:white; padding:14px 28px; display:flex; justify-content:space-between; align-items:center; position:fixed; width:100%; top:0; z-index:100; }
+body { margin:0; font-family: "Segoe UI", Arial, sans-serif; background:#eef2f7; }
+
+/* ===== TOPBAR ===== */
+.topbar {
+    background:#0f172a; color:white; padding:14px 28px;
+    display:flex; justify-content:space-between; align-items:center;
+    position:fixed; width:100%; top:0; z-index:100;
+}
 .brand { font-weight:600; letter-spacing:.4px; font-size:15px; }
 .back { background:#2563eb; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:13px; }
-.doc-header { max-width:1100px; margin:80px auto 10px auto; padding:0 10px; display:flex; justify-content:space-between; align-items:center; }
-.tool { background:white; border:1px solid #e2e8f0; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; transition:.2s; }
-.tool:hover { background:#2563eb; color:white; }
-.tool.disabled { opacity:.5; pointer-events:none; }
 
 /* ===== DOC AREA ===== */
-.doc-area { display:flex; justify-content:center; padding:10px 20px 40px; }
-.doc-frame { position:relative; width:100%; max-width:1100px; height:80vh; overflow:visible; background:white; border-radius:12px; box-shadow:0 15px 40px rgba(0,0,0,.15); }
+.doc-area { display:flex; justify-content:center; padding:80px 20px 40px; }
+.doc-frame { position:relative; width:100%; max-width:1100px; height:80vh; overflow:visible; background:white; border-radius:12px; box-shadow:0 15px 40px rgba(0,0,0,.15);}
 iframe { width:100%; height:100%; border:none; }
 
 /* ===== COMMENTS LAYER ===== */
-#commentsLayer { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:450; }
-.floating-comment { position:absolute; pointer-events:auto; z-index:999; }
-.floating-comment div { background: rgba(255,255,255,0.9); border-left:4px solid #dc2626; color:#dc2626; padding:6px; border-radius:6px; font-size:12px; font-style:italic; max-width:220px; word-wrap:break-word; }
-.floating-comment textarea { width:200px; height:60px; border:none; outline:none; background: rgba(255,255,255,0.9); font-style:italic; font-size:12px; resize:none; }
+.floating-comment {
+  position:absolute;
+  pointer-events:auto;
+  z-index:999;
+}
+.floating-comment div {
+  background: rgba(255,255,255,0.9);
+  border-left:4px solid #dc2626;
+  color:#dc2626; padding:6px; border-radius:6px; font-size:12px; font-style:italic; max-width:220px; word-wrap:break-word;
+}
 
 /* ===== CLICK LAYER ===== */
-#clickLayer { position:absolute; top:0; left:0; width:100%; height:100%; z-index:400; cursor:crosshair; background:transparent; display:none; }
+#clickLayer {
+    position:absolute; top:0; left:0; width:100%; height:100%; z-index:400;
+    cursor: crosshair; background: transparent; display:none;
+}
 
 /* ===== LOGIN OVERLAY ===== */
-#loginOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg,#0f172a,#1e293b); display:none; align-items:center; justify-content:center; z-index:500; }
+#loginOverlay {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  display:none; align-items:center; justify-content:center; z-index:500;
+}
 .login-card { background:white; padding:35px; border-radius:16px; width:360px; box-shadow:0 20px 50px rgba(0,0,0,.4); }
 #loginMessage { color:red; font-size:13px; margin-bottom:10px; }
 .login-card button { padding:10px 20px; border-radius:8px; font-size:14px; border:none; cursor:pointer; transition:.2s; }
@@ -38,11 +52,15 @@ iframe { width:100%; height:100%; border:none; }
 #loginOverlay .login-card button#loginBtn:hover { background:#1e40af; }
 #loginOverlay .login-card button.cancelBtn { background:#e5e7eb; color:#111; }
 #loginOverlay .login-card button.cancelBtn:hover { background:#cbd5e1; }
-.login-card select, .login-card input[type="password"] { width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:12px; font-size:14px; }
+.login-card select, .login-card input[type="password"] { width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:12px; font-size:14px; box-sizing:border-box; }
 
 /* ===== MODAL NUEVO COMENTARIO ===== */
-#commentModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:500px; max-width:90%; background:white; z-index:1000; border-radius:14px; padding:25px; box-shadow:0 20px 50px rgba(0,0,0,.4); }
-#commentModal textarea { width:100%; height:80px; }
+#commentModal {
+  display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:500px; max-width:90%; background:white; z-index:1000; border-radius:14px; padding:25px; box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+#commentModal textarea { width:100%; height:80px; padding:8px; border-radius:8px; border:1px solid #cbd5e1; resize:none; }
+
 </style>
 </head>
 <body>
@@ -50,24 +68,13 @@ iframe { width:100%; height:100%; border:none; }
 <div class="topbar">
   <div class="brand">ARTEMISA SOP • VIEWER</div>
   <a class="back" href="/sop-site/">⬅ Biblioteca</a>
-</div>
-
-<div class="doc-header">
-  <div id="title">Documento SOP</div>
-  <div>
-    <button class="tool" onclick="openNew()">Abrir</button>
-    <button class="tool" onclick="downloadDoc()">Descargar</button>
-    <button class="tool" onclick="printDoc()">Imprimir</button>
-    <button class="tool" onclick="showLogin()">🔒 Editar</button>
-    <button class="tool" id="commentBtn" onclick="enableCommentMode()">💬 Comentar</button>
-  </div>
+  <button onclick="enableEditMode()">🔒 Editar</button>
 </div>
 
 <div class="doc-area">
   <div class="doc-frame">
     <iframe id="frame"></iframe>
     <div id="clickLayer"></div>
-    <div id="commentsLayer"></div>
   </div>
 </div>
 
@@ -105,105 +112,134 @@ iframe { width:100%; height:100%; border:none; }
 </div>
 
 <script>
-// ===== VARIABLES GLOBALES =====
+const frame = document.getElementById("frame");
+const clickLayer = document.getElementById("clickLayer");
+const commentModal = document.getElementById("commentModal");
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+
 let editMode = false;
 let currentUser = "";
-let currentPage = 1;
-const params = new URLSearchParams(window.location.search);
-let doc = params.get("doc") || "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html";
-let idSOP = params.get("id") || "SOP-1774461381359-0";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-const frame = document.getElementById("frame");
+let idSOP = new URLSearchParams(window.location.search).get("id") || "";
+let docURL = new URLSearchParams(window.location.search).get("doc") || "";
+let loadedComments = [];
+
+if(docURL) frame.src = docURL;
 
 // Usuarios y contraseñas
-const users = { "Damian Molina":"Dam1975","Alberto Molina":"Alb1975","Gabriel Batista":"Gab1975","Jenny Perez":"Jen1975","Yoandry Perez":"Yoa1975","Wendy Romanach":"Wen1975","Otros":"Otr1975" };
+const users = {
+  "Damian Molina":"Dam1975",
+  "Alberto Molina":"Alb1975",
+  "Gabriel Batista":"Gab1975",
+  "Jenny Perez":"Jen1975",
+  "Yoandry Perez":"Yoa1975",
+  "Wendy Romanach":"Wen1975",
+  "Otros":"Otr1975"
+};
 
-// ===== LOGIN =====
-function showLogin(){ document.getElementById("loginOverlay").style.display="flex"; }
+// ====================== LOGIN ======================
+function enableEditMode(){ document.getElementById("loginOverlay").style.display="flex"; }
 function closeLogin(){ document.getElementById("loginOverlay").style.display="none"; }
+
 function checkLogin(){
   const user = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
   const msg = document.getElementById("loginMessage");
   if(!user){ msg.innerText="Seleccione usuario"; return; }
   if(users[user]!==pass){ msg.innerText="Clave incorrecta"; return; }
+
   editMode = true;
   currentUser = user;
   closeLogin();
-  alert("Modo edición activado. Ahora puede comentar sobre el SOP.");
+  alert("Modo edición activado. Haga clic sobre el documento para agregar comentarios.");
+  loadComments();
 }
 
-// ===== FUNCIONES IFRAME =====
-frame.src = doc;
+// ====================== CLICK PARA COMENTARIO ======================
+clickLayer.addEventListener("click", e => {
+  if(!editMode) return;
 
-// ===== MODO COMENTARIO =====
-function enableCommentMode(){
-  if(!editMode){ alert("Activa modo edición primero"); return; }
-  const clickLayer = document.getElementById("clickLayer");
-  clickLayer.style.display="block";
-  clickLayer.onclick = async e => {
-    const rect = frame.getBoundingClientRect();
-    const x = (e.clientX - rect.left)/rect.width;
-    const y = (e.clientY - rect.top)/rect.height;
-    openCommentModal({x,y});
-    clickLayer.style.display="none";
-  };
-}
+  const rect = frame.getBoundingClientRect();
+  const x = (e.clientX - rect.left)/rect.width;
+  const y = (e.clientY - rect.top)/rect.height;
 
-// ===== MODAL COMENTARIO =====
+  openCommentModal({x,y});
+  clickLayer.style.display="none";
+});
+
 function openCommentModal(data){
-  const modal = document.getElementById("commentModal");
-  modal.style.display="block";
-  modal.dataset.x = data.x;
-  modal.dataset.y = data.y;
+  commentModal.style.display="block";
+  commentModal.dataset.x = data.x;
+  commentModal.dataset.y = data.y;
+  document.getElementById("commentInput").value = "";
 }
-function closeCommentModal(){ document.getElementById("commentModal").style.display="none"; }
+function closeCommentModal(){ commentModal.style.display="none"; }
 
-// ===== GUARDAR COMENTARIO =====
+// ====================== GUARDAR COMENTARIO ======================
 async function saveComment(){
-  const modal = document.getElementById("commentModal");
   const text = document.getElementById("commentInput").value.trim();
   if(!text){ alert("Comentario vacío"); return; }
 
   const newComment = {
     id_comment: Date.now().toString(),
-    usuario: currentUser || "Anónimo",
+    id_sop: idSOP,
+    usuario: currentUser,
     comentario: text,
-    x: parseFloat(modal.dataset.x),
-    y: parseFloat(modal.dataset.y),
-    page: currentPage
+    x: parseFloat(commentModal.dataset.x),
+    y: parseFloat(commentModal.dataset.y)
   };
 
   try{
     await fetch(SCRIPT_URL,{
       method:"POST",
-      body: JSON.stringify({...newComment, id_sop:idSOP, tipo:"comentario"})
+      body: JSON.stringify({...newComment, tipo:"comentario"})
     });
-    // Dibujar comentario dentro del iframe
+    loadedComments.push(newComment);
     drawCommentInIframe(newComment);
     closeCommentModal();
-    document.getElementById("commentInput").value="";
-  }catch(err){ alert("Error guardando comentario: "+err); }
+  }catch(err){
+    alert("Error guardando comentario: "+err);
+  }
 }
 
-// ===== DIBUJAR COMENTARIO =====
+// ====================== CARGAR COMENTARIOS ======================
+async function loadComments(){
+  try{
+    const res = await fetch(`${SCRIPT_URL}?comments=${idSOP}`);
+    const data = await res.json();
+    loadedComments = data || [];
+    loadedComments.forEach(drawCommentInIframe);
+  }catch(err){ console.error(err); }
+}
+
+// ====================== DIBUJAR COMENTARIO EN IFRAME ======================
 function drawCommentInIframe(comment){
   const iframeDoc = frame.contentDocument || frame.contentWindow.document;
+  if(!iframeDoc.body) return;
+
+  // Contenedor de comentarios
+  let container = iframeDoc.getElementById("commentsLayerInside");
+  if(!container){
+    container = iframeDoc.createElement("div");
+    container.id="commentsLayerInside";
+    container.style.position="absolute";
+    container.style.top=0;
+    container.style.left=0;
+    container.style.width="100%";
+    container.style.height="100%";
+    container.style.pointerEvents="none";
+    iframeDoc.body.appendChild(container);
+  }
+
   const docWidth = iframeDoc.documentElement.scrollWidth;
   const docHeight = iframeDoc.documentElement.scrollHeight;
-  const el = iframeDoc.createElement("div");
-  el.className = "floating-comment";
-  el.style.left = (comment.x*docWidth)+"px";
-  el.style.top = (comment.y*docHeight)+"px";
+
+  const el = document.createElement("div");
+  el.className="floating-comment";
+  el.style.left = (comment.x*docWidth) + "px";
+  el.style.top = (comment.y*docHeight) + "px";
   el.innerHTML = `<div>${comment.comentario}</div>`;
-  iframeDoc.body.appendChild(el);
+  container.appendChild(el);
 }
-
-// ===== FUNCIONES UTILES =====
-function openNew(){ window.open(doc,"_blank"); }
-function downloadDoc(){ const a=document.createElement("a"); a.href=doc; a.download=doc.split("/").pop(); a.click(); }
-function printDoc(){ frame.contentWindow.print(); }
 </script>
-
 </body>
 </html>
