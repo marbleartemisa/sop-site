@@ -442,23 +442,15 @@ function commentSelectedText() {
   clickLayer.style.cursor="crosshair";
 
   clickLayer.onclick = e => {
-const iframeDoc = frame.contentDocument || frame.contentWindow.document;
-const docWidth = iframeDoc.documentElement.scrollWidth;
-const docHeight = iframeDoc.documentElement.scrollHeight;
-
-const rect = frame.getBoundingClientRect();
-
-const x = (e.clientX - rect.left) / rect.width;
-const y = (e.clientY - rect.top) / rect.height;
+    const rect = frame.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
 
     openCommentModal({x,y,page:currentPage});
     clickLayer.style.display="none";
   };
 }
 
-
-
-    
 // ====================== MODAL ======================
 function openCommentModal(data){
   const modal = document.getElementById("commentModal");
@@ -515,156 +507,44 @@ async function saveComment() {
   }
 }
 
-function findTextNode(doc, text){
-  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
-  let node;
-
-  while(node = walker.nextNode()){
-    if(node.nodeValue.includes(text)){
-      return node;
-    }
-  }
-  return null;
-}
-
-function createCommentAtText(iframeDoc, textNode, comment){
-
-  const range = iframeDoc.createRange();
-  const startIndex = textNode.nodeValue.indexOf(comment.text_selected);
-
-  if(startIndex === -1) return false;
-
-  range.setStart(textNode, startIndex);
-  range.setEnd(textNode, startIndex + comment.text_selected.length);
-
-  const rect = range.getBoundingClientRect();
-
-  const el = iframeDoc.createElement("div");
-  el.className = "floating-comment";
-  el.innerHTML = `<div>${comment.comentario}</div>`;
-
-  el.style.position = "absolute";
-  el.style.left = rect.left + "px";
-  el.style.top = rect.top + "px";
-  el.style.zIndex = 9999;
-
-  iframeDoc.body.appendChild(el);
-
-  return true;
-}
-
-    
-
-    
 // ====================== RENDER COMENTARIOS DENTRO DEL IFRAME ======================
 function renderCommentsForPage(pageNumber){
   if(!window.loadedComments) return;
 
   const iframeDoc = frame.contentDocument || frame.contentWindow.document;
-  if(!iframeDoc || !iframeDoc.body) return;
+  if(!iframeDoc) return;
 
-  // Asegurar que el body sea relativo (clave)
-  iframeDoc.body.style.position = "relative";
-
-  // Crear contenedor si no existe
+  // Crear contenedor dentro del iframe si no existe
   let commentsContainer = iframeDoc.getElementById("commentsLayerInside");
-
   if(!commentsContainer){
     commentsContainer = iframeDoc.createElement("div");
     commentsContainer.id = "commentsLayerInside";
-
     commentsContainer.style.position = "absolute";
-    commentsContainer.style.top = "0";
-    commentsContainer.style.left = "0";
+    commentsContainer.style.top = 0;
+    commentsContainer.style.left = 0;
     commentsContainer.style.width = "100%";
     commentsContainer.style.height = "100%";
     commentsContainer.style.pointerEvents = "none";
-    commentsContainer.style.zIndex = "9998";
-
+    iframeDoc.body.style.position = "relative";
     iframeDoc.body.appendChild(commentsContainer);
   }
-
   commentsContainer.innerHTML = "";
-
-  const docWidth = iframeDoc.documentElement.scrollWidth;
-  const docHeight = iframeDoc.documentElement.scrollHeight;
 
   window.loadedComments
     .filter(c => Number(c.page) === pageNumber)
     .forEach(c => {
-
-      let placed = false;
-
-      // =========================
-      // 🔥 INTENTO 1: ANCLAR POR TEXTO
-      // =========================
-      if(c.text_selected){
-
-        const walker = iframeDoc.createTreeWalker(
-          iframeDoc.body,
-          NodeFilter.SHOW_TEXT,
-          null,
-          false
-        );
-
-        let node;
-        while(node = walker.nextNode()){
-
-          if(node.nodeValue.includes(c.text_selected)){
-
-            const range = iframeDoc.createRange();
-            const startIndex = node.nodeValue.indexOf(c.text_selected);
-
-            range.setStart(node, startIndex);
-            range.setEnd(node, startIndex + c.text_selected.length);
-
-            const rect = range.getBoundingClientRect();
-            const bodyRect = iframeDoc.body.getBoundingClientRect();
-
-            const el = iframeDoc.createElement("div");
-            el.className = "floating-comment";
-            el.innerHTML = `<div>${c.comentario}</div>`;
-
-            el.style.position = "absolute";
-            el.style.pointerEvents = "auto";
-
-            // 🔥 posición RELATIVA al documento
-            el.style.left = (rect.left - bodyRect.left) + "px";
-            el.style.top = (rect.top - bodyRect.top) + "px";
-
-            el.style.zIndex = 9999;
-
-            commentsContainer.appendChild(el);
-
-            placed = true;
-            break;
-          }
-        }
-      }
-
-      // =========================
-      // 🔥 FALLBACK: COORDENADAS
-      // =========================
-      if(!placed && c.x != null && c.y != null){
-
-        const el = iframeDoc.createElement("div");
-        el.className = "floating-comment";
-        el.innerHTML = `<div>${c.comentario}</div>`;
-
-        el.style.position = "absolute";
-        el.style.pointerEvents = "auto";
-
-        el.style.left = (c.x * docWidth) + "px";
-        el.style.top = (c.y * docHeight) + "px";
-
-        el.style.zIndex = 9999;
-
-        commentsContainer.appendChild(el);
-      }
-
+      const el = iframeDoc.createElement("div");
+      el.className = "floating-comment";
+      el.innerHTML = `<div>${c.comentario}</div>`;
+      el.style.position = "absolute";
+      el.style.pointerEvents = "auto";
+      el.style.left = (c.x * iframeDoc.body.clientWidth) + "px";
+      el.style.top = (c.y * iframeDoc.body.clientHeight) + "px";
+      el.style.zIndex = 9999;
+      commentsContainer.appendChild(el);
     });
 }
-    
+
 // ====================== CARGAR COMENTARIOS ======================
 async function loadComments(){
   const loader = document.getElementById("commentsLoader");
