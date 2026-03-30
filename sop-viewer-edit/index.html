@@ -3,176 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leer y Comentar SOP</title>
+<title>Viewer SOP con Comentarios</title>
 <style>
   body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f0f0f0; }
-  h2 { text-align:center; margin:20px 0; }
-  
-  table { width:90%; margin: 0 auto 20px; border-collapse: collapse; background:#fff; }
-  th, td { border:1px solid #ccc; padding:8px 12px; text-align:left; }
-  th { background:#2563eb; color:white; }
-  tr:hover { background:#e2e8f0; cursor:pointer; }
+  h2 { text-align:center; margin: 20px 0; }
 
-  /* Viewer */
-  #sop-viewer {
-    display:none;
-    position:fixed;
-    top:50px;
-    left:50%;
-    transform:translateX(-50%);
-    width:90%;
-    height:80%;
-    background:#fff;
-    border:2px solid #2563eb;
-    box-shadow:0 10px 30px rgba(0,0,0,0.3);
-    z-index:100;
-    overflow:auto;
-    padding:10px;
+  #sop-container { 
+    position: relative; 
+    width: 80%; 
+    margin: 20px auto; 
+    border: 1px solid #ccc; 
+    background:#fff; 
+    min-height:600px;
   }
 
-  /* Comentarios dentro del SOP */
+  #canvas-wrapper {
+    position: relative;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+  }
+
   .comentario {
-    position:absolute;
-    background: rgba(255,255,0,0.7);
-    border:1px solid #aaa;
-    border-radius:4px;
-    padding:2px 6px;
+    position: absolute;
+    background: rgba(255,255,0,0.8);
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    border-radius: 4px;
     font-size:12px;
-    cursor:pointer;
-    z-index:500;
+    pointer-events: none;
   }
 
-  /* Modal */
   #modal {
-    display:none; position:fixed; top:0; left:0;
-    width:100%; height:100%;
-    background: rgba(0,0,0,0.5);
-    justify-content:center; align-items:center;
-    z-index:1000;
+    display:none; 
+    position: fixed; 
+    top:0; left:0; width:100%; height:100%; 
+    background: rgba(0,0,0,0.6); 
+    justify-content:center; 
+    align-items:center; 
   }
   #modal-content {
-    background:#fff; padding:20px; border-radius:5px;
-    width:300px;
+    background:#fff; 
+    padding:20px; 
+    border-radius:5px; 
+    width:300px; 
   }
-  #comentario-text { width:100%; height:80px; }
-  #btn-save, #btn-cancel { margin-top:10px; padding:6px 12px; }
+  #comentario-text { width:100%; height:80px; margin-top:5px; }
+  #btn-save, #btn-cancel { margin-top:10px; margin-right:5px; padding:6px 12px; cursor:pointer; }
 </style>
 </head>
 <body>
 
-<h2>Leer y Comentar SOP</h2>
+<h2>Viewer SOP con Comentarios</h2>
 
-<table>
-  <thead>
-    <tr><th>Empleado</th><th>Departamento</th><th>Objetivo</th><th>Resumen</th></tr>
-  </thead>
-  <tbody id="tabla-body"></tbody>
-</table>
+<div id="sop-container">
+  <div id="canvas-wrapper"></div>
+</div>
 
-<div id="sop-viewer"></div>
-
-<!-- Modal comentario -->
+<!-- Modal para escribir comentario -->
 <div id="modal">
   <div id="modal-content">
     <h3>Escribe tu comentario</h3>
-    <textarea id="comentario-text"></textarea><br>
-    <button id="btn-save">Guardar</button>
-    <button id="btn-cancel">Cancelar</button>
+    <textarea id="comentario-text"></textarea>
+    <div style="text-align:right;">
+      <button id="btn-save">Guardar</button>
+      <button id="btn-cancel">Cancelar</button>
+    </div>
   </div>
 </div>
 
+<!-- html2canvas -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <script>
-let SOPs = [
-  { empleado: "Damian Molina", departamento: "Administración", objetivo: "Compra de slabs", resumen: "Resumen 1", links: "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html", id_sop: "SOP-1" },
-  { empleado: "Alberto Molina", departamento: "Producción", objetivo: "Control de inventario", resumen: "Resumen 2", links: "https://marbleartemisa.github.io/sop-site/produccion/SOP-INVENTARIO/index.html", id_sop: "SOP-2" }
-];
+const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
-const tbody = document.getElementById("tabla-body");
-const viewer = document.getElementById("sop-viewer");
-let clickX=0, clickY=0;
-let comentarios=[]; // comentarios en memoria
-let sopActual=null;
+// Configura aquí tu SOP
+const SOP_URL = "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html"; 
+const ID_SOP = "SOP-1774461381359-0";
+const USUARIO = "TuNombre";
+const CORREO = "tucorreo@empresa.com";
 
-// Llenar tabla
-function renderTabla() {
-  tbody.innerHTML="";
-  SOPs.forEach(sop=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${sop.empleado}</td><td>${sop.departamento}</td><td>${sop.objetivo}</td><td>${sop.resumen}</td>`;
-    tr.addEventListener("click", ()=> seleccionarSOP(sop));
-    tbody.appendChild(tr);
-  });
-}
+let comentarios = [];
+let clickX = 0, clickY = 0;
 
-// Abrir SOP en viewer
-async function seleccionarSOP(sop) {
-  sopActual=sop;
-  viewer.innerHTML = "<p>Cargando SOP...</p>";
-  viewer.style.display="block";
+// Cargar HTML y generar canvas
+async function cargarSOP() {
   try {
-    const res = await fetch(sop.links);
-    const html = await res.text();
-    viewer.innerHTML = html;
+    const response = await fetch(SOP_URL);
+    const html = await response.text();
 
-    // Permitir agregar comentarios
-    viewer.addEventListener("click", activarComentario);
-    
-    // Renderizar comentarios existentes
-    renderComentarios();
+    // Crear div temporal para renderizar
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    tempDiv.style.width = "800px"; // ancho fijo para html2canvas
+    tempDiv.style.padding = "20px";
+    tempDiv.style.background = "#fff";
+
+    const wrapper = document.getElementById('canvas-wrapper');
+    wrapper.innerHTML = ""; // limpiar
+    wrapper.appendChild(tempDiv);
+
+    // Esperamos que las imágenes carguen
+    await new Promise(res => setTimeout(res, 500));
+
+    // Renderizamos el canvas
+    const canvas = await html2canvas(tempDiv, {useCORS:true, scale:1});
+    canvas.id = "sop-canvas";
+
+    // Limpiamos y colocamos canvas
+    wrapper.innerHTML = "";
+    wrapper.appendChild(canvas);
+
+    canvas.addEventListener('click', activarComentario);
+
+    cargarComentariosExistentes();
+
   } catch(err) {
-    viewer.innerHTML = "<p style='color:red;'>No se pudo cargar el SOP</p>";
     console.error(err);
+    document.getElementById('canvas-wrapper').innerHTML = "<p style='color:red;'>No se pudo cargar el SOP.</p>";
   }
 }
 
-// Activar modal al hacer clic dentro del SOP
+// Activar modal al hacer clic
 function activarComentario(e) {
-  if(e.target.classList.contains("comentario")) return;
-  const rect = viewer.getBoundingClientRect();
-  clickX = e.clientX - rect.left + viewer.scrollLeft;
-  clickY = e.clientY - rect.top + viewer.scrollTop;
-  document.getElementById("modal").style.display="flex";
+  const rect = e.target.getBoundingClientRect();
+  clickX = e.clientX - rect.left;
+  clickY = e.clientY - rect.top;
+
+  document.getElementById('modal').style.display = 'flex';
 }
 
 // Guardar comentario
-document.getElementById("btn-save").addEventListener("click", ()=>{
-  const text = document.getElementById("comentario-text").value.trim();
-  if(!text) return alert("Escribe algo");
-  
-  const div = document.createElement("div");
-  div.className="comentario";
-  div.style.left=clickX+"px";
-  div.style.top=clickY+"px";
-  div.textContent=text;
-  viewer.appendChild(div);
+document.getElementById('btn-save').addEventListener('click', async () => {
+  const texto = document.getElementById('comentario-text').value.trim();
+  if(!texto) return alert("Escribe algo antes de guardar");
 
-  comentarios.push({x:clickX, y:clickY, text});
-  document.getElementById("modal").style.display="none";
-  document.getElementById("comentario-text").value="";
+  comentarios.push({x:clickX, y:clickY, comentario:texto});
+  dibujarComentarios();
 
-  console.log("Comentario guardado (simulado):", {sop:sopActual.id_sop, x:clickX, y:clickY, text});
+  document.getElementById('modal').style.display = 'none';
+  document.getElementById('comentario-text').value = "";
+
+  // Guardar en Sheet
+  try {
+    await fetch(SHEET_API, {
+      method:"POST",
+      body: JSON.stringify({
+        tipo: "comentario",
+        id_sop: ID_SOP,
+        usuario: USUARIO,
+        correo: CORREO,
+        comentario: texto,
+        x: clickX,
+        y: clickY,
+        page: 1,
+        url_doc: SOP_URL
+      })
+    });
+    console.log("Comentario guardado en Sheet");
+  } catch(err) {
+    console.error("Error guardando comentario:", err);
+  }
 });
 
 // Cancelar comentario
-document.getElementById("btn-cancel").addEventListener("click", ()=>{
-  document.getElementById("modal").style.display="none";
-  document.getElementById("comentario-text").value="";
+document.getElementById('btn-cancel').addEventListener('click', () => {
+  document.getElementById('modal').style.display = 'none';
+  document.getElementById('comentario-text').value = "";
 });
 
-// Renderizar comentarios existentes en viewer
-function renderComentarios() {
-  comentarios.forEach(c=>{
-    const div = document.createElement("div");
-    div.className="comentario";
-    div.style.left=c.x+"px";
-    div.style.top=c.y+"px";
-    div.textContent=c.text;
-    viewer.appendChild(div);
+// Dibujar comentarios sobre canvas
+function dibujarComentarios() {
+  const wrapper = document.getElementById('canvas-wrapper');
+  wrapper.querySelectorAll('.comentario').forEach(el => el.remove());
+  comentarios.forEach(c => {
+    const div = document.createElement('div');
+    div.className = "comentario";
+    div.style.left = c.x + "px";
+    div.style.top = c.y + "px";
+    div.textContent = c.comentario;
+    wrapper.appendChild(div);
   });
 }
 
+// Cargar comentarios existentes desde Sheet
+async function cargarComentariosExistentes() {
+  try {
+    const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
+    const data = await res.json();
+    comentarios = data.map(c=>({x:c.x, y:c.y, comentario:c.comentario}));
+    dibujarComentarios();
+  } catch(err) {
+    console.error("Error cargando comentarios:", err);
+  }
+}
+
 // Iniciar
-renderTabla();
+cargarSOP();
 </script>
 
 </body>
