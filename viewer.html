@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Viewer SOP con Comentarios</title>
+<title>Viewer SOP con Comentarios Mejorado</title>
 <style>
   body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f0f0f0; }
   h2 { text-align:center; margin: 20px 0; }
@@ -17,37 +17,28 @@
     min-height:600px;
   }
 
-  iframe {
-    width: 100%;
-    height: 800px;
-    border: none;
-  }
+  iframe { width: 100%; height: 600px; border: none; display:block; }
 
-  /* Capa de comentarios sobre el iframe */
-  #commentsLayer {
+  /* Layer para detectar clics */
+  #click-layer {
     position: absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    pointer-events:none; /* los clics pasan al iframe */
-    z-index: 9999;
+    top:0; left:0;
+    width:100%; height:100%;
+    cursor: crosshair;
+    z-index: 10;
   }
 
   .comentario {
     position: absolute;
-    background: rgba(255,0,0,0.2); /* fondo rojo semitransparente */
-    border: 1px solid red;         /* borde rojo */
-    color: red;                     /* texto rojo */
-    padding: 4px 6px;
+    background: rgba(255,0,0,0.8);
+    color:#fff;
     border-radius: 4px;
+    padding: 2px 6px;
     font-size:12px;
-    pointer-events: auto; /* para que sean clicables si quieres */
-    max-width: 200px;
-    word-wrap: break-word;
+    pointer-events:none;
+    z-index: 20;
   }
 
-  /* Modal para escribir comentario */
   #modal {
     display:none; 
     position: fixed; 
@@ -55,6 +46,7 @@
     background: rgba(0,0,0,0.6); 
     justify-content:center; 
     align-items:center; 
+    z-index: 100;
   }
   #modal-content {
     background:#fff; 
@@ -64,16 +56,15 @@
   }
   #comentario-text { width:100%; height:80px; margin-top:5px; }
   #btn-save, #btn-cancel { margin-top:10px; margin-right:5px; padding:6px 12px; cursor:pointer; }
-
 </style>
 </head>
 <body>
 
-<h2>Viewer SOP con Comentarios</h2>
+<h2>Viewer SOP con Comentarios Mejorado</h2>
 
 <div id="sop-container">
-  <iframe id="sop-frame" src=""></iframe>
-  <div id="commentsLayer"></div>
+  <iframe id="sop-frame" src="https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html"></iframe>
+  <div id="click-layer"></div>
 </div>
 
 <!-- Modal para escribir comentario -->
@@ -91,8 +82,6 @@
 <script>
 const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
-// Configura aquí tu SOP
-const SOP_URL = "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html"; 
 const ID_SOP = "SOP-1774461381359-0";
 const USUARIO = "TuNombre";
 const CORREO = "tucorreo@empresa.com";
@@ -100,15 +89,11 @@ const CORREO = "tucorreo@empresa.com";
 let comentarios = [];
 let clickX = 0, clickY = 0;
 
-// Cargar SOP en iframe
-const iframe = document.getElementById('sop-frame');
-iframe.src = SOP_URL;
-
-// Activar modal al hacer clic sobre el layer
-const commentsLayer = document.getElementById('commentsLayer');
-commentsLayer.addEventListener('click', (e) => {
-  clickX = e.offsetX;
-  clickY = e.offsetY;
+// Detectar clic en el layer transparente
+document.getElementById('click-layer').addEventListener('click', e => {
+  const rect = e.target.getBoundingClientRect();
+  clickX = e.clientX - rect.left;
+  clickY = e.clientY - rect.top;
   document.getElementById('modal').style.display = 'flex';
 });
 
@@ -136,7 +121,7 @@ document.getElementById('btn-save').addEventListener('click', async () => {
         x: clickX,
         y: clickY,
         page: 1,
-        url_doc: SOP_URL
+        url_doc: document.getElementById('sop-frame').src
       })
     });
     console.log("Comentario guardado en Sheet");
@@ -153,18 +138,19 @@ document.getElementById('btn-cancel').addEventListener('click', () => {
 
 // Dibujar comentarios sobre el layer
 function dibujarComentarios() {
-  commentsLayer.innerHTML = "";
+  const layer = document.getElementById('sop-container');
+  layer.querySelectorAll('.comentario').forEach(el => el.remove());
   comentarios.forEach(c => {
-    const div = document.createElement("div");
+    const div = document.createElement('div');
     div.className = "comentario";
     div.style.left = c.x + "px";
     div.style.top = c.y + "px";
     div.textContent = c.comentario;
-    commentsLayer.appendChild(div);
+    layer.appendChild(div);
   });
 }
 
-// Cargar comentarios existentes desde Sheet
+// Cargar comentarios existentes
 async function cargarComentariosExistentes() {
   try {
     const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
@@ -176,10 +162,8 @@ async function cargarComentariosExistentes() {
   }
 }
 
-// Espera a que el iframe cargue para activar layer
-iframe.onload = () => {
-  cargarComentariosExistentes();
-};
+// Inicializar
+cargarComentariosExistentes();
 </script>
 
 </body>
