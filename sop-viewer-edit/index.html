@@ -8,7 +8,7 @@
 <style>
 body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f2937; }
 
-/* NAVBAR */
+  /* NAVBAR */
 .navbar{
   position:sticky;
   top:0;
@@ -20,8 +20,9 @@ body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f29
   display:flex;
   justify-content:space-between;
   align-items:center;
-  z-index:999;
+  z-index:11000; /* 🔥 Subimos para que quede siempre encima */
 }
+
 .logo{ display:flex; align-items:center; gap:10px; }
 .logo img{ height:40px; }
 .menu{ display:flex; gap:25px; }
@@ -42,10 +43,24 @@ th{ background:#003366; color:white;}
 .aprobado{background:#e6f7ec;color:#1e7e34;}
 
 /* CANVAS */
-#canvas-overlay{ display:none; position:fixed; top:50px; left:0; width:100%; height:calc(100% - 50px); background:rgba(0,0,0,0.3); z-index:1000; overflow:auto; }
+/* Canvas overlay */
+#canvas-overlay{
+  display:none;
+  position:fixed;
+  top:50px;
+  left:0;
+  width:100%;
+  height:calc(100% - 50px);
+  background:rgba(0,0,0,0.3);
+  z-index:1000; /* Menor que el navbar */
+  overflow:auto;
+}
 #sop-container{ position:relative; margin:20px auto; width:90%; max-width:1200px; background:white; border-radius:12px; padding:20px; }
 #canvas-wrapper{ position:relative; width:100%; }
 canvas{ display:block; width:100%; }
+
+  
+
 
 /* COMENTARIOS STICKY NOTES */
 .comentario{
