@@ -8,7 +8,7 @@
 <style>
 body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f2937; }
 
-  /* NAVBAR */
+/* NAVBAR */
 .navbar{
   position:sticky;
   top:0;
@@ -20,9 +20,8 @@ body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f29
   display:flex;
   justify-content:space-between;
   align-items:center;
-  z-index:11000; /* 🔥 Subimos para que quede siempre encima */
+  z-index:11000;
 }
-
 .logo{ display:flex; align-items:center; gap:10px; }
 .logo img{ height:40px; }
 .menu{ display:flex; gap:25px; }
@@ -43,7 +42,6 @@ th{ background:#003366; color:white;}
 .aprobado{background:#e6f7ec;color:#1e7e34;}
 
 /* CANVAS */
-/* Canvas overlay */
 #canvas-overlay{
   display:none;
   position:fixed;
@@ -52,15 +50,22 @@ th{ background:#003366; color:white;}
   width:100%;
   height:calc(100% - 50px);
   background:rgba(0,0,0,0.3);
-  z-index:1000; /* Menor que el navbar */
+  z-index:1000;
   overflow:auto;
 }
-#sop-container{ position:relative; margin:20px auto; width:90%; max-width:1200px; background:white; border-radius:12px; padding:20px; }
-#canvas-wrapper{ position:relative; width:100%; }
-canvas{ display:block; width:100%; }
-
-  
-
+#sop-container{
+  position:relative;
+  margin:20px auto;
+  width:90%;
+  max-width:1200px;
+  background:white;
+  border-radius:12px;
+  padding:20px;
+}
+#canvas-wrapper{
+  position:relative;
+  width:100%;
+}
 
 /* COMENTARIOS STICKY NOTES */
 .comentario{
@@ -72,8 +77,13 @@ canvas{ display:block; width:100%; }
   max-width:250px;
   cursor:text;
   overflow-wrap:break-word;
-  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);
   word-break: break-word;
+  animation: glow 1.5s infinite alternate;
+}
+@keyframes glow{
+  0%{ box-shadow:0 2px 6px rgba(0,0,0,0.2);}
+  100%{ box-shadow:0 2px 15px rgba(255,255,255,0.7);}
 }
 .comentario .close-btn{
   position:absolute;
@@ -170,12 +180,8 @@ let comentarios=[], SOP_URL="", ID_SOP="";
 const USUARIO = localStorage.getItem("usuario") || "Anonimo";
 const CORREO = localStorage.getItem("correo") || "";
 
-// Colores por usuario (puedes agregar más)
-const userColors = {
-  "Anonimo":"#1abc9c",
-  "admin":"#e67e22",
-  "editor":"#3498db"
-};
+// Colores por usuario
+const userColors = {"Anonimo":"#1abc9c","admin":"#e67e22","editor":"#3498db"};
 function getUserColor(user){ return userColors[user]||"#9b59b6"; }
 
 // Render tabla
@@ -189,16 +195,7 @@ async function renderTabla(){
     const data=await res.json();
     data.forEach(row=>{
       if(!row.ID_SOP) return;
-      const sop={
-        Timestamp: row.Timestamp||"",
-        empleado: row.empleado||"",
-        departamento: row.departamento||"",
-        objetivo: row.objetivo||"",
-        areas: row.areas||"",
-        estado: row.estado||"Pendiente",
-        ID_SOP: row.ID_SOP,
-        url_doc: row.url_doc||row.links||""
-      };
+      const sop={ Timestamp: row.Timestamp||"", empleado: row.empleado||"", departamento: row.departamento||"", objetivo: row.objetivo||"", areas: row.areas||"", estado: row.estado||"Pendiente", ID_SOP: row.ID_SOP, url_doc: row.url_doc||row.links||"" };
       if(filtro && sop.estado!==filtro) return;
       if(buscar && !(sop.empleado.toLowerCase()+sop.objetivo.toLowerCase()).includes(buscar)) return;
       const fila=document.createElement("tr");
@@ -230,10 +227,15 @@ async function abrirSOP(url,id){
     const html=await res.text();
     const tempDiv=document.createElement('div');
     tempDiv.innerHTML=html;
-    tempDiv.querySelectorAll("script").forEach(s=>s.remove());
+
+    // ❌ Limpiar scripts e imágenes que no se pueden mostrar
+    tempDiv.querySelectorAll("script,img").forEach(el=>el.remove());
     tempDiv.style.width="900px"; tempDiv.style.margin="auto"; tempDiv.style.padding="20px"; tempDiv.style.background="#fff";
+    tempDiv.querySelectorAll("*").forEach(el=>el.style.textIndent="1em"); // indentación texto
+
     wrapper.innerHTML=""; wrapper.appendChild(tempDiv);
     await new Promise(r=>setTimeout(r,300));
+
     const canvas=await html2canvas(tempDiv,{useCORS:true, scale:1});
     canvas.id="sop-canvas"; wrapper.innerHTML=""; wrapper.appendChild(canvas);
     canvas.addEventListener("click",crearComentarioDirecto);
@@ -266,6 +268,9 @@ function crearComentarioDirecto(e){
 
   wrapper.appendChild(div);
   div.focus();
+
+  // Seleccionar todo el texto al escribir
+  div.addEventListener("focus",()=>{ if(div.getAttribute("data-temp")){ const sel=window.getSelection(); sel.selectAllChildren(div); } });
 
   // Guardar al Enter
   div.addEventListener("keydown",(event)=>{
