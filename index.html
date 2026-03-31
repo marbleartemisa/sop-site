@@ -410,6 +410,73 @@ body{
     flex: 0 0 40%;
   }
 }
+
+  /* Login Modal */
+.login-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+}
+
+.login-box {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+  animation: fadeIn 0.4s ease;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.login-box select,
+.login-box input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s;
+}
+
+.login-box select:focus,
+.login-box input:focus {
+  border-color: #0072C6;
+  box-shadow: 0 0 5px #0072C6;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#0072C6,#005a9e);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-box button:hover {
+  transform: scale(1.03);
+  background: linear-gradient(135deg,#005a9e,#003f6b);
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(-20px);}
+  to {opacity:1; transform: translateY(0);}
+}
 </style>
 </head>
 
@@ -530,18 +597,17 @@ body{
 </div>
 </div>
 
-<!-- LOGIN MODAL -->
-<div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
-  <div style="background:white; padding:30px; border-radius:8px; width:300px; text-align:center; position:relative;">
-    <h3>Ingresar</h3>
-    <select id="loginUser" style="width:100%; padding:8px; margin-bottom:15px;">
-      <option value="">Seleccione usuario</option>
-    </select>
-    <input type="password" id="loginPass" placeholder="Clave" style="width:100%; padding:8px; margin-bottom:15px;">
-    <button id="loginBtn" style="width:100%; padding:10px;">Entrar</button>
-    <button onclick="closeLogin()" style="position:absolute; top:5px; right:10px; background:none; border:none; font-size:18px; cursor:pointer;">&times;</button>
+<!-- LOGIN MODAL MODERNO -->
+<div id="loginModal" class="login-modal">
+  <div class="login-box">
+    <h2>Iniciar Sesión</h2>
+    <select id="loginUser"></select>
+    <input type="password" id="loginPass" placeholder="Clave">
+    <button id="loginBtn">Entrar</button>
+    <span id="loginError" style="color:red; display:none; font-size:0.85rem;">Usuario o clave incorrecta</span>
   </div>
 </div>
+  
   
 <script>
 
@@ -660,92 +726,105 @@ function filterDept(dep, el){
 }
 
   // -------- LOGIN LOCAL ---------
-  const usuarios = [
-    {usuario:"Damian Molina", clave:"Dam1975", rol:"editor"},
-    {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor"},
-    {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor"},
-    {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor"},
-    {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor"},
-    {usuario:"Eliana Pineda", clave:"Eli1975", rol:"editor"},
-    {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor"},
-    {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin"}
-  ];
+// Lista de usuarios
+const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor"},
+  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor"},
+  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor"},
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor"},
+  {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor"},
+  {usuario:"Eliana Pineda", clave:"Eli1975", rol:"editor"},
+  {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin"}
+];
 
-  let loginType = "editor"; // "editor" o "admin"
+let loginType = "editor"; // "editor" o "admin"
 
-  function openLogin(type){
-    loginType = type;
-    document.getElementById("loginModal").style.display = "flex";
-    loadUsuarios();
+// Abrir modal
+function openLogin(type){
+  loginType = type;
+  document.getElementById("loginModal").style.display = "flex";
+  loadUsuarios();
+}
+
+// Cerrar modal
+function closeLogin(){
+  document.getElementById("loginModal").style.display = "none";
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginError").style.display = "none";
+}
+
+// Cerrar con ESC
+document.addEventListener("keydown", e => { 
+  if(e.key === "Escape") closeLogin(); 
+});
+
+// Cargar usuarios en el combo
+function loadUsuarios(){
+  const select = document.getElementById("loginUser");
+  select.innerHTML = '<option value="">Seleccione usuario</option>'; // limpiar
+  usuarios.forEach(u => {
+    const opt = document.createElement("option");
+    opt.value = u.usuario;
+    opt.textContent = u.usuario; // no mostrar rol
+    select.appendChild(opt);
+  });
+}
+
+// LOGIN FUNCION
+function doLogin(){
+  const usuario = document.getElementById("loginUser").value.trim();
+  const clave = document.getElementById("loginPass").value.trim();
+  const errorMsg = document.getElementById("loginError");
+
+  errorMsg.style.display = "none";
+
+  if(!usuario || !clave){
+    errorMsg.innerText = "Seleccione usuario e ingrese la clave";
+    errorMsg.style.display = "block";
+    return;
   }
 
-  function closeLogin(){
-    document.getElementById("loginModal").style.display = "none";
-    document.getElementById("loginPass").value = "";
+  const match = usuarios.find(u => u.usuario === usuario && u.clave === clave);
+
+  if(!match){
+    errorMsg.innerText = "Usuario o clave incorrectos";
+    errorMsg.style.display = "block";
+    return;
   }
 
-  document.addEventListener("keydown", e => { if(e.key==="Escape") closeLogin(); });
-
-  // cargar usuarios en el combo
-  function loadUsuarios(){
-    const select = document.getElementById("loginUser");
-    select.innerHTML = '<option value="">Seleccione usuario</option>'; // limpiar
-    usuarios.forEach(u => {
-      const opt = document.createElement("option");
-      opt.value = u.usuario;
-      opt.textContent = u.usuario; // no mostrar rol
-      select.appendChild(opt);
-    });
+  if(loginType === "admin" && match.rol !== "admin"){
+    errorMsg.innerText = "No autorizado para Admin";
+    errorMsg.style.display = "block";
+    return;
   }
 
-  // login
-  function doLogin(){
-    const usuario = document.getElementById("loginUser").value.trim();
-    const clave = document.getElementById("loginPass").value.trim();
-    const btn = document.getElementById("loginBtn");
-
-    if(!usuario || !clave){
-      alert("Seleccione usuario e ingrese la clave");
-      return;
-    }
-
-    btn.innerText = "Validando...";
-    btn.disabled = true;
-
-    const match = usuarios.find(u => u.usuario === usuario && u.clave === clave);
-
-    if(!match){
-      alert("Usuario o clave incorrectos");
-      btn.innerText = "Entrar";
-      btn.disabled = false;
-      return;
-    }
-
-    if(loginType === "admin" && match.rol !== "admin"){
-      alert("No autorizado para Admin");
-      btn.innerText = "Entrar";
-      btn.disabled = false;
-      return;
-    }
-
-    if(loginType === "editor" && match.rol !== "editor"){
-      alert("No autorizado para Editar SOP");
-      btn.innerText = "Entrar";
-      btn.disabled = false;
-      return;
-    }
-
-    localStorage.setItem("rol", match.rol);
-    alert("Login exitoso! Rol: " + match.rol);
-
-    if(match.rol === "admin"){
-      window.location.href = "/sop-site/admin/";
-    } else {
-      window.location.href = "/sop-site/sop-viewer-edit/";
-    }
+  if(loginType === "editor" && match.rol !== "editor"){
+    errorMsg.innerText = "No autorizado para Editar SOP";
+    errorMsg.style.display = "block";
+    return;
   }
-// Evento
-  document.getElementById("loginBtn").addEventListener("click", doLogin);
+
+  // LOGIN CORRECTO
+  localStorage.setItem("rol", match.rol);
+  closeLogin(); // cierra modal
+
+  if(match.rol === "admin"){
+    window.location.href = "/sop-site/admin/";
+  } else {
+    window.location.href = "/sop-site/sop-viewer-edit/";
+  }
+}
+
+// Evento click en botón
+document.getElementById("loginBtn").addEventListener("click", doLogin);
+
+// Validar con Enter
+document.getElementById("loginPass").addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    doLogin();
+  }
+});
 
 </script>
 </body>
