@@ -658,98 +658,94 @@ function filterDept(dep, el){
   document.getElementById("deptFilter").value = dep;
   filterSOP();
 }
-  
-// --------- LOGIN JS ---------
 
-const API_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-let loginType = "editor"; // "editor" o "admin"
+  // -------- LOGIN LOCAL ---------
+  const usuarios = [
+    {usuario:"Damian Molina", clave:"Dam1975", rol:"editor"},
+    {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor"},
+    {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor"},
+    {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor"},
+    {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor"},
+    {usuario:"Eliana Pineda", clave:"Eli1975", rol:"editor"},
+    {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor"},
+    {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin"}
+  ];
 
-// Abrir modal
-function openLogin(type){
-  loginType = type;
-  document.getElementById("loginModal").style.display = "flex";
-  loadUsuarios(); // cargar usuarios cuando se abre el modal
-}
+  let loginType = "editor"; // "editor" o "admin"
 
-// Cerrar modal
-function closeLogin(){
-  document.getElementById("loginModal").style.display = "none";
-  document.getElementById("loginPass").value = "";
-}
-document.addEventListener("keydown", e => { if(e.key==="Escape") closeLogin(); });
+  function openLogin(type){
+    loginType = type;
+    document.getElementById("loginModal").style.display = "flex";
+    loadUsuarios();
+  }
 
-// Cargar usuarios desde Sheet (solo nombre)
-async function loadUsuarios(){
-  try{
-    const res = await fetch(API_URL+"?usuarios");
-    const data = await res.json();
+  function closeLogin(){
+    document.getElementById("loginModal").style.display = "none";
+    document.getElementById("loginPass").value = "";
+  }
+
+  document.addEventListener("keydown", e => { if(e.key==="Escape") closeLogin(); });
+
+  // cargar usuarios en el combo
+  function loadUsuarios(){
     const select = document.getElementById("loginUser");
-
-    // Limpiar opciones previas
-    select.innerHTML = '<option value="">Seleccione usuario</option>';
-
-    data.forEach(u => {
+    select.innerHTML = '<option value="">Seleccione usuario</option>'; // limpiar
+    usuarios.forEach(u => {
       const opt = document.createElement("option");
-      opt.value = u.usuario; // solo el nombre
+      opt.value = u.usuario;
       opt.textContent = u.usuario; // no mostrar rol
       select.appendChild(opt);
     });
-  }catch(err){
-    console.error("Error cargando usuarios:", err);
-  }
-}
-
-// Login
-async function doLogin(){
-  const select = document.getElementById("loginUser");
-  const btn = document.getElementById("loginBtn");
-  const usuario = select.value.trim();
-  const clave = document.getElementById("loginPass").value.trim();
-
-  if(!usuario || !clave){
-    alert("Seleccione usuario e ingrese la clave");
-    return;
   }
 
-  btn.innerText = "Validando...";
-  btn.disabled = true;
+  // login
+  function doLogin(){
+    const usuario = document.getElementById("loginUser").value.trim();
+    const clave = document.getElementById("loginPass").value.trim();
+    const btn = document.getElementById("loginBtn");
 
-  try{
-    const tipo = (loginType === "admin") ? "login_admin" : "login_edit_sop";
+    if(!usuario || !clave){
+      alert("Seleccione usuario e ingrese la clave");
+      return;
+    }
 
-    const res = await fetch(API_URL,{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ tipo, usuario, clave })
-    });
+    btn.innerText = "Validando...";
+    btn.disabled = true;
 
-    const data = await res.json();
+    const match = usuarios.find(u => u.usuario === usuario && u.clave === clave);
 
-    if(!data.success){
-      alert(data.error || "Acceso denegado");
+    if(!match){
+      alert("Usuario o clave incorrectos");
       btn.innerText = "Entrar";
       btn.disabled = false;
       return;
     }
 
-    localStorage.setItem("rol", data.rol);
-    alert("Login exitoso! Rol: " + data.rol);
+    if(loginType === "admin" && match.rol !== "admin"){
+      alert("No autorizado para Admin");
+      btn.innerText = "Entrar";
+      btn.disabled = false;
+      return;
+    }
 
-    if(data.rol === "admin"){
+    if(loginType === "editor" && match.rol !== "editor"){
+      alert("No autorizado para Editar SOP");
+      btn.innerText = "Entrar";
+      btn.disabled = false;
+      return;
+    }
+
+    localStorage.setItem("rol", match.rol);
+    alert("Login exitoso! Rol: " + match.rol);
+
+    if(match.rol === "admin"){
       window.location.href = "/sop-site/admin/";
     } else {
       window.location.href = "/sop-site/sop-viewer-edit/";
     }
-
-  }catch(err){
-    console.error(err);
-    alert("Error de conexión");
-    btn.innerText = "Entrar";
-    btn.disabled = false;
   }
-}
 // Evento
-document.getElementById("loginBtn").addEventListener("click", doLogin);
+  document.getElementById("loginBtn").addEventListener("click", doLogin);
 
 </script>
 </body>
