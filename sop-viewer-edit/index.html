@@ -31,32 +31,98 @@
   .aprobado{background:#e6f7ec;color:#1e7e34;}
 
   /* Canvas y comentarios */
-  #canvas-overlay{ display:none; position:fixed; top:50px; left:0; width:100%; height:calc(100% - 50px); background:rgba(0,0,0,0.3); z-index:1000; overflow:auto; }
+
+#canvas-overlay {
+    display:none;
+    position:fixed;
+    top:50px;
+    left:0;
+    width:100%;
+    height:calc(100% - 50px);
+    background:rgba(0,0,0,0.15);
+    z-index:900; /* menos que navbar */
+    overflow:auto;
+    backdrop-filter: blur(2px);
+}
+  
   #sop-container{ position:relative; margin:20px auto; width:90%; max-width:1200px; background:white; border-radius:12px; padding:20px; }
+  #sop-container p:nth-child(odd),
+  #sop-container li:nth-child(odd){
+    background: #f9f9f9;
+    padding: 2px 0;
+  }
+  #sop-container p, #sop-container li{
+    line-height:1.6;
+}
+  
   #canvas-wrapper{ position:relative; width:100%; }
   canvas{ display:block; width:100%; }
   
   /* Reemplaza tu clase .comentario */
-    .comentario {
+
+  .comentario {
     position: absolute;
-    background: rgba(50, 120, 220, 0.25); /* azul semitransparente */
-    border: 1px solid rgba(50, 120, 220, 0.6);
-    border-radius: 8px;
-    padding: 6px 10px;
-    font-size: 13px;
-    line-height: 1.4;
-    color: #000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    pointer-events: none; /* igual que antes */
-    max-width: 220px;
+    background: #fef68a; /* color tipo sticky note */
+    border: 1px solid #f9e37c;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 8px rgba(255,255,200,0.6);
+    pointer-events: auto;
+    max-width: 250px;
     word-wrap: break-word;
+    cursor: grab;
+    transition: transform 0.15s ease, box-shadow 0.3s ease;
+}
+
+.comentario:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4), 0 0 12px rgba(255,255,200,0.8);
 }
   
   /* Modal comentarios */
   #modal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:2000; }
-  #modal-content{ background:white; padding:20px; border-radius:8px; width:300px; }
-  #comentario-text{ width:100%; height:80px; margin-top:5px; }
-  #btn-save, #btn-cancel{ margin-top:10px; margin-right:5px; padding:6px 12px; cursor:pointer; }
+
+
+  
+  #modal-content {
+    background: #fffefc;
+    padding: 20px 25px;
+    border-radius: 12px;
+    width: 350px;
+    max-width: 90%;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    font-family: 'Inter', sans-serif;
+}
+
+#comentario-text {
+    width: 100%;
+    height: 120px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+#btn-save, #btn-cancel {
+    margin-top: 10px;
+    margin-right: 8px;
+    padding: 8px 16px;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+}
+#btn-save { background:#00aaff; color:white; }
+#btn-save:hover { background:#008ecc; }
+#btn-cancel { background:#ccc; color:#333; }
+#btn-cancel:hover { background:#999; }
+
   
   /* Boton cerrar SOP */
   #btnCerrarSOP{ 
@@ -122,6 +188,7 @@
   </div>
 </div>
 
+
 <!-- Modal comentarios -->
 <div id="modal">
   <div id="modal-content">
@@ -133,7 +200,7 @@
     </div>
   </div>
 </div>
-
+  
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
@@ -255,15 +322,25 @@ function cerrarCanvas(){
   document.getElementById("canvas-wrapper").innerHTML = "";
 }
 
-// Comentarios
-function activarComentario(e){
-  const rect = e.target.getBoundingClientRect();
-  clickX = e.clientX - rect.left;
-  clickY = e.clientY - rect.top;
-  document.getElementById("modal").style.display = "flex";
-}
 
-// Guardar comentario
+
+// Configuración inicial del textarea "Nuevo comentario"
+const comentarioText = document.getElementById("comentario-text");
+comentarioText.value = "Nuevo comentario...";
+  
+comentarioText.addEventListener("focus", () => {
+    if (comentarioText.value === "Nuevo comentario...") comentarioText.value = "";
+});
+
+comentarioText.addEventListener("blur", () => {
+    if (comentarioText.value.trim() === "") comentarioText.value = "Nuevo comentario...";
+});
+
+
+
+
+  
+  // Guardar comentario
 document.getElementById("btn-save").addEventListener("click",async()=>{
   const texto = document.getElementById("comentario-text").value.trim();
   if(!texto) return alert("Escribe algo antes de guardar");
@@ -399,6 +476,73 @@ function cargarComentariosExistentes(){
     .map(c => ({x:c.x, y:c.y, comentario:c.comentario}));
   dibujarComentarios();
 }
+
+// -----------------------------
+// Modal de Comentarios Mejorado
+// -----------------------------
+const comentarioText = document.getElementById("comentario-text");
+// Comentarios
+// Función activar comentario al hacer click en canvas
+function activarComentario(e){
+    const rect = e.target.getBoundingClientRect();
+    clickX = e.clientX - rect.left;
+    clickY = e.clientY - rect.top;
+    abrirModal();
+}
+// Función para abrir modal con texto "Nuevo comentario..."
+function abrirModal() {
+    document.getElementById("modal").style.display = "flex";
+    comentarioText.value = "Nuevo comentario...";
+    comentarioText.focus();
+}
+
+// Borrar texto al escribir
+comentarioText.addEventListener("focus", () => {
+    if (comentarioText.value === "Nuevo comentario...") comentarioText.value = "";
+});
+
+// Volver a mostrar placeholder si queda vacío
+comentarioText.addEventListener("blur", () => {
+    if (comentarioText.value.trim() === "") comentarioText.value = "Nuevo comentario...";
+});
+
+
+
+// Guardar comentario
+document.getElementById("btn-save").addEventListener("click", async () => {
+    const texto = comentarioText.value.trim();
+    if(!texto || texto === "Nuevo comentario...") return alert("Escribe algo antes de guardar");
+
+    comentarios.push({x:clickX, y:clickY, comentario:texto});
+    dibujarComentarios();
+    document.getElementById("modal").style.display = "none";
+    comentarioText.value = "";
+
+    // Guardar en Sheet
+    try{
+        await fetch(SHEET_API, {
+            method:"POST",
+            body: JSON.stringify({
+                tipo:"comentario",
+                id_sop:ID_SOP,
+                usuario:USUARIO,
+                correo:CORREO,
+                comentario:texto,
+                x:clickX,
+                y:clickY,
+                page:1,
+                url_doc:SOP_URL
+            })
+        });
+        console.log("Comentario guardado en Sheet");
+    }catch(err){ console.error("Error guardando comentario", err); }
+});
+
+// Cancelar
+document.getElementById("btn-cancel").addEventListener("click", () => {
+    document.getElementById("modal").style.display = "none";
+    comentarioText.value = "";
+});
 
 </script>
 </body>
