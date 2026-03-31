@@ -317,35 +317,60 @@ function crearComentarioDirecto(e){
 }
 
 // Guardar
-async function guardarComentario(div,x,y,texto){
-  comentarios.push({x,y,comentario:texto});
+// Guardar comentario
+async function guardarComentario(div, x, y, texto){
+  comentarios.push({x, y, comentario:texto});
   try{
-    await fetch(SHEET_API,{
-      method:"POST",
-      body: JSON.stringify({tipo:"comentario",id_sop:ID_SOP,usuario:USUARIO,correo:CORREO,comentario:texto,x,y,page:1,url_doc:SOP_URL})
+    await fetch(SHEET_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tipo: "comentario",
+        id_sop: ID_SOP,
+        usuario: USUARIO,
+        correo: CORREO,
+        comentario: texto,
+        x: x,
+        y: y,
+        page: 1,
+        url_doc: SOP_URL
+      })
     });
-  }catch(err){ console.error(err); }
+  }catch(err){ console.error("Error guardando comentario:", err); }
 }
 
 // Actualizar posición
-async function actualizarComentario(texto,x,y){
+async function actualizarComentario(texto, x, y){
   try{
-    await fetch(SHEET_API,{
-      method:"POST",
-      body: JSON.stringify({tipo:"update",id_sop:ID_SOP,usuario:USUARIO,correo:CORREO,comentario:texto,x,y,page:1,url_doc:SOP_URL})
+    await fetch(SHEET_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tipo: "update",
+        id_sop: ID_SOP,
+        usuario: USUARIO,
+        correo: CORREO,
+        comentario: texto,
+        x: x,
+        y: y,
+        page: 1,
+        url_doc: SOP_URL
+      })
     });
-  }catch(err){ console.error(err); }
+  }catch(err){ console.error("Error actualizando comentario:", err); }
 }
 
 // Eliminar comentario
-async function eliminarComentario(x,y){
+async function eliminarComentario(x, y){
   try{
-    await fetch(SHEET_API,{
-      method:"POST",
-      body: JSON.stringify({tipo:"delete",id_sop:ID_SOP,x,y})
+    await fetch(SHEET_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tipo:"delete", id_sop: ID_SOP, x: x, y: y })
     });
-  }catch(err){ console.error(err); }
+  }catch(err){ console.error("Error eliminando comentario:", err); }
 }
+  
 
 // Cargar existentes
 async function cargarComentariosExistentes(){
