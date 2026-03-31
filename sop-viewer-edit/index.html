@@ -8,7 +8,7 @@
 <style>
 body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f2937; }
 
-/* NAVBAR */
+  /* NAVBAR */
 .navbar{
   position:sticky;
   top:0;
@@ -20,8 +20,9 @@ body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f29
   display:flex;
   justify-content:space-between;
   align-items:center;
-  z-index:999;
+  z-index:11000; /* 🔥 Subimos para que quede siempre encima */
 }
+
 .logo{ display:flex; align-items:center; gap:10px; }
 .logo img{ height:40px; }
 .menu{ display:flex; gap:25px; }
@@ -42,9 +43,24 @@ th{ background:#003366; color:white;}
 .aprobado{background:#e6f7ec;color:#1e7e34;}
 
 /* CANVAS */
-#canvas-overlay{ display:none; position:fixed; top:50px; left:0; width:100%; height:calc(100% - 50px); background:rgba(0,0,0,0.3); z-index:1000; overflow:auto; }
+/* Canvas overlay */
+#canvas-overlay{
+  display:none;
+  position:fixed;
+  top:50px;
+  left:0;
+  width:100%;
+  height:calc(100% - 50px);
+  background:rgba(0,0,0,0.3);
+  z-index:1000; /* Menor que el navbar */
+  overflow:auto;
+}
 #sop-container{ position:relative; margin:20px auto; width:90%; max-width:1200px; background:white; border-radius:12px; padding:20px; }
 #canvas-wrapper{ position:relative; width:100%; }
+canvas{ display:block; width:100%; }
+
+  
+
 
 /* COMENTARIOS STICKY NOTES */
 .comentario{
@@ -58,7 +74,6 @@ th{ background:#003366; color:white;}
   overflow-wrap:break-word;
   box-shadow:0 2px 6px rgba(0,0,0,0.2);
   word-break: break-word;
-  animation: fadeIn 0.3s;
 }
 .comentario .close-btn{
   position:absolute;
@@ -83,10 +98,13 @@ th{ background:#003366; color:white;}
   border-radius:8px; 
 }
 
-/* ANIMACIÓN RESALTADO */
-@keyframes fadeIn {
-  from { transform: scale(0.9); opacity:0; }
-  to { transform: scale(1); opacity:1; }
+/* INPUT INLINE */
+.inline-input{
+  background:rgba(255,255,255,0.2);
+  border:none;
+  color:white;
+  font-size:14px;
+  outline:none;
 }
 </style>
 </head>
@@ -118,6 +136,7 @@ th{ background:#003366; color:white;}
     <option value="Rechazado">Rechazado</option>
     <option value="Aprobado">Aprobado</option>
   </select>
+
   <div class="table-container">
     <table>
       <thead>
@@ -151,8 +170,12 @@ let comentarios=[], SOP_URL="", ID_SOP="";
 const USUARIO = localStorage.getItem("usuario") || "Anonimo";
 const CORREO = localStorage.getItem("correo") || "";
 
-// Colores por usuario
-const userColors = { "Anonimo":"#1abc9c", "admin":"#e67e22", "editor":"#3498db" };
+// Colores por usuario (puedes agregar más)
+const userColors = {
+  "Anonimo":"#1abc9c",
+  "admin":"#e67e22",
+  "editor":"#3498db"
+};
 function getUserColor(user){ return userColors[user]||"#9b59b6"; }
 
 // Render tabla
@@ -198,99 +221,65 @@ renderTabla();
 
 // Abrir SOP
 async function abrirSOP(url,id){
-  SOP_URL = url; 
-  ID_SOP = id; 
-  comentarios = [];
-  const wrapper = document.getElementById("canvas-wrapper");
-  document.getElementById("canvas-overlay").style.display = "block";
-  wrapper.innerHTML = "Cargando SOP...";
-
+  SOP_URL=url; ID_SOP=id; comentarios=[];
+  const wrapper=document.getElementById("canvas-wrapper");
+  document.getElementById("canvas-overlay").style.display="block";
+  wrapper.innerHTML="Cargando SOP...";
   try{
-    const res = await fetch(url);
-    const html = await res.text();
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    tempDiv.querySelectorAll("script").forEach(s => s.remove());
-
-    // Estilos para orden y legibilidad
-    tempDiv.style.width = "900px";
-    tempDiv.style.margin = "auto";
-    tempDiv.style.padding = "20px";
-    tempDiv.style.background = "#fff";
-    tempDiv.style.fontFamily = "'Inter', sans-serif";
-    tempDiv.style.lineHeight = "1.6";
-    tempDiv.style.textIndent = "1em";
-
-    // Zebra stripes y eliminar vacíos
-    const elements = tempDiv.querySelectorAll("p, li, div");
-    elements.forEach((el,i)=>{
-      el.style.padding = "4px 6px";
-      el.style.background = i % 2 === 0 ? "#f9f9f9" : "#ffffff";
-      el.style.borderRadius = "4px";
-      if(el.textContent.trim() === "") el.style.display = "none";
-    });
-
-    wrapper.innerHTML = "";
-    wrapper.appendChild(tempDiv);
-
-    await new Promise(r => setTimeout(r,300));
-    const canvas = await html2canvas(tempDiv,{useCORS:true, scale:1});
-    canvas.id = "sop-canvas";
-    wrapper.innerHTML = "";
-    wrapper.appendChild(canvas);
-    canvas.addEventListener("click", crearComentarioDirecto);
+    const res=await fetch(url);
+    const html=await res.text();
+    const tempDiv=document.createElement('div');
+    tempDiv.innerHTML=html;
+    tempDiv.querySelectorAll("script").forEach(s=>s.remove());
+    tempDiv.style.width="900px"; tempDiv.style.margin="auto"; tempDiv.style.padding="20px"; tempDiv.style.background="#fff";
+    wrapper.innerHTML=""; wrapper.appendChild(tempDiv);
+    await new Promise(r=>setTimeout(r,300));
+    const canvas=await html2canvas(tempDiv,{useCORS:true, scale:1});
+    canvas.id="sop-canvas"; wrapper.innerHTML=""; wrapper.appendChild(canvas);
+    canvas.addEventListener("click",crearComentarioDirecto);
     cargarComentariosExistentes();
-
-  } catch(err){
-    console.error(err);
-    wrapper.innerHTML = "<p style='color:red;'>No se pudo cargar el SOP.</p>";
-  }
+  }catch(err){ console.error(err); wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>"; }
 }
 
 // Cerrar SOP
-function cerrarCanvas(){ 
-  document.getElementById("canvas-overlay").style.display="none"; 
-  document.getElementById("canvas-wrapper").innerHTML=""; 
-}
+function cerrarCanvas(){ document.getElementById("canvas-overlay").style.display="none"; document.getElementById("canvas-wrapper").innerHTML=""; }
 
-// Crear comentario
+// Crear comentario tipo sticky note
 function crearComentarioDirecto(e){
-  const wrapper = document.getElementById("canvas-wrapper");
-  const rect = e.target.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+  const wrapper=document.getElementById("canvas-wrapper");
+  const rect=e.target.getBoundingClientRect();
+  const x=e.clientX-rect.left;
+  const y=e.clientY-rect.top;
 
-  const div = document.createElement("div");
-  div.className = "comentario";
-  div.style.left = x+"px";
-  div.style.top = y+"px";
-  div.style.background = getUserColor(USUARIO);
-  div.contentEditable = "true";
-  div.innerHTML = "Nuevo comentario...";
+  const div=document.createElement("div");
+  div.className="comentario";
+  div.style.left=x+"px";
+  div.style.top=y+"px";
+  div.style.background=getUserColor(USUARIO);
+  div.contentEditable="true";
+  div.setAttribute("data-temp","true");
+  div.innerHTML="Nuevo comentario...";
+
+  const closeBtn=document.createElement("span");
+  closeBtn.className="close-btn"; closeBtn.innerHTML="×";
+  div.appendChild(closeBtn);
+
   wrapper.appendChild(div);
+  div.focus();
 
-  // Seleccionar todo al enfocar
-  div.addEventListener("focus", ()=>{
-    if(div.getAttribute("data-temp") !== "editing"){
-      const sel = window.getSelection();
-      const range = document.createRange();
-      range.selectNodeContents(div);
-      sel.removeAllRanges();
-      sel.addRange(range);
-      div.setAttribute("data-temp","editing");
-    }
-  });
-
-  // Guardar comentario con Enter sin shift
-  div.addEventListener("keydown",(ev)=>{
-    if(ev.key==="Enter" && !ev.shiftKey){
-      ev.preventDefault();
-      const texto = div.textContent.trim();
+  // Guardar al Enter
+  div.addEventListener("keydown",(event)=>{
+    if(event.key==="Enter" && !event.shiftKey){
+      event.preventDefault();
+      const texto=div.textContent.replace("×","").trim();
       if(!texto){ div.remove(); return; }
       div.removeAttribute("data-temp");
       guardarComentario(div,x,y,texto);
     }
   });
+
+  // Eliminar
+  closeBtn.addEventListener("click",()=>{ div.remove(); eliminarComentario(x,y); });
 
   // Drag & drop
   let offsetX=0, offsetY=0, dragging=false;
@@ -305,87 +294,44 @@ function crearComentarioDirecto(e){
     if(dragging){
       dragging=false;
       const newX=parseInt(div.style.left), newY=parseInt(div.style.top);
-      actualizarComentario(div.textContent.trim(),newX,newY);
+      actualizarComentario(div.textContent.replace("×","").trim(),newX,newY);
     }
   });
-
-  // Eliminar
-  const closeBtn = document.createElement("span");
-  closeBtn.className = "close-btn"; closeBtn.innerHTML="×";
-  closeBtn.addEventListener("click",()=>{ div.remove(); eliminarComentario(x,y); });
-  div.appendChild(closeBtn);
 }
 
-// Guardar
 // Guardar comentario
-async function guardarComentario(div, x, y, texto){
-  comentarios.push({x, y, comentario:texto});
-  try{
-    await fetch(SHEET_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tipo: "comentario",
-        id_sop: ID_SOP,
-        usuario: USUARIO,
-        correo: CORREO,
-        comentario: texto,
-        x: x,
-        y: y,
-        page: 1,
-        url_doc: SOP_URL
-      })
-    });
-  }catch(err){ console.error("Error guardando comentario:", err); }
+async function guardarComentario(div,x,y,texto){
+  comentarios.push({x,y,comentario:texto});
+  try{ await fetch(SHEET_API,{method:"POST", body: JSON.stringify({tipo:"comentario",id_sop:ID_SOP,usuario:USUARIO,correo:CORREO,comentario:texto,x,y,page:1,url_doc:SOP_URL})}); }
+  catch(err){ console.error(err); }
 }
 
 // Actualizar posición
-async function actualizarComentario(texto, x, y){
-  try{
-    await fetch(SHEET_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tipo: "update",
-        id_sop: ID_SOP,
-        usuario: USUARIO,
-        correo: CORREO,
-        comentario: texto,
-        x: x,
-        y: y,
-        page: 1,
-        url_doc: SOP_URL
-      })
-    });
-  }catch(err){ console.error("Error actualizando comentario:", err); }
+async function actualizarComentario(texto,x,y){
+  try{ await fetch(SHEET_API,{method:"POST", body: JSON.stringify({tipo:"update",id_sop:ID_SOP,usuario:USUARIO,correo:CORREO,comentario:texto,x,y,page:1,url_doc:SOP_URL})}); }
+  catch(err){ console.error(err); }
 }
 
 // Eliminar comentario
-async function eliminarComentario(x, y){
-  try{
-    await fetch(SHEET_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tipo:"delete", id_sop: ID_SOP, x: x, y: y })
-    });
-  }catch(err){ console.error("Error eliminando comentario:", err); }
+async function eliminarComentario(x,y){
+  try{ await fetch(SHEET_API,{method:"POST", body: JSON.stringify({tipo:"delete",id_sop:ID_SOP,x,y})}); }
+  catch(err){ console.error(err); }
 }
-  
 
 // Cargar existentes
 async function cargarComentariosExistentes(){
   try{
-    const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
-    const data = await res.json();
-    comentarios = data.map(c=>({x:c.x,y:c.y,comentario:c.comentario,usuario:c.usuario||"Anonimo"}));
-    const wrapper = document.getElementById("canvas-wrapper");
+    const res=await fetch(`${SHEET_API}?comments=${ID_SOP}`);
+    const data=await res.json();
+    comentarios=data.map(c=>({x:c.x,y:c.y,comentario:c.comentario,usuario:c.usuario||"Anonimo"}));
+    const wrapper=document.getElementById("canvas-wrapper");
     comentarios.forEach(c=>{
-      const div = document.createElement("div");
-      div.className = "comentario";
-      div.style.left = c.x+"px";
-      div.style.top = c.y+"px";
-      div.style.background = getUserColor(c.usuario);
-      div.textContent = c.comentario;
+      const div=document.createElement("div");
+      div.className="comentario";
+      div.style.left=c.x+"px";
+      div.style.top=c.y+"px";
+      div.style.background=getUserColor(c.usuario);
+      div.textContent=c.comentario;
       wrapper.appendChild(div);
     });
   }catch(err){ console.error(err); }
