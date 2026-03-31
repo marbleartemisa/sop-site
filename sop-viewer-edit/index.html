@@ -157,18 +157,120 @@ button{
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
-const SHEET_API="TU_URL_AQUI";
+const SHEET_API="https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
 let comentarios=[], clickX=0, clickY=0, ID_SOP="", SOP_URL="";
 
 const USUARIO = localStorage.getItem("usuario");
 const CORREO = localStorage.getItem("correo");
 
-// 🔴 VALIDACIÓN USUARIO
-if(!USUARIO || !CORREO){
-  alert("Debe iniciar sesión");
-  window.location.href="/sop-site/";
+const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor"},
+  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor"},
+  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor"},
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor"},
+  {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor"},
+  {usuario:"Eliana Pineda", clave:"Eli1975", rol:"editor"},
+  {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin"}
+];
+
+let loginType = "editor";
+
+// abrir modal
+function openLogin(type){
+  loginType = type;
+  document.getElementById("loginModal").style.display = "flex";
+  loadUsuarios();
 }
+
+// cerrar modal
+function closeLogin(){
+  document.getElementById("loginModal").style.display = "none";
+  document.getElementById("loginPass").value = "";
+}
+
+// ESC para cerrar
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape") closeLogin();
+});
+
+// cargar usuarios en combo
+function loadUsuarios(){
+  const select = document.getElementById("loginUser");
+  select.innerHTML = '<option value="">Seleccione usuario</option>';
+
+  usuarios.forEach(u => {
+    const opt = document.createElement("option");
+    opt.value = u.usuario;
+    opt.textContent = u.usuario;
+    select.appendChild(opt);
+  });
+}
+
+// LOGIN
+function doLogin(){
+  const usuario = document.getElementById("loginUser").value.trim();
+  const clave = document.getElementById("loginPass").value.trim();
+  const btn = document.getElementById("loginBtn");
+
+  if(!usuario || !clave){
+    alert("Seleccione usuario e ingrese la clave");
+    return;
+  }
+
+  btn.innerText = "Validando...";
+  btn.disabled = true;
+
+  const match = usuarios.find(u => 
+    u.usuario === usuario && u.clave === clave
+  );
+
+  if(!match){
+    alert("Usuario o clave incorrectos");
+    resetBtn();
+    return;
+  }
+
+  // VALIDAR ROL
+  if(loginType === "admin" && match.rol !== "admin"){
+    alert("No autorizado para Admin");
+    resetBtn();
+    return;
+  }
+
+  if(loginType === "editor" && match.rol !== "editor"){
+    alert("No autorizado para Editar SOP");
+    resetBtn();
+    return;
+  }
+
+  // 🔥 GUARDAR SESION (ESTO ES LO QUE TE FALTABA)
+  localStorage.setItem("usuario", match.usuario);
+  localStorage.setItem("rol", match.rol);
+
+  // opcional (para evitar errores en comentarios)
+  localStorage.setItem("correo", match.usuario + "@artemisa.local");
+
+  alert("Bienvenido " + match.usuario);
+
+  // redirección
+  if(match.rol === "admin"){
+    window.location.href = "/sop-site/admin/";
+  } else {
+    window.location.href = "/sop-site/sop-viewer-edit/";
+  }
+}
+
+// reset botón
+function resetBtn(){
+  const btn = document.getElementById("loginBtn");
+  btn.innerText = "Entrar";
+  btn.disabled = false;
+}
+
+// evento botón
+document.getElementById("loginBtn").addEventListener("click", doLogin);
 
 // COLORES
 const colores={
