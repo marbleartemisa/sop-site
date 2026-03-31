@@ -47,26 +47,26 @@ th{ background:#003366; color:white;}
 #canvas-wrapper{ position:relative; width:100%; }
 canvas{ display:block; width:100%; }
 
-/* COMENTARIOS DIRECTOS */
+/* COMENTARIOS STICKY NOTES */
 .comentario{
   position:absolute;
-  background:rgba(0,170,255,0.2);
-  border:1px solid #00aaff;
-  padding:6px 10px;
   border-radius:8px;
+  padding:8px 12px;
   font-size:14px;
-  color:#003366;
+  color:white;
   max-width:250px;
   cursor:text;
-  resize:none;
   overflow-wrap:break-word;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  word-break: break-word;
 }
 .comentario .close-btn{
   position:absolute;
   top:2px; right:4px;
   font-size:12px;
-  color:#c00;
+  color:#fff;
   cursor:pointer;
+  font-weight:bold;
 }
 
 /* BOTÓN CERRAR SOP */
@@ -85,13 +85,10 @@ canvas{ display:block; width:100%; }
 
 /* INPUT INLINE */
 .inline-input{
-  background:rgba(255,255,255,0.8);
-  border:1px solid #00aaff;
-  border-radius:6px;
-  padding:6px;
+  background:rgba(255,255,255,0.2);
+  border:none;
+  color:white;
   font-size:14px;
-  width:200px;
-  color:#003366;
   outline:none;
 }
 </style>
@@ -158,6 +155,14 @@ let comentarios=[], SOP_URL="", ID_SOP="";
 const USUARIO = localStorage.getItem("usuario") || "Anonimo";
 const CORREO = localStorage.getItem("correo") || "";
 
+// Colores por usuario (puedes agregar más)
+const userColors = {
+  "Anonimo":"#1abc9c",
+  "admin":"#e67e22",
+  "editor":"#3498db"
+};
+function getUserColor(user){ return userColors[user]||"#9b59b6"; }
+
 // Render tabla
 async function renderTabla(){
   const tabla=document.getElementById("tablaSOP");
@@ -221,10 +226,10 @@ async function abrirSOP(url,id){
   }catch(err){ console.error(err); wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>"; }
 }
 
-// Cerrar
+// Cerrar SOP
 function cerrarCanvas(){ document.getElementById("canvas-overlay").style.display="none"; document.getElementById("canvas-wrapper").innerHTML=""; }
 
-// Crear comentario
+// Crear comentario tipo sticky note
 function crearComentarioDirecto(e){
   const wrapper=document.getElementById("canvas-wrapper");
   const rect=e.target.getBoundingClientRect();
@@ -232,18 +237,18 @@ function crearComentarioDirecto(e){
   const y=e.clientY-rect.top;
 
   const div=document.createElement("div");
-  div.className="comentario inline-input";
+  div.className="comentario";
   div.style.left=x+"px";
   div.style.top=y+"px";
+  div.style.background=getUserColor(USUARIO);
   div.contentEditable="true";
   div.setAttribute("data-temp","true");
-  div.innerHTML="Escribe comentario...";
-  
+  div.innerHTML="Nuevo comentario...";
+
   const closeBtn=document.createElement("span");
-  closeBtn.className="close-btn";
-  closeBtn.innerHTML="×";
+  closeBtn.className="close-btn"; closeBtn.innerHTML="×";
   div.appendChild(closeBtn);
-  
+
   wrapper.appendChild(div);
   div.focus();
 
@@ -254,19 +259,16 @@ function crearComentarioDirecto(e){
       const texto=div.textContent.replace("×","").trim();
       if(!texto){ div.remove(); return; }
       div.removeAttribute("data-temp");
-      guardarComentario(div, x, y, texto);
+      guardarComentario(div,x,y,texto);
     }
   });
 
-  // Eliminar comentario
+  // Eliminar
   closeBtn.addEventListener("click",()=>{ div.remove(); eliminarComentario(x,y); });
 
   // Drag & drop
   let offsetX=0, offsetY=0, dragging=false;
-  div.addEventListener("mousedown",(ev)=>{
-    dragging=true;
-    offsetX=ev.offsetX; offsetY=ev.offsetY;
-  });
+  div.addEventListener("mousedown",(ev)=>{ dragging=true; offsetX=ev.offsetX; offsetY=ev.offsetY; });
   document.addEventListener("mousemove",(ev)=>{
     if(dragging){
       div.style.left=(ev.clientX - wrapper.getBoundingClientRect().left - offsetX)+"px";
@@ -277,62 +279,28 @@ function crearComentarioDirecto(e){
     if(dragging){
       dragging=false;
       const newX=parseInt(div.style.left), newY=parseInt(div.style.top);
-      actualizarComentario(div.textContent.replace("×","").trim(), newX,newY);
+      actualizarComentario(div.textContent.replace("×","").trim(),newX,newY);
     }
   });
 }
 
-// Guardar comentario en Sheet
+// Guardar comentario
 async function guardarComentario(div,x,y,texto){
   comentarios.push({x,y,comentario:texto});
-  try{
-    await fetch(SHEET_API,{
-      method:"POST",
-      body: JSON.stringify({
-        tipo:"comentario",
-        id_sop:ID_SOP,
-        usuario:USUARIO,
-        correo:CORREO,
-        comentario:texto,
-        x,y,
-        page:1,
-        url_doc:SOP_URL
-      })
-    });
-  }catch(err){ console.error(err); }
+  try{ await fetch(SHEET_API,{method:"POST", body: JSON.stringify({tipo:"comentario",id_sop:ID_SOP,usuario:USUARIO,correo:CORREO,comentario:texto,x,y,page:1,url_doc:SOP_URL})}); }
+  catch(err){ console.error(err); }
 }
 
-// Actualizar posición en Sheet
+// Actualizar posición
 async function actualizarComentario(texto,x,y){
-  try{
-    await fetch(SHEET_API,{
-      method:"POST",
-      body: JSON.stringify({
-        tipo:"update",
-        id_sop:ID_SOP,
-        usuario:USUARIO,
-        correo:CORREO,
-        comentario:texto,
-        x,y,
-        page:1,
-        url_doc:SOP_URL
-      })
-    });
-  }catch(err){ console.error(err); }
+  try{ await fetch(SHEET_API,{method:"POST", body: JSON.stringify({tipo:"update",id_sop:ID_SOP,usuario:USUARIO,correo:CORREO,comentario:texto,x,y,page:1,url_doc:SOP_URL})}); }
+  catch(err){ console.error(err); }
 }
 
-// Eliminar comentario en Sheet
+// Eliminar comentario
 async function eliminarComentario(x,y){
-  try{
-    await fetch(SHEET_API,{
-      method:"POST",
-      body: JSON.stringify({
-        tipo:"delete",
-        id_sop:ID_SOP,
-        x,y
-      })
-    });
-  }catch(err){ console.error(err); }
+  try{ await fetch(SHEET_API,{method:"POST", body: JSON.stringify({tipo:"delete",id_sop:ID_SOP,x,y})}); }
+  catch(err){ console.error(err); }
 }
 
 // Cargar existentes
@@ -340,13 +308,14 @@ async function cargarComentariosExistentes(){
   try{
     const res=await fetch(`${SHEET_API}?comments=${ID_SOP}`);
     const data=await res.json();
-    comentarios=data.map(c=>({x:c.x,y:c.y,comentario:c.comentario}));
+    comentarios=data.map(c=>({x:c.x,y:c.y,comentario:c.comentario,usuario:c.usuario||"Anonimo"}));
     const wrapper=document.getElementById("canvas-wrapper");
     comentarios.forEach(c=>{
       const div=document.createElement("div");
       div.className="comentario";
       div.style.left=c.x+"px";
       div.style.top=c.y+"px";
+      div.style.background=getUserColor(c.usuario);
       div.textContent=c.comentario;
       wrapper.appendChild(div);
     });
