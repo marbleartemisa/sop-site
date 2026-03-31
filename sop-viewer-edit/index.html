@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Historial y Comentarios SOP - Artemisa</title>
+<title>Historial y Comentarios SOP - Artemisa Rev 1.0</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+/* GLOBAL */
 body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f2937; }
 
-  /* NAVBAR */
+/* NAVBAR */
 .navbar{
   position:sticky;
   top:0;
@@ -20,14 +21,14 @@ body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f29
   display:flex;
   justify-content:space-between;
   align-items:center;
-  z-index:11000; /* 🔥 Subimos para que quede siempre encima */
+  z-index:999;
 }
-
 .logo{ display:flex; align-items:center; gap:10px; }
 .logo img{ height:40px; }
 .menu{ display:flex; gap:25px; }
 .menu a{ color:white; text-decoration:none; font-weight:bold; transition:.3s; }
 .menu a:hover{ color:#00aaff; }
+.menu-toggle{ display:none; font-size:1.6rem; cursor:pointer; }
 
 /* OVERLAY Y TABLA */
 .overlay { padding:20px; max-width:1200px; margin:auto;}
@@ -43,46 +44,11 @@ th{ background:#003366; color:white;}
 .aprobado{background:#e6f7ec;color:#1e7e34;}
 
 /* CANVAS */
-/* Canvas overlay */
-#canvas-overlay{
-  display:none;
-  position:fixed;
-  top:50px;
-  left:0;
-  width:100%;
-  height:calc(100% - 50px);
-  background:rgba(0,0,0,0.3);
-  z-index:1000; /* Menor que el navbar */
-  overflow:auto;
-}
+#canvas-overlay{ display:none; position:fixed; top:50px; left:0; width:100%; height:calc(100% - 50px); background:rgba(0,0,0,0.3); z-index:1000; overflow:auto; }
 #sop-container{ position:relative; margin:20px auto; width:90%; max-width:1200px; background:white; border-radius:12px; padding:20px; }
 #canvas-wrapper{ position:relative; width:100%; }
 canvas{ display:block; width:100%; }
-
-  
-
-
-/* COMENTARIOS STICKY NOTES */
-.comentario{
-  position:absolute;
-  border-radius:8px;
-  padding:8px 12px;
-  font-size:14px;
-  color:white;
-  max-width:250px;
-  cursor:text;
-  overflow-wrap:break-word;
-  box-shadow:0 2px 6px rgba(0,0,0,0.2);
-  word-break: break-word;
-}
-.comentario .close-btn{
-  position:absolute;
-  top:2px; right:4px;
-  font-size:12px;
-  color:#fff;
-  cursor:pointer;
-  font-weight:bold;
-}
+.comentario{ position:absolute; background:rgba(255,255,0,0.8); border:1px solid #ccc; padding:4px 6px; border-radius:4px; font-size:12px; pointer-events:none; }
 
 /* BOTÓN CERRAR SOP */
 #btnCerrarSOP{ 
@@ -98,13 +64,62 @@ canvas{ display:block; width:100%; }
   border-radius:8px; 
 }
 
-/* INPUT INLINE */
-.inline-input{
-  background:rgba(255,255,255,0.2);
+/* MODAL MODERNO */
+#modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(5px);
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
+  transition: opacity 0.3s ease;
+}
+#modal-content{
+  background: rgba(0,0,0,0.75);
+  border-radius:12px;
+  padding:20px;
+  width:320px;
+  color:#fff;
+  box-shadow:0 8px 20px rgba(0,0,0,0.4);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  animation: fadeIn 0.3s ease;
+}
+#modal h3{ margin:0; font-weight:600; text-align:center; }
+#comentario-text{
+  width:100%;
+  height:100px;
+  padding:10px;
   border:none;
-  color:white;
+  border-radius:8px;
+  background: rgba(255,255,255,0.1);
+  color:#fff;
+  resize:none;
   font-size:14px;
-  outline:none;
+}
+#comentario-text::placeholder{ color: #ddd; }
+#btn-save, #btn-cancel{
+  padding:8px 14px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  transition: all 0.2s ease;
+}
+#btn-save{ background:#00aaff; color:white; }
+#btn-save:hover{ background:#0088cc; }
+#btn-cancel{ background:#555; color:white; }
+#btn-cancel:hover{ background:#333; }
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(-20px);}
+  to{opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
@@ -115,6 +130,9 @@ canvas{ display:block; width:100%; }
   <div class="logo">
     <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
   </div>
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
@@ -163,33 +181,39 @@ canvas{ display:block; width:100%; }
   </div>
 </div>
 
+<!-- Modal comentarios -->
+<div id="modal">
+  <div id="modal-content">
+    <h3>Escribe tu comentario</h3>
+    <textarea id="comentario-text" placeholder="Tu comentario..."></textarea>
+    <div style="text-align:right;">
+      <button id="btn-save">Guardar</button>
+      <button id="btn-cancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-let comentarios=[], SOP_URL="", ID_SOP="";
+
+// Variables
+let comentarios=[], clickX=0, clickY=0, SOP_URL="", ID_SOP="";
 const USUARIO = localStorage.getItem("usuario") || "Anonimo";
 const CORREO = localStorage.getItem("correo") || "";
 
-// Colores por usuario (puedes agregar más)
-const userColors = {
-  "Anonimo":"#1abc9c",
-  "admin":"#e67e22",
-  "editor":"#3498db"
-};
-function getUserColor(user){ return userColors[user]||"#9b59b6"; }
-
-// Render tabla
+// RENDER TABLA
 async function renderTabla(){
-  const tabla=document.getElementById("tablaSOP");
+  const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML="";
-  const filtro=document.getElementById("filtroEstado").value;
-  const buscar=document.getElementById("buscarSOP").value.toLowerCase();
+  const filtro = document.getElementById("filtroEstado").value;
+  const buscar = document.getElementById("buscarSOP").value.toLowerCase();
   try{
-    const res=await fetch(SHEET_API);
-    const data=await res.json();
+    const res = await fetch(SHEET_API);
+    const data = await res.json();
     data.forEach(row=>{
       if(!row.ID_SOP) return;
-      const sop={
+      const sop = {
         Timestamp: row.Timestamp||"",
         empleado: row.empleado||"",
         departamento: row.departamento||"",
@@ -201,7 +225,7 @@ async function renderTabla(){
       };
       if(filtro && sop.estado!==filtro) return;
       if(buscar && !(sop.empleado.toLowerCase()+sop.objetivo.toLowerCase()).includes(buscar)) return;
-      const fila=document.createElement("tr");
+      const fila = document.createElement("tr");
       fila.innerHTML=`
         <td>${sop.empleado}</td>
         <td>${sop.departamento}</td>
@@ -219,7 +243,7 @@ document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
-// Abrir SOP
+// ABRIR SOP
 async function abrirSOP(url,id){
   SOP_URL=url; ID_SOP=id; comentarios=[];
   const wrapper=document.getElementById("canvas-wrapper");
@@ -236,105 +260,79 @@ async function abrirSOP(url,id){
     await new Promise(r=>setTimeout(r,300));
     const canvas=await html2canvas(tempDiv,{useCORS:true, scale:1});
     canvas.id="sop-canvas"; wrapper.innerHTML=""; wrapper.appendChild(canvas);
-    canvas.addEventListener("click",crearComentarioDirecto);
+    canvas.addEventListener("click",activarComentario);
     cargarComentariosExistentes();
-  }catch(err){ console.error(err); wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>"; }
+  }catch(err){
+    console.error(err);
+    wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>";
+  }
 }
 
-// Cerrar SOP
-function cerrarCanvas(){ document.getElementById("canvas-overlay").style.display="none"; document.getElementById("canvas-wrapper").innerHTML=""; }
+// CERRAR
+function cerrarCanvas(){
+  document.getElementById("canvas-overlay").style.display="none";
+  document.getElementById("canvas-wrapper").innerHTML="";
+}
 
-// Crear comentario tipo sticky note
-function crearComentarioDirecto(e){
-  const wrapper=document.getElementById("canvas-wrapper");
+// COMENTARIOS
+function activarComentario(e){
   const rect=e.target.getBoundingClientRect();
-  const x=e.clientX-rect.left;
-  const y=e.clientY-rect.top;
+  clickX=e.clientX-rect.left;
+  clickY=e.clientY-rect.top;
+  document.getElementById("modal").style.display="flex";
+}
 
-  const div=document.createElement("div");
-  div.className="comentario";
-  div.style.left=x+"px";
-  div.style.top=y+"px";
-  div.style.background=getUserColor(USUARIO);
-  div.contentEditable="true";
-  div.setAttribute("data-temp","true");
-  div.innerHTML="Nuevo comentario...";
+document.getElementById("btn-save").addEventListener("click",async()=>{
+  const texto=document.getElementById("comentario-text").value.trim();
+  if(!texto) return alert("Escribe algo antes de guardar");
+  comentarios.push({x:clickX,y:clickY,comentario:texto});
+  dibujarComentarios();
+  document.getElementById("modal").style.display="none";
+  document.getElementById("comentario-text").value="";
+  try{
+    await fetch(SHEET_API,{
+      method:"POST",
+      body: JSON.stringify({
+        tipo:"comentario",
+        id_sop:ID_SOP,
+        usuario:USUARIO,
+        correo:CORREO,
+        comentario:texto,
+        x:clickX,
+        y:clickY,
+        page:1,
+        url_doc:SOP_URL
+      })
+    });
+    console.log("Comentario guardado en Sheet");
+  }catch(err){ console.error("Error guardando comentario",err);}
+});
 
-  const closeBtn=document.createElement("span");
-  closeBtn.className="close-btn"; closeBtn.innerHTML="×";
-  div.appendChild(closeBtn);
+document.getElementById("btn-cancel").addEventListener("click",()=>{
+  document.getElementById("modal").style.display="none";
+  document.getElementById("comentario-text").value="";
+});
 
-  wrapper.appendChild(div);
-  div.focus();
-
-  // Guardar al Enter
-  div.addEventListener("keydown",(event)=>{
-    if(event.key==="Enter" && !event.shiftKey){
-      event.preventDefault();
-      const texto=div.textContent.replace("×","").trim();
-      if(!texto){ div.remove(); return; }
-      div.removeAttribute("data-temp");
-      guardarComentario(div,x,y,texto);
-    }
-  });
-
-  // Eliminar
-  closeBtn.addEventListener("click",()=>{ div.remove(); eliminarComentario(x,y); });
-
-  // Drag & drop
-  let offsetX=0, offsetY=0, dragging=false;
-  div.addEventListener("mousedown",(ev)=>{ dragging=true; offsetX=ev.offsetX; offsetY=ev.offsetY; });
-  document.addEventListener("mousemove",(ev)=>{
-    if(dragging){
-      div.style.left=(ev.clientX - wrapper.getBoundingClientRect().left - offsetX)+"px";
-      div.style.top=(ev.clientY - wrapper.getBoundingClientRect().top - offsetY)+"px";
-    }
-  });
-  document.addEventListener("mouseup",()=>{
-    if(dragging){
-      dragging=false;
-      const newX=parseInt(div.style.left), newY=parseInt(div.style.top);
-      actualizarComentario(div.textContent.replace("×","").trim(),newX,newY);
-    }
+function dibujarComentarios(){
+  const wrapper=document.getElementById("canvas-wrapper");
+  wrapper.querySelectorAll(".comentario").forEach(el=>el.remove());
+  comentarios.forEach(c=>{
+    const div=document.createElement("div");
+    div.className="comentario";
+    div.style.left=c.x+"px";
+    div.style.top=c.y+"px";
+    div.textContent=c.comentario;
+    wrapper.appendChild(div);
   });
 }
 
-// Guardar comentario
-async function guardarComentario(div,x,y,texto){
-  comentarios.push({x,y,comentario:texto});
-  try{ await fetch(SHEET_API,{method:"POST", body: JSON.stringify({tipo:"comentario",id_sop:ID_SOP,usuario:USUARIO,correo:CORREO,comentario:texto,x,y,page:1,url_doc:SOP_URL})}); }
-  catch(err){ console.error(err); }
-}
-
-// Actualizar posición
-async function actualizarComentario(texto,x,y){
-  try{ await fetch(SHEET_API,{method:"POST", body: JSON.stringify({tipo:"update",id_sop:ID_SOP,usuario:USUARIO,correo:CORREO,comentario:texto,x,y,page:1,url_doc:SOP_URL})}); }
-  catch(err){ console.error(err); }
-}
-
-// Eliminar comentario
-async function eliminarComentario(x,y){
-  try{ await fetch(SHEET_API,{method:"POST", body: JSON.stringify({tipo:"delete",id_sop:ID_SOP,x,y})}); }
-  catch(err){ console.error(err); }
-}
-
-// Cargar existentes
 async function cargarComentariosExistentes(){
   try{
     const res=await fetch(`${SHEET_API}?comments=${ID_SOP}`);
     const data=await res.json();
-    comentarios=data.map(c=>({x:c.x,y:c.y,comentario:c.comentario,usuario:c.usuario||"Anonimo"}));
-    const wrapper=document.getElementById("canvas-wrapper");
-    comentarios.forEach(c=>{
-      const div=document.createElement("div");
-      div.className="comentario";
-      div.style.left=c.x+"px";
-      div.style.top=c.y+"px";
-      div.style.background=getUserColor(c.usuario);
-      div.textContent=c.comentario;
-      wrapper.appendChild(div);
-    });
-  }catch(err){ console.error(err); }
+    comentarios=data.map(c=>({x:c.x,y:c.y,comentario:c.comentario}));
+    dibujarComentarios();
+  }catch(err){ console.error("Error cargando comentarios",err);}
 }
 </script>
 </body>
