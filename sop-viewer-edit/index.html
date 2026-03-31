@@ -67,19 +67,23 @@ th{ background:#003366; color:white;}
 }
 #canvas-wrapper{ position:relative; width:100%; }
 canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.2);}
-.comentario{
-  position:absolute;
-  background:rgba(255,255,100,0.9);
-  border:1px solid #ffaa00;
-  padding:6px 8px;
-  border-radius:6px;
-  font-size:13px;
-  pointer-events:none;
-  font-weight:600;
-  color:#000;
-  max-width:200px;
-  word-wrap:break-word;
-  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+
+  .comentario {
+  position: absolute;
+  background: rgba(255,255,100,0.9);
+  border: 1px solid #ffaa00;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #000;
+  max-width: 200px;
+  word-wrap: break-word;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 /* BOTÓN CERRAR SOP */
@@ -355,19 +359,56 @@ document.getElementById("btn-cancel").addEventListener("click", ()=>{
 });
 
 // DIBUJAR COMENTARIOS
+
 function dibujarComentarios(){
-  const wrapper=document.getElementById("canvas-wrapper");
-  wrapper.querySelectorAll(".comentario").forEach(el=>el.remove());
-  comentarios.forEach(c=>{
-    const div=document.createElement("div");
-    div.className="comentario";
-    div.style.left=c.x+"px";
-    div.style.top=c.y+"px";
-    div.textContent=c.comentario;
+  const wrapper = document.getElementById("canvas-wrapper");
+
+  // Limpiar comentarios anteriores
+  wrapper.querySelectorAll(".comentario").forEach(el => el.remove());
+
+  comentarios.forEach((c, idx) => {
+    // Contenedor del comentario
+    const div = document.createElement("div");
+    div.className = "comentario";
+    div.style.left = c.x + "px";
+    div.style.top = c.y + "px";
+
+    // Texto del comentario
+    const spanText = document.createElement("span");
+    spanText.textContent = c.comentario;
+
+    // Botón X para eliminar
+    const btnClose = document.createElement("i");
+    btnClose.className = "fa-solid fa-xmark"; // ícono de fontawesome
+    btnClose.style.cursor = "pointer";
+    btnClose.style.marginLeft = "6px";
+    btnClose.style.color = "#c00";
+    
+    // Evento click para eliminar comentario
+    btnClose.addEventListener("click", (e) => {
+      e.stopPropagation(); // evita que abra el modal
+      comentarios.splice(idx, 1); // elimina del array
+      dibujarComentarios();      // redibuja
+      // Opcional: enviar eliminación a Sheet
+      fetch(SHEET_API, {
+        method: "POST",
+        body: JSON.stringify({
+          tipo: "eliminar",
+          id_sop: ID_SOP,
+          comentario_idx: idx
+        })
+      }).catch(err => console.error(err));
+    });
+
+    // Combinar texto y botón
+    div.appendChild(spanText);
+    div.appendChild(btnClose);
+
+    // Añadir al wrapper
     wrapper.appendChild(div);
   });
 }
-
+  
 // CARGAR COMENTARIOS EXISTENTES
 async function cargarComentariosExistentes(){
   try{
