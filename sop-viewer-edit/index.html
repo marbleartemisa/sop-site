@@ -482,32 +482,7 @@ function dibujarComentarios(){
     crearComentarioEditable(c.x, c.y, c.comentario, c);
   });
 }
-    // Botón X para eliminar
-    const btnClose = document.createElement("i");
-    btnClose.className = "fa-solid fa-xmark";
-    btnClose.style.cursor = "pointer";
-    btnClose.style.marginLeft = "6px";
-    btnClose.style.color = "#c00";
-
-    btnClose.addEventListener("click", (e) => {
-      e.stopPropagation(); 
-      comentarios.splice(idx, 1); 
-      dibujarComentarios();      
-      fetch(SHEET_API, {
-        method: "POST",
-        body: JSON.stringify({
-          tipo: "eliminar",
-          id_sop: ID_SOP,
-          comentario_idx: idx
-        })
-      }).catch(err => console.error(err));
-    });
-
-    div.appendChild(spanText);
-    div.appendChild(btnClose);
-    wrapper.appendChild(div);
-  });
-}  
+  
   
 // CARGAR COMENTARIOS EXISTENTES
 async function cargarComentariosExistentes(){
