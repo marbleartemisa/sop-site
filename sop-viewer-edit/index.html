@@ -85,6 +85,11 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
   gap: 4px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
+  
+  .comentario.editable {
+    pointer-events: auto;
+    outline: 2px dashed #00aaff;
+}
 
 /* BOTÓN CERRAR SOP */
 #btnCerrarSOP{ 
@@ -315,49 +320,72 @@ function cerrarCanvas(){
 }
 
 // COMENTARIOS
+
 function activarComentario(e){
-  const rect=e.target.getBoundingClientRect();
-  clickX=e.clientX-rect.left;
-  clickY=e.clientY-rect.top;
-  const txt=document.getElementById("comentario-text");
-  txt.value="";
-  txt.focus();
-  document.getElementById("modal").style.display="flex";
-}
+    const rect = e.target.getBoundingClientRect();
+    clickX = e.clientX - rect.left;
+    clickY = e.clientY - rect.top;
 
-// GUARDAR COMENTARIO
-document.getElementById("btn-save").addEventListener("click", async ()=>{
-  const texto = document.getElementById("comentario-text").value.trim();
-  if(!texto) return alert("Escribe algo antes de guardar");
-  comentarios.push({x:clickX,y:clickY,comentario:texto});
-  dibujarComentarios();
-  document.getElementById("modal").style.display="none";
-  document.getElementById("comentario-text").value="";
-  try{
-    await fetch(SHEET_API,{
-      method:"POST",
-      body: JSON.stringify({
-        tipo:"comentario",
-        id_sop:ID_SOP,
-        usuario:USUARIO,
-        correo:CORREO,
-        comentario:texto,
-        x:clickX,
-        y:clickY,
-        page:1,
-        url_doc:SOP_URL
-      })
+    // Crear un div editable
+    const wrapper = document.getElementById("canvas-wrapper");
+    const editDiv = document.createElement("div");
+    editDiv.contentEditable = "true";
+    editDiv.className = "comentario editable";
+    editDiv.style.left = clickX + "px";
+    editDiv.style.top = clickY + "px";
+    editDiv.style.pointerEvents = "auto"; // para que se pueda escribir
+    editDiv.style.background = "rgba(255,255,100,0.9)";
+    editDiv.style.border = "1px solid #ffaa00";
+    editDiv.style.padding = "6px 8px";
+    editDiv.style.borderRadius = "6px";
+    editDiv.style.maxWidth = "200px";
+    editDiv.style.wordWrap = "break-word";
+    editDiv.style.fontWeight = "600";
+    editDiv.style.color = "#000";
+    
+    // Agregar la X para eliminar
+    const btnX = document.createElement("span");
+    btnX.innerHTML = "✖";
+    btnX.style.cursor = "pointer";
+    btnX.style.marginLeft = "6px";
+    btnX.style.float = "right";
+    btnX.addEventListener("click", ()=>{
+        editDiv.remove();
     });
-    console.log("Comentario guardado en Sheet");
-  }catch(err){ console.error("Error guardando comentario",err);}
-});
+    editDiv.appendChild(btnX);
 
-// CANCELAR
-document.getElementById("btn-cancel").addEventListener("click", ()=>{
-  document.getElementById("modal").style.display="none";
-  document.getElementById("comentario-text").value="";
-});
+    wrapper.appendChild(editDiv);
+    editDiv.focus();
 
+    // Guardar cuando se pierde el foco
+    editDiv.addEventListener("blur", async ()=>{
+        const texto = editDiv.innerText.replace("✖","").trim();
+        if(!texto){ editDiv.remove(); return; }
+
+        comentarios.push({x:clickX, y:clickY, comentario:texto});
+        editDiv.classList.remove("editable");
+        editDiv.innerHTML = texto + `<span style="float:right; cursor:pointer;">✖</span>`;
+        
+        // Guardar en Sheet
+        try{
+            await fetch(SHEET_API, {
+                method:"POST",
+                body: JSON.stringify({
+                    tipo:"comentario",
+                    id_sop: ID_SOP,
+                    usuario: USUARIO,
+                    correo: CORREO,
+                    comentario: texto,
+                    x: clickX,
+                    y: clickY,
+                    page:1,
+                    url_doc: SOP_URL
+                })
+            });
+            console.log("Comentario guardado");
+        }catch(err){ console.error(err); }
+    });
+}
 // DIBUJAR COMENTARIOS
 function dibujarComentarios(){
   const wrapper = document.getElementById("canvas-wrapper");
