@@ -69,26 +69,54 @@ th{ background:#003366; color:white;}
 canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.2);}
 
   .comentario{
-  position:absolute;
-  min-width:120px;
-  max-width:220px;
-  padding:10px 12px;
-  border-radius:10px;
-  background:rgba(255,255,180,0.95);
-  border:1px solid #ffcc00;
-  font-size:14px;
-  font-weight:500;
-  color:#000;
-  box-shadow:0 6px 15px rgba(0,0,0,0.25);
-  cursor:grab;
-  outline:none;
-  transition:0.2s;
+  position: absolute;
+  min-width: 120px;
+  max-width: 220px;
+  padding: 10px 12px;
+  padding-right: 28px; /* espacio para la X sin que choque con el texto */
+  border-radius: 10px;
+  background: rgba(255,255,180,0.95);
+  border: 1px solid #ffcc00;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+  cursor: grab;
+  outline: none;
+  transition: 0.2s;
+  overflow-wrap: break-word;
 }
 
 .comentario:focus{
-  background:#fff8a6;
-  box-shadow:0 0 0 2px #00aaff;
+  background: #fff8a6;
+  box-shadow: 0 0 0 2px #00aaff;
 }
+
+.cerrar-comentario{
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  background: #ff3b3b;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  z-index: 10; /* para que esté siempre encima */
+  user-select: none; /* evita que selecciones la X al escribir */
+}
+
+.cerrar-comentario{
+  position:absolute;
+  top:2px;
+  right:4px;
+}
+
 
 .cerrar-comentario{
   position:absolute;
@@ -384,7 +412,11 @@ function activarComentario(e){
     });
   });
 
-  div.appendChild(btnX);
+    wrapper.appendChild(div);
+    wrapper.appendChild(btnX);
+    btnX.style.position = "absolute";
+    btnX.style.left = (x + 200) + "px"; // ajusta según ancho
+    btnX.style.top = (y - 8) + "px";
 
   // GUARDAR AL SALIR
   div.addEventListener("blur", async ()=>{
@@ -394,33 +426,42 @@ function activarComentario(e){
       return;
     }
 
-    if(existente){
-      existente.comentario = texto;
-      existente.x = parseInt(div.style.left);
-      existente.y = parseInt(div.style.top);
-    }else{
-      const nuevo = {x, y, comentario:texto, div};
-      comentarios.push(nuevo);
-      existente = nuevo;
-    }
+if (existente) {
+  // Actualizamos comentario existente
+  existente.comentario = texto;
+  existente.x = parseInt(div.style.left);
+  existente.y = parseInt(div.style.top);
+} else {
+  // Creamos comentario nuevo y lo marcamos como 'nuevo' para guardarlo
+  const nuevo = { x: parseInt(div.style.left), y: parseInt(div.style.top), comentario: texto, div, nuevo: true };
+  comentarios.push(nuevo);
+  existente = nuevo; // para que el fetch sepa que este es el existente
+}
 
-    try{
-      await fetch(SHEET_API,{
-        method:"POST",
-        body: JSON.stringify({
-          tipo:"comentario",
-          id_sop: ID_SOP,
-          usuario: USUARIO,
-          correo: CORREO,
-          comentario: texto,
-          x: parseInt(div.style.left),
-          y: parseInt(div.style.top),
-          url_doc: SOP_URL
-        })
-      });
-    }catch(err){ console.error(err); }
-  });
+// Solo guardamos en Sheet si es nuevo
+if (existente.nuevo) {
+  try {
+    await fetch(SHEET_API, {
+      method: "POST",
+      body: JSON.stringify({
+        tipo: "comentario",
+        id_sop: ID_SOP,
+        usuario: USUARIO,
+        correo: CORREO,
+        comentario: texto,
+        x: parseInt(div.style.left),
+        y: parseInt(div.style.top),
+        url_doc: SOP_URL
+      })
+    });
+    existente.nuevo = false; // marcamos como guardado para no duplicar
+  } catch (err) {
+    console.error("Error guardando comentario:", err);
+  }
+}
 
+
+    
   // DRAG & DROP
   let offsetX = 0, offsetY = 0, dragging = false;
 
