@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Viewer SOP con Comentarios - ARTEMISA MARBLE & CABINETS</title>
+<title>Aportes SOP - Comentarios</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <style>
@@ -35,7 +35,16 @@ body {
 .navbar .menu a { color:white; margin-left:20px; text-decoration:none; font-weight:bold; }
 
 .overlay { min-height:100vh; padding:20px; max-width:1200px; margin:auto; }
+
 h2 { margin-bottom:15px; color:#003366; }
+
+.table-container { overflow-x:auto; margin-bottom:20px; }
+
+table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+td { padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; word-break: break-word; white-space: normal; }
+td button { cursor:pointer; padding:6px 10px; border:none; border-radius:6px; background:#0072C6; color:white; }
+td button:hover { background:#005fa3; }
 
 #sop-container { 
   position: relative; 
@@ -45,6 +54,7 @@ h2 { margin-bottom:15px; color:#003366; }
   overflow:hidden;
   background: #fff; 
   box-shadow:0 5px 20px rgba(0,0,0,0.1);
+  margin-top:20px;
 }
 
 #canvas-wrapper { position:relative; width:100%; }
@@ -61,7 +71,7 @@ canvas { display:block; width:100%; }
   pointer-events: none;
 }
 
-#modal, #modalAporte { 
+#modal { 
   display:none; 
   position: fixed; 
   top:0; left:0; width:100%; height:100%; 
@@ -78,37 +88,14 @@ canvas { display:block; width:100%; }
   width:400px; max-width:90%; 
 }
 
-.modal-content textarea, .modal-content select, .modal-content input {
-  width:100%; margin-top:10px; padding:8px; border-radius:6px; border:1px solid #ccc;
-}
-
+.modal-content textarea { width:100%; margin-top:10px; padding:8px; border-radius:6px; border:1px solid #ccc; }
 .modal-content button {
   margin-top:10px; padding:10px; border:none; border-radius:8px; cursor:pointer;
 }
 .modal-content button.cancel { background:#999; color:white; }
 .modal-content button.send { background:#0072C6; color:white; display:flex; align-items:center; justify-content:center; gap:5px; }
 
-.spinner { border:2px solid #f3f3f3; border-top:2px solid #fff; border-radius:50%; width:14px; height:14px; animation:spin 1s linear infinite; display:inline-block; vertical-align:middle; }
-@keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
-
-.file-icon { font-size:1.2rem; margin-right:5px; cursor:pointer; }
-.file-icon:hover { transform:scale(1.2); }
-
 .footer { text-align:center; padding:20px; color:white; background:rgba(0,0,0,0.65); margin-top:10px; }
-
-.table-container { overflow-x:auto; margin-bottom:20px; }
-
-table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
-th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-td { padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; word-break: break-word; white-space: normal; }
-th:nth-child(3), td:nth-child(3) { max-width: 250px; }
-th:nth-child(4), td:nth-child(4) { max-width: 200px; }
-
-.estado { display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; border:1px solid transparent; }
-.pendiente { background:#fff4cc; color:#b38f00; border-color:#ffe58f; }
-.tramite { background:#e6f0ff; color:#1a5fd0; border-color:#99c2ff; }
-.rechazado { background:#fdecea; color:#c62828; border-color:#f5a5a0; }
-.aprobado { background:#e6f7ec; color:#1e7e34; border-color:#9dd8b1; }
 
 </style>
 </head>
@@ -122,13 +109,28 @@ th:nth-child(4), td:nth-child(4) { max-width: 200px; }
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a>
     <a href="#" onclick="adminLogin()"><i class="fa-solid fa-user-shield"></i> Admin</a>
   </div>
 </div>
 
 <div class="overlay">
-  <h2>Viewer SOP con Comentarios</h2>
+  <h2>Selecciona el SOP para revisar y comentar</h2>
+  
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID SOP</th>
+          <th>Nombre SOP</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="tablaSOP">
+        <!-- Se carga desde JS -->
+      </tbody>
+    </table>
+  </div>
+
   <div id="sop-container">
     <div id="canvas-wrapper"></div>
   </div>
@@ -151,17 +153,42 @@ th:nth-child(4), td:nth-child(4) { max-width: 200px; }
 <script>
 const SHEET_API = "https://script.google.com/macros/s/YOUR_SHEET_ID/exec";
 
-const SOP_URL = "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html"; 
-const ID_SOP = "SOP-1774461381359-0";
-const USUARIO = "TuNombre";
-const CORREO = "tucorreo@empresa.com";
+// Lista de SOPs (puedes agregar más)
+const SOPS = [
+  {id:"SOP-1774461381359-0", nombre:"Compra de Slabs", url:"https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html"}
+];
 
 let comentarios = [];
 let clickX=0, clickY=0;
+let SOP_ACTUAL = null;
 
-async function cargarSOP() {
+// Renderizar tabla
+function renderTablaSOP() {
+  const tbody = document.getElementById("tablaSOP");
+  tbody.innerHTML = "";
+  SOPS.forEach(sop=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${sop.id}</td>
+      <td>${sop.nombre}</td>
+      <td><button onclick="seleccionarSOP('${sop.id}')">Abrir</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Seleccionar SOP y cargar canvas
+async function seleccionarSOP(id){
+  SOP_ACTUAL = SOPS.find(s=>s.id===id);
+  comentarios = [];
+  document.getElementById('canvas-wrapper').innerHTML="";
+  await cargarSOP(SOP_ACTUAL);
+}
+
+// Cargar SOP en canvas
+async function cargarSOP(sop){
   try {
-    const res = await fetch(SOP_URL);
+    const res = await fetch(sop.url);
     const html = await res.text();
 
     const tempDiv = document.createElement('div');
@@ -182,11 +209,12 @@ async function cargarSOP() {
     wrapper.appendChild(canvas);
 
     canvas.addEventListener('click', activarComentario);
-    cargarComentariosExistentes();
+    cargarComentariosExistentes(sop.id);
 
   } catch(err){ console.error(err); wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>"; }
 }
 
+// Comentarios
 function activarComentario(e){
   const rect=e.target.getBoundingClientRect();
   clickX = e.clientX - rect.left;
@@ -195,6 +223,7 @@ function activarComentario(e){
 }
 
 document.getElementById('btn-save').addEventListener('click', async ()=>{
+  if(!SOP_ACTUAL) return alert("Selecciona un SOP primero");
   const texto = document.getElementById('comentario-text').value.trim();
   if(!texto) return alert("Escribe algo antes de guardar");
   comentarios.push({x:clickX, y:clickY, comentario:texto});
@@ -205,7 +234,7 @@ document.getElementById('btn-save').addEventListener('click', async ()=>{
   try{
     await fetch(SHEET_API,{
       method:"POST",
-      body:JSON.stringify({tipo:"comentario", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO, comentario:texto, x:clickX, y:clickY, page:1, url_doc:SOP_URL})
+      body:JSON.stringify({tipo:"comentario", id_sop:SOP_ACTUAL.id, usuario:"TuNombre", correo:"tucorreo@empresa.com", comentario:texto, x:clickX, y:clickY, page:1, url_doc:SOP_ACTUAL.url})
     });
     console.log("Comentario guardado en Sheet");
   }catch(err){ console.error(err); }
@@ -229,9 +258,9 @@ function dibujarComentarios(){
   });
 }
 
-async function cargarComentariosExistentes(){
+async function cargarComentariosExistentes(id_sop){
   try{
-    const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
+    const res = await fetch(`${SHEET_API}?comments=${id_sop}`);
     const data = await res.json();
     comentarios = data.map(c=>({x:c.x, y:c.y, comentario:c.comentario}));
     dibujarComentarios();
@@ -240,7 +269,7 @@ async function cargarComentariosExistentes(){
 
 function adminLogin(){ const password=prompt("Ingrese contraseña de administrador"); if(password==="Artemisa2026") window.location.href="/sop-site/admin/"; else alert("Acceso denegado"); }
 
-cargarSOP();
+renderTablaSOP();
 </script>
 
 </body>
