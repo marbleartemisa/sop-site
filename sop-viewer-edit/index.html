@@ -7,8 +7,47 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f2937; }
-  .navbar { position:sticky; top:0; background:#003366; color:white; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; z-index:1000;}
-  .navbar .logo img{ height:40px; margin-right:10px; }
+    
+.navbar{
+  position:sticky;
+  top:0;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(8px);
+  padding:10px 30px;
+  color:white;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:999;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logo img{
+  height:40px;
+}
+.menu{
+  display:flex;
+  gap:25px;
+}
+.menu a{
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  transition:.3s;
+}
+.menu a:hover{
+  color:#00aaff;
+}
+.menu-toggle{
+  display:none;
+  font-size:1.6rem;
+  cursor:pointer;
+}
+  
   .overlay { padding:20px; max-width:1200px; margin:auto;}
   h2{ color:#003366; margin-bottom:15px; text-align:center;}
   input, select{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
