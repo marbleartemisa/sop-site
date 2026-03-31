@@ -663,43 +663,52 @@ function filterDept(dep, el){
 
 // --------- LOGIN JS ---------
 const API_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-let loginType = "editor"; // o admin
+let loginType = "editor"; // "editor" o "admin"
 
-  function openLogin(type){
+// Abrir modal de login
+function openLogin(type){
   loginType = type;
-  document.getElementById("loginModal").style.display = "flex";
-  loadUsuarios(); // cargar usuarios cuando se abre el modal
+  const modal = document.getElementById("loginModal");
+  modal.style.display = "flex";
+  loadUsuarios();
 }
 
-  function closeLogin(){
-  document.getElementById("loginModal").style.display = "none";
+// Cerrar modal de login
+function closeLogin(){
+  const modal = document.getElementById("loginModal");
+  modal.style.display = "none";
   document.getElementById("loginPass").value = "";
 }
-document.addEventListener("keydown", e => { if(e.key==="Escape") closeLogin(); });
 
-  
-// cargar usuarios desde Sheet
-// Llenar combo de usuarios
+// Cerrar modal con Escape
+document.addEventListener("keydown", e => { 
+  if(e.key === "Escape") closeLogin(); 
+});
+
+// Cargar usuarios desde Google Sheet y llenar combo
 async function loadUsuarios(){
   try{
-    const res = await fetch(API_URL+"?usuarios");
-    const data = await res.json();
     const select = document.getElementById("loginUser");
+    if(!select) return;
+
+    // Limpiar opciones anteriores (menos la placeholder)
+    select.querySelectorAll('option:not([value=""])').forEach(opt => opt.remove());
+
+    const res = await fetch(API_URL + "?usuarios");
+    const data = await res.json();
+
     data.forEach(u => {
       const opt = document.createElement("option");
       opt.value = u.usuario;
-      opt.textContent = u.usuario + " (" + u.rol + ")";
+      opt.textContent = `${u.usuario} (${u.rol})`;
       select.appendChild(opt);
     });
-  }catch(err){
+  } catch(err){
     console.error("Error cargando usuarios:", err);
   }
 }
 
-
-
-// hacer login
-// Login
+// Hacer login
 async function doLogin(){
   const select = document.getElementById("loginUser");
   const btn = document.getElementById("loginBtn");
@@ -715,11 +724,16 @@ async function doLogin(){
   btn.disabled = true;
 
   try{
-    const res = await fetch(API_URL,{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ tipo:"login_admin", usuario, clave })
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({ 
+        tipo: loginType === "admin" ? "login_admin" : "login_edit_sop", 
+        usuario, 
+        clave 
+      })
     });
+
     const data = await res.json();
 
     if(!data.success){
@@ -731,14 +745,15 @@ async function doLogin(){
 
     localStorage.setItem("rol", data.rol);
     alert("Login exitoso! Rol: " + data.rol);
-    // 🔀 redirección según rol
+
+    // 🔀 Redirección según rol
     if(data.rol === "admin"){
       window.location.href = "/sop-site/admin/";
     } else {
       window.location.href = "/sop-site/sop-viewer-edit/";
     }
 
-  }catch(err){
+  } catch(err){
     console.error(err);
     alert("Error de conexión");
     btn.innerText = "Entrar";
@@ -746,14 +761,8 @@ async function doLogin(){
   }
 }
 
-// Eventos
+// Evento click en botón login
 document.getElementById("loginBtn").addEventListener("click", doLogin);
-
-
-  
 </script>
-
-
-  
 </body>
 </html>
