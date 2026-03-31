@@ -359,7 +359,6 @@ document.getElementById("btn-cancel").addEventListener("click", ()=>{
 });
 
 // DIBUJAR COMENTARIOS
-
 function dibujarComentarios(){
   const wrapper = document.getElementById("canvas-wrapper");
 
@@ -377,19 +376,57 @@ function dibujarComentarios(){
     const spanText = document.createElement("span");
     spanText.textContent = c.comentario;
 
+    // Evento para editar comentario
+    spanText.addEventListener("click", (e) => {
+      e.stopPropagation(); // evita abrir un nuevo comentario
+      clickX = c.x;
+      clickY = c.y;
+      const txt = document.getElementById("comentario-text");
+      txt.value = c.comentario;
+      document.getElementById("modal").style.display = "flex";
+
+      // Guardar cambios: sobreescribimos el comentario actual
+      const btnSave = document.getElementById("btn-save");
+      
+      // Desvincular posibles listeners anteriores
+      btnSave.replaceWith(btnSave.cloneNode(true));
+      const newBtnSave = document.getElementById("btn-save");
+
+      newBtnSave.addEventListener("click", async () => {
+        const nuevoTexto = document.getElementById("comentario-text").value.trim();
+        if(!nuevoTexto) return alert("Escribe algo antes de guardar");
+        comentarios[idx].comentario = nuevoTexto;
+        dibujarComentarios();
+        document.getElementById("modal").style.display = "none";
+        document.getElementById("comentario-text").value = "";
+
+        // Guardar edición en Sheet
+        try{
+          await fetch(SHEET_API,{
+            method:"POST",
+            body: JSON.stringify({
+              tipo:"editar",
+              id_sop: ID_SOP,
+              comentario_idx: idx,
+              comentario: nuevoTexto
+            })
+          });
+          console.log("Comentario editado en Sheet");
+        }catch(err){ console.error(err); }
+      });
+    });
+
     // Botón X para eliminar
     const btnClose = document.createElement("i");
-    btnClose.className = "fa-solid fa-xmark"; // ícono de fontawesome
+    btnClose.className = "fa-solid fa-xmark";
     btnClose.style.cursor = "pointer";
     btnClose.style.marginLeft = "6px";
     btnClose.style.color = "#c00";
-    
-    // Evento click para eliminar comentario
+
     btnClose.addEventListener("click", (e) => {
-      e.stopPropagation(); // evita que abra el modal
-      comentarios.splice(idx, 1); // elimina del array
-      dibujarComentarios();      // redibuja
-      // Opcional: enviar eliminación a Sheet
+      e.stopPropagation(); 
+      comentarios.splice(idx, 1); 
+      dibujarComentarios();      
       fetch(SHEET_API, {
         method: "POST",
         body: JSON.stringify({
@@ -400,14 +437,11 @@ function dibujarComentarios(){
       }).catch(err => console.error(err));
     });
 
-    // Combinar texto y botón
     div.appendChild(spanText);
     div.appendChild(btnClose);
-
-    // Añadir al wrapper
     wrapper.appendChild(div);
   });
-}
+}  
   
 // CARGAR COMENTARIOS EXISTENTES
 async function cargarComentariosExistentes(){
