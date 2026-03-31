@@ -1,162 +1,317 @@
-<!-- Modal Login Responsive -->
-<div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
-  <div style="
-      background:#fff; 
-      padding:30px 25px; 
-      border-radius:12px; 
-      width:90%; 
-      max-width:360px; 
-      box-shadow:0 5px 20px rgba(0,0,0,0.4); 
-      text-align:center; 
-      position:relative;
-      box-sizing:border-box;
-  ">
-    <!-- Botón cerrar -->
-    <button onclick="closeLogin()" style="
-        position:absolute; 
-        top:10px; 
-        right:10px; 
-        background:none; 
-        border:none; 
-        font-size:20px; 
-        cursor:pointer;
-        color:#888;
-    ">&times;</button>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Historial y Comentarios SOP - Artemisa</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f2937; }
+  .navbar{
+    position:sticky; top:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px);
+    padding:10px 30px; color:white; font-weight:bold; display:flex; justify-content:space-between; align-items:center; z-index:999;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; }
+  .logo img{ height:40px; }
+  .menu{ display:flex; gap:25px; }
+  .menu a{ color:white; text-decoration:none; font-weight:bold; transition:.3s; }
+  .menu a:hover{ color:#00aaff; }
+  .menu-toggle{ display:none; font-size:1.6rem; cursor:pointer; }
 
-    <h2 style="margin-bottom:25px; font-family:Arial,sans-serif;">Iniciar Sesión</h2>
+  .overlay { padding:20px; max-width:1200px; margin:auto;}
+  h2{ color:#003366; margin-bottom:15px; text-align:center;}
+  input, select{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
+  table{ width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+  th, td{ padding:10px 12px; text-align:left; border-bottom:1px solid #ddd; }
+  th{ background:#003366; color:white;}
+  .estado{ display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:uppercase;}
+  .pendiente{background:#fff4cc; color:#b38f00;}
+  .tramite{background:#e6f0ff;color:#1a5fd0;}
+  .rechazado{background:#fdecea;color:#c62828;}
+  .aprobado{background:#e6f7ec;color:#1e7e34;}
 
-    <select id="loginUser" style="
-        width:100%; 
-        padding:12px; 
-        margin-bottom:15px; 
-        font-size:16px; 
-        border-radius:6px; 
-        border:1px solid #ccc;
-        box-sizing:border-box;
-    ">
-      <option value="">Seleccione usuario</option>
-    </select>
+  /* Canvas y comentarios */
+  #canvas-overlay{ display:none; position:fixed; top:50px; left:0; width:100%; height:calc(100% - 50px); background:rgba(0,0,0,0.3); z-index:1000; overflow:auto; }
+  #sop-container{ position:relative; margin:20px auto; width:90%; max-width:1200px; background:white; border-radius:12px; padding:20px; }
+  #canvas-wrapper{ position:relative; width:100%; }
+  canvas{ display:block; width:100%; }
+  .comentario{ position:absolute; background:rgba(255,255,0,0.8); border:1px solid #ccc; padding:4px 6px; border-radius:4px; font-size:12px; pointer-events:none; }
+  
+  /* Modal comentarios */
+  #modal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:2000; }
+  #modal-content{ background:white; padding:20px; border-radius:8px; width:300px; }
+  #comentario-text{ width:100%; height:80px; margin-top:5px; }
+  #btn-save, #btn-cancel{ margin-top:10px; margin-right:5px; padding:6px 12px; cursor:pointer; }
+  
+  /* Boton cerrar SOP */
+  #btnCerrarSOP{ 
+    position:fixed; top:70px; right:20px; z-index:9999; padding:8px 14px; cursor:pointer; background:#c00; color:white; border:none; border-radius:8px;
+  }
+</style>
+</head>
+<body>
 
-    <input type="password" id="loginPass" placeholder="Clave" style="
-        width:100%; 
-        padding:12px; 
-        font-size:16px; 
-        border-radius:6px; 
-        border:1px solid #ccc; 
-        margin-bottom:15px;
-        box-sizing:border-box;
-    ">
-
-    <div id="loginError" style="
-        color:red; 
-        margin-bottom:15px; 
-        display:none; 
-        font-size:14px;
-    "></div>
-
-    <button id="loginBtn" style="
-        width:100%; 
-        padding:12px; 
-        font-size:16px; 
-        background:#007bff; 
-        color:#fff; 
-        border:none; 
-        border-radius:6px; 
-        cursor:pointer;
-        transition: background 0.3s;
-    " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">Entrar</button>
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <img src="/sop-site/logo.png">
+    <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+  <div class="menu">
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/Aportes/">Aportes SOP</a>    
+    <a href="#" onclick="openLogin('editor')">Editar SOP</a>  
+    <a href="#" onclick="openLogin('admin')"><i class="fa-solid fa-user-shield"></i> Admin</a>
+    <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>  
   </div>
 </div>
 
+<div class="overlay">
+  <h2>Historial de SOPs</h2>
+  <input type="text" id="buscarSOP" placeholder="Buscar...">
+  <select id="filtroEstado">
+    <option value="">Todos los estados</option>
+    <option value="Pendiente">Pendiente</option>
+    <option value="Trámite">Trámite</option>
+    <option value="Rechazado">Rechazado</option>
+    <option value="Aprobado">Aprobado</option>
+  </select>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Empleado</th>
+          <th>Departamento</th>
+          <th>Objetivo</th>
+          <th>Áreas</th>
+          <th>Estado</th>
+          <th>Fecha / Hora</th>
+          <th>Abrir SOP</th>
+        </tr>
+      </thead>
+      <tbody id="tablaSOP"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Canvas flotante -->
+<div id="canvas-overlay">
+  <div id="sop-container">
+    <button id="btnCerrarSOP" onclick="cerrarCanvas()">Cerrar SOP</button>
+    <div id="canvas-wrapper"></div>
+  </div>
+</div>
+
+<!-- Modal comentarios -->
+<div id="modal">
+  <div id="modal-content">
+    <h3>Escribe tu comentario</h3>
+    <textarea id="comentario-text"></textarea>
+    <div style="text-align:right;">
+      <button id="btn-save">Guardar</button>
+      <button id="btn-cancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <script>
-// Lista de usuarios inline
-const usuarios = [
-  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor"},
-  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor"},
-  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor"},
-  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor"},
-  {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor"},
-  {usuario:"Eliana Pineda", clave:"Eli1975", rol:"editor"},
-  {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor"},
-  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin"}
-];
+const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+const USUARIO = localStorage.getItem("usuario") || "Anonimo";
+const CORREO = localStorage.getItem("correo") || "";
 
-let loginType = "editor"; // o "admin"
+// Variables globales
+let comentarios = [];
+let clickX = 0, clickY = 0;
+let SOP_URL = "";
+let ID_SOP = "";
+let canvasSOP = null;
+let overlayComentarios = null;
+let comentariosCache = [];
 
-// Abrir modal
-function openLogin(type){
-  loginType = type;
-  document.getElementById("loginModal").style.display = "flex";
-  loadUsuarios();
+// Renderizar tabla SOP
+async function renderTabla(){
+  const tabla = document.getElementById("tablaSOP");
+  tabla.innerHTML = "";
+  const filtroEstado = document.getElementById("filtroEstado").value;
+  const buscar = document.getElementById("buscarSOP").value.toLowerCase();
+
+  try{
+    const res = await fetch(SHEET_API);
+    const data = await res.json();
+
+    data.forEach(row => {
+      if(!row.ID_SOP) return;
+      const sop = {
+        Timestamp: row.Timestamp || "",
+        empleado: row.empleado || "",
+        departamento: row.departamento || "",
+        objetivo: row.objetivo || "",
+        areas: row.areas || "",
+        estado: row.estado || "Pendiente",
+        ID_SOP: row.ID_SOP,
+        url_doc: row.url_doc || row.links || ""
+      };
+      if(filtroEstado && sop.estado !== filtroEstado) return;
+      if(buscar && !(sop.empleado.toLowerCase() + sop.objetivo.toLowerCase()).includes(buscar)) return;
+
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${sop.empleado}</td>
+        <td>${sop.departamento}</td>
+        <td>${sop.objetivo}</td>
+        <td>${sop.areas}</td>
+        <td><span class="estado ${sop.estado.toLowerCase()}">${sop.estado}</span></td>
+        <td>${new Date(sop.Timestamp).toLocaleString()}</td>
+        <td><button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Abrir</button></td>
+      `;
+      tabla.appendChild(fila);
+    });
+
+  }catch(e){
+    console.error(e);
+    alert("Error cargando SOPs");
+  }
 }
 
-// Cerrar modal
-function closeLogin(){
-  document.getElementById("loginModal").style.display = "none";
-  document.getElementById("loginPass").value = "";
-  document.getElementById("loginError").style.display = "none";
+document.getElementById("buscarSOP").addEventListener("input", renderTabla);
+document.getElementById("filtroEstado").addEventListener("change", renderTabla);
+renderTabla();
+
+// Abrir SOP
+async function abrirSOP(url,id){
+  SOP_URL = url;
+  ID_SOP = id;
+  const wrapper = document.getElementById("canvas-wrapper");
+  wrapper.innerHTML = "Cargando SOP...";
+  document.getElementById("canvas-overlay").style.display = "block";
+  comentarios = [];
+
+  try{
+    const res = await fetch(url);
+    const html = await res.text();
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    tempDiv.querySelectorAll("script").forEach(s => s.remove());
+    tempDiv.style.width = "900px";
+    tempDiv.style.margin = "auto";
+    tempDiv.style.padding = "20px";
+    tempDiv.style.background = "#fff";
+
+    wrapper.innerHTML = "";
+    wrapper.appendChild(tempDiv);
+
+    // Generar canvas una sola vez
+    canvasSOP = await html2canvas(tempDiv,{useCORS:true, scale:1});
+    canvasSOP.id = "sop-canvas";
+    wrapper.innerHTML = "";
+    wrapper.appendChild(canvasSOP);
+
+    // Overlay para comentarios
+    overlayComentarios = document.createElement("div");
+    overlayComentarios.style.position = "absolute";
+    overlayComentarios.style.top = "0";
+    overlayComentarios.style.left = "0";
+    overlayComentarios.style.width = canvasSOP.width + "px";
+    overlayComentarios.style.height = canvasSOP.height + "px";
+    overlayComentarios.style.pointerEvents = "none";
+    wrapper.style.position = "relative";
+    wrapper.appendChild(overlayComentarios);
+
+    canvasSOP.addEventListener("click", activarComentario);
+    await cargarTodosComentarios();
+    cargarComentariosExistentes();
+
+  }catch(err){
+    console.error(err);
+    wrapper.innerHTML = "<p style='color:red;'>No se pudo cargar el SOP.</p>";
+  }
 }
 
-// Cerrar con ESC
-document.addEventListener("keydown", e => { if(e.key === "Escape") closeLogin(); });
+// Cerrar SOP
+function cerrarCanvas(){
+  document.getElementById("canvas-overlay").style.display = "none";
+  document.getElementById("canvas-wrapper").innerHTML = "";
+}
 
-// Cargar usuarios
-function loadUsuarios(){
-  const select = document.getElementById("loginUser");
-  select.innerHTML = '<option value="">Seleccione usuario</option>';
-  usuarios.forEach(u => {
-    const opt = document.createElement("option");
-    opt.value = u.usuario;
-    opt.textContent = u.usuario;
-    select.appendChild(opt);
+// Comentarios
+function activarComentario(e){
+  const rect = e.target.getBoundingClientRect();
+  clickX = e.clientX - rect.left;
+  clickY = e.clientY - rect.top;
+  document.getElementById("modal").style.display = "flex";
+}
+
+// Guardar comentario
+document.getElementById("btn-save").addEventListener("click",async()=>{
+  const texto = document.getElementById("comentario-text").value.trim();
+  if(!texto) return alert("Escribe algo antes de guardar");
+  comentarios.push({x:clickX,y:clickY,comentario:texto});
+  dibujarComentarios();
+  document.getElementById("modal").style.display = "none";
+  document.getElementById("comentario-text").value = "";
+
+  try{
+    await fetch(SHEET_API,{
+      method:"POST",
+      body: JSON.stringify({
+        tipo:"comentario",
+        id_sop:ID_SOP,
+        usuario:USUARIO,
+        correo:CORREO,
+        comentario:texto,
+        x:clickX,
+        y:clickY,
+        page:1,
+        url_doc:SOP_URL
+      })
+    });
+    console.log("Comentario guardado en Sheet");
+  }catch(err){
+    console.error("Error guardando comentario",err);
+  }
+});
+
+document.getElementById("btn-cancel").addEventListener("click",()=>{
+  document.getElementById("modal").style.display = "none";
+  document.getElementById("comentario-text").value = "";
+});
+
+function dibujarComentarios(){
+  requestAnimationFrame(()=>{
+    overlayComentarios.innerHTML = "";
+    comentarios.forEach(c=>{
+      const div = document.createElement("div");
+      div.className = "comentario";
+      div.style.left = c.x + "px";
+      div.style.top = c.y + "px";
+      div.textContent = c.comentario;
+      overlayComentarios.appendChild(div);
+    });
   });
 }
 
-// Login
-function doLogin(){
-  const usuario = document.getElementById("loginUser").value.trim();
-  const clave = document.getElementById("loginPass").value.trim();
-  const errorMsg = document.getElementById("loginError");
-
-  errorMsg.style.display = "none";
-
-  if(!usuario || !clave){
-    errorMsg.innerText = "Seleccione usuario e ingrese la clave";
-    errorMsg.style.display = "block";
-    return;
-  }
-
-  const match = usuarios.find(u => u.usuario === usuario && u.clave === clave);
-
-  if(!match){
-    errorMsg.innerText = "Usuario o clave incorrectos";
-    errorMsg.style.display = "block";
-    return;
-  }
-
-  if(loginType === "admin" && match.rol !== "admin"){
-    errorMsg.innerText = "No autorizado para Admin";
-    errorMsg.style.display = "block";
-    return;
-  }
-
-  if(loginType === "editor" && match.rol !== "editor"){
-    errorMsg.innerText = "No autorizado para Editar SOP";
-    errorMsg.style.display = "block";
-    return;
-  }
-
-  localStorage.setItem("rol", match.rol);
-  closeLogin();
-
-  if(match.rol === "admin"){
-    window.location.href = "/sop-site/admin/";
-  } else {
-    window.location.href = "/sop-site/sop-viewer-edit/";
-  }
+// Cache de todos los comentarios
+async function cargarTodosComentarios(){
+  try{
+    const res = await fetch(`${SHEET_API}?comments=all`);
+    comentariosCache = await res.json();
+  }catch(err){ console.error(err); }
 }
 
-// Eventos
-document.getElementById("loginBtn").addEventListener("click", doLogin);
-document.getElementById("loginPass").addEventListener("keypress", e => { if(e.key === "Enter") doLogin(); });
+function cargarComentariosExistentes(){
+  comentarios = comentariosCache
+    .filter(c => c.id_sop === ID_SOP)
+    .map(c => ({x:c.x, y:c.y, comentario:c.comentario}));
+  dibujarComentarios();
+}
+
 </script>
+</body>
+</html>
