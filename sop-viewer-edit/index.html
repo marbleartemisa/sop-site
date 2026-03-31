@@ -3,205 +3,243 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Viewer SOP con Comentarios</title>
+<title>Viewer SOP con Comentarios - ARTEMISA MARBLE & CABINETS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <style>
-  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f0f0f0; }
-  h2 { text-align:center; margin: 20px 0; }
+body {
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background-image:url('/sop-site/wall0.png');
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-attachment:fixed;
+  color:#1f2937;
+}
 
-  #sop-container { 
-    position: relative; 
-    width: 80%; 
-    margin: 20px auto; 
-    border: 1px solid #ccc; 
-    background:#fff; 
-    min-height:600px;
-  }
+.navbar { 
+  position:sticky; 
+  top:0; 
+  background:rgba(0,0,0,0.65); 
+  color:white; 
+  padding:10px 30px; 
+  display:flex; 
+  justify-content:space-between; 
+  align-items:center; 
+  z-index:1000; 
+}
 
-  #canvas-wrapper {
-    position: relative;
-  }
+.navbar .logo { display:flex; align-items:center; gap:10px; }
+.navbar .logo img { height:40px; }
+.navbar .menu a { color:white; margin-left:20px; text-decoration:none; font-weight:bold; }
 
-  canvas {
-    display: block;
-    width: 100%;
-  }
+.overlay { min-height:100vh; padding:20px; max-width:1200px; margin:auto; }
+h2 { margin-bottom:15px; color:#003366; }
 
-  .comentario {
-    position: absolute;
-    background: rgba(255,255,0,0.8);
-    border: 1px solid #ccc;
-    padding: 4px 6px;
-    border-radius: 4px;
-    font-size:12px;
-    pointer-events: none;
-  }
+#sop-container { 
+  position: relative; 
+  width: 100%; 
+  min-height:600px; 
+  border-radius:12px; 
+  overflow:hidden;
+  background: #fff; 
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
 
-  #modal {
-    display:none; 
-    position: fixed; 
-    top:0; left:0; width:100%; height:100%; 
-    background: rgba(0,0,0,0.6); 
-    justify-content:center; 
-    align-items:center; 
-  }
-  #modal-content {
-    background:#fff; 
-    padding:20px; 
-    border-radius:5px; 
-    width:300px; 
-  }
-  #comentario-text { width:100%; height:80px; margin-top:5px; }
-  #btn-save, #btn-cancel { margin-top:10px; margin-right:5px; padding:6px 12px; cursor:pointer; }
+#canvas-wrapper { position:relative; width:100%; }
+
+canvas { display:block; width:100%; }
+
+.comentario {
+  position: absolute;
+  background: rgba(255,255,0,0.8);
+  border: 1px solid #ccc;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size:12px;
+  pointer-events: none;
+}
+
+#modal, #modalAporte { 
+  display:none; 
+  position: fixed; 
+  top:0; left:0; width:100%; height:100%; 
+  background: rgba(0,0,0,0.6); 
+  justify-content:center; 
+  align-items:center; 
+  z-index:9999; 
+}
+
+.modal-content {
+  background:white; 
+  padding:20px; 
+  border-radius:12px; 
+  width:400px; max-width:90%; 
+}
+
+.modal-content textarea, .modal-content select, .modal-content input {
+  width:100%; margin-top:10px; padding:8px; border-radius:6px; border:1px solid #ccc;
+}
+
+.modal-content button {
+  margin-top:10px; padding:10px; border:none; border-radius:8px; cursor:pointer;
+}
+.modal-content button.cancel { background:#999; color:white; }
+.modal-content button.send { background:#0072C6; color:white; display:flex; align-items:center; justify-content:center; gap:5px; }
+
+.spinner { border:2px solid #f3f3f3; border-top:2px solid #fff; border-radius:50%; width:14px; height:14px; animation:spin 1s linear infinite; display:inline-block; vertical-align:middle; }
+@keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+
+.file-icon { font-size:1.2rem; margin-right:5px; cursor:pointer; }
+.file-icon:hover { transform:scale(1.2); }
+
+.footer { text-align:center; padding:20px; color:white; background:rgba(0,0,0,0.65); margin-top:10px; }
+
+.table-container { overflow-x:auto; margin-bottom:20px; }
+
+table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+td { padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; word-break: break-word; white-space: normal; }
+th:nth-child(3), td:nth-child(3) { max-width: 250px; }
+th:nth-child(4), td:nth-child(4) { max-width: 200px; }
+
+.estado { display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; border:1px solid transparent; }
+.pendiente { background:#fff4cc; color:#b38f00; border-color:#ffe58f; }
+.tramite { background:#e6f0ff; color:#1a5fd0; border-color:#99c2ff; }
+.rechazado { background:#fdecea; color:#c62828; border-color:#f5a5a0; }
+.aprobado { background:#e6f7ec; color:#1e7e34; border-color:#9dd8b1; }
+
 </style>
 </head>
 <body>
 
-<h2>Viewer SOP con Comentarios</h2>
-
-<div id="sop-container">
-  <div id="canvas-wrapper"></div>
+<div class="navbar">
+  <div class="logo">
+    <img src="/sop-site/logo.png">
+    <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+  <div class="menu">
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/Aportes/">Aportes SOP</a>
+    <a href="#" onclick="adminLogin()"><i class="fa-solid fa-user-shield"></i> Admin</a>
+  </div>
 </div>
 
-<!-- Modal para escribir comentario -->
+<div class="overlay">
+  <h2>Viewer SOP con Comentarios</h2>
+  <div id="sop-container">
+    <div id="canvas-wrapper"></div>
+  </div>
+</div>
+
 <div id="modal">
-  <div id="modal-content">
+  <div class="modal-content">
     <h3>Escribe tu comentario</h3>
-    <textarea id="comentario-text"></textarea>
-    <div style="text-align:right;">
-      <button id="btn-save">Guardar</button>
-      <button id="btn-cancel">Cancelar</button>
+    <textarea id="comentario-text" rows="4"></textarea>
+    <div style="display:flex; justify-content:flex-end; gap:10px;">
+      <button id="btn-save" class="send">Guardar</button>
+      <button id="btn-cancel" class="cancel">Cancelar</button>
     </div>
   </div>
 </div>
 
-<!-- html2canvas -->
+<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
+
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
 <script>
-const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+const SHEET_API = "https://script.google.com/macros/s/YOUR_SHEET_ID/exec";
 
-// Configura aquí tu SOP
 const SOP_URL = "https://marbleartemisa.github.io/sop-site/administracion/SOP-COMPRA-SLABS/index.html"; 
 const ID_SOP = "SOP-1774461381359-0";
 const USUARIO = "TuNombre";
 const CORREO = "tucorreo@empresa.com";
 
 let comentarios = [];
-let clickX = 0, clickY = 0;
+let clickX=0, clickY=0;
 
-// Cargar HTML y generar canvas
 async function cargarSOP() {
   try {
-    const response = await fetch(SOP_URL);
-    const html = await response.text();
+    const res = await fetch(SOP_URL);
+    const html = await res.text();
 
-    // Crear div temporal para renderizar
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
-    tempDiv.style.width = "800px"; // ancho fijo para html2canvas
+    tempDiv.style.width = "800px";
     tempDiv.style.padding = "20px";
-    tempDiv.style.background = "#fff";
+    tempDiv.style.background="#fff";
 
     const wrapper = document.getElementById('canvas-wrapper');
-    wrapper.innerHTML = ""; // limpiar
+    wrapper.innerHTML="";
     wrapper.appendChild(tempDiv);
 
-    // Esperamos que las imágenes carguen
-    await new Promise(res => setTimeout(res, 500));
+    await new Promise(res=>setTimeout(res,500));
 
-    // Renderizamos el canvas
-    const canvas = await html2canvas(tempDiv, {useCORS:true, scale:1});
-    canvas.id = "sop-canvas";
-
-    // Limpiamos y colocamos canvas
-    wrapper.innerHTML = "";
+    const canvas = await html2canvas(tempDiv,{useCORS:true, scale:1});
+    canvas.id="sop-canvas";
+    wrapper.innerHTML="";
     wrapper.appendChild(canvas);
 
     canvas.addEventListener('click', activarComentario);
-
     cargarComentariosExistentes();
 
-  } catch(err) {
-    console.error(err);
-    document.getElementById('canvas-wrapper').innerHTML = "<p style='color:red;'>No se pudo cargar el SOP.</p>";
-  }
+  } catch(err){ console.error(err); wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>"; }
 }
 
-// Activar modal al hacer clic
-function activarComentario(e) {
-  const rect = e.target.getBoundingClientRect();
+function activarComentario(e){
+  const rect=e.target.getBoundingClientRect();
   clickX = e.clientX - rect.left;
   clickY = e.clientY - rect.top;
-
-  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('modal').style.display='flex';
 }
 
-// Guardar comentario
-document.getElementById('btn-save').addEventListener('click', async () => {
+document.getElementById('btn-save').addEventListener('click', async ()=>{
   const texto = document.getElementById('comentario-text').value.trim();
   if(!texto) return alert("Escribe algo antes de guardar");
-
   comentarios.push({x:clickX, y:clickY, comentario:texto});
   dibujarComentarios();
+  document.getElementById('modal').style.display='none';
+  document.getElementById('comentario-text').value='';
 
-  document.getElementById('modal').style.display = 'none';
-  document.getElementById('comentario-text').value = "";
-
-  // Guardar en Sheet
-  try {
-    await fetch(SHEET_API, {
+  try{
+    await fetch(SHEET_API,{
       method:"POST",
-      body: JSON.stringify({
-        tipo: "comentario",
-        id_sop: ID_SOP,
-        usuario: USUARIO,
-        correo: CORREO,
-        comentario: texto,
-        x: clickX,
-        y: clickY,
-        page: 1,
-        url_doc: SOP_URL
-      })
+      body:JSON.stringify({tipo:"comentario", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO, comentario:texto, x:clickX, y:clickY, page:1, url_doc:SOP_URL})
     });
     console.log("Comentario guardado en Sheet");
-  } catch(err) {
-    console.error("Error guardando comentario:", err);
-  }
+  }catch(err){ console.error(err); }
 });
 
-// Cancelar comentario
-document.getElementById('btn-cancel').addEventListener('click', () => {
-  document.getElementById('modal').style.display = 'none';
-  document.getElementById('comentario-text').value = "";
+document.getElementById('btn-cancel').addEventListener('click', ()=>{
+  document.getElementById('modal').style.display='none';
+  document.getElementById('comentario-text').value='';
 });
 
-// Dibujar comentarios sobre canvas
-function dibujarComentarios() {
+function dibujarComentarios(){
   const wrapper = document.getElementById('canvas-wrapper');
-  wrapper.querySelectorAll('.comentario').forEach(el => el.remove());
-  comentarios.forEach(c => {
+  wrapper.querySelectorAll('.comentario').forEach(el=>el.remove());
+  comentarios.forEach(c=>{
     const div = document.createElement('div');
-    div.className = "comentario";
-    div.style.left = c.x + "px";
-    div.style.top = c.y + "px";
-    div.textContent = c.comentario;
+    div.className="comentario";
+    div.style.left=c.x+"px";
+    div.style.top=c.y+"px";
+    div.textContent=c.comentario;
     wrapper.appendChild(div);
   });
 }
 
-// Cargar comentarios existentes desde Sheet
-async function cargarComentariosExistentes() {
-  try {
+async function cargarComentariosExistentes(){
+  try{
     const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
     const data = await res.json();
     comentarios = data.map(c=>({x:c.x, y:c.y, comentario:c.comentario}));
     dibujarComentarios();
-  } catch(err) {
-    console.error("Error cargando comentarios:", err);
-  }
+  }catch(err){ console.error("Error cargando comentarios:", err); }
 }
 
-// Iniciar
+function adminLogin(){ const password=prompt("Ingrese contraseña de administrador"); if(password==="Artemisa2026") window.location.href="/sop-site/admin/"; else alert("Acceso denegado"); }
+
 cargarSOP();
 </script>
 
