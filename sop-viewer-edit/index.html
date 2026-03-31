@@ -7,8 +7,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f2937; }
-
-  /* Navbar */
   .navbar{
     position:sticky; top:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px);
     padding:10px 30px; color:white; font-weight:bold; display:flex; justify-content:space-between; align-items:center; z-index:999;
@@ -32,31 +30,10 @@
   .rechazado{background:#fdecea;color:#c62828;}
   .aprobado{background:#e6f7ec;color:#1e7e34;}
 
-  /* Canvas y comentarios */
-  #canvas-overlay {
-      display:none;
-      position:fixed;
-      top:50px;
-      left:0;
-      width:100%;
-      height:calc(100% - 50px);
-      background:rgba(0,0,0,0.15);
-      z-index:900;
-      overflow:auto;
-      backdrop-filter: blur(2px);
-  }
-  
-  #sop-container{ position:relative; margin:20px auto; width:90%; max-width:1200px; background:white; border-radius:12px; padding:20px; }
-  #sop-container p:nth-child(odd),
-  #sop-container li:nth-child(odd){
-    background: #f9f9f9;
-    padding: 2px 0;
-  }
-  #sop-container p, #sop-container li{ line-height:1.6; }
-
-  #canvas-wrapper{ position:relative; width:100%; }
-  canvas{ display:block; width:100%; }
-
+  /* SOP container y overlay de comentarios */
+  #canvas-overlay { display:none; position:fixed; top:50px; left:0; width:100%; height:calc(100% - 50px); background:rgba(0,0,0,0.15); z-index:900; overflow:auto; backdrop-filter: blur(2px); }
+  #sop-container { position:relative; margin:20px auto; width:90%; max-width:1200px; background:white; border-radius:12px; padding:20px; overflow:auto; max-height:80vh; }
+  #sop-content { position:relative; }
   .comentario {
     position: absolute;
     background: #fef68a;
@@ -72,43 +49,26 @@
     word-wrap: break-word;
     transition: transform 0.15s ease, box-shadow 0.3s ease;
   }
-  .comentario:hover {
-    transform: scale(1.03);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.4), 0 0 12px rgba(255,255,200,0.8);
-  }
+  .comentario:hover { transform: scale(1.03); box-shadow: 0 6px 18px rgba(0,0,0,0.4), 0 0 12px rgba(255,255,200,0.8); }
+
+  #btnCerrarSOP{ position:fixed; top:70px; right:20px; z-index:9999; padding:8px 14px; cursor:pointer; background:#c00; color:white; border:none; border-radius:8px; }
 
   /* Modal comentarios */
   #modal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:2000; }
-  #modal-content {
-      background: #fffefc;
-      padding: 20px 25px;
-      border-radius: 12px;
-      width: 350px;
-      max-width: 90%;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
-  }
+  #modal-content { background: #fffefc; padding: 20px 25px; border-radius: 12px; width: 350px; max-width: 90%; box-shadow: 0 6px 20px rgba(0,0,0,0.35); font-family: 'Inter', sans-serif; }
   #comentario-text { width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; line-height: 1.5; resize: vertical; }
   #btn-save, #btn-cancel { margin-top: 10px; margin-right: 8px; padding: 8px 16px; border:none; border-radius:8px; font-weight:600; cursor:pointer; transition:.2s; }
-  #btn-save { background:#00aaff; color:white; }
-  #btn-save:hover { background:#008ecc; }
-  #btn-cancel { background:#ccc; color:#333; }
-  #btn-cancel:hover { background:#999; }
+  #btn-save { background:#00aaff; color:white; } #btn-save:hover { background:#008ecc; }
+  #btn-cancel { background:#ccc; color:#333; } #btn-cancel:hover { background:#999; }
 
-  /* Boton cerrar SOP */
-  #btnCerrarSOP{ position:fixed; top:70px; right:20px; z-index:9999; padding:8px 14px; cursor:pointer; background:#c00; color:white; border:none; border-radius:8px; }
 </style>
 </head>
 <body>
 
 <!-- NAVBAR -->
 <div class="navbar">
-  <div class="logo">
-    <img src="/sop-site/logo.png">
-    <span>ARTEMISA MARBLE & CABINETS</span>
-  </div>
-  <div class="menu-toggle" onclick="toggleMenu()">
-    <i class="fa-solid fa-bars"></i>
-  </div>
+  <div class="logo"><img src="/sop-site/logo.png"><span>ARTEMISA MARBLE & CABINETS</span></div>
+  <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
@@ -148,11 +108,11 @@
   </div>
 </div>
 
-<!-- Canvas flotante -->
+<!-- Contenedor SOP y comentarios -->
 <div id="canvas-overlay">
   <div id="sop-container">
     <button id="btnCerrarSOP" onclick="cerrarCanvas()">Cerrar SOP</button>
-    <div id="canvas-wrapper"></div>
+    <div id="sop-content"></div>
   </div>
 </div>
 
@@ -168,246 +128,181 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+const SHEET_API = "https://script.google.com/macros/s/YOUR_SHEET_ID/exec";
 const USUARIO = localStorage.getItem("usuario") || "Anonimo";
 const CORREO = localStorage.getItem("correo") || "";
 
 let comentarios = [];
 let comentariosCache = [];
-let clickX = 0, clickY = 0;
-let SOP_URL = "", ID_SOP = "";
-let canvasSOP = null;
+let clickX=0, clickY=0, ID_SOP="", SOP_URL="";
 let overlayComentarios = null;
-const comentarioText = document.getElementById("comentario-text");
 
-// -------------------------
 // Render tabla SOP
-// -------------------------
-async function renderTabla(){
-  const tabla = document.getElementById("tablaSOP");
-  tabla.innerHTML = "";
-  const filtroEstado = document.getElementById("filtroEstado").value;
-  const buscar = document.getElementById("buscarSOP").value.toLowerCase();
-  try{
-    const res = await fetch(SHEET_API);
-    const data = await res.json();
-    data.forEach(row => {
-      if(!row.ID_SOP) return;
-      const sop = {
-        Timestamp: row.Timestamp || "",
-        empleado: row.empleado || "",
-        departamento: row.departamento || "",
-        objetivo: row.objetivo || "",
-        areas: row.areas || "",
-        estado: row.estado || "Pendiente",
-        ID_SOP: row.ID_SOP,
-        url_doc: row.url_doc || row.links || ""
-      };
-      if(filtroEstado && sop.estado !== filtroEstado) return;
-      if(buscar && !(sop.empleado.toLowerCase() + sop.objetivo.toLowerCase()).includes(buscar)) return;
-      const fila = document.createElement("tr");
-      fila.innerHTML = `
-        <td>${sop.empleado}</td>
-        <td>${sop.departamento}</td>
-        <td>${sop.objetivo}</td>
-        <td>${sop.areas}</td>
-        <td><span class="estado ${sop.estado.toLowerCase()}">${sop.estado}</span></td>
-        <td>${new Date(sop.Timestamp).toLocaleString()}</td>
-        <td><button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Abrir</button></td>
-      `;
-      tabla.appendChild(fila);
-    });
-  }catch(e){ console.error(e); alert("Error cargando SOPs"); }
+async function renderTabla() {
+    const tabla = document.getElementById("tablaSOP");
+    tabla.innerHTML="";
+    const filtroEstado = document.getElementById("filtroEstado").value;
+    const buscar = document.getElementById("buscarSOP").value.toLowerCase();
+    try{
+        const res = await fetch(SHEET_API);
+        const data = await res.json();
+        data.forEach(row=>{
+            if(!row.ID_SOP) return;
+            const sop = {
+                Timestamp: row.Timestamp || "",
+                empleado: row.empleado || "",
+                departamento: row.departamento || "",
+                objetivo: row.objetivo || "",
+                areas: row.areas || "",
+                estado: row.estado || "Pendiente",
+                ID_SOP: row.ID_SOP,
+                url_doc: row.url_doc || row.links || ""
+            };
+            if(filtroEstado && sop.estado!==filtroEstado) return;
+            if(buscar && !(sop.empleado.toLowerCase()+sop.objetivo.toLowerCase()).includes(buscar)) return;
+            const fila=document.createElement("tr");
+            fila.innerHTML=`
+                <td>${sop.empleado}</td>
+                <td>${sop.departamento}</td>
+                <td>${sop.objetivo}</td>
+                <td>${sop.areas}</td>
+                <td><span class="estado ${sop.estado.toLowerCase()}">${sop.estado}</span></td>
+                <td>${new Date(sop.Timestamp).toLocaleString()}</td>
+                <td><button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Abrir</button></td>
+            `;
+            tabla.appendChild(fila);
+        });
+    }catch(e){ console.error(e); alert("Error cargando SOPs"); }
 }
-
 document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
-// -------------------------
 // Abrir SOP
-// -------------------------
 async function abrirSOP(url,id){
-  SOP_URL = url; ID_SOP = id;
-  const wrapper = document.getElementById("canvas-wrapper");
-  wrapper.innerHTML = "Cargando SOP...";
-  document.getElementById("canvas-overlay").style.display = "block";
-  comentarios = [];
+    SOP_URL=url; ID_SOP=id;
+    const sopContent = document.getElementById("sop-content");
+    sopContent.innerHTML="Cargando SOP...";
+    document.getElementById("canvas-overlay").style.display="block";
+    comentarios=[];
+    try{
+        const res = await fetch(url);
+        const html = await res.text();
+        const tempDiv=document.createElement("div");
+        tempDiv.innerHTML=html;
+        tempDiv.querySelectorAll("script").forEach(s=>s.remove());
+        sopContent.innerHTML=""; sopContent.appendChild(tempDiv);
 
-  try{
-    const res = await fetch(url);
-    const html = await res.text();
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    tempDiv.querySelectorAll("script").forEach(s => s.remove());
-    tempDiv.style.width = "900px";
-    tempDiv.style.margin = "auto";
-    tempDiv.style.padding = "20px";
-    tempDiv.style.background = "#fff";
+        // Overlay comentarios
+        overlayComentarios=document.createElement("div");
+        overlayComentarios.style.position="absolute";
+        overlayComentarios.style.top="0";
+        overlayComentarios.style.left="0";
+        overlayComentarios.style.width="100%";
+        overlayComentarios.style.height=tempDiv.scrollHeight+"px";
+        overlayComentarios.style.pointerEvents="auto";
+        tempDiv.style.position="relative";
+        tempDiv.appendChild(overlayComentarios);
 
-    wrapper.innerHTML = "";
-    wrapper.appendChild(tempDiv);
-
-    // Canvas opcional para snapshot
-    canvasSOP = await html2canvas(tempDiv,{useCORS:true, scale:1});
-    canvasSOP.id = "sop-canvas";
-
-    overlayComentarios = document.createElement("div");
-    overlayComentarios.style.position = "absolute";
-    overlayComentarios.style.top = "0";
-    overlayComentarios.style.left = "0";
-    overlayComentarios.style.width = canvasSOP.width + "px";
-    overlayComentarios.style.height = canvasSOP.height + "px";
-    overlayComentarios.style.pointerEvents = "auto";
-    wrapper.style.position = "relative";
-    wrapper.appendChild(canvasSOP);
-    wrapper.appendChild(overlayComentarios);
-
-    canvasSOP.addEventListener("click", activarComentario);
-
-    await cargarTodosComentarios();
-    cargarComentariosExistentes();
-
-  }catch(err){
-    console.error(err);
-    wrapper.innerHTML = "<p style='color:red;'>No se pudo cargar el SOP.</p>";
-  }
+        overlayComentarios.addEventListener("click", activarComentario);
+        await cargarTodosComentarios();
+        cargarComentariosExistentes();
+    }catch(e){ console.error(e); sopContent.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>"; }
 }
 
 // Cerrar SOP
 function cerrarCanvas(){
-  document.getElementById("canvas-overlay").style.display = "none";
-  document.getElementById("canvas-wrapper").innerHTML = "";
+    document.getElementById("canvas-overlay").style.display="none";
+    document.getElementById("sop-content").innerHTML="";
 }
 
-// -------------------------
-// Modal y comentarios
-// -------------------------
+// Modal comentarios
+const comentarioText=document.getElementById("comentario-text");
 function activarComentario(e){
-    const rect = canvasSOP.getBoundingClientRect();
-    clickX = e.clientX - rect.left;
-    clickY = e.clientY - rect.top;
+    const rect=overlayComentarios.getBoundingClientRect();
+    clickX=e.clientX-rect.left + overlayComentarios.scrollLeft;
+    clickY=e.clientY-rect.top + overlayComentarios.scrollTop;
     abrirModal();
 }
-
-function abrirModal() {
-    document.getElementById("modal").style.display = "flex";
-    comentarioText.value = "Nuevo comentario...";
-    setTimeout(()=> comentarioText.focus(),50);
+function abrirModal(){
+    document.getElementById("modal").style.display="flex";
+    comentarioText.value="Nuevo comentario...";
+    comentarioText.focus();
 }
 
-comentarioText.addEventListener("focus", () => {
-    if (comentarioText.value === "Nuevo comentario...") comentarioText.value = "";
-});
-comentarioText.addEventListener("blur", () => {
-    if (comentarioText.value.trim() === "") comentarioText.value = "Nuevo comentario...";
-});
-
-document.getElementById("btn-cancel").addEventListener("click", ()=>{
-    document.getElementById("modal").style.display = "none";
-    comentarioText.value = "";
-});
-
+// Guardar comentario
 document.getElementById("btn-save").addEventListener("click", async ()=>{
-    const texto = comentarioText.value.trim();
+    const texto=comentarioText.value.trim();
     if(!texto || texto==="Nuevo comentario...") return alert("Escribe algo antes de guardar");
-
-    comentarios.push({x:clickX, y:clickY, comentario:texto});
+    comentarios.push({x:clickX,y:clickY,comentario:texto});
     dibujarComentarios();
-    document.getElementById("modal").style.display = "none";
-    comentarioText.value = "";
-
+    document.getElementById("modal").style.display="none";
+    comentarioText.value="";
+    // Guardar en Sheet
     try{
-        await fetch(SHEET_API,{ method:"POST", body: JSON.stringify({
+        await fetch(SHEET_API,{method:"POST",body:JSON.stringify({
             tipo:"comentario", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO,
             comentario:texto, x:clickX, y:clickY, page:1, url_doc:SOP_URL
         })});
-        console.log("Comentario guardado en Sheet");
-    }catch(err){ console.error("Error guardando comentario", err); }
+    }catch(err){ console.error(err); }
 });
+document.getElementById("btn-cancel").addEventListener("click",()=>{ document.getElementById("modal").style.display="none"; comentarioText.value=""; });
 
-// -------------------------
-// Dibujar comentarios y drag&drop
-// -------------------------
+// Dibujar comentarios
 function dibujarComentarios(){
-    overlayComentarios.innerHTML = "";
+    overlayComentarios.innerHTML="";
     comentarios.forEach((c,index)=>{
-        const div = document.createElement("div");
-        div.className = "comentario";
-        div.style.left = c.x + "px";
-        div.style.top = c.y + "px";
-        div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;">
-            <span>${c.comentario.replace(/\n/g,'<br>')}</span>
-            <i class="fa-solid fa-xmark" style="cursor:pointer;margin-left:6px;"></i>
-        </div>`;
+        const div=document.createElement("div");
+        div.className="comentario";
+        div.style.left=c.x+"px";
+        div.style.top=c.y+"px";
+        div.innerHTML=`<span>${c.comentario.replace(/\n/g,'<br>')}</span><i class="fa-solid fa-xmark" style="cursor:pointer; margin-left:6px;"></i>`;
         overlayComentarios.appendChild(div);
 
-        // Eliminar comentario
+        // Eliminar
         div.querySelector("i").addEventListener("click", async ()=>{
             if(!confirm("Eliminar comentario?")) return;
             comentarios.splice(index,1);
             dibujarComentarios();
-            try{ await fetch(SHEET_API,{ method:"POST", body: JSON.stringify({
-                tipo:"eliminar_comentario", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO,
-                comentario_id:index, url_doc:SOP_URL
+            try{ await fetch(SHEET_API,{method:"POST",body:JSON.stringify({
+                tipo:"eliminar_comentario", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO, comentario_id:index, url_doc:SOP_URL
             })}); }catch(err){ console.error(err); }
         });
 
-        // Drag & Drop
+        // Drag & drop
         let offsetX=0, offsetY=0, isDragging=false;
-        div.addEventListener("mousedown", (e)=>{
-            isDragging = true;
-            offsetX = e.offsetX;
-            offsetY = e.offsetY;
-            div.style.cursor = "grabbing";
-        });
-        document.addEventListener("mousemove", (e)=>{
+        div.addEventListener("mousedown",(e)=>{ isDragging=true; offsetX=e.offsetX; offsetY=e.offsetY; div.style.cursor="grabbing"; });
+        document.addEventListener("mousemove",(e)=>{
             if(!isDragging) return;
-            const rect = overlayComentarios.getBoundingClientRect();
-            c.x = e.clientX - rect.left - offsetX;
-            c.y = e.clientY - rect.top - offsetY;
-            div.style.left = c.x + "px";
-            div.style.top = c.y + "px";
+            const rect=overlayComentarios.getBoundingClientRect();
+            c.x=e.clientX-rect.left-offsetX + overlayComentarios.scrollLeft;
+            c.y=e.clientY-rect.top-offsetY + overlayComentarios.scrollTop;
+            div.style.left=c.x+"px"; div.style.top=c.y+"px";
         });
         document.addEventListener("mouseup", async ()=>{
-            if(isDragging){
-                isDragging=false;
-                div.style.cursor="grab";
-                try{
-                    await fetch(SHEET_API,{ method:"POST", body: JSON.stringify({
-                        tipo:"actualizar_posicion", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO,
-                        comentario:c.comentario, x:c.x, y:c.y, url_doc:SOP_URL
-                    })});
-                }catch(err){ console.error(err); }
+            if(isDragging){ isDragging=false; div.style.cursor="grab";
+                try{ await fetch(SHEET_API,{method:"POST",body:JSON.stringify({
+                    tipo:"actualizar_posicion", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO,
+                    comentario:c.comentario, x:c.x, y:c.y, url_doc:SOP_URL
+                })}); }catch(err){ console.error(err); }
             }
         });
     });
 }
 
-// -------------------------
-// Comentarios cache
-// -------------------------
+// Cargar comentarios existentes
 async function cargarTodosComentarios(){
     try{
-        const res = await fetch(`${SHEET_API}?comments=all`);
-        comentariosCache = await res.json();
+        const res=await fetch(`${SHEET_API}?comments=all`);
+        comentariosCache=await res.json();
     }catch(err){ console.error(err); }
 }
-
 function cargarComentariosExistentes(){
-    comentarios = comentariosCache.filter(c => c.id_sop===ID_SOP).map(c=>({x:c.x, y:c.y, comentario:c.comentario}));
+    comentarios = comentariosCache.filter(c=>c.id_sop===ID_SOP).map(c=>({x:c.x, y:c.y, comentario:c.comentario}));
     dibujarComentarios();
 }
 
-// -------------------------
-// Menu toggle
-// -------------------------
-function toggleMenu(){
-    const menu = document.querySelector(".menu");
-    menu.style.display = (menu.style.display==="flex")?"none":"flex";
-}
 </script>
 </body>
 </html>
