@@ -3,38 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Viewer SOP - Comentarios</title>
+<title>Viewer SOP con Comentarios</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
 <style>
   body{
     margin:0;
     font-family:'Inter',sans-serif;
-    background-image:url('/sop-site/wall0.png');
-    background-position:center;
-    background-repeat:no-repeat;
-    background-size:cover;
-    background-attachment:fixed;
+    background:#f0f0f0;
     color:#1f2937;
   }
 
-  .navbar { position:sticky; top:0; background:rgba(0,0,0,0.65); color:white; padding:10px 30px; display:flex; justify-content:space-between; align-items:center; z-index:1000; }
+  .navbar { 
+    position:sticky; top:0; background:#003366; color:white; padding:10px 30px; display:flex; justify-content:space-between; align-items:center; z-index:1000; 
+  }
   .navbar .logo { display:flex; align-items:center; gap:10px; }
   .navbar .logo img { height:40px; }
   .navbar .menu a { color:white; margin-left:20px; text-decoration:none; font-weight:bold; }
 
-  .overlay { min-height:100vh; padding:20px; max-width:1200px; margin:auto; }
+  .overlay { padding:20px; max-width:1200px; margin:auto; }
 
   h2 { margin-bottom:15px; color:#003366; }
 
   input, select { margin-bottom:15px; padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; }
 
   .table-container { overflow-x:auto; margin-bottom:20px; }
+
   table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
   th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   td { padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; word-break: break-word; white-space: normal; }
-  th:nth-child(3), td:nth-child(3) { max-width: 250px; }
-  th:nth-child(4), td:nth-child(4) { max-width: 200px; }
+  th:nth-child(3), td:nth-child(3) { max-width: 250px; } 
+  th:nth-child(4), td:nth-child(4) { max-width: 200px; } 
 
   .estado { display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; border:1px solid transparent; }
   .pendiente { background:#fff4cc; color:#b38f00; border-color:#ffe58f; }
@@ -42,25 +41,47 @@
   .rechazado { background:#fdecea; color:#c62828; border-color:#f5a5a0; }
   .aprobado { background:#e6f7ec; color:#1e7e34; border-color:#9dd8b1; }
 
-  .footer { text-align:center; padding:20px; color:white; background:rgba(0,0,0,0.65); margin-top:10px; }
+  #sop-container { 
+    position: relative; 
+    width: 100%; 
+    min-height:600px; 
+    border:1px solid #ccc; 
+    background:white; 
+    margin-bottom:20px;
+  }
 
-  .notification { position:fixed; top:20px; right:20px; padding:12px 20px; border-radius:12px; color:white; font-weight:bold; z-index:9999; opacity:0.95; }
-  .notification.success { background:#28a745; }
-  .notification.error { background:#dc3545; }
-
-  .file-icon { font-size:1.2rem; margin-right:5px; cursor:pointer; }
-  .file-icon:hover { transform:scale(1.2); }
-
-  #sop-container { position: relative; width:100%; margin:20px 0; border:1px solid #ccc; background:#fff; min-height:600px; }
   #canvas-wrapper { position: relative; }
-  canvas { display:block; width:100%; }
-  .comentario { position:absolute; background:rgba(255,255,0,0.8); border:1px solid #ccc; padding:4px 6px; border-radius:4px; font-size:12px; pointer-events:none; }
 
-  /* Modal Comentarios */
-  #modal { display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); justify-content:center; align-items:center; }
-  #modal-content { background:#fff; padding:20px; border-radius:5px; width:300px; }
+  canvas { display:block; width:100%; }
+
+  .comentario {
+    position: absolute;
+    background: rgba(255,255,0,0.8);
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size:12px;
+    pointer-events: none;
+  }
+
+  #modal {
+    display:none; 
+    position: fixed; 
+    top:0; left:0; width:100%; height:100%; 
+    background: rgba(0,0,0,0.6); 
+    justify-content:center; 
+    align-items:center; 
+    z-index:10000;
+  }
+  #modal-content {
+    background:#fff; 
+    padding:20px; 
+    border-radius:5px; 
+    width:300px; 
+  }
   #comentario-text { width:100%; height:80px; margin-top:5px; }
   #btn-save, #btn-cancel { margin-top:10px; margin-right:5px; padding:6px 12px; cursor:pointer; }
+
 </style>
 </head>
 <body>
@@ -74,12 +95,11 @@
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
     <a href="/sop-site/Aportes/">Aportes SOP</a>
-    <a href="#" onclick="adminLogin()"><i class="fa-solid fa-user-shield"></i> Admin</a>
   </div>
 </div>
 
 <div class="overlay">
-  <h2>Lista de SOPs</h2>
+  <h2>Selecciona un SOP para comentar</h2>
   <input type="text" id="buscarSOP" placeholder="Buscar...">
   <select id="filtroEstado">
     <option value="">Todos los estados</option>
@@ -99,7 +119,7 @@
           <th>Áreas</th>
           <th>Estado</th>
           <th>Fecha / Hora</th>
-          <th>Ver SOP</th>
+          <th>Acción</th>
         </tr>
       </thead>
       <tbody id="tablaSOP"></tbody>
@@ -111,9 +131,7 @@
   </div>
 </div>
 
-<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
-
-<!-- Modal Comentario -->
+<!-- Modal comentarios -->
 <div id="modal">
   <div id="modal-content">
     <h3>Escribe tu comentario</h3>
@@ -125,7 +143,6 @@
   </div>
 </div>
 
-<!-- html2canvas -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
@@ -133,12 +150,12 @@ const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcT
 
 let comentarios = [];
 let clickX = 0, clickY = 0;
-let ID_SOP = "";
 let SOP_URL = "";
+let ID_SOP = "";
 let USUARIO = "TuNombre";
 let CORREO = "tucorreo@empresa.com";
 
-// Render tabla de SOPs
+// Cargar tabla de SOPs
 async function renderTabla() {
   const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML = "";
@@ -151,16 +168,15 @@ async function renderTabla() {
 
     data.forEach(row => {
       const sop = {
-        Timestamp: row.Timestamp || "",
-        empleado: row.empleado || "",
-        correo: row.correo || "",
-        departamento: row.departamento || "",
-        objetivo: row.objetivo || "",
-        areas: row.areas || "",
-        estado: row.estado || "Pendiente",
-        links: row.links || "",
-        ID_SOP: row.ID_SOP || "",
-        url_doc: row.url_doc || ""  // URL del SOP
+        Timestamp: row.Timestamp || row[0] || "",
+        empleado: row.empleado || row[1] || "",
+        correo: row.correo || row[2] || "",
+        departamento: row.departamento || row[3] || "",
+        objetivo: row.objetivo || row[4] || "",
+        areas: row.areas || row[5] || "",
+        estado: row.estado || row[7] || "Pendiente",
+        ID_SOP: row.ID_SOP || row[9] || "",
+        URL: row.links?.split("\n")[0] || "" // URL del SOP (primer link)
       };
 
       if (filtroEstado && sop.estado !== filtroEstado) return;
@@ -179,26 +195,30 @@ async function renderTabla() {
         <td>${sop.areas}</td>
         <td><span class="estado ${estadoClass}">${sop.estado}</span></td>
         <td>${new Date(sop.Timestamp).toLocaleString()}</td>
-        <td><button onclick="cargarSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Revisar / Comentar</button></td>
+        <td><button onclick="seleccionarSOP('${sop.URL}','${sop.ID_SOP}')">Abrir</button></td>
       `;
       tabla.appendChild(fila);
     });
 
-  } catch(err) {
-    console.error(err);
-    alert("Error cargando SOPs");
+  } catch(e) {
+    console.error(e);
+    alert("Error cargando los SOPs");
   }
 }
 
-async function cargarSOP(url, id) {
+// Seleccionar un SOP y cargar canvas
+async function seleccionarSOP(url,id){
   SOP_URL = url;
   ID_SOP = id;
   comentarios = [];
+  await cargarSOP();
+}
 
+// Cargar SOP en canvas
+async function cargarSOP() {
   try {
     const response = await fetch(SOP_URL);
     const html = await response.text();
-
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
     tempDiv.style.width = "800px";
@@ -209,9 +229,9 @@ async function cargarSOP(url, id) {
     wrapper.innerHTML = "";
     wrapper.appendChild(tempDiv);
 
-    await new Promise(res => setTimeout(res, 500));
+    await new Promise(res=>setTimeout(res,500));
 
-    const canvas = await html2canvas(tempDiv, {useCORS:true, scale:1});
+    const canvas = await html2canvas(tempDiv,{useCORS:true,scale:1});
     canvas.id = "sop-canvas";
 
     wrapper.innerHTML = "";
@@ -221,14 +241,14 @@ async function cargarSOP(url, id) {
 
     cargarComentariosExistentes();
 
-  } catch(err) {
+  } catch(err){
     console.error(err);
     document.getElementById('canvas-wrapper').innerHTML = "<p style='color:red;'>No se pudo cargar el SOP.</p>";
   }
 }
 
 // Activar modal
-function activarComentario(e) {
+function activarComentario(e){
   const rect = e.target.getBoundingClientRect();
   clickX = e.clientX - rect.left;
   clickY = e.clientY - rect.top;
@@ -236,17 +256,18 @@ function activarComentario(e) {
 }
 
 // Guardar comentario
-document.getElementById('btn-save').addEventListener('click', async () => {
+document.getElementById('btn-save').addEventListener('click', async()=>{
   const texto = document.getElementById('comentario-text').value.trim();
   if(!texto) return alert("Escribe algo antes de guardar");
 
   comentarios.push({x:clickX, y:clickY, comentario:texto});
   dibujarComentarios();
-  document.getElementById('modal').style.display = 'none';
-  document.getElementById('comentario-text').value = "";
 
-  try {
-    await fetch(SHEET_API, {
+  document.getElementById('modal').style.display='none';
+  document.getElementById('comentario-text').value='';
+
+  try{
+    await fetch(SHEET_API,{
       method:"POST",
       body: JSON.stringify({
         tipo: "comentario",
@@ -256,56 +277,53 @@ document.getElementById('btn-save').addEventListener('click', async () => {
         comentario: texto,
         x: clickX,
         y: clickY,
-        page: 1,
+        page:1,
         url_doc: SOP_URL
       })
     });
     console.log("Comentario guardado en Sheet");
-  } catch(err) {
-    console.error("Error guardando comentario:", err);
+  }catch(err){
+    console.error("Error guardando comentario:",err);
   }
 });
 
-document.getElementById('btn-cancel').addEventListener('click', () => {
-  document.getElementById('modal').style.display = 'none';
-  document.getElementById('comentario-text').value = "";
+document.getElementById('btn-cancel').addEventListener('click',()=>{
+  document.getElementById('modal').style.display='none';
+  document.getElementById('comentario-text').value='';
 });
 
-function dibujarComentarios() {
+// Dibujar comentarios sobre canvas
+function dibujarComentarios(){
   const wrapper = document.getElementById('canvas-wrapper');
-  wrapper.querySelectorAll('.comentario').forEach(el => el.remove());
-  comentarios.forEach(c => {
+  wrapper.querySelectorAll('.comentario').forEach(el=>el.remove());
+  comentarios.forEach(c=>{
     const div = document.createElement('div');
-    div.className = "comentario";
-    div.style.left = c.x + "px";
-    div.style.top = c.y + "px";
-    div.textContent = c.comentario;
+    div.className="comentario";
+    div.style.left=c.x+"px";
+    div.style.top=c.y+"px";
+    div.textContent=c.comentario;
     wrapper.appendChild(div);
   });
 }
 
-async function cargarComentariosExistentes() {
-  try {
+// Cargar comentarios desde Sheet
+async function cargarComentariosExistentes(){
+  try{
     const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
     const data = await res.json();
     comentarios = data.map(c=>({x:c.x, y:c.y, comentario:c.comentario}));
     dibujarComentarios();
-  } catch(err) {
-    console.error("Error cargando comentarios:", err);
+  }catch(err){
+    console.error("Error cargando comentarios:",err);
   }
 }
 
-document.getElementById("buscarSOP").addEventListener("input", renderTabla);
-document.getElementById("filtroEstado").addEventListener("change", renderTabla);
+// Buscador y filtro
+document.getElementById("buscarSOP").addEventListener("input",renderTabla);
+document.getElementById("filtroEstado").addEventListener("change",renderTabla);
 
+// Inicial
 renderTabla();
-
-function adminLogin(){
-  const password = prompt("Ingrese contraseña de administrador");
-  if(password==="Artemisa2026") window.location.href="/sop-site/admin/";
-  else alert("Acceso denegado");
-}
 </script>
-
 </body>
 </html>
