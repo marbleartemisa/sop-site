@@ -115,9 +115,11 @@ let comentarios = [];
 let clickX = 0, clickY = 0;
 let SOP_URL = "";
 let ID_SOP = "";
-const USUARIO = "Carlos Herrera";
-const CORREO = "control@artemisamarble.com";
+const USUARIO = localStorage.getItem("usuario") || "Anonimo";
+const CORREO = localStorage.getItem("correo") || "";
 
+
+  
 // Renderizar tabla de SOPs
 async function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
@@ -167,7 +169,7 @@ document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
-// Abrir SOP y generar canvas
+// Abrir SOP y generar canvas  
 async function abrirSOP(url,id){
   SOP_URL = url;
   ID_SOP = id;
@@ -276,6 +278,7 @@ async function cargarComentariosExistentes(){
     console.error("Error cargando comentarios",err);
   }
 }
+
 </script>
 </body>
 </html>
