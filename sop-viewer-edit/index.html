@@ -40,11 +40,11 @@
   #sop-container{ position:relative; margin:20px auto; width:90%; max-width:1200px; background:white; border-radius:12px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
   #canvas-wrapper{ position:relative; width:100%; }
 
-  /* Comentarios flotantes */
+  /* Comentarios flotantes sobre canvas */
   .comentario {
     position:absolute;
     background: rgba(50,120,220,0.2);
-    border: 1px solid rgba(50,120,220,0.6);
+    border:1px solid rgba(50,120,220,0.6);
     border-radius: 8px;
     padding:6px 10px;
     font-size:13px;
@@ -55,14 +55,8 @@
     max-width:220px;
     pointer-events:auto;
     user-select:text;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .comentario:hover { box-shadow:0 6px 15px rgba(0,0,0,0.3); transform:translateY(-2px); }
-  .comentario[data-user="Alice"] { background: rgba(255,200,200,0.3); }
-  .comentario[data-user="Bob"]   { background: rgba(200,255,200,0.3); }
-  .comentario[data-user="Carlos"]{ background: rgba(200,220,255,0.3); }
-
-  .comentario textarea {
+  .comentario textarea{
     width:100%;
     border:none;
     outline:none;
@@ -72,6 +66,13 @@
     font-size:13px;
     line-height:1.3;
     color:inherit;
+  }
+  .comentario .close-btn{
+    position:absolute;
+    top:2px; right:4px;
+    cursor:pointer;
+    font-size:12px;
+    color:red;
   }
 
   #btnCerrarSOP{
@@ -217,32 +218,27 @@ async function abrirSOP(url,id){
     wrapper.appendChild(canvasSOP);
 
     overlayComentarios = document.createElement("div");
-    overlayComentarios.style.position = "absolute";
-    overlayComentarios.style.top = "0";
-    overlayComentarios.style.left = "0";
-    overlayComentarios.style.width = canvasSOP.width+"px";
-    overlayComentarios.style.height = canvasSOP.height+"px";
-    overlayComentarios.style.pointerEvents = "auto";
-    wrapper.style.position = "relative";
+    overlayComentarios.style.position="absolute";
+    overlayComentarios.style.top="0";
+    overlayComentarios.style.left="0";
+    overlayComentarios.style.width=canvasSOP.width+"px";
+    overlayComentarios.style.height=canvasSOP.height+"px";
+    overlayComentarios.style.pointerEvents="auto";
+    wrapper.style.position="relative";
     wrapper.appendChild(overlayComentarios);
 
-    canvasSOP.addEventListener("dblclick", e => {
+    // Crear nuevo comentario con doble click
+    canvasSOP.addEventListener("dblclick", e=>{
       const rect = canvasSOP.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const nuevo = {x, y, comentario:"Nuevo comentario", usuario:USUARIO};
+      const nuevo={x,y,comentario:"Nuevo comentario",usuario:USUARIO};
       comentarios.push(nuevo);
       dibujarComentarios();
       // Guardar en Sheet
-      fetch(SHEET_API,{method:"POST", body: JSON.stringify({
-        tipo:"comentario",
-        id_sop:ID_SOP,
-        usuario:USUARIO,
-        correo:CORREO,
-        comentario:nuevo.comentario,
-        x, y,
-        page:1,
-        url_doc:SOP_URL
+      fetch(SHEET_API,{method:"POST", body:JSON.stringify({
+        tipo:"comentario", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO,
+        comentario:nuevo.comentario, x, y, page:1, url_doc:SOP_URL
       })});
     });
 
@@ -254,14 +250,12 @@ async function abrirSOP(url,id){
 // Cerrar SOP
 function cerrarCanvas(){ document.getElementById("canvas-overlay").style.display="none"; document.getElementById("canvas-wrapper").innerHTML=""; }
 
-// Drag & Drop
+// Drag & Drop y edición
 function hacerDraggable(div, comentario){
   let offsetX, offsetY, isDragging=false;
   div.addEventListener("mousedown", e=>{
     if(e.target.tagName==='TEXTAREA') return;
-    isDragging=true;
-    offsetX=e.offsetX; offsetY=e.offsetY;
-    div.style.zIndex=1000;
+    isDragging=true; offsetX=e.offsetX; offsetY=e.offsetY; div.style.zIndex=1000;
   });
   document.addEventListener("mousemove", e=>{
     if(!isDragging) return;
@@ -273,16 +267,10 @@ function hacerDraggable(div, comentario){
     if(isDragging){
       isDragging=false; div.style.zIndex="";
       comentario.x=parseInt(div.style.left); comentario.y=parseInt(div.style.top);
-      try{
-        await fetch(SHEET_API,{method:"POST", body:JSON.stringify({
-          tipo:"update_pos",
-          id_sop:ID_SOP,
-          usuario:USUARIO,
-          correo:CORREO,
-          comentario:comentario.comentario,
-          x:comentario.x, y:comentario.y
-        })});
-      }catch(err){ console.error(err); }
+      try{ await fetch(SHEET_API,{method:"POST", body:JSON.stringify({
+        tipo:"update_pos", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO,
+        comentario:comentario.comentario, x:comentario.x, y:comentario.y
+      })}); }catch(err){console.error(err);}
     }
   });
 }
@@ -295,10 +283,27 @@ function dibujarComentarios(){
     div.className="comentario"; div.style.left=c.x+"px"; div.style.top=c.y+"px"; div.dataset.user=c.usuario;
     const textarea=document.createElement("textarea");
     textarea.value=c.comentario;
-    textarea.oninput=async()=>{ c.comentario=textarea.value; try{ await fetch(SHEET_API,{method:"POST", body:JSON.stringify({
-      tipo:"update_text", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO, comentario:c.comentario, x:c.x, y:c.y
-    })}); }catch(err){console.error(err);} };
+    textarea.oninput=async()=>{
+      c.comentario=textarea.value;
+      try{ await fetch(SHEET_API,{method:"POST", body:JSON.stringify({
+        tipo:"update_text", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO,
+        comentario:c.comentario, x:c.x, y:c.y
+      })}); }catch(err){console.error(err);}
+    };
     div.appendChild(textarea);
+
+    const closeBtn=document.createElement("span");
+    closeBtn.className="close-btn"; closeBtn.innerHTML="×";
+    closeBtn.onclick=async()=>{
+      overlayComentarios.removeChild(div);
+      comentarios=comentarios.filter(cm=>cm!==c);
+      try{ await fetch(SHEET_API,{method:"POST", body:JSON.stringify({
+        tipo:"delete", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO,
+        comentario:c.comentario, x:c.x, y:c.y
+      })}); }catch(err){console.error(err);}
+    };
+    div.appendChild(closeBtn);
+
     overlayComentarios.appendChild(div);
     hacerDraggable(div,c);
   });
