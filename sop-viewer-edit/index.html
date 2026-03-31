@@ -339,40 +339,69 @@ document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
-// ABRIR SOP
-async function abrirSOP(url,id){
-  SOP_URL=url; ID_SOP=id; comentarios=[];
-  const wrapper=document.getElementById("canvas-wrapper");
-  document.getElementById("canvas-overlay").style.display="block";
-  wrapper.innerHTML="Cargando SOP...";
-  try{
+<!-- ABRIR SOP -->
+const comentarios = [];
+let SOP_URL = "";
+let ID_SOP = "";
+
+// ABRIR SOP Y RENDERIZAR EN CANVAS
+async function abrirSOP(url, id) {
+  SOP_URL = url;
+  ID_SOP = id;
+  comentarios.length = 0; // reset comentarios
+  const wrapper = document.getElementById("canvas-wrapper");
+  document.getElementById("canvas-overlay").style.display = "block";
+  wrapper.innerHTML = "Cargando SOP...";
+
+  try {
     const res = await fetch(url);
     const html = await res.text();
-    const tempDiv = document.createElement('div');
+
+    const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
-    tempDiv.querySelectorAll("script").forEach(s=>s.remove());
-    tempDiv.style.width="900px"; tempDiv.style.margin="auto"; tempDiv.style.padding="20px"; tempDiv.style.background="#fff";
-    wrapper.innerHTML=""; wrapper.appendChild(tempDiv);
-    await new Promise(r=>setTimeout(r,300));
-    const canvas = await html2canvas(tempDiv,{useCORS:true, scale:1});
-    canvas.id="sop-canvas";
-    wrapper.innerHTML=""; wrapper.appendChild(canvas);
+
+    // eliminar scripts del SOP
+    tempDiv.querySelectorAll("script").forEach(s => s.remove());
+
+    // estilos temporales
+    tempDiv.style.width = "900px";
+    tempDiv.style.margin = "auto";
+    tempDiv.style.padding = "20px";
+    tempDiv.style.background = "#fff";
+
+    wrapper.innerHTML = "";
+    wrapper.appendChild(tempDiv);
+
+    // esperar que el DOM se renderice
+    await new Promise(r => setTimeout(r, 300));
+
+    const canvas = await html2canvas(tempDiv, { useCORS: true, scale: 1 });
+    canvas.id = "sop-canvas";
+
+    wrapper.innerHTML = "";
+    wrapper.appendChild(canvas);
+
+    // activar click para agregar comentario
     canvas.addEventListener("click", activarComentario);
-    cargarComentariosExistentes();
-  }catch(err){
-    console.error(err);
-    wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>";
+
+    // cargar comentarios existentes
+    await cargarComentariosExistentes();
+
+  } catch (err) {
+    console.error("Error cargando SOP:", err);
+    wrapper.innerHTML = "<p style='color:red;'>No se pudo cargar el SOP.</p>";
   }
 }
 
-// CERRAR
-function cerrarCanvas(){
-  document.getElementById("canvas-overlay").style.display="none";
-  document.getElementById("canvas-wrapper").innerHTML="";
+// CERRAR CANVAS SOP
+function cerrarCanvas() {
+  document.getElementById("canvas-overlay").style.display = "none";
+  document.getElementById("canvas-wrapper").innerHTML = "";
 }
 
-// COMENTARIOS
-function activarComentario(e){
+// ACTIVAR CREACIÓN DE COMENTARIO
+function activarComentario(e) {
+  const wrapper = document.getElementById("canvas-wrapper");
   const rect = e.target.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
@@ -380,8 +409,8 @@ function activarComentario(e){
   crearComentarioEditable(x, y, "");
 }
 
-  function crearComentarioEditable(x, y, textoInicial, existente = null){
-
+// CREAR COMENTARIO EDITABLE
+function crearComentarioEditable(x, y, textoInicial = "", existente = null) {
   const wrapper = document.getElementById("canvas-wrapper");
 
   const div = document.createElement("div");
@@ -394,146 +423,137 @@ function activarComentario(e){
 
   // BOTÓN X
   const btnX = document.createElement("div");
-  btnX.innerHTML = "×";
   btnX.className = "cerrar-comentario";
+  btnX.innerHTML = "×";
 
-  btnX.addEventListener("click", async (e)=>{
+  btnX.addEventListener("click", async (e) => {
     e.stopPropagation();
     div.remove();
-    comentarios = comentarios.filter(c => c.div !== div);
+    btnX.remove();
+    comentarios.splice(comentarios.indexOf(existente), 1);
 
-    await fetch(SHEET_API,{
-      method:"POST",
-      body: JSON.stringify({
-        tipo:"eliminar",
-        id_sop: ID_SOP,
-        comentario: textoInicial
-      })
-    });
+    if (existente) {
+      try {
+        await fetch(SHEET_API, {
+          method: "POST",
+          body: JSON.stringify({ tipo: "eliminar", id_sop: ID_SOP, comentario: existente.comentario })
+        });
+      } catch (err) { console.error(err); }
+    }
   });
 
-    wrapper.appendChild(div);
-    wrapper.appendChild(btnX);
-    btnX.style.position = "absolute";
-    btnX.style.left = (x + 200) + "px"; // ajusta según ancho
-    btnX.style.top = (y - 8) + "px";
+  wrapper.appendChild(div);
+  wrapper.appendChild(btnX);
 
-  // GUARDAR AL SALIR
-  div.addEventListener("blur", async ()=>{
-    const texto = div.innerText.replace("×","").trim();
-    if(!texto){
-      div.remove();
-      return;
+  // posicionar X sobre el div
+  btnX.style.left = (div.offsetLeft + div.offsetWidth - btnX.offsetWidth / 2) + "px";
+  btnX.style.top = (div.offsetTop - btnX.offsetHeight / 2) + "px";
+
+  div.focus();
+
+  // GUARDAR AL SALIR DEL FOCUS
+  div.addEventListener("blur", async () => {
+    const texto = div.innerText.replace("×", "").trim();
+    if (!texto) { div.remove(); btnX.remove(); return; }
+
+    if (existente) {
+      existente.comentario = texto;
+      existente.x = parseInt(div.style.left);
+      existente.y = parseInt(div.style.top);
+    } else {
+      existente = { x: parseInt(div.style.left), y: parseInt(div.style.top), comentario: texto, div, nuevo: true };
+      comentarios.push(existente);
     }
 
-if (existente) {
-  // Actualizamos comentario existente
-  existente.comentario = texto;
-  existente.x = parseInt(div.style.left);
-  existente.y = parseInt(div.style.top);
-} else {
-  // Creamos comentario nuevo y lo marcamos como 'nuevo' para guardarlo
-  const nuevo = { x: parseInt(div.style.left), y: parseInt(div.style.top), comentario: texto, div, nuevo: true };
-  comentarios.push(nuevo);
-  existente = nuevo; // para que el fetch sepa que este es el existente
-}
+    if (existente.nuevo) {
+      try {
+        await fetch(SHEET_API, {
+          method: "POST",
+          body: JSON.stringify({
+            tipo: "comentario",
+            id_sop: ID_SOP,
+            usuario: USUARIO,
+            correo: CORREO,
+            comentario: texto,
+            x: existente.x,
+            y: existente.y,
+            url_doc: SOP_URL
+          })
+        });
+        existente.nuevo = false;
+      } catch (err) { console.error("Error guardando comentario:", err); }
+    }
+  });
 
-// Solo guardamos en Sheet si es nuevo
-if (existente.nuevo) {
-  try {
-    await fetch(SHEET_API, {
-      method: "POST",
-      body: JSON.stringify({
-        tipo: "comentario",
-        id_sop: ID_SOP,
-        usuario: USUARIO,
-        correo: CORREO,
-        comentario: texto,
-        x: parseInt(div.style.left),
-        y: parseInt(div.style.top),
-        url_doc: SOP_URL
-      })
-    });
-    existente.nuevo = false; // marcamos como guardado para no duplicar
-  } catch (err) {
-    console.error("Error guardando comentario:", err);
-  }
-}
-
-
-    
   // DRAG & DROP
   let offsetX = 0, offsetY = 0, dragging = false;
 
-  div.addEventListener("mousedown",(e)=>{
-    if(e.target === btnX) return;
+  div.addEventListener("mousedown", (e) => {
+    if (e.target === btnX) return;
     dragging = true;
     offsetX = e.offsetX;
     offsetY = e.offsetY;
     div.style.cursor = "grabbing";
   });
 
-  document.addEventListener("mousemove",(e)=>{
-    if(!dragging) return;
+  document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
     const rect = wrapper.getBoundingClientRect();
-
     let newX = e.clientX - rect.left - offsetX;
     let newY = e.clientY - rect.top - offsetY;
-
     div.style.left = newX + "px";
     div.style.top = newY + "px";
+
+    // mover X junto al div
+    btnX.style.left = (newX + div.offsetWidth - btnX.offsetWidth / 2) + "px";
+    btnX.style.top = (newY - btnX.offsetHeight / 2) + "px";
   });
 
-  document.addEventListener("mouseup", async ()=>{
-    if(dragging){
-      dragging = false;
-      div.style.cursor = "grab";
+  document.addEventListener("mouseup", async () => {
+    if (!dragging) return;
+    dragging = false;
+    div.style.cursor = "grab";
 
-      if(existente){
-        existente.x = parseInt(div.style.left);
-        existente.y = parseInt(div.style.top);
+    if (existente) {
+      existente.x = parseInt(div.style.left);
+      existente.y = parseInt(div.style.top);
 
-        // guardar nueva posición
-        try{
-          await fetch(SHEET_API,{
-            method:"POST",
-            body: JSON.stringify({
-              tipo:"mover",
-              id_sop: ID_SOP,
-              comentario: existente.comentario,
-              x: existente.x,
-              y: existente.y
-            })
-          });
-        }catch(err){ console.error(err); }
-      }
+      try {
+        await fetch(SHEET_API, {
+          method: "POST",
+          body: JSON.stringify({
+            tipo: "mover",
+            id_sop: ID_SOP,
+            comentario: existente.comentario,
+            x: existente.x,
+            y: existente.y
+          })
+        });
+      } catch (err) { console.error(err); }
     }
   });
-
-  wrapper.appendChild(div);
-  div.focus();
 }
 
-// DIBUJAR COMENTARIOS
-function dibujarComentarios(){
+// DIBUJAR TODOS LOS COMENTARIOS
+function dibujarComentarios() {
   const wrapper = document.getElementById("canvas-wrapper");
-  wrapper.querySelectorAll(".comentario").forEach(el=>el.remove());
+  wrapper.querySelectorAll(".comentario").forEach(el => el.remove());
+  wrapper.querySelectorAll(".cerrar-comentario").forEach(el => el.remove());
 
-  comentarios.forEach(c=>{
-    crearComentarioEditable(c.x, c.y, c.comentario, c);
-  });
+  comentarios.forEach(c => crearComentarioEditable(c.x, c.y, c.comentario, c));
 }
-  
-  
+
 // CARGAR COMENTARIOS EXISTENTES
-async function cargarComentariosExistentes(){
-  try{
+async function cargarComentariosExistentes() {
+  try {
     const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
     const data = await res.json();
-    comentarios = data.map(c=>({x:c.x,y:c.y,comentario:c.comentario}));
+    comentarios.length = 0;
+    data.forEach(c => comentarios.push({ x: c.x, y: c.y, comentario: c.comentario }));
     dibujarComentarios();
-  }catch(err){ console.error("Error cargando comentarios",err);}
+  } catch (err) { console.error("Error cargando comentarios:", err); }
 }
+
 </script>
 </body>
 </html>
