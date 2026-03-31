@@ -662,10 +662,10 @@ function filterDept(dep, el){
 const API_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 let loginType = "editor"; // o admin
 
-function openLogin(type){
+  function openLogin(type){
   loginType = type;
   document.getElementById("loginModal").style.display = "flex";
-  loadUsers(); // cargar usuarios cuando se abre el modal
+  loadUsuarios(); // cargar usuarios cuando se abre el modal
 }
 
   function closeLogin(){
@@ -746,8 +746,6 @@ async function doLogin(){
 // Eventos
 document.getElementById("loginBtn").addEventListener("click", doLogin);
 
-// Inicializar
-loadUsuarios();
 
   
 </script>
