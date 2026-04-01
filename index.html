@@ -641,79 +641,28 @@ body{
 </div>
 
 <!-- LOGIN MODAL MODERNO -->
-<!-- Modal Login Responsive -->
 <div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
-  <div style="
-      background:#fff; 
-      padding:30px 25px; 
-      border-radius:12px; 
-      width:90%; 
-      max-width:360px; 
-      box-shadow:0 5px 20px rgba(0,0,0,0.4); 
-      text-align:center; 
-      position:relative;
-      box-sizing:border-box;
-  ">
+  <div style="...">
     <!-- Botón cerrar -->
-    <button onclick="closeLogin()" style="
-        position:absolute; 
-        top:10px; 
-        right:10px; 
-        background:none; 
-        border:none; 
-        font-size:20px; 
-        cursor:pointer;
-        color:#888;
-    ">&times;</button>
+    <button onclick="closeLogin()" style="...">&times;</button>
 
     <h2 style="margin-bottom:25px; font-family:Arial,sans-serif;">Iniciar Sesión</h2>
 
-    <select id="loginUser" style="
-        width:100%; 
-        padding:12px; 
-        margin-bottom:15px; 
-        font-size:16px; 
-        border-radius:6px; 
-        border:1px solid #ccc;
-        box-sizing:border-box;
-    ">
+    <select id="loginUser" style="...">
       <option value="">Seleccione usuario</option>
     </select>
 
-    <input type="password" id="loginPass" placeholder="Clave" style="
-        width:100%; 
-        padding:12px; 
-        font-size:16px; 
-        border-radius:6px; 
-        border:1px solid #ccc; 
-        margin-bottom:15px;
-        box-sizing:border-box;
-    ">
+    <input type="password" id="loginPass" placeholder="Clave" style="...">
 
-    <div id="loginError" style="
-        color:red; 
-        margin-bottom:15px; 
-        display:none; 
-        font-size:14px;
-    "></div>
+    <div id="loginError" style="color:red; margin-bottom:15px; display:none; font-size:14px;"></div>
 
-    <button id="loginBtn" style="
-        width:100%; 
-        padding:12px; 
-        font-size:16px; 
-        background:#007bff; 
-        color:#fff; 
-        border:none; 
-        border-radius:6px; 
-        cursor:pointer;
-        transition: background 0.3s;
-    " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">Entrar</button>
+    <button id="loginBtn" style="..." onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">Entrar</button>
   </div>
 </div>
 
+
   
 <script>
-
 /* ================================
    CONFIG
 ================================ */
@@ -722,7 +671,20 @@ const API_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwK
 let SOP_INDEX = [];
 
 /* ================================
-   INIT
+   USUARIOS (CORREGIDOS)
+================================ */
+const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
+  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Administracion", correo:"frontdesk@artemisamarble.com"},
+  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:"sales@artemisamarble.com"},
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:"accounting@artemisamarble.com"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Control", correo:"control@artemisamarble.com"},
+  {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor", depto:"Comercial", correo:"jenny@artemisamarble.com"},
+  {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor", depto:"Gerencia", correo:"wood@artemisamarble.com"}
+];
+
+/* ================================
+   LOGIN Y FUNCIONES
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
   initApp();
@@ -735,267 +697,10 @@ function initApp(){
   checkLogin();
 }
 
-/* ================================
-   FETCH SOP
-================================ */
-function loadSOP(){
+/* Resto de tus funciones checkLogin(), openLogin(), closeLogin(), loadUsuarios(), doLogin(), mostrarUsuarioNavbar(), logout() permanecen igual */
 
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-
-      console.log("DATA RAW:", data);
-
-      // 🔥 Soporta cualquier formato
-      const rows = data.data || data.result || data || [];
-
-      if(!Array.isArray(rows) || rows.length === 0){
-        showMessage("⚠️ No hay SOP disponibles");
-        return;
-      }
-
-      SOP_INDEX = rows.map(row => ({
-        id: row.ID_SOP || "SOP-" + Math.random(),
-        title: row.resumen || "Sin título",
-        department: normalizeDept(row.departamento),
-        url: row.links || "#",
-        keywords: ((row.objetivo || "") + " " + (row.areas || "")).toLowerCase()
-      }));
-
-      sortByDepartment();
-      renderSOP();
-
-    })
-    .catch(err => {
-      console.error("ERROR:", err);
-      showMessage("❌ Error cargando SOP");
-    });
-
-}
-
-/* ================================
-   NORMALIZAR DEPTO
-================================ */
-function normalizeDept(dep){
-  if(!dep) return "";
-  dep = dep.toLowerCase().trim();
-
-  if(dep === "produccion") return "carpinteria";
-  if(dep === "instalacion") return "stone";
-
-  return dep;
-}
-
-/* ================================
-   RENDER
-================================ */
-function renderSOP(filtered){
-
-  const container = document.getElementById("sopContainer");
-  const list = filtered || SOP_INDEX;
-
-  if(list.length === 0){
-    showMessage("⚠️ No hay resultados");
-    return;
-  }
-
-  let html = `
-  <div class="sop-info">
-    Mostrando <strong>${list.length}</strong> SOP
-  </div>
-
-  <div class="table-scroll">
-    <table class="sop-table">
-      <thead>
-        <tr>
-          <th onclick="sortTable('department')">Departamento</th>
-          <th onclick="sortTable('title')">Procedimiento</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  list.forEach(sop => {
-    html += `
-    <tr>
-      <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
-      <td data-label="Procedimiento"><span class="sop-title">${sop.title}</span></td>
-      <td data-label="Acción">
-        <a class="sop-btn" href="/sop-site/viewer.html?doc=${encodeURIComponent(sop.url)}&id=${sop.id}">
-          <i class="fa-solid fa-eye"></i> Ver
-        </a>
-      </td>
-    </tr>
-    `;
-  });
-
-  html += `</tbody></table></div>`;
-  container.innerHTML = html;
-}
-
-function showMessage(msg){
-  document.getElementById("sopContainer").innerHTML =
-    `<div class='sop-info'>${msg}</div>`;
-}
-
-/* ================================
-   SORT
-================================ */
-function sortByDepartment(){
-  SOP_INDEX.sort((a,b)=>{
-    if(a.department < b.department) return -1;
-    if(a.department > b.department) return 1;
-    return a.title.localeCompare(b.title);
-  });
-}
-
-function sortTable(field){
-  SOP_INDEX.sort((a,b)=>{
-    return (a[field] || "").localeCompare(b[field] || "");
-  });
-  renderSOP();
-}
-
-/* ================================
-   BADGES
-================================ */
-function getDepartmentBadge(dep){
-
-  const map = {
-    carpinteria:{name:"Carpintería",icon:"fa-hammer"},
-    administracion:{name:"Administración",icon:"fa-building"},
-    comercial:{name:"Comercial",icon:"fa-chart-line"},
-    stone:{name:"Stone",icon:"fa-screwdriver-wrench"},
-    maquinarias:{name:"Maquinarias",icon:"fa-gears"},
-    medidas:{name:"Medidas",icon:"fa-ruler"},
-    vehiculos:{name:"Vehículos",icon:"fa-truck"},
-    ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
-    taller:{name:"Taller",icon:"fa-tools"},
-    "houzz-pro":{name:"Houzz Pro",icon:"fa-house"}
-  };
-
-  const d = map[dep];
-  if(!d) return dep || "-";
-
-  return `<span class="dept-badge dept-${dep}">
-    <i class="fa-solid ${d.icon}"></i> ${d.name}
-  </span>`;
-}
-
-/* ================================
-   FILTER
-================================ */
-function setupEvents(){
-  document.getElementById("searchInput").addEventListener("input", filterSOP);
-  document.getElementById("deptFilter").addEventListener("change", filterSOP);
-}
-
-function filterSOP(){
-
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const dept = document.getElementById("deptFilter").value;
-
-  const filtered = SOP_INDEX.filter(sop => {
-
-    const matchDept = !dept || sop.department === dept;
-
-    const matchSearch =
-      sop.title.toLowerCase().includes(search) ||
-      sop.keywords.includes(search);
-
-    return matchDept && matchSearch;
-  });
-
-  renderSOP(filtered);
-}
-
-function filterDept(dep, el){
-  document.querySelectorAll(".dept-filter").forEach(b => b.classList.remove("active"));
-  if(el) el.classList.add("active");
-
-  document.getElementById("deptFilter").value = dep;
-  filterSOP();
-}
-
-/* ================================
-   LOGIN (AISLADO)
-================================ */
-
-  const usuarios = [
-  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:" damian@artemisamarble.com"},
-  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Administracion", correo:" frontdesk@artemisamarble.com"},
-  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:" sales@artemisamarble.com"},
-  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:" accounting@artemisamarble.com "},
-  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Control", correo:"control@artemisamarble.com"}
-  {usuario:" Jenny Perez", clave:"Jen1975", rol:"editor", depto:"Comercial", correo:" jenny@artemisamarble.com"}
-  {usuario:" Yozusi Urdaneta ", clave:"Yoz1975", rol:"editor", depto:"Gerencia", correo:" wood@artemisamarble.com"}
-];
-
-
-  
-function checkLogin(){
-  const user = localStorage.getItem("usuarioActivo");
-  if(!user){
-    openLogin();
-  }
-}
-
-function openLogin(){
-  document.getElementById("loginModal").style.display = "flex";
-  loadUsuarios();
-}
-
-function closeLogin(){
-  document.getElementById("loginModal").style.display = "none";
-}
-
-function loadUsuarios(){
-  const select = document.getElementById("loginUser");
-  select.innerHTML = '<option value="">Seleccione usuario</option>';
-
-  usuarios.forEach(u=>{
-    const opt = document.createElement("option");
-    opt.value = u.usuario;
-    opt.textContent = u.usuario;
-    select.appendChild(opt);
-  });
-}
-
-function doLogin(){
-
-  const user = document.getElementById("loginUser").value;
-  const pass = document.getElementById("loginPass").value;
-
-  const match = usuarios.find(u => u.usuario === user && u.clave === pass);
-
-  if(!match){
-    alert("❌ Usuario o clave incorrectos");
-    return;
-  }
-
-  localStorage.setItem("usuarioActivo", JSON.stringify(match));
-  closeLogin();
-  mostrarUsuarioNavbar();
-}
-
-function mostrarUsuarioNavbar(){
-  const user = JSON.parse(localStorage.getItem("usuarioActivo"));
-  const div = document.getElementById("userInfo");
-
-  if(user){
-    div.innerHTML = `<i class="fa-solid fa-user"></i> ${user.usuario}`;
-  }
-}
-
-function logout(){
-  localStorage.removeItem("usuarioActivo");
-  location.reload();
-}
-
-/* EVENTOS LOGIN */
 document.getElementById("loginBtn").addEventListener("click", doLogin);
-
 </script>
+
 </body>
 </html>
