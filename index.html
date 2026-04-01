@@ -785,9 +785,6 @@ Taller
   </div>
 </div>
 <script>
-  
-// Variable global para guardar usuario activo
-let currentUser = null;
 
   const usuarios = [
   {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
@@ -798,7 +795,9 @@ let currentUser = null;
   {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor", depto:"Comercial", correo:"jenny@artemisamarble.com"},
   {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor", depto:"Gerencia", correo:"wood@artemisamarble.com"}
 ];
-  
+
+  // Variable global para guardar usuario activo
+    let currentUser = null;  
 /* MENU */
 function toggleMenu(){
   document.querySelector('.menu').classList.toggle('show');
@@ -1060,21 +1059,7 @@ document.getElementById("loginBtn").addEventListener("click", ()=>{
         error.textContent = "Usuario o clave incorrecta";
     }
 });
-  function editSOP(){
-    if(!currentUser){
-        alert("Debe iniciar sesión primero");
-        openLogin();
-        return;
-    }
 
-    const pass = prompt("Ingrese su clave para editar este SOP");
-    if(pass === currentUser.clave){
-        // Redirige al editor
-        window.location.href = "/sop-site/sop-viewer-edit/";
-    } else {
-        alert("Clave incorrecta, no puede editar");
-    }
-}
   
   // Mostrar modal login al cargar la página si no hay usuario
 if(!localStorage.getItem("usuario")){
@@ -1100,19 +1085,93 @@ document.getElementById("clave").addEventListener("keypress", function(e){
     }
 });
 
-// Función login
-function loginUsuario(){
-    const clave = document.getElementById("clave").value.trim();
-    if(!clave) return alert("Ingresa tu clave");
-    
-    // Aquí puedes validar la clave (ej: comparar con un listado o hardcode)
-    // Para prueba, aceptamos cualquier valor
-    localStorage.setItem("usuario", "Usuario"); // guardar usuario
-    localStorage.setItem("correo", "correo@empresa.com"); // opcional
 
-    document.getElementById("modal-login").style.display = "none";
-    mostrarBienvenida("Usuario"); // mostrar mensaje
+// -----------------------------
+// FUNCIONES LOGIN
+// -----------------------------
+function mostrarBienvenida(nombre){
+  const msg = document.getElementById("welcome-msg");
+  msg.textContent = `Bienvenido, ${nombre}!`;
+  msg.classList.add("show");
+  setTimeout(()=>{ msg.classList.remove("show"); }, 3000);
 }
+
+function loginUsuario(){
+  const claveIngresada = document.getElementById("clave").value.trim();
+  if(!claveIngresada) return alert("Ingresa tu clave");
+
+  const usuario = usuarios.find(u => u.clave === claveIngresada);
+  if(!usuario){
+    alert("Clave incorrecta");
+    return;
+  }
+
+  // Guardar usuario en memoria y localStorage
+  currentUser = usuario;
+  localStorage.setItem("usuario", usuario.usuario);
+  localStorage.setItem("correo", usuario.correo);
+
+  // Cerrar modal
+  document.getElementById("modal-login").style.display = "none";
+
+  // Mostrar usuario en navbar
+  const spanUser = document.getElementById("usuario-logeado");
+  if(spanUser) spanUser.textContent = usuario.usuario;
+
+  // Mensaje bienvenida
+  mostrarBienvenida(usuario.usuario);
+}
+
+// -----------------------------
+// EVENTOS LOGIN
+// -----------------------------
+document.getElementById("btnLogin").addEventListener("click", loginUsuario);
+
+// Enter funciona como click
+document.getElementById("clave").addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    e.preventDefault();
+    loginUsuario();
+  }
+});
+
+// Evita click fuera del modal
+document.getElementById("modal-login").addEventListener("click", e=> e.stopPropagation());
+document.getElementById("modal-login-content").addEventListener("click", e=> e.stopPropagation());
+
+// -----------------------------
+// ABRIR MODAL AL CARGAR SI NO HAY USUARIO
+// -----------------------------
+window.addEventListener("DOMContentLoaded", ()=>{
+  const usuarioGuardado = localStorage.getItem("usuario");
+  if(usuarioGuardado){
+    currentUser = usuarios.find(u => u.usuario === usuarioGuardado) || null;
+    if(currentUser){
+      const spanUser = document.getElementById("usuario-logeado");
+      if(spanUser) spanUser.textContent = currentUser.usuario;
+    }
+  } else {
+    document.getElementById("modal-login").style.display = "flex";
+  }
+});
+// -----------------------------
+// FUNCION EDITAR SOP
+// -----------------------------
+function editSOP(){
+  if(!currentUser){
+    alert("Debe iniciar sesión primero");
+    document.getElementById("modal-login").style.display = "flex";
+    return;
+  }
+
+  const pass = prompt("Ingrese su clave para editar este SOP");
+  if(pass === currentUser.clave){
+    window.location.href = "/sop-site/sop-viewer-edit/";
+  } else {
+    alert("Clave incorrecta, no puede editar");
+  }
+}
+
 </script>
 </body>
 </html>
