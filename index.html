@@ -239,6 +239,21 @@ body{
   transform:scale(1.05);
   background:linear-gradient(135deg,#005a9e,#003f6b);
 }
+
+  .logout-btn{
+  padding:6px 10px;
+  border:none;
+  border-radius:8px;
+  background:#ef4444;
+  color:white;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.logout-btn:hover{
+  background:#dc2626;
+  transform:scale(1.05);
+}
 /* SCROLLBAR */
 .table-scroll::-webkit-scrollbar{
   width:8px;
@@ -485,21 +500,49 @@ body{
 
 <!-- NAVBAR -->
 <div class="navbar">
+
+  <!-- IZQUIERDA: LOGO -->
   <div class="logo">
     <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
-  <div class="menu-toggle" onclick="toggleMenu()">
-    <i class="fa-solid fa-bars"></i>
+
+  <!-- DERECHA: MENU + USER -->
+  <div style="display:flex; align-items:center; gap:15px;">
+
+    <!-- MENU DESKTOP -->
+    <div class="menu">
+      <a href="/sop-site/">Inicio</a>
+      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+      <a href="/sop-site/Aportes/">Aportes SOP</a>    
+      <a href="#" onclick="openLogin('editor')">Editar SOP</a>  
+      <a href="#" onclick="openLogin('admin')">
+        <i class="fa-solid fa-user-shield"></i> Admin
+      </a>
+      <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>  
+    </div>
+
+    <!-- USUARIO -->
+    <div id="userInfo" style="
+      font-size:0.8rem;
+      background:rgba(255,255,255,0.1);
+      padding:6px 12px;
+      border-radius:20px;
+      white-space:nowrap;
+    "></div>
+
+    <!-- BOTÓN LOGOUT -->
+    <button onclick="logout()" class="logout-btn">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+
+    <!-- MENU MOBILE -->
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+
   </div>
-  <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a>    
-    <a href="#" onclick="openLogin('editor')">Editar SOP</a>  
-    <a href="#" onclick="openLogin('admin')"><i class="fa-solid fa-user-shield"></i> Admin</a>
-    <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>  
-  </div>
+
 </div>
   
 <!-- BANNER -->
@@ -787,26 +830,34 @@ function filterDept(dep, el){
 
   // -------- LOGIN LOCAL ---------
 // Lista de usuarios inline
-const usuarios = [
-  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor"},
-  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor"},
-  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor"},
-  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor"},
-  {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor"},
-  {usuario:"Eliana Pineda", clave:"Eli1975", rol:"editor"},
-  {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor"},
-  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin"}
+
+  const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Producción", correo:"damian@empresa.com"},
+  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Producción", correo:"alberto@empresa.com"},
+  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:"gabriel@empresa.com"},
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:"wendy@empresa.com"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Gerencia", correo:"carlos@empresa.com"}
 ];
 
 let loginType = "editor"; // o "admin"
 
 // Abrir modal
+
 function openLogin(type){
   loginType = type;
+
+  const user = localStorage.getItem("usuarioActivo");
+
+  // 🔥 SI YA ESTÁ LOGUEADO → solo pide clave (opcional)
+  if(user && type === "editor"){
+    document.getElementById("loginModal").style.display = "flex";
+    return;
+  }
+
   document.getElementById("loginModal").style.display = "flex";
   loadUsuarios();
 }
-
+  
 // Cerrar modal
 function closeLogin(){
   document.getElementById("loginModal").style.display = "none";
@@ -828,20 +879,24 @@ function loadUsuarios(){
     select.appendChild(opt);
   });
 }
+  function mostrarUsuarioTopbar(){
+  const data = JSON.parse(localStorage.getItem("usuarioActivo"));
+  if(!data) return;
+
+  document.getElementById("userInfo").innerHTML = `
+    <i class="fa-solid fa-user"></i> ${data.usuario} 
+    <span style="opacity:0.7">(${data.depto})</span>
+  `;
+}
 
 // Login
-function doLogin(){
+
+  function doLogin(){
   const usuario = document.getElementById("loginUser").value.trim();
   const clave = document.getElementById("loginPass").value.trim();
   const errorMsg = document.getElementById("loginError");
 
   errorMsg.style.display = "none";
-
-  if(!usuario || !clave){
-    errorMsg.innerText = "Seleccione usuario e ingrese la clave";
-    errorMsg.style.display = "block";
-    return;
-  }
 
   const match = usuarios.find(u => u.usuario === usuario && u.clave === clave);
 
@@ -851,22 +906,13 @@ function doLogin(){
     return;
   }
 
-  if(loginType === "admin" && match.rol !== "admin"){
-    errorMsg.innerText = "No autorizado para Admin";
-    errorMsg.style.display = "block";
-    return;
-  }
+  // 🔥 GUARDAR USUARIO COMPLETO
+  localStorage.setItem("usuarioActivo", JSON.stringify(match));
 
-  if(loginType === "editor" && match.rol !== "editor"){
-    errorMsg.innerText = "No autorizado para Editar SOP";
-    errorMsg.style.display = "block";
-    return;
-  }
-
-  localStorage.setItem("rol", match.rol);
   closeLogin();
 
-  if(match.rol === "admin"){
+  // REDIRECCIÓN
+  if(loginType === "admin"){
     window.location.href = "/sop-site/admin/";
   } else {
     window.location.href = "/sop-site/sop-viewer-edit/";
@@ -877,6 +923,15 @@ function doLogin(){
 document.getElementById("loginBtn").addEventListener("click", doLogin);
 document.getElementById("loginPass").addEventListener("keypress", e => { if(e.key === "Enter") doLogin(); });
 
+ window.addEventListener("load", () => {
+  const user = localStorage.getItem("usuarioActivo");
+
+  if(!user){
+    openLogin("editor"); // 🔥 obliga login
+  } else {
+    mostrarUsuarioTopbar();
+  }
+}); 
 
 </script>
 </body>
