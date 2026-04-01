@@ -4,478 +4,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP</title>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-<style>
-/* ===== BODY ===== */
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background-image:url('/sop-site/wall0.png');
-  background-position:center;
-  background-repeat:no-repeat;
-  background-size:cover;
-  background-attachment:fixed;
-  color:#1f2937;
-}
-.overlay{
-  background:rgba(0,0,0,0.25);
-  min-height:100vh;
-}
-
-/* ===== NAVBAR ===== */
-.navbar{
-  position:sticky;
-  top:0;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(8px);
-  padding:10px 30px;
-  color:white;
-  font-weight:bold;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:999;
-}
-.logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.logo img{
-  height:40px;
-}
-.menu{
-  display:flex;
-  gap:25px;
-}
-.menu a{
-  color:white;
-  text-decoration:none;
-  font-weight:bold;
-  transition:.3s;
-}
-.menu a:hover{
-  color:#00aaff;
-}
-.menu-toggle{
-  display:none;
-  font-size:1.6rem;
-  cursor:pointer;
-}
-
-/* ===== BANNER ===== */
-.banner{
-  text-align:center;
-  padding:40px 20px 20px 20px;
-  color:white;
-}
-.banner h1{
-  margin:0;
-  font-size:2.2rem;
-}
-.banner p{
-  margin:4px 0;
-  opacity:0.9;
-}
-.cta-btn{
-  display:inline-block;
-  margin-top:15px;
-  padding:10px 25px;
-  border-radius:30px;
-  background:linear-gradient(135deg,#0072C6,#005a9e);
-  color:white;
-  text-decoration:none;
-  font-weight:bold;
-  transition:.3s;
-}
-.cta-btn:hover{
-  transform:scale(1.05);
-}
-
-/* ===== BUSCADOR ===== */
-.search-container{
-  max-width:950px;
-  margin:30px auto;
-  padding:0 20px;
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-}
-.search-container input,
-.search-container select{
-  width:100%;
-  padding:12px 15px;
-  border-radius:30px;
-  border:none;
-  font-size:1rem;
-  box-shadow:0 8px 20px rgba(0,0,0,0.25);
-  outline:none;
-}
-
-/* ===== SOP TABLE ===== */
-.dept-filter-bar{
-  max-width:1050px;
-  margin:20px auto;
-  padding:0 20px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-.dept-filter{
-  padding:8px 16px;
-  border-radius:20px;
-  border:none;
-  background:white;
-  box-shadow:0 6px 14px rgba(0,0,0,0.15);
-  font-size:.85rem;
-  cursor:pointer;
-  transition:.25s;
-}
-.dept-filter:hover{
-  transform:scale(1.05);
-}
-.dept-filter.active{
-  background:#0072C6;
-  color:white;
-}
-
-.sop-container{
-  max-width:1050px;
-  margin:40px auto 80px auto;
-  padding:0 20px;
-}
-.sop-info{
-  background:white;
-  padding:12px 18px;
-  border-radius:12px;
-  margin-bottom:10px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.15);
-  font-size:.9rem;
-  color:#374151;
-}
-.sop-card{
-  background:white;
-  border-radius:16px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.25);
-  overflow:hidden;
-}
-.sop-card-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:18px 22px;
-  background:#0f172a;
-  color:white;
-  font-weight:600;
-  font-size:0.9rem;
-}
-.sop-count{
-  opacity:.8;
-  font-weight:400;
-}
-.table-scroll{
-  max-height:550px;
-  overflow-y:auto;
-}
-.sop-table{
-  width:100%;
-  border-collapse:collapse;
-}
-.sop-table thead th{
-  position:sticky;
-  top:0;
-  background:#1e293b;
-  color:#cbd5e1;
-  padding:14px 18px;
-  font-size:.75rem;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  font-weight:600;
-}
-.sop-table td{
-  padding:16px 18px;
-  border-bottom:1px solid #f1f5f9;
-  font-size:.95rem;
-}
-.sop-table tbody tr:nth-child(even){
-  background:#f8fafc;
-}
-.sop-table tbody tr:hover{
-  background:#eef2f7;
-}
-.sop-title{
-  font-weight:600;
-  color:#0f172a;
-}
-.sop-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:8px 16px;
-  border-radius:10px;
-  background:linear-gradient(135deg,#0072C6,#005a9e);
-  color:white;
-  text-decoration:none;
-  font-size:.85rem;
-  font-weight:500;
-  transition:.25s;
-}
-.sop-btn:hover{
-  transform:scale(1.05);
-  background:linear-gradient(135deg,#005a9e,#003f6b);
-}
-.logout-btn{
-  padding:6px 10px;
-  border:none;
-  border-radius:8px;
-  background:#ef4444;
-  color:white;
-  cursor:pointer;
-  transition:.3s;
-}
-.logout-btn:hover{
-  background:#dc2626;
-  transform:scale(1.05);
-}
-.table-scroll::-webkit-scrollbar{
-  width:8px;
-}
-.table-scroll::-webkit-scrollbar-thumb{
-  background:#cbd5e1;
-  border-radius:10px;
-}
-
-/* BADGES */
-.dept-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:6px 12px;
-  border-radius:999px;
-  font-size:.75rem;
-  font-weight:600;
-}
-.dept-carpinteria{background:#e0f2fe;color:#0369a1;}
-.dept-administracion{background:#ede9fe;color:#5b21b6;}
-.dept-comercial{background:#dcfce7;color:#166534;}
-.dept-taller{background:#dcfce7;color:#166534;}
-.dept-stone{background:#fef3c7;color:#92400e;}
-.dept-maquinarias{background:#fee2e2;color:#991b1b;}
-.dept-vehiculos{background:#e5e7eb;color:#374151;}
-.dept-ecopower{background:#cffafe;color:#0e7490;}
-.dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
-.dept-medidas{background:#f3e8ff;color:#7e22ce;}
-
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-  .menu{
-    display:none;
-    flex-direction:column;
-    background:rgba(0,0,0,0.9);
-    position:absolute;
-    top:60px;
-    right:0;
-    width:200px;
-    padding:20px;
-  }
-  .menu.show{
-    display:flex;
-  }
-  .menu-toggle{
-    display:block;
-  }
-
-  .sop-table, .sop-table thead, .sop-table tbody, .sop-table th, .sop-table td, .sop-table tr {
-    display: block;
-  }
-  .sop-table thead tr { display: none; }
-  .sop-table tbody tr {
-    margin-bottom: 15px;
-    background: #f9f9f9;
-    border-radius: 12px;
-    padding: 10px;
-  }
-  .sop-table tbody td {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border-bottom: none;
-    font-size: 0.9rem;
-  }
-  .sop-table tbody td:before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #555;
-    margin-right: 10px;
-    flex: 0 0 40%;
-  }
-}
-
-/* ===== LOGIN MODAL ===== */
-.login-modal, #loginModal{
-  display: none;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  z-index: 9999;
-}
-.login-box{
-  background: #fff;
-  padding: 30px 25px;
-  border-radius: 12px;
-  width: 320px;
-  text-align: center;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.3);
-  animation: fadeIn 0.4s ease;
-}
-.login-box h2{margin-bottom:20px;color:#0f172a;font-weight:600;}
-.login-box select, .login-box input{
-  width: 100%;
-  padding:12px 15px;
-  margin-bottom:15px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-size:1rem;
-  outline:none;
-}
-.login-box select:focus, .login-box input:focus{
-  border-color:#0072C6;
-  box-shadow:0 0 5px #0072C6;
-}
-.login-box button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  background: linear-gradient(135deg,#0072C6,#005a9e);
-  color:white;
-  font-weight:600;
-  cursor:pointer;
-}
-.login-box button:hover{
-  transform:scale(1.03);
-  background:linear-gradient(135deg,#005a9e,#003f6b);
-}
-@keyframes fadeIn{
-  from {opacity:0; transform: translateY(-20px);}
-  to {opacity:1; transform: translateY(0);}
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+
+<!-- VIDEO DE FONDO -->
+<video id="bgVideo" autoplay muted loop>
+  <source src="background.mp4" type="video/mp4">
+</video>
+
 <div class="overlay">
 
-<!-- NAVBAR -->
-<div class="navbar">
-  <div class="logo">
-    <img src="/sop-site/logo.png" alt="Logo">
-    <span>ARTEMISA MARBLE & CABINETS</span>
-  </div>
-  <div style="display:flex; align-items:center; gap:15px;">
-    <div class="menu">
-      <a href="/sop-site/">Inicio</a>
-      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-      <a href="/sop-site/Aportes/">Aportes SOP</a>    
-      <a href="#" onclick="openLogin('editor')">Editar SOP</a>  
-      <a href="#" onclick="openLogin('admin')"><i class="fa-solid fa-user-shield"></i> Admin</a>
-      <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>  
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="logo"><img src="logo.png"><span>ARTEMISA MARBLE & CABINETS</span></div>
+    <div style="display:flex; align-items:center; gap:15px;">
+      <div class="menu">
+        <a href="#">Inicio</a>
+        <a href="#">Registrar SOP</a>
+        <a href="#">Aportes SOP</a>
+        <a href="#" onclick="openLogin('editor')">Editar SOP</a>
+        <a href="#" onclick="openLogin('admin')">Admin</a>
+      </div>
+      <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
     </div>
-    <div id="userInfo" style="font-size:0.8rem;background:rgba(255,255,255,0.1);padding:6px 12px;border-radius:20px;white-space:nowrap;"></div>
-    <button onclick="logout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
-    <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
   </div>
-</div>
 
-<!-- BANNER -->
-<div class="banner">
-  <h1>Biblioteca de Procedimientos Operativos Estándar</h1>
-  <p>ARTEMISA MARBLE & CABINETS</p>
-  <a href="#sopContainer" class="cta-btn">Ver SOP</a>
-</div>
-
-<!-- BUSCADOR -->
-<div class="search-container">
-  <input type="text" id="searchInput" placeholder="Buscar SOP...">
-  <select id="deptFilter">
-    <option value="">Todos los departamentos</option>
-    <option value="comercial">Comercial</option>
-    <option value="produccion">Producción</option>
-    <option value="instalacion">Instalación</option>
-    <option value="administracion">Administración</option>
-    <option value="maquinarias">Maquinarias</option>
-    <option value="vehiculos">Vehículos</option>
-    <option value="houzz-pro">Houzz Pro</option>
-    <option value="ecopower">Ecopowertech</option>
-    <option value="medidas">Medidas</option>
-    <option value="taller">Taller</option>
-  </select>
-</div>
-
-<!-- DEPT FILTER BUTTONS -->
-<div class="dept-filter-bar">
-  <button onclick="filterDept('')" class="dept-filter active">Todos</button>
-  <button onclick="filterDept('comercial',this)" class="dept-filter">Comercial</button>
-  <button onclick="filterDept('produccion',this)" class="dept-filter">Carpintería</button>
-  <button onclick="filterDept('instalacion',this)" class="dept-filter">Stone</button>
-  <button onclick="filterDept('administracion',this)" class="dept-filter">Administración</button>
-  <button onclick="filterDept('maquinarias',this)" class="dept-filter">Maquinarias</button>
-  <button onclick="filterDept('vehiculos',this)" class="dept-filter">Vehículos</button>
-  <button onclick="filterDept('houzz-pro',this)" class="dept-filter">Houzz-Pro</button>
-  <button onclick="filterDept('medidas',this)" class="dept-filter">Medidas</button>
-  <button onclick="filterDept('taller',this)" class="dept-filter">Taller</button>
-</div>
-
-<!-- TABLA SOP -->
-<div class="sop-container" id="sopContainer"></div>
-
-<!-- VIDEOS -->
-<div class="video-section">
-  <video autoplay muted loop playsinline>
-    <source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
-  </video>
-  <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
-  <video autoplay muted loop playsinline>
-    <source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
-  </video>
-</div>
-
-<!-- CARRUSEL PREMIUM -->
-<div class="carousel-container-premium">
-  <div class="carousel-track-premium">
-    <!-- tus imágenes aquí -->
+  <!-- BANNER -->
+  <div class="banner">
+    <h1>Biblioteca de Procedimientos Operativos Estándar</h1>
+    <p>ARTEMISA MARBLE & CABINETS</p>
+    <a href="#sopContainer" class="cta-btn">Ver SOP</a>
   </div>
-</div>
 
-<!-- FOOTER -->
-<div class="footer" style="text-align:center;color:white;background: rgba(0,0,0,0.65);margin:30px 0;">
-  © 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
-</div>
-
-<!-- LOGIN MODAL -->
-<div id="loginModal">
-  <div class="login-box">
-    <button onclick="closeLogin()" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:20px;cursor:pointer;color:#888;">&times;</button>
-    <h2>Iniciar Sesión</h2>
-    <select id="loginUser"><option value="">Seleccione usuario</option></select>
-    <input type="password" id="loginPass" placeholder="Clave">
-    <div id="loginError" style="color:red;margin-bottom:15px;display:none;font-size:14px;"></div>
-    <button id="loginBtn">Entrar</button>
+  <!-- TABLA SOP -->
+  <div class="sop-container" id="sopContainer">
+    <div class="sop-info">Cargando SOP...</div>
   </div>
+
+  <!-- CARRUSEL -->
+  <div class="carousel-container-premium">
+    <div class="carousel-track-premium">
+      <div class="carousel-slide-premium"><img src="ABQM0471.JPG"></div>
+      <div class="carousel-slide-premium"><img src="outlet.png"></div>
+      <div class="carousel-slide-premium"><img src="VanitiesBath.png"></div>
+      <div class="carousel-slide-premium"><img src="Kitchen.jpg"></div>
+      <!-- duplicado para loop -->
+      <div class="carousel-slide-premium"><img src="ABQM0471.JPG"></div>
+      <div class="carousel-slide-premium"><img src="outlet.png"></div>
+    </div>
+  </div>
+
 </div>
 
-<script>
-// menú mobile
-function toggleMenu(){ document.querySelector('.menu').classList.toggle('show'); }
-
-// SOP dinámico y filtros aquí (igual que tu script actual, no cambio nada)
-</script>
-
-</div>
+<script src="main.js"></script>
 </body>
 </html>
