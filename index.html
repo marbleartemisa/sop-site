@@ -223,13 +223,19 @@
         border-bottom:1px solid #f1f5f9;
       }
       
-      .sop-table tbody tr:nth-child(even){
-        background:#f8fafc;
-      }
-      
-      .sop-table tbody tr:hover{
-        background:#eef2f7;
-      }
+
+.sop-table tbody tr {
+    background: rgba(255, 255, 255, 0.6); /* blanco translúcido */
+}
+
+.sop-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.sop-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.8); /* más visible al pasar el mouse */
+}
+
       
       /* ===== BOTON ===== */
       .sop-btn{
@@ -289,15 +295,19 @@
         color:#fff;
       }
       
+
       #loginModal select,
       #loginModal input{
         width:100%;
-        padding:10px;
+        padding:12px;
         margin-bottom:15px;
         border-radius:8px;
-        border:none;
+        border:1px solid #ccc;
+        font-size:14px;
+        box-sizing:border-box;
+        height:42px; /* 🔥 clave para igualar altura */
       }
-      
+            
       #loginModal button{
         width:100%;
         padding:10px;
@@ -605,6 +615,7 @@ function editSOP(){
 
 /* ===== INIT ===== */
 window.addEventListener("DOMContentLoaded", ()=>{
+
   populateUsers();
 
   const savedUser = localStorage.getItem("usuario");
@@ -614,6 +625,15 @@ window.addEventListener("DOMContentLoaded", ()=>{
   }else{
     openLogin();
   }
+
+  // 🔥 ENTER PARA LOGIN
+  document.getElementById("loginPass").addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+      e.preventDefault();
+      document.getElementById("loginBtn").click();
+    }
+  });
+
 });
 
 </script>  
