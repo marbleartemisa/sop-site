@@ -879,14 +879,28 @@ function loadUsuarios(){
     select.appendChild(opt);
   });
 
+// Función de logout
+function logout() {
+    // Limpiar datos de sesión
+    sessionStorage.removeItem("usuario");
+    sessionStorage.removeItem("token"); // si usas token
+    // Opcional: ocultar elementos de la app
+    document.getElementById("app").style.display = "none";
+    // Redirigir al login
+    window.location.href = "login.html";
+}
 
-function mostrarUsuarioNavbar(){
+  function mostrarUsuarioNavbar(){
   const user = JSON.parse(localStorage.getItem("usuarioActivo"));
   const div = document.getElementById("userInfo");
+  const logoutBtn = document.querySelector(".logout-btn");
+
   if(user){
     div.innerHTML = `<i class="fa-solid fa-user"></i> ${user.usuario} (${user.rol})`;
+    logoutBtn.style.display = "inline-block"; // mostrar logout
   } else {
     div.innerHTML = "";
+    logoutBtn.style.display = "none"; // ocultar logout
   }
 }
 
@@ -961,11 +975,12 @@ document.getElementById("loginPass").addEventListener("keypress", e => { if(e.ke
   const user = localStorage.getItem("usuarioActivo");
 
   if(!user){
-    openLogin("editor"); // 🔥 obliga login
+    openLogin("editor"); // obliga login
   } else {
-    mostrarUsuarioTopbar();
+    mostrarUsuarioNavbar(); // ❌ corregido aquí
   }
 }); 
+
 
 </script>
 </body>
