@@ -261,13 +261,15 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
 // API SHEET
 const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
+
 // VARIABLES GLOBALES
 const comentarios = [];
 let SOP_URL = "";
 let ID_SOP = "";
-const USUARIO = localStorage.getItem("usuario") || "";
+const USUARIO = localStorage.getItem("usuario") || "Anonimo";
 const CORREO = localStorage.getItem("correo") || "";
 
+  
 // RENDER TABLA SOP
 async function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
@@ -310,6 +312,7 @@ document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
+
 // ABRIR SOP
 async function abrirSOP(url, id){
   SOP_URL = url;
@@ -318,7 +321,6 @@ async function abrirSOP(url, id){
   const wrapper = document.getElementById("canvas-wrapper");
   document.getElementById("canvas-overlay").style.display = "block";
   wrapper.innerHTML = "Cargando SOP...";
-  console.log("Abrir SOP URL:", url, "ID:", id);
 
   try {
     const res = await fetch(url);
@@ -363,59 +365,77 @@ function activarComentario(e){
   const rect = e.target.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
-  crearComentarioEditable(x,y,"");
+  crearComentarioEditable(x, y, "");
 }
 
-// CREAR COMENTARIO
-function crearComentarioEditable(x,y,textoInicial="",existente=null){
+// CREAR COMENTARIO EDITABLE
+function crearComentarioEditable(x, y, textoInicial="", existente=null){
   const wrapper = document.getElementById("canvas-wrapper");
+
   const div = document.createElement("div");
-  div.className="comentario";
-  div.style.left = x+"px";
-  div.style.top = y+"px";
-  div.contentEditable=true;
-  div.spellcheck=false;
+  div.className="comentario editable";
+  div.style.left = x + "px";
+  div.style.top = y + "px";
+  div.contentEditable = true;
+  div.spellcheck = false;
   div.innerText = textoInicial;
 
+  // BOTÓN CERRAR
   const btnX = document.createElement("div");
   btnX.className="cerrar-comentario";
-  btnX.innerHTML="×";
+  btnX.innerHTML = "×";
 
   btnX.addEventListener("click", async (e)=>{
     e.stopPropagation();
     div.remove();
     btnX.remove();
-    comentarios.splice(comentarios.indexOf(existente),1);
     if(existente){
-      try{ await fetch(SHEET_API,{method:"POST",body:JSON.stringify({tipo:"eliminar",id_sop:ID_SOP,comentario:existente.comentario})}); }
-      catch(err){ console.error(err); }
+      comentarios.splice(comentarios.indexOf(existente),1);
+      try{
+        await fetch(SHEET_API,{
+          method:"POST",
+          body: JSON.stringify({tipo:"eliminar",id_sop:ID_SOP,comentario:existente.comentario})
+        });
+      } catch(err){ console.error(err); }
     }
   });
 
   wrapper.appendChild(div);
   wrapper.appendChild(btnX);
-  btnX.style.left = (div.offsetLeft+div.offsetWidth-btnX.offsetWidth/2)+"px";
-  btnX.style.top = (div.offsetTop-btnX.offsetHeight/2)+"px";
+  btnX.style.left = (div.offsetLeft + div.offsetWidth - btnX.offsetWidth/2) + "px";
+  btnX.style.top = (div.offsetTop - btnX.offsetHeight/2) + "px";
   div.focus();
 
+  // GUARDAR COMENTARIO AL PERDER FOCO
   div.addEventListener("blur", async ()=>{
     const texto = div.innerText.replace("×","").trim();
     if(!texto){ div.remove(); btnX.remove(); return; }
+
     if(existente){
       existente.comentario = texto;
       existente.x = parseInt(div.style.left);
       existente.y = parseInt(div.style.top);
     } else {
-      existente={x:parseInt(div.style.left),y:parseInt(div.style.top),comentario:texto,div,nuevo:true};
+      existente = {x: parseInt(div.style.left), y: parseInt(div.style.top), comentario: texto, div, nuevo:true};
       comentarios.push(existente);
     }
+
     if(existente.nuevo){
       try{
         await fetch(SHEET_API,{
           method:"POST",
-          body:JSON.stringify({tipo:"comentario",id_sop:ID_SOP,usuario:USUARIO,correo:CORREO,comentario:texto,x:existente.x,y:existente.y,url_doc:SOP_URL})
+          body: JSON.stringify({
+            tipo: "comentario",
+            id_sop: ID_SOP,
+            usuario: USUARIO,
+            correo: CORREO,
+            comentario: texto,
+            x: existente.x,
+            y: existente.y,
+            url_doc: SOP_URL
+          })
         });
-        existente.nuevo=false;
+        existente.nuevo = false;
       } catch(err){ console.error("Error guardando comentario:",err); }
     }
   });
@@ -429,27 +449,35 @@ function crearComentarioEditable(x,y,textoInicial="",existente=null){
     offsetY=e.offsetY;
     div.style.cursor="grabbing";
   });
+
   document.addEventListener("mousemove",(e)=>{
     if(!dragging) return;
-    const rect=wrapper.getBoundingClientRect();
-    let newX=e.clientX-rect.left-offsetX;
-    let newY=e.clientY-rect.top-offsetY;
-    div.style.left=newX+"px";
-    div.style.top=newY+"px";
-    btnX.style.left=(newX+div.offsetWidth-btnX.offsetWidth/2)+"px";
-    btnX.style.top=(newY-btnX.offsetHeight/2)+"px";
+    const rect = wrapper.getBoundingClientRect();
+    let newX = e.clientX - rect.left - offsetX;
+    let newY = e.clientY - rect.top - offsetY;
+    div.style.left = newX + "px";
+    div.style.top = newY + "px";
+    btnX.style.left = (newX + div.offsetWidth - btnX.offsetWidth/2) + "px";
+    btnX.style.top = (newY - btnX.offsetHeight/2) + "px";
   });
+
   document.addEventListener("mouseup", async ()=>{
     if(!dragging) return;
     dragging=false;
     div.style.cursor="grab";
     if(existente){
-      existente.x=parseInt(div.style.left);
-      existente.y=parseInt(div.style.top);
+      existente.x = parseInt(div.style.left);
+      existente.y = parseInt(div.style.top);
       try{
         await fetch(SHEET_API,{
           method:"POST",
-          body:JSON.stringify({tipo:"mover",id_sop:ID_SOP,comentario:existente.comentario,x:existente.x,y:existente.y})
+          body: JSON.stringify({
+            tipo:"mover",
+            id_sop: ID_SOP,
+            comentario: existente.comentario,
+            x: existente.x,
+            y: existente.y
+          })
         });
       } catch(err){ console.error(err); }
     }
@@ -459,21 +487,26 @@ function crearComentarioEditable(x,y,textoInicial="",existente=null){
 // CARGAR COMENTARIOS EXISTENTES
 async function cargarComentariosExistentes(){
   try{
-    const res=await fetch(`${SHEET_API}?id_sop=${ID_SOP}`);
-    const data=await res.json();
-    data.forEach(c=>{
-      crearComentarioEditable(c.x,c.y,c.comentario,c);
+    const res = await fetch(SHEET_API);
+    const data = await res.json();
+
+    // Filtrar solo comentarios del SOP actual y con coordenadas numéricas
+    const comentariosSOP = data.filter(c =>
+      c.id_sop === ID_SOP &&
+      c.comentario &&
+      !isNaN(c.x) &&
+      !isNaN(c.y)
+    );
+
+    comentariosSOP.forEach(c=>{
+      crearComentarioEditable(Number(c.x), Number(c.y), c.comentario, c);
     });
-  }catch(err){ console.error(err); }
+
+  } catch(err){
+    console.error("Error cargando comentarios existentes:", err);
+  }
 }
 
-// TOGGLE MENU RESPONSIVE
-function toggleMenu(){
-  document.querySelector(".menu").classList.toggle("active");
-}
-
-// LOGIN SIMPLIFICADO
-function openLogin(tipo){ alert("Abrir login para "+tipo); }
 </script>
 </body>
 </html>
