@@ -45,9 +45,9 @@ th{background:#003366;color:white;}
 <body>
 <div class="overlay">
 
-<!-- NAVBAR -->
 
- <div class="navbar">
+ <!-- NAVBAR -->
+<div class="navbar">
   <div class="logo">
     <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
@@ -57,7 +57,7 @@ th{background:#003366;color:white;}
     <i class="fa-solid fa-bars"></i>
   </div>
 
-<div class="menu">
+  <div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
     <a href="/sop-site/Aportes/">Aportes SOP</a>     
@@ -66,18 +66,14 @@ th{background:#003366;color:white;}
       <i class="fa-solid fa-user-shield"></i> Login
     </a>
     <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a> 
+    <div class="user-info" id="userInfo" style="display:none;">
+      <span id="userName"></span>
+      <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
   </div>
-
-  <!-- ✅ Mover user-info fuera de menu -->
-  <div class="user-info" id="userInfo" style="display:none;">
-    <span id="userName"></span>
-    <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </button>
-  </div>
-
-</div> 
-
+</div>
 
 <!-- FORMULARIO -->
 <div class="container">
@@ -263,6 +259,26 @@ if(password === "Artemisa2026"){   // puedes cambiar la clave
 
 }
 
+// Mostrar usuario en navbar
+function mostrarUsuario(user){
+  const userInfo = document.getElementById("userInfo");
+  const userName = document.getElementById("userName");
+
+  if(user){
+    userName.textContent = user.usuario;
+    userInfo.style.display = "flex";
+  }else{
+    userInfo.style.display = "none";
+  }
+}
+
+// Cerrar sesión
+function logout(){
+  localStorage.removeItem("usuario");
+  currentUser = null;
+  mostrarUsuario(null);
+  openLogin();
+} 
 
 function mostrarNotificacion(msg,tipo){
   const notif=document.createElement("div");
@@ -271,6 +287,19 @@ function mostrarNotificacion(msg,tipo){
   document.body.appendChild(notif);
   setTimeout(()=>notif.remove(),4000);
 }
+
+ // Al cargar la página, mostrar usuario si está guardado
+window.addEventListener("DOMContentLoaded", () => {
+  const savedUser = localStorage.getItem("usuario");
+  if(savedUser){
+    // asumiendo que tienes un array de usuarios llamado 'usuarios'
+    currentUser = usuarios.find(u => u.usuario === savedUser);
+    if(currentUser){
+      mostrarBienvenida(currentUser.usuario); // si tienes esta función
+      mostrarUsuario(currentUser); // muestra en navbar
+    }
+  }
+});
 </script>
 
 </body>
