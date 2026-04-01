@@ -921,11 +921,14 @@ function filterDept(dep, el){
 /* ================================
    LOGIN (AISLADO)
 ================================ */
-const usuarios = [
-  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor"},
-  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin"}
-];
 
+  const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Producción", correo:"damian@empresa.com"},
+  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Producción", correo:"alberto@empresa.com"},
+  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:"gabriel@empresa.com"},
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:"wendy@empresa.com"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Gerencia", correo:"carlos@empresa.com"}
+  
 function checkLogin(){
   const user = localStorage.getItem("usuarioActivo");
   if(!user){
