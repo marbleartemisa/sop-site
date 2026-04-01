@@ -169,22 +169,33 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
 </head>
 <body>
 
-<!-- NAVBAR -->
+
+  <!-- NAVBAR -->
 <div class="navbar">
   <div class="logo">
     <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
+
   <div class="menu-toggle" onclick="toggleMenu()">
     <i class="fa-solid fa-bars"></i>
   </div>
+
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a>
-    <a href="#" onclick="openLogin('editor')">Editar SOP</a>
-    <a href="#" onclick="openLogin('admin')"><i class="fa-solid fa-user-shield"></i> Admin</a>
-    <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>
+    <a href="/sop-site/Aportes/">Aportes SOP</a>     
+    <a href="#" onclick="editSOP()">Editar SOP</a>
+    <a href="#" onclick="openLogin()">
+      <i class="fa-solid fa-user-shield"></i> Login
+    </a>
+    <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a> 
+    <div class="user-info" id="userInfo" style="display:none;">
+      <span id="userName"></span>
+      <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -486,6 +497,40 @@ async function cargarComentariosExistentes(){
     dibujarComentarios();
   }catch(err){ console.error("Error cargando comentarios",err);}
 }
+  // Mostrar usuario en navbar
+function mostrarUsuario(user){
+  const userInfo = document.getElementById("userInfo");
+  const userName = document.getElementById("userName");
+
+  if(user){
+    userName.textContent = user.usuario;
+    userInfo.style.display = "flex";
+  }else{
+    userInfo.style.display = "none";
+  }
+}
+
+// Cerrar sesión
+function logout(){
+  localStorage.removeItem("usuario");
+  currentUser = null;
+  mostrarUsuario(null);
+  openLogin();
+}
+
+// Al cargar la página, mostrar usuario si está guardado
+window.addEventListener("DOMContentLoaded", () => {
+  const savedUser = localStorage.getItem("usuario");
+  if(savedUser){
+    // asumiendo que tienes un array de usuarios llamado 'usuarios'
+    currentUser = usuarios.find(u => u.usuario === savedUser);
+    if(currentUser){
+      mostrarBienvenida(currentUser.usuario); // si tienes esta función
+      mostrarUsuario(currentUser); // muestra en navbar
+    }
+  }
+});
+  
 </script>
 </body>
 </html>
