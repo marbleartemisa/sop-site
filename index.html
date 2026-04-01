@@ -110,7 +110,74 @@ body{
 .cta-btn:hover{
   transform:scale(1.05);
 }
+  
+<!-- Modal Login -->
+<div id="modal-login">
+  <div id="modal-login-content">
+    <h3>Ingrese su clave</h3>
+    <input type="password" id="clave" placeholder="Clave">
+    <div style="text-align:right;">
+      <button id="btnLogin">Aceptar</button>
+    </div>
+  </div>
+</div>
 
+  /* Modal login */
+#modal-login{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+    z-index:2000;
+}
+#modal-login-content{
+    background: rgba(0,0,0,0.85);
+    border-radius:14px;
+    padding:20px;
+    width:300px;
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+#modal-login-content h3{ text-align:center; color:#00aaff; margin:0; }
+#modal-login-content input{
+    padding:10px; border-radius:8px; border:none; font-size:15px;
+    background: rgba(255,255,255,0.15); color:#fff;
+}
+#modal-login-content input:focus{ outline:none; background: rgba(255,255,255,0.25); }
+#modal-login-content button{
+    padding:10px 16px; border:none; border-radius:8px; background:#00d1ff; color:white; cursor:pointer; font-weight:bold;
+}
+#modal-login-content button:hover{ background:#00a8cc; }
+
+/* Mensaje de bienvenida */
+#welcome-msg{
+    position: fixed; 
+    top: 60px; 
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00d1ff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    font-weight: bold;
+    z-index: 3000;
+    opacity: 0;
+    transition: all 0.5s ease;
+}
+#welcome-msg.show{
+    opacity: 1;
+    top: 80px;
+}
+
+<!-- Mensaje de bienvenida -->
+<div id="welcome-msg"></div>
 /* ===== BUSCADOR ===== */
 .search-container{
   max-width:950px;
@@ -1007,6 +1074,44 @@ document.getElementById("loginBtn").addEventListener("click", ()=>{
     } else {
         alert("Clave incorrecta, no puede editar");
     }
+}
+  
+  // Mostrar modal login al cargar la página si no hay usuario
+if(!localStorage.getItem("usuario")){
+    document.getElementById("modal-login").style.display = "flex";
+}
+
+// Función para mostrar bienvenida
+function mostrarBienvenida(nombre){
+    const msg = document.getElementById("welcome-msg");
+    msg.textContent = `Bienvenido, ${nombre}!`;
+    msg.classList.add("show");
+    setTimeout(()=>{ msg.classList.remove("show"); }, 3000);
+}
+
+// Botón login
+document.getElementById("btnLogin").addEventListener("click", loginUsuario);
+
+// Enter funciona como click en aceptar
+document.getElementById("clave").addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+        e.preventDefault();
+        document.getElementById("btnLogin").click();
+    }
+});
+
+// Función login
+function loginUsuario(){
+    const clave = document.getElementById("clave").value.trim();
+    if(!clave) return alert("Ingresa tu clave");
+    
+    // Aquí puedes validar la clave (ej: comparar con un listado o hardcode)
+    // Para prueba, aceptamos cualquier valor
+    localStorage.setItem("usuario", "Usuario"); // guardar usuario
+    localStorage.setItem("correo", "correo@empresa.com"); // opcional
+
+    document.getElementById("modal-login").style.display = "none";
+    mostrarBienvenida("Usuario"); // mostrar mensaje
 }
 </script>
 </body>
