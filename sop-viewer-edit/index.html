@@ -368,24 +368,26 @@ function activarComentario(e){
         
         // Guardar en Sheet
         try{
-            await fetch(SHEET_API, {
-                method:"POST",
-                body: JSON.stringify({
-                    tipo:"comentario",
-                    id_sop: ID_SOP,
-                    usuario: USUARIO,
-                    correo: CORREO,
-                    comentario: texto,
-                    x: clickX,
-                    y: clickY,
-                    page:1,
-                    url_doc: SOP_URL
-                })
-            });
+           await fetch(SHEET_API, {
+                  method:"POST",
+                  body: JSON.stringify({
+                      tipo:"comentario",
+                      id_sop: ID_SOP,
+                      usuario: currentUser ? currentUser.usuario : "Anonimo",
+                      correo: currentUser ? currentUser.correo : "",
+                      comentario: texto,
+                      x: clickX,
+                      y: clickY,
+                      page:1,
+                      url_doc: SOP_URL
+                  })
+              });
             console.log("Comentario guardado");
         }catch(err){ console.error(err); }
     });
 }
+
+
 // DIBUJAR COMENTARIOS
 function dibujarComentarios(){
   const wrapper = document.getElementById("canvas-wrapper");
@@ -430,19 +432,23 @@ function dibujarComentarios(){
 
         // Guardar edición en Sheet
         try{
-          await fetch(SHEET_API,{
-            method:"POST",
-            body: JSON.stringify({
-              tipo:"editar",
-              id_sop: ID_SOP,
-              comentario_idx: idx,
-              comentario: nuevoTexto
-            })
-          });
+           await fetch(SHEET_API,{
+                method:"POST",
+                body: JSON.stringify({
+                  tipo:"editar",
+                  id_sop: ID_SOP,
+                  comentario_idx: idx,
+                  comentario: nuevoTexto,
+                  usuario: currentUser ? currentUser.usuario : "Anonimo",
+                  correo: currentUser ? currentUser.correo : ""
+                })
+            });
           console.log("Comentario editado en Sheet");
         }catch(err){ console.error(err); }
       });
     });
+
+
 
     // Botón X para eliminar
     const btnClose = document.createElement("i");
