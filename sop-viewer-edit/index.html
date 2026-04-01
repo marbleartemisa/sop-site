@@ -234,39 +234,14 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
     </div>
   </div>
 </div>
-<!-- Spinner -->
-<div id="spinner" style="
-    display:none;
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-    width:50px;
-    height:50px;
-    border:6px solid #ccc;
-    border-top-color:#00aaff;
-    border-radius:50%;
-    animation: spin 1s linear infinite;
-    z-index:1200;
-"></div>
 
-<style>
-@keyframes spin {
-    from{transform:translate(-50%, -50%) rotate(0deg);}
-    to{transform:translate(-50%, -50%) rotate(360deg);}
-}
-</style>
-  
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 // ================= VARIABLES =================
 const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 let comentarios=[], clickX=0, clickY=0, SOP_URL="", ID_SOP="";
-  // Obtener usuario activo
-const userActivo = JSON.parse(localStorage.getItem("usuarioActivo") || "{}");
-const USUARIO = userActivo.usuario || "";
-const CORREO = userActivo.correo || "";
-const DEPARTAMENTO = userActivo.depto || "";
+const USUARIO = localStorage.getItem("usuario") || "";
+const CORREO = localStorage.getItem("correo") || "";
 
 // ================= TABLA =================
 async function renderTabla(){
@@ -311,54 +286,30 @@ renderTabla();
 
 // ================= ABRIR SOP =================
 async function abrirSOP(url,id){
-  SOP_URL = url; 
-  ID_SOP = id; 
-  comentarios = [];
-  const wrapper = document.getElementById("canvas-wrapper");
-  document.getElementById("canvas-overlay").style.display = "block";
-
-  // 🔹 Spinner
-  const spinner = document.createElement("div");
-  spinner.innerHTML = `
-    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px;">
-      <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; margin-bottom:10px;"></i>
-      <span>Cargando SOP...</span>
-    </div>`;
-  wrapper.innerHTML = "";
-  wrapper.appendChild(spinner);
-
+  SOP_URL=url; ID_SOP=id; comentarios=[];
+  const wrapper=document.getElementById("canvas-wrapper");
+  document.getElementById("canvas-overlay").style.display="block";
+  wrapper.innerHTML="Cargando SOP...";
   try{
     const res = await fetch(url);
     const html = await res.text();
-    
-    // Crear contenedor temporal
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
-    tempDiv.querySelectorAll("script").forEach(s => s.remove());
-    tempDiv.style.width = "900px";
-    tempDiv.style.margin = "auto";
-    tempDiv.style.padding = "20px";
-    tempDiv.style.background = "#fff";
-
-    // 🔹 Reemplazar spinner con contenido
-    wrapper.innerHTML = "";
-    wrapper.appendChild(tempDiv);
-
-    await new Promise(r => setTimeout(r,300));
-    const canvas = await html2canvas(tempDiv, {useCORS:true, scale:1});
-    canvas.id = "sop-canvas";
-    wrapper.innerHTML = "";
-    wrapper.appendChild(canvas);
-
+    tempDiv.querySelectorAll("script").forEach(s=>s.remove());
+    tempDiv.style.width="900px"; tempDiv.style.margin="auto"; tempDiv.style.padding="20px"; tempDiv.style.background="#fff";
+    wrapper.innerHTML=""; wrapper.appendChild(tempDiv);
+    await new Promise(r=>setTimeout(r,300));
+    const canvas = await html2canvas(tempDiv,{useCORS:true, scale:1});
+    canvas.id="sop-canvas";
+    wrapper.innerHTML=""; wrapper.appendChild(canvas);
     canvas.addEventListener("click", activarComentario);
-    await cargarComentariosExistentes();
-    canvas.addEventListener("click", activarComentario);
-
+    cargarComentariosExistentes();
   }catch(err){
     console.error(err);
     wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>";
   }
 }
+
 // ================= CERRAR =================
 function cerrarCanvas(){
   document.getElementById("canvas-overlay").style.display="none";
@@ -456,25 +407,14 @@ function dibujarComentarios(){
   });
 }
 
-
-
-
 async function cargarComentariosExistentes(){
-    try{
-        const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
-        const data = await res.json();
-        if(!Array.isArray(data)) return; // prevenir errores
-        comentarios = data.map(c=>({
-            x: parseFloat(c.x) || 0,
-            y: parseFloat(c.y) || 0,
-            comentario: c.comentario || ""
-        }));
-        dibujarComentarios();
-    }catch(err){
-        console.error("Error cargando comentarios", err);
-    }
+  try{
+    const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
+    const data = await res.json();
+    comentarios = data.map(c=>({x:c.x,y:c.y,comentario:c.comentario}));
+    dibujarComentarios();
+  }catch(err){ console.error("Error cargando comentarios",err);}
 }
-  
 </script>
 </body>
 </html>
