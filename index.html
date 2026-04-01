@@ -136,19 +136,22 @@ body{
 <!-- Mensaje de bienvenida -->
 <div id="welcome-msg"></div>
 /* ===== BUSCADOR ===== */
-.search-container {
+/* Contenedor principal del buscador + filtro */
+.search-filter-container {
     max-width: 950px;
     margin: 30px auto;
     padding: 0 20px;
     display: flex;
-    flex-wrap: wrap;       /* permite que bajen en pantallas pequeñas */
-    justify-content: center; /* centra los elementos horizontalmente */
+    flex-wrap: wrap;          /* permite que bajen en pantallas pequeñas */
+    justify-content: center;  /* centra horizontalmente */
     gap: 15px;
+    align-items: center;      /* centra verticalmente si están al lado */
 }
 
-.search-container input,
-.search-container select {
-    width: 250px;           /* ancho fijo para que se vean iguales */
+/* Input y select */
+.search-filter-container input,
+.search-filter-container select {
+    width: 250px;
     padding: 12px 15px;
     border-radius: 30px;
     border: none;
@@ -156,45 +159,35 @@ body{
     box-shadow: 0 8px 20px rgba(0,0,0,0.25);
     outline: none;
 }
-  
-/* ===== SOP TABLE MODERN ===== */
 
-.dept-filter-bar{
-
-max-width:1050px;
-margin:20px auto;
-padding:0 20px;
-
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-
+/* Barra de botones de departamento */
+.dept-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;  /* centra los botones */
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
 }
 
-  .dept-filter{
-  padding:8px 16px;
-  border-radius:20px;
-  border:none;
-  background:white;
-  box-shadow:0 6px 14px rgba(0,0,0,0.15);
-  font-size:.85rem;
-  cursor:pointer;
-  transition:.25s;
-  flex: 0 0 auto; /* evita que se estiren */
+.dept-filter {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    background: white;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    font-size: .85rem;
+    cursor: pointer;
+    transition: .25s;
 }
 
-.dept-filter:hover{
-
-transform:scale(1.05);
-
+.dept-filter:hover {
+    transform: scale(1.05);
 }
 
-.dept-filter.active{
-
-background:#0072C6;
-
-color:white;
-
+.dept-filter.active {
+    background: #0072C6;
+    color: white;
 }
   
 .sop-info{
@@ -508,6 +501,32 @@ background:inherit;
     flex: 0 0 40%;
   }
 }
+
+/* Modal Login */
+#loginModal {
+  display: none; /* se activa con JS si no hay usuario */
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#loginModal .modal-content {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+  position: relative;
+}
+
+  
 </style>
 </head>
 
@@ -544,7 +563,8 @@ background:inherit;
 </div>
 
 <!-- BUSCADOR -->
-<div class="search-container">
+
+<div class="search-filter-container">
   <input type="text" id="searchInput" placeholder="Buscar SOP...">
   <select id="deptFilter">
     <option value="">Todos los departamentos</option>
@@ -558,55 +578,22 @@ background:inherit;
     <option value="ecopower">Ecopowertech</option>
     <option value="medidas">Medidas</option>
     <option value="taller">Taller</option>
-    
   </select>
-</div>
 
   <div class="dept-filter-bar">
-
-<button onclick="filterDept('')" class="dept-filter active">
-Todos
-</button>
-
-<button onclick="filterDept('comercial')" class="dept-filter">
-Comercial
-</button>
-
-    
-<button onclick="filterDept('produccion')" class="dept-filter">
-Carpintería
-</button>
-
-<button onclick="filterDept('instalacion')" class="dept-filter">
-Stone
-</button>
-
-<button onclick="filterDept('administracion')" class="dept-filter">
-Administración
-</button>
-
-<button onclick="filterDept('maquinarias')" class="dept-filter">
-Maquinarias
-</button>
-
-<button onclick="filterDept('vehiculos')" class="dept-filter">
-Vehículos
-</button>
-
-<button onclick="filterDept('houzz-pro')" class="dept-filter">
-Houzz-Pro
-</button>
-
-<button onclick="filterDept('medidas')" class="dept-filter">
-Medidas
-</button>
-
-<button onclick="filterDept('taller')" class="dept-filter">
-Taller
-</button>
-
-
+    <button onclick="filterDept('')" class="dept-filter active">Todos</button>
+    <button onclick="filterDept('comercial')" class="dept-filter">Comercial</button>
+    <button onclick="filterDept('produccion')" class="dept-filter">Carpintería</button>
+    <button onclick="filterDept('instalacion')" class="dept-filter">Stone</button>
+    <button onclick="filterDept('administracion')" class="dept-filter">Administración</button>
+    <button onclick="filterDept('maquinarias')" class="dept-filter">Maquinarias</button>
+    <button onclick="filterDept('vehiculos')" class="dept-filter">Vehículos</button>
+    <button onclick="filterDept('houzz-pro')" class="dept-filter">Houzz-Pro</button>
+    <button onclick="filterDept('medidas')" class="dept-filter">Medidas</button>
+    <button onclick="filterDept('taller')" class="dept-filter">Taller</button>
+  </div>
 </div>
+
   
 <!-- TABLA -->
 <div class="sop-container" id="sopContainer"></div>
@@ -665,8 +652,21 @@ Taller
 </div>
   
 <!-- LOGIN MODAL MODERNO -->
-<!-- Modal Login Responsive -->
-<div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
+<!-- Modal Login Obligatorio -->
+  
+<div id="loginModal">
+  <div class="modal-content">
+    <h2>Iniciar sesión</h2>
+    <select id="loginUser">
+      <option value="">Seleccione usuario</option>
+    </select>
+    <input type="password" id="loginPass" placeholder="Clave">
+    <div id="loginError" style="color:red; margin-top:10px; display:none;">Usuario o clave incorrecta</div>
+    <button id="loginBtn">Entrar</button>
+    <!-- NO HAY BOTÓN X -->
+  </div>
+</div>
+  
   <div style="
       background:#fff; 
       padding:30px 25px; 
@@ -748,7 +748,59 @@ Taller
 
   // Variable global para guardar usuario activo
     let currentUser = null;  
-/* MENU */
+
+  // Usuarios
+const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975"},
+  {usuario:"Alberto Molina", clave:"Alb1975"},
+  {usuario:"Carlos Herrera", clave:"Art2026"}
+];
+
+// Mostrar modal si no hay usuario
+if(!localStorage.getItem("usuario")){
+  document.getElementById("loginModal").style.display = "flex";
+}
+
+// Rellenar select de usuarios
+function populateLoginSelect(){
+  const select = document.getElementById("loginUser");
+  usuarios.forEach(u=>{
+    const opt = document.createElement("option");
+    opt.value = u.usuario;
+    opt.textContent = u.usuario;
+    select.appendChild(opt);
+  });
+}
+populateLoginSelect();
+
+// Evitar cerrar clicando fuera del modal
+document.getElementById("loginModal").addEventListener("click", (e) => {
+  if (e.target === document.getElementById("loginModal")) {
+    e.stopPropagation(); // no hace nada
+  }
+});
+
+// Login
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const userName = document.getElementById("loginUser").value;
+  const pass = document.getElementById("loginPass").value;
+
+  const user = usuarios.find(u => u.usuario === userName && u.clave === pass);
+
+  if(user){
+    localStorage.setItem("usuario", user.usuario);
+    document.getElementById("loginModal").style.display = "none";
+    alert(`Bienvenido ${user.usuario}`);
+  } else {
+    const error = document.getElementById("loginError");
+    error.style.display = "block";
+  }
+});
+  
+  
+  
+  
+  /* MENU */
 function toggleMenu(){
   document.querySelector('.menu').classList.toggle('show');
 }
