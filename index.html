@@ -136,27 +136,25 @@ body{
 <!-- Mensaje de bienvenida -->
 <div id="welcome-msg"></div>
 /* ===== BUSCADOR ===== */
-.search-container{
-  max-width:950px;
-  margin:30px auto;
-  padding:0 20px;
-  display:flex;
-  flex-direction:column;
-  gap:15px;
+.search-container {
+    max-width: 950px;
+    margin: 30px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;       /* permite que bajen en pantallas pequeñas */
+    justify-content: center; /* centra los elementos horizontalmente */
+    gap: 15px;
 }
 
 .search-container input,
-.search-container select{
-  width:100%;
-  max-width:400px; /* limita el estiramiento */
-  margin:0 auto;   /* centra horizontalmente */
-  padding:12px 15px;
-  border-radius:30px;
-  border:none;
-  font-size:1rem;
-  box-shadow:0 8px 20px rgba(0,0,0,0.25);
-  outline:none;
-  box-sizing:border-box;
+.search-container select {
+    width: 250px;           /* ancho fijo para que se vean iguales */
+    padding: 12px 15px;
+    border-radius: 30px;
+    border: none;
+    font-size: 1rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    outline: none;
 }
   
 /* ===== SOP TABLE MODERN ===== */
