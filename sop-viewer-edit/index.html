@@ -281,29 +281,77 @@ document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
 // --- ABRIR SOP ---
-async function abrirSOP(url,id){
-  SOP_URL=url; ID_SOP=id; comentarios=[];
-  const wrapper=document.getElementById("canvas-wrapper");
-  document.getElementById("canvas-overlay").style.display="block";
-  wrapper.innerHTML="Cargando SOP...";
-  try{
-    const res = await fetch(url);
-    const html = await res.text();
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    tempDiv.querySelectorAll("script").forEach(s=>s.remove());
-    tempDiv.style.width="900px"; tempDiv.style.margin="auto"; tempDiv.style.padding="20px"; tempDiv.style.background="#fff";
-    wrapper.innerHTML=""; wrapper.appendChild(tempDiv);
-    await new Promise(r=>setTimeout(r,300));
-    const canvas = await html2canvas(tempDiv,{useCORS:true, scale:1});
-    canvas.id="sop-canvas";
-    wrapper.innerHTML=""; wrapper.appendChild(canvas);
-    canvas.addEventListener("click", activarComentario);
-    cargarComentariosExistentes();
-  }catch(err){
-    console.error(err);
-    wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>";
-  }
+
+  async function abrirSOP(url, id) {
+    SOP_URL = url;
+    ID_SOP = id;
+    comentarios = [];
+
+    const wrapper = document.getElementById("canvas-wrapper");
+    document.getElementById("canvas-overlay").style.display = "block";
+    wrapper.innerHTML = "Cargando SOP...";
+
+    try {
+        // Traer el SOP
+        const res = await fetch(url);
+        const html = await res.text();
+
+        // Crear un contenedor temporal
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        // Eliminar scripts
+        tempDiv.querySelectorAll("script").forEach(s => s.remove());
+
+        // Limpiar imágenes vacías
+        tempDiv.querySelectorAll("img").forEach(img => {
+            if (!img.src || img.src.trim() === "") img.remove();
+        });
+
+        // Limpiar divs vacíos
+        tempDiv.querySelectorAll("div").forEach(d => {
+            if (d.innerText.trim() === "" && d.querySelectorAll("img").length === 0) d.remove();
+        });
+
+        // Aplicar estilos temporales para canvas
+        tempDiv.style.width = "900px";
+        tempDiv.style.margin = "auto";
+        tempDiv.style.padding = "20px";
+        tempDiv.style.background = "#fff";
+
+        // Mejorar texto y tablas
+        const style = document.createElement("style");
+        style.innerHTML = `
+            body { font-family: Arial, sans-serif; line-height:1.5; color:#1f2937; }
+            p, h1, h2, h3, h4 { margin-bottom:12px; }
+            table { width:100%; border-collapse: collapse; margin-bottom:15px; }
+            th, td { border:1px solid #ccc; padding:8px; }
+            img { max-width:100%; height:auto; display:block; margin:10px 0; }
+        `;
+        tempDiv.prepend(style);
+
+        wrapper.innerHTML = "";
+        wrapper.appendChild(tempDiv);
+
+        // Esperar un momento para que todo se renderice
+        await new Promise(r => setTimeout(r, 300));
+
+        // Crear canvas
+        const canvas = await html2canvas(tempDiv, { useCORS: true, scale: 1 });
+        canvas.id = "sop-canvas";
+        wrapper.innerHTML = "";
+        wrapper.appendChild(canvas);
+
+        // Permitir agregar comentarios
+        canvas.addEventListener("click", activarComentario);
+
+        // Cargar comentarios existentes
+        cargarComentariosExistentes();
+
+    } catch (err) {
+        console.error(err);
+        wrapper.innerHTML = "<p style='color:red;'>No se pudo cargar el SOP.</p>";
+    }
 }
 
 // --- CERRAR ---
