@@ -3,231 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Historial y Comentarios SOP - Artemisa Rev Mejorada</title>
+<title>Historial y Comentarios SOP - Artemisa Fusion</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 /* GLOBAL */
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: #f0f0f0;
-  color: #1f2937;
-}
+body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f2937; }
 
 /* NAVBAR */
-.navbar {
-  position: sticky;
-  top: 0;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(8px);
-  padding: 10px 30px;
-  color: white;
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1100;
+.navbar{
+  position:sticky;
+  top:0;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(8px);
+  padding:10px 30px;
+  color:white;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:1100;
 }
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.logo img { height: 40px; }
-.menu { display: flex; gap: 25px; }
-.menu a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  transition: .3s;
-}
-.menu a:hover { color: #00aaff; }
-.menu-toggle {
-  display: none;
-  font-size: 1.6rem;
-  cursor: pointer;
-}
+.logo{ display:flex; align-items:center; gap:10px; }
+.logo img{ height:40px; }
+.menu{ display:flex; gap:25px; }
+.menu a{ color:white; text-decoration:none; font-weight:bold; transition:.3s; }
+.menu a:hover{ color:#00aaff; }
+.menu-toggle{ display:none; font-size:1.6rem; cursor:pointer; }
 
 /* OVERLAY Y TABLA */
-.overlay {
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
-}
-h2 { color: #003366; margin-bottom: 15px; text-align: center; }
-input, select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
-  margin-bottom: 10px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #ddd; }
-th { background: #003366; color: white; }
-.estado {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-.pendiente { background: #fff4cc; color: #b38f00; }
-.tramite { background: #e6f0ff; color: #1a5fd0; }
-.rechazado { background: #fdecea; color: #c62828; }
-.aprobado { background: #e6f7ec; color: #1e7e34; }
+.overlay { padding:20px; max-width:1200px; margin:auto;}
+h2{ color:#003366; margin-bottom:15px; text-align:center;}
+input, select{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
+table{ width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+th, td{ padding:10px 12px; text-align:left; border-bottom:1px solid #ddd; }
+th{ background:#003366; color:white;}
+.estado{ display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:uppercase;}
+.pendiente{background:#fff4cc; color:#b38f00;}
+.tramite{background:#e6f0ff;color:#1a5fd0;}
+.rechazado{background:#fdecea;color:#c62828;}
+.aprobado{background:#e6f7ec;color:#1e7e34;}
 
 /* CANVAS */
-#canvas-overlay {
-  display: none;
-  position: fixed;
-  top: 50px;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 50px);
-  background: rgba(0,0,0,0.35);
-  z-index: 1000;
-  overflow: auto;
+#canvas-overlay{
+  display:none;
+  position:fixed;
+  top:50px;
+  left:0;
+  width:100%;
+  height:calc(100% - 50px);
+  background:rgba(0,0,0,0.35);
+  z-index:1000;
+  overflow:auto;
 }
-#sop-container {
-  position: relative;
-  margin: 30px auto;
-  width: 90%;
-  max-width: 1200px;
-  background: white;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+#sop-container{
+  position:relative;
+  margin:30px auto;
+  width:90%;
+  max-width:1200px;
+  background:white;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
-#canvas-wrapper { position: relative; width: 100%; }
-canvas {
-  display: block;
-  width: 100%;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
+#canvas-wrapper{ position:relative; width:100%; }
+canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.2);}
 
 /* COMENTARIOS */
 .comentario {
   position: absolute;
-  min-width: 120px;
-  max-width: 220px;
-  padding: 10px 12px;
-  padding-right: 28px;
-  border-radius: 10px;
-  background: rgba(255,255,180,0.95);
-  border: 1px solid #ffcc00;
-  font-size: 14px;
-  font-weight: 500;
+  background: rgba(255,255,100,0.9);
+  border: 1px solid #ffaa00;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
   color: #000;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-  cursor: grab;
-  outline: none;
-  overflow-wrap: break-word;
-}
-.comentario:focus {
-  background: #fff8a6;
-  box-shadow: 0 0 0 2px #00aaff;
-}
-.cerrar-comentario {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 18px;
-  height: 18px;
-  background: #ff3b3b;
-  color: #fff;
-  font-size: 12px;
-  border-radius: 50%;
+  max-width: 200px;
+  word-wrap: break-word;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  cursor:pointer;
 }
-.comentario.editable { pointer-events: auto; outline: 2px dashed #00aaff; }
+.comentario.editable { outline: 2px dashed #00aaff; }
 
 /* BOTÓN CERRAR SOP */
-#btnCerrarSOP {
-  position: fixed;
-  top: 70px;
-  right: 20px;
-  z-index: 9999;
-  padding: 10px 16px;
-  cursor: pointer;
-  background: #c00;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+#btnCerrarSOP{ 
+  position:fixed; 
+  top:70px; 
+  right:20px; 
+  z-index:9999; 
+  padding:10px 16px; 
+  cursor:pointer; 
+  background:#c00; 
+  color:white; 
+  border:none; 
+  border-radius:10px; 
+  font-weight:bold;
+  box-shadow:0 3px 8px rgba(0,0,0,0.3);
 }
 
 /* MODAL MODERNO */
-#modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+#modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
   background: rgba(0,0,0,0.45);
   backdrop-filter: blur(6px);
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
 }
-#modal-content {
+#modal-content{
   background: rgba(0,0,0,0.85);
-  border-radius: 14px;
-  padding: 20px;
-  width: 350px;
-  color: #fff;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  border-radius:14px;
+  padding:20px;
+  width:350px;
+  color:#fff;
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
   animation: fadeIn 0.3s ease;
 }
-#modal h3 { margin: 0; font-weight: 600; text-align: center; color: #00aaff; }
-#comentario-text {
-  width: 100%;
-  height: 120px;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
+#modal h3{ margin:0; font-weight:600; text-align:center; color:#00aaff; }
+#comentario-text{
+  width:100%;
+  height:120px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
   background: rgba(255,255,255,0.15);
-  color: #fff;
-  resize: vertical;
-  font-size: 15px;
+  color:#fff;
+  resize:vertical;
+  font-size:15px;
   transition: all 0.2s ease;
 }
-#comentario-text:focus { background: rgba(255,255,255,0.25); outline: none; }
-#comentario-text::placeholder { color: #ddd; font-style: italic; }
-#btn-save, #btn-cancel {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
+#comentario-text:focus{ background: rgba(255,255,255,0.25); outline:none; }
+#comentario-text::placeholder{ color: #ddd; font-style:italic; }
+#btn-save, #btn-cancel{
+  padding:10px 16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
   transition: all 0.2s ease;
 }
-#btn-save { background: #00d1ff; color: white; }
-#btn-save:hover { background: #00a8cc; }
-#btn-cancel { background: #555; color: white; }
-#btn-cancel:hover { background: #333; }
+#btn-save{ background:#00d1ff; color:white; }
+#btn-save:hover{ background:#00a8cc; }
+#btn-cancel{ background:#555; color:white; }
+#btn-cancel:hover{ background:#333; }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(-20px);}
+  to{opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
@@ -303,22 +237,23 @@ canvas {
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-const comentarios = [];
-let SOP_URL = "", ID_SOP = "";
-const USUARIO = localStorage.getItem("usuario") || "Anonimo";
+// ================= VARIABLES =================
+const SHEET_API = "https://script.google.com/macros/s/YOUR_SHEET_SCRIPT_ID/exec";
+let comentarios=[], clickX=0, clickY=0, SOP_URL="", ID_SOP="";
+const USUARIO = localStorage.getItem("usuario") || "";
 const CORREO = localStorage.getItem("correo") || "";
 
-async function renderTabla() {
+// ================= TABLA =================
+async function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
-  tabla.innerHTML = "";
+  tabla.innerHTML="";
   const filtro = document.getElementById("filtroEstado").value;
   const buscar = document.getElementById("buscarSOP").value.toLowerCase();
-  try {
+  try{
     const res = await fetch(SHEET_API);
     const data = await res.json();
-    data.forEach(row => {
-      if (!row.ID_SOP) return;
+    data.forEach(row=>{
+      if(!row.ID_SOP) return;
       const sop = {
         Timestamp: row.Timestamp||"",
         empleado: row.empleado||"",
@@ -329,10 +264,10 @@ async function renderTabla() {
         ID_SOP: row.ID_SOP,
         url_doc: row.url_doc||row.links||""
       };
-      if(filtro && sop.estado !== filtro) return;
+      if(filtro && sop.estado!==filtro) return;
       if(buscar && !(sop.empleado.toLowerCase()+sop.objetivo.toLowerCase()).includes(buscar)) return;
       const fila = document.createElement("tr");
-      fila.innerHTML = `
+      fila.innerHTML=`
         <td>${sop.empleado}</td>
         <td>${sop.departamento}</td>
         <td>${sop.objetivo}</td>
@@ -343,131 +278,142 @@ async function renderTabla() {
       `;
       tabla.appendChild(fila);
     });
-  } catch(e) { console.error(e); alert("Error cargando SOPs"); }
+  }catch(e){ console.error(e); alert("Error cargando SOPs"); }
 }
-
 document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
-async function abrirSOP(url, id){
-  SOP_URL = url; ID_SOP = id; comentarios.length = 0;
-  const wrapper = document.getElementById("canvas-wrapper");
-  document.getElementById("canvas-overlay").style.display = "block";
-  wrapper.innerHTML = "Cargando SOP...";
-  try {
+// ================= ABRIR SOP =================
+async function abrirSOP(url,id){
+  SOP_URL=url; ID_SOP=id; comentarios=[];
+  const wrapper=document.getElementById("canvas-wrapper");
+  document.getElementById("canvas-overlay").style.display="block";
+  wrapper.innerHTML="Cargando SOP...";
+  try{
     const res = await fetch(url);
     const html = await res.text();
-    const tempDiv = document.createElement("div");
+    const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
-    tempDiv.querySelectorAll("script").forEach(s => s.remove());
-    tempDiv.style.width = "900px"; tempDiv.style.margin = "auto"; tempDiv.style.padding = "20px"; tempDiv.style.background = "#fff";
-    wrapper.innerHTML = ""; wrapper.appendChild(tempDiv);
+    tempDiv.querySelectorAll("script").forEach(s=>s.remove());
+    tempDiv.style.width="900px"; tempDiv.style.margin="auto"; tempDiv.style.padding="20px"; tempDiv.style.background="#fff";
+    wrapper.innerHTML=""; wrapper.appendChild(tempDiv);
     await new Promise(r=>setTimeout(r,300));
-    const canvas = await html2canvas(tempDiv,{useCORS:true,scale:1});
-    canvas.id = "sop-canvas";
-    wrapper.innerHTML = ""; wrapper.appendChild(canvas);
+    const canvas = await html2canvas(tempDiv,{useCORS:true, scale:1});
+    canvas.id="sop-canvas";
+    wrapper.innerHTML=""; wrapper.appendChild(canvas);
     canvas.addEventListener("click", activarComentario);
-    await cargarComentariosExistentes();
-  } catch(err){
-    console.error("Error cargando SOP:", err);
+    cargarComentariosExistentes();
+  }catch(err){
+    console.error(err);
     wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>";
   }
 }
 
+// ================= CERRAR =================
 function cerrarCanvas(){
   document.getElementById("canvas-overlay").style.display="none";
   document.getElementById("canvas-wrapper").innerHTML="";
 }
 
+// ================= COMENTARIOS =================
 function activarComentario(e){
+    const rect = e.target.getBoundingClientRect();
+    clickX = e.clientX - rect.left;
+    clickY = e.clientY - rect.top;
+
+    const wrapper = document.getElementById("canvas-wrapper");
+    const editDiv = document.createElement("div");
+    editDiv.contentEditable = "true";
+    editDiv.className = "comentario editable";
+    editDiv.style.left = clickX + "px";
+    editDiv.style.top = clickY + "px";
+    wrapper.appendChild(editDiv);
+    editDiv.focus();
+
+    editDiv.addEventListener("blur", async ()=>{
+        const texto = editDiv.innerText.replace("✖","").trim();
+        if(!texto){ editDiv.remove(); return; }
+
+        comentarios.push({x:clickX, y:clickY, comentario:texto});
+        editDiv.classList.remove("editable");
+        editDiv.innerHTML = texto + `<span style="float:right; cursor:pointer;">✖</span>`;
+
+        // Guardar en Sheet
+        try{
+            await fetch(SHEET_API, {
+                method:"POST",
+                body: JSON.stringify({
+                    tipo:"comentario",
+                    id_sop: ID_SOP,
+                    usuario: USUARIO,
+                    correo: CORREO,
+                    comentario: texto,
+                    x: clickX,
+                    y: clickY,
+                    page:1,
+                    url_doc: SOP_URL
+                })
+            });
+            console.log("Comentario guardado");
+        }catch(err){ console.error(err); }
+    });
+}
+
+function dibujarComentarios(){
   const wrapper = document.getElementById("canvas-wrapper");
-  const rect = e.target.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  crearComentarioEditable(x, y, "");
+  wrapper.querySelectorAll(".comentario").forEach(el => el.remove());
+
+  comentarios.forEach((c, idx) => {
+    const div = document.createElement("div");
+    div.className = "comentario";
+    div.style.left = c.x + "px";
+    div.style.top = c.y + "px";
+
+    const spanText = document.createElement("span");
+    spanText.textContent = c.comentario;
+    spanText.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      clickX=c.x; clickY=c.y;
+      const txt=document.getElementById("comentario-text");
+      txt.value=c.comentario;
+      document.getElementById("modal").style.display="flex";
+      const btnSave = document.getElementById("btn-save");
+      btnSave.replaceWith(btnSave.cloneNode(true));
+      document.getElementById("btn-save").addEventListener("click", async ()=>{
+        const nuevoTexto = document.getElementById("comentario-text").value.trim();
+        if(!nuevoTexto) return alert("Escribe algo antes de guardar");
+        comentarios[idx].comentario = nuevoTexto;
+        dibujarComentarios();
+        document.getElementById("modal").style.display="none";
+        document.getElementById("comentario-text").value="";
+        try{ await fetch(SHEET_API,{method:"POST",body:JSON.stringify({tipo:"editar",id_sop:ID_SOP,comentario_idx:idx,comentario:nuevoTexto})}); }catch(err){console.error(err);}
+      });
+    });
+
+    const btnClose = document.createElement("i");
+    btnClose.className="fa-solid fa-xmark";
+    btnClose.style.cursor="pointer";
+    btnClose.style.marginLeft="6px";
+    btnClose.style.color="#c00";
+    btnClose.addEventListener("click",(e)=>{
+      e.stopPropagation(); comentarios.splice(idx,1); dibujarComentarios();
+      fetch(SHEET_API,{method:"POST",body:JSON.stringify({tipo:"eliminar",id_sop:ID_SOP,comentario_idx:idx})}).catch(err=>console.error(err));
+    });
+
+    div.appendChild(spanText);
+    div.appendChild(btnClose);
+    wrapper.appendChild(div);
+  });
 }
 
 async function cargarComentariosExistentes(){
   try{
-    const res = await fetch(`${SHEET_API}?id_sop=${ID_SOP}`);
+    const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
     const data = await res.json();
-    const comentariosSOP = data.filter(c => c.id_sop===ID_SOP && c.comentario && !isNaN(c.x) && !isNaN(c.y));
-    comentariosSOP.forEach(c=>{
-      crearComentarioEditable(Number(c.x), Number(c.y), c.comentario, c);
-    });
-  } catch(err){ console.error("Error cargando comentarios existentes:", err); }
-}
-
-function crearComentarioEditable(x, y, textoInicial="", existente=null){
-  const wrapper = document.getElementById("canvas-wrapper");
-  const div = document.createElement("div");
-  div.className="comentario editable"; div.style.left=x+"px"; div.style.top=y+"px";
-  div.contentEditable=true; div.spellcheck=false; div.innerText=textoInicial;
-
-  const btnX = document.createElement("div");
-  btnX.className="cerrar-comentario"; btnX.innerHTML="×";
-  btnX.addEventListener("click", async (e)=>{
-    e.stopPropagation(); div.remove(); btnX.remove();
-    if(existente){
-      comentarios.splice(comentarios.indexOf(existente),1);
-      try{ await fetch(SHEET_API,{method:"POST",body:JSON.stringify({tipo:"eliminar",id_sop:ID_SOP,comentario:existente.comentario})}); }
-      catch(err){ console.error(err); }
-    }
-  });
-
-  wrapper.appendChild(div); wrapper.appendChild(btnX);
-  btnX.style.left = (div.offsetLeft + div.offsetWidth - btnX.offsetWidth/2)+"px";
-  btnX.style.top = (div.offsetTop - btnX.offsetHeight/2)+"px";
-
-  div.addEventListener("blur", async ()=>{
-    const texto = div.innerText.replace("×","").trim();
-    if(!texto){ div.remove(); btnX.remove(); return; }
-
-    if(existente){
-      existente.comentario = texto;
-      existente.x = parseInt(div.style.left);
-      existente.y = parseInt(div.style.top);
-    } else {
-      existente = { x:parseInt(div.style.left), y:parseInt(div.style.top), comentario:texto, div, nuevo:true };
-      comentarios.push(existente);
-    }
-
-    if(existente.nuevo){
-      try{
-        await fetch(SHEET_API,{
-          method:"POST",
-          body: JSON.stringify({
-            tipo:"comentario", id_sop:ID_SOP, usuario:USUARIO, correo:CORREO,
-            comentario:texto, x:existente.x, y:existente.y, url_doc:SOP_URL
-          })
-        });
-        existente.nuevo=false;
-      } catch(err){ console.error("Error guardando comentario:", err); }
-    }
-  });
-
-  // DRAG & DROP
-  let offsetX=0, offsetY=0, dragging=false;
-  div.addEventListener("mousedown",(e)=>{ if(e.target===btnX) return; dragging=true; offsetX=e.offsetX; offsetY=e.offsetY; div.style.cursor="grabbing"; });
-  document.addEventListener("mousemove",(e)=>{
-    if(!dragging) return;
-    const rect=wrapper.getBoundingClientRect();
-    const newX=e.clientX-rect.left-offsetX;
-    const newY=e.clientY-rect.top-offsetY;
-    div.style.left=newX+"px"; div.style.top=newY+"px";
-    btnX.style.left=(newX+div.offsetWidth-btnX.offsetWidth/2)+"px";
-    btnX.style.top=(newY-btnX.offsetHeight/2)+"px";
-  });
-  document.addEventListener("mouseup", async ()=>{
-    if(!dragging) return; dragging=false; div.style.cursor="grab";
-    if(existente){
-      existente.x = parseInt(div.style.left);
-      existente.y = parseInt(div.style.top);
-      try{ await fetch(SHEET_API,{method:"POST",body:JSON.stringify({tipo:"mover",id_sop:ID_SOP,comentario:existente.comentario,x:existente.x,y:existente.y})}); }
-      catch(err){ console.error(err); }
-    }
-  });
+    comentarios = data.map(c=>({x:c.x,y:c.y,comentario:c.comentario}));
+    dibujarComentarios();
+  }catch(err){ console.error("Error cargando comentarios",err);}
 }
 </script>
 </body>
