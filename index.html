@@ -358,7 +358,7 @@
     <i class="fa-solid fa-bars"></i>
   </div>
 
-  <div class="menu">
+<div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
     <a href="/sop-site/Aportes/">Aportes SOP</a>     
@@ -367,14 +367,18 @@
       <i class="fa-solid fa-user-shield"></i> Login
     </a>
     <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a> 
-        <div class="user-info" id="userInfo" style="display:none;">
-  <span id="userName"></span>
-  <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
-    <i class="fa-solid fa-right-from-bracket"></i>
-  </button>
   </div>
-</div>
 
+  <!-- ✅ Mover user-info fuera de menu -->
+  <div class="user-info" id="userInfo" style="display:none;">
+    <span id="userName"></span>
+    <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+  </div>
+
+</div>
+      
 <!-- MENSAJE BIENVENIDA -->
 <div id="welcome-msg"></div>
 
