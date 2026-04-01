@@ -724,37 +724,38 @@ const SHEET_ID = "1zUZ37cWCS4N72AG5H2c_RRgjGhcQ5pj_D9qNBbRCRcI";
 const SHEET_NAME = "SOP_Admin";
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
-fetch(SHEET_URL)
-  .then(res => res.text())
+const API_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+
+fetch(API_URL)
+  .then(res => res.json())
   .then(data => {
-    try {
-      const json = JSON.parse(
-        data.replace(/.*google\.visualization\.Query\.setResponse\(/, '').slice(0, -2)
-      );
 
-      if (!json.table || !json.table.rows) {
-        console.error("No hay datos en la hoja");
-        return;
-      }
+    console.log("DATA BACKEND:", data);
 
-      SOP_INDEX = json.table.rows.map(row => ({
-        id: row.c[9]?.v || "SOP-" + Math.random(),
-        title: row.c[6]?.v || "--",
-        department: (row.c[3]?.v || "").toLowerCase().trim(),
-        url: row.c[8]?.v || "#",
-        keywords: ((row.c[4]?.v || "") + " " + (row.c[5]?.v || "")).toLowerCase()
-      }));
-
-      console.log("SOP cargados:", SOP_INDEX);
-
-      sortByDepartment();
-      renderSOP();
-
-    } catch (err) {
-      console.error("Error parseando datos:", err);
+    if (!data || data.length === 0) {
+      document.getElementById("sopContainer").innerHTML =
+        "<div class='sop-info'>⚠️ No hay SOP disponibles</div>";
+      return;
     }
+
+    SOP_INDEX = data.map(row => ({
+      id: row.ID_SOP || "SOP-" + Math.random(),
+      title: row.resumen || "--",
+      department: (row.departamento || "").toLowerCase().trim(),
+      url: row.links || "#",
+      keywords: ((row.objetivo || "") + " " + (row.areas || "")).toLowerCase()
+    }));
+
+    sortByDepartment();
+    renderSOP();
+
   })
-  .catch(err => console.error("Error en fetch:", err));
+  .catch(err => {
+    console.error("ERROR:", err);
+    document.getElementById("sopContainer").innerHTML =
+      "<div class='sop-info'>❌ Error cargando SOP</div>";
+  });
+  
 
 /* ORDEN */
 function sortByDepartment(){
