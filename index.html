@@ -727,17 +727,34 @@ const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq
 fetch(SHEET_URL)
   .then(res => res.text())
   .then(data => {
-    const json = JSON.parse(data.substring(47).slice(0,-2));
-    SOP_INDEX = json.table.rows.map(row => ({
-      id: row.c[9]?.v || "SOP-"+Date.now(),  // 🔹 id_sop
-      title: row.c[6]?.v || "--",
-      department: row.c[3]?.v || "--",
-      url: row.c[8]?.v || "#",
-      keywords: (row.c[4]?.v || "") + " " + (row.c[5]?.v || "")
-    }));
-    sortByDepartment();
-    renderSOP();
-  });
+    try {
+      const json = JSON.parse(
+        data.replace(/.*google\.visualization\.Query\.setResponse\(/, '').slice(0, -2)
+      );
+
+      if (!json.table || !json.table.rows) {
+        console.error("No hay datos en la hoja");
+        return;
+      }
+
+      SOP_INDEX = json.table.rows.map(row => ({
+        id: row.c[9]?.v || "SOP-" + Math.random(),
+        title: row.c[6]?.v || "--",
+        department: (row.c[3]?.v || "").toLowerCase().trim(),
+        url: row.c[8]?.v || "#",
+        keywords: ((row.c[4]?.v || "") + " " + (row.c[5]?.v || "")).toLowerCase()
+      }));
+
+      console.log("SOP cargados:", SOP_INDEX);
+
+      sortByDepartment();
+      renderSOP();
+
+    } catch (err) {
+      console.error("Error parseando datos:", err);
+    }
+  })
+  .catch(err => console.error("Error en fetch:", err));
 
 /* ORDEN */
 function sortByDepartment(){
