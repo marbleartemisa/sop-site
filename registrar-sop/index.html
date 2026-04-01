@@ -261,16 +261,20 @@ if(password === "Artemisa2026"){   // puedes cambiar la clave
 
 // Mostrar usuario en navbar
 function mostrarUsuario(user){
-  const userInfo = document.getElementById("userInfo");
-  const userName = document.getElementById("userName");
+  const userDiv = document.getElementById("userInfo");
+  const userNameSpan = document.getElementById("userName");
 
-  if(user){
-    userName.textContent = user.usuario;
-    userInfo.style.display = "flex";
-  }else{
-    userInfo.style.display = "none";
-  }
+  userNameSpan.textContent = user.usuario; // mostrar nombre
+  userDiv.style.display = "flex";          // mostrar bloque
 }
+      
+function mostrarBienvenida(nombre){
+  const msg = document.getElementById("welcome-msg");
+  msg.textContent = `Bienvenido, ${nombre}`;
+  msg.classList.add("show");
+  setTimeout(()=> msg.classList.remove("show"),3000);
+}
+
 
 // Cerrar sesión
 function logout(){
