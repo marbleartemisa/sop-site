@@ -748,57 +748,6 @@ background:inherit;
 
   // Variable global para guardar usuario activo
     let currentUser = null;  
-
-  // Usuarios
-const usuarios = [
-  {usuario:"Damian Molina", clave:"Dam1975"},
-  {usuario:"Alberto Molina", clave:"Alb1975"},
-  {usuario:"Carlos Herrera", clave:"Art2026"}
-];
-
-// Mostrar modal si no hay usuario
-if(!localStorage.getItem("usuario")){
-  document.getElementById("loginModal").style.display = "flex";
-}
-
-// Rellenar select de usuarios
-function populateLoginSelect(){
-  const select = document.getElementById("loginUser");
-  usuarios.forEach(u=>{
-    const opt = document.createElement("option");
-    opt.value = u.usuario;
-    opt.textContent = u.usuario;
-    select.appendChild(opt);
-  });
-}
-populateLoginSelect();
-
-// Evitar cerrar clicando fuera del modal
-document.getElementById("loginModal").addEventListener("click", (e) => {
-  if (e.target === document.getElementById("loginModal")) {
-    e.stopPropagation(); // no hace nada
-  }
-});
-
-// Login
-document.getElementById("loginBtn").addEventListener("click", () => {
-  const userName = document.getElementById("loginUser").value;
-  const pass = document.getElementById("loginPass").value;
-
-  const user = usuarios.find(u => u.usuario === userName && u.clave === pass);
-
-  if(user){
-    localStorage.setItem("usuario", user.usuario);
-    document.getElementById("loginModal").style.display = "none";
-    alert(`Bienvenido ${user.usuario}`);
-  } else {
-    const error = document.getElementById("loginError");
-    error.style.display = "block";
-  }
-});
-  
-  
-  
   
   /* MENU */
 function toggleMenu(){
