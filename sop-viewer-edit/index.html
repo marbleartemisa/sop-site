@@ -43,49 +43,103 @@ th{ background:#003366; color:white;}
 .rechazado{background:#fdecea;color:#c62828;}
 .aprobado{background:#e6f7ec;color:#1e7e34;}
 
-/* CANVAS */
-#canvas-overlay{
-  display:none;
-  position:fixed;
-  top:50px;
-  left:0;
-  width:100%;
-  height:calc(100% - 50px);
-  background:rgba(0,0,0,0.35);
-  z-index:1000;
-  overflow:auto;
+/* CANVAS MEJORADO */
+#canvas-overlay {
+  display: none;
+  position: fixed;
+  top: 50px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 50px);
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  overflow: auto;
+  padding-bottom: 50px;
 }
-#sop-container{
-  position:relative;
-  margin:30px auto;
-  width:90%;
-  max-width:1200px;
-  background:white;
-  border-radius:14px;
-  padding:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+
+#sop-container {
+  position: relative;
+  margin: 20px auto;
+  width: 95%;
+  max-width: 1200px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
-#canvas-wrapper{ position:relative; width:100%; }
+
+#canvas-wrapper {
+  position: relative;
+  width: 100%;
+}
 canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.2);}
 
-/* COMENTARIOS */
+/* Comentarios modernos */
 .comentario {
   position: absolute;
-  background: rgba(255,255,100,0.9);
-  border: 1px solid #ffaa00;
-  padding: 6px 8px;
-  border-radius: 6px;
-  font-size: 13px;
+  background: rgba(0, 170, 255, 0.9);
+  color: #fff;
+  font-size: 14px;
   font-weight: 600;
-  color: #000;
-  max-width: 200px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  cursor: pointer;
+  max-width: 220px;
   word-wrap: break-word;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 4px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  cursor: move;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.comentario:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+}
+
+.comentario i {
+  margin-left: 6px;
+  color: #ff5555;
+  cursor: pointer;
+}
+
+/* Mejorar texto del SOP */
+#canvas-wrapper p, #canvas-wrapper span, #canvas-wrapper li {
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+#canvas-wrapper table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+#canvas-wrapper th, #canvas-wrapper td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+#canvas-wrapper img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px 0;
+}
+
+/* Botón cerrar SOP */
+#btnCerrarSOP {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 9999;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: #c00;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
 }
 
 /* BOTÓN CERRAR SOP */
@@ -280,9 +334,8 @@ document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
-// --- ABRIR SOP ---
-
-  async function abrirSOP(url, id) {
+// ABRIR SOP MEJORADO
+async function abrirSOP(url, id) {
     SOP_URL = url;
     ID_SOP = id;
     comentarios = [];
@@ -292,34 +345,28 @@ renderTabla();
     wrapper.innerHTML = "Cargando SOP...";
 
     try {
-        // Traer el SOP
         const res = await fetch(url);
         const html = await res.text();
-
-        // Crear un contenedor temporal
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = html;
-
-        // Eliminar scripts
         tempDiv.querySelectorAll("script").forEach(s => s.remove());
 
-        // Limpiar imágenes vacías
+        // Limpiar imágenes y divs vacíos
         tempDiv.querySelectorAll("img").forEach(img => {
             if (!img.src || img.src.trim() === "") img.remove();
         });
-
-        // Limpiar divs vacíos
         tempDiv.querySelectorAll("div").forEach(d => {
             if (d.innerText.trim() === "" && d.querySelectorAll("img").length === 0) d.remove();
         });
 
-        // Aplicar estilos temporales para canvas
-        tempDiv.style.width = "900px";
+        // Estilos temporales
+        tempDiv.style.width = "100%";
+        tempDiv.style.maxWidth = "900px";
         tempDiv.style.margin = "auto";
         tempDiv.style.padding = "20px";
         tempDiv.style.background = "#fff";
 
-        // Mejorar texto y tablas
+        // Insertar CSS temporal para canvas
         const style = document.createElement("style");
         style.innerHTML = `
             body { font-family: Arial, sans-serif; line-height:1.5; color:#1f2937; }
@@ -333,19 +380,15 @@ renderTabla();
         wrapper.innerHTML = "";
         wrapper.appendChild(tempDiv);
 
-        // Esperar un momento para que todo se renderice
         await new Promise(r => setTimeout(r, 300));
 
-        // Crear canvas
         const canvas = await html2canvas(tempDiv, { useCORS: true, scale: 1 });
         canvas.id = "sop-canvas";
         wrapper.innerHTML = "";
         wrapper.appendChild(canvas);
 
-        // Permitir agregar comentarios
+        // Activar comentarios
         canvas.addEventListener("click", activarComentario);
-
-        // Cargar comentarios existentes
         cargarComentariosExistentes();
 
     } catch (err) {
