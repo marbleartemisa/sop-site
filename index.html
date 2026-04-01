@@ -509,8 +509,8 @@ background:inherit;
       <div class="menu">
       <a href="/sop-site/">Inicio</a>
       <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-      <a href="/sop-site/Aportes/">Aportes SOP</a>    
-      <a href="/sop-site/sop-viewer-edit/">Editar SOP</a>  
+      <a href="/sop-site/Aportes/">Aportes SOP</a>     
+        <a href="#" onclick="editSOP()">Editar SOP</a>
       <a href="#" onclick="openLogin('admin')">
         <i class="fa-solid fa-user-shield"></i> Admin
       </a>
@@ -718,6 +718,20 @@ Taller
   </div>
 </div>
 <script>
+  
+// Variable global para guardar usuario activo
+let currentUser = null;
+
+  const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
+  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Administracion", correo:"frontdesk@artemisamarble.com"},
+  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:"sales@artemisamarble.com"},
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:"accounting@artemisamarble.com"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Control", correo:"control@artemisamarble.com"},
+  {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor", depto:"Comercial", correo:"jenny@artemisamarble.com"},
+  {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor", depto:"Gerencia", correo:"wood@artemisamarble.com"}
+];
+  
 /* MENU */
 function toggleMenu(){
   document.querySelector('.menu').classList.toggle('show');
@@ -894,13 +908,106 @@ if(password === "Artemisa2026"){   // puedes cambiar la clave
 }else{
 
     alert("Acceso denegado");
-
+}
 }
 
+// Abrir modal al cargar la página
+window.addEventListener("DOMContentLoaded", ()=>{
+    openLogin(); // abre modal al inicio
+    populateLoginSelect();
+});
+
+// Rellenar select de usuarios
+function populateLoginSelect(){
+    const select = document.getElementById("loginUser");
+    usuarios.forEach(u=>{
+        const opt = document.createElement("option");
+        opt.value = u.usuario;
+        opt.textContent = u.usuario;
+        select.appendChild(opt);
+    });
 }
 
+function openLogin(){
+    document.getElementById("loginModal").style.display = "flex";
+}
 
+function closeLogin(){
+    document.getElementById("loginModal").style.display = "none";
+}
 
+// Botón Entrar
+document.getElementById("loginBtn").addEventListener("click", ()=>{
+    const userName = document.getElementById("loginUser").value;
+    const pass = document.getElementById("loginPass").value;
+
+    const user = usuarios.find(u=>u.usuario===userName && u.clave===pass);
+    if(user){
+        currentUser = user; // ✅ guardar usuario global
+        closeLogin();
+        alert(`Bienvenido ${user.usuario} (${user.depto})`);
+    }else{
+        const error = document.getElementById("loginError");
+        error.style.display = "block";
+        error.textContent = "Usuario o clave incorrecta";
+    }
+});
+  // Abrir modal al cargar la página
+window.addEventListener("DOMContentLoaded", ()=>{
+    openLogin(); // abre modal al inicio
+    populateLoginSelect();
+});
+
+// Rellenar select de usuarios
+function populateLoginSelect(){
+    const select = document.getElementById("loginUser");
+    usuarios.forEach(u=>{
+        const opt = document.createElement("option");
+        opt.value = u.usuario;
+        opt.textContent = u.usuario;
+        select.appendChild(opt);
+    });
+}
+
+function openLogin(){
+    document.getElementById("loginModal").style.display = "flex";
+}
+
+function closeLogin(){
+    document.getElementById("loginModal").style.display = "none";
+}
+
+// Botón Entrar
+document.getElementById("loginBtn").addEventListener("click", ()=>{
+    const userName = document.getElementById("loginUser").value;
+    const pass = document.getElementById("loginPass").value;
+
+    const user = usuarios.find(u=>u.usuario===userName && u.clave===pass);
+    if(user){
+        currentUser = user; // ✅ guardar usuario global
+        closeLogin();
+        alert(`Bienvenido ${user.usuario} (${user.depto})`);
+    }else{
+        const error = document.getElementById("loginError");
+        error.style.display = "block";
+        error.textContent = "Usuario o clave incorrecta";
+    }
+});
+  function editSOP(){
+    if(!currentUser){
+        alert("Debe iniciar sesión primero");
+        openLogin();
+        return;
+    }
+
+    const pass = prompt("Ingrese su clave para editar este SOP");
+    if(pass === currentUser.clave){
+        // Redirige al editor
+        window.location.href = "/sop-site/sop-viewer-edit/";
+    } else {
+        alert("Clave incorrecta, no puede editar");
+    }
+}
 </script>
 </body>
 </html>
