@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Historial y Comentarios SOP - Artemisa Fusion</title>
+<title>Historial y Comentarios SOP - Artemisa Rev Mejorada</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 /* GLOBAL */
@@ -13,7 +13,7 @@ body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f29
 .navbar{
   position:sticky;
   top:0;
-  background:rgba(0,0,0,0.75);
+  background:rgba(0,0,0,0.65);
   backdrop-filter:blur(8px);
   padding:10px 30px;
   color:white;
@@ -85,9 +85,8 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
   align-items: center;
   gap: 4px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  cursor:pointer;
+  cursor: move;
 }
-.comentario.editable { outline: 2px dashed #00aaff; }
 
 /* BOTÓN CERRAR SOP */
 #btnCerrarSOP{ 
@@ -173,9 +172,6 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
     <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
-  <div class="menu-toggle" onclick="toggleMenu()">
-    <i class="fa-solid fa-bars"></i>
-  </div>
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
@@ -237,13 +233,13 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-// ================= VARIABLES =================
+// --- CONFIG ---
 const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 let comentarios=[], clickX=0, clickY=0, SOP_URL="", ID_SOP="";
 const USUARIO = localStorage.getItem("usuario") || "";
 const CORREO = localStorage.getItem("correo") || "";
 
-// ================= TABLA =================
+// --- TABLA SOP ---
 async function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML="";
@@ -284,7 +280,7 @@ document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
-// ================= ABRIR SOP =================
+// --- ABRIR SOP ---
 async function abrirSOP(url,id){
   SOP_URL=url; ID_SOP=id; comentarios=[];
   const wrapper=document.getElementById("canvas-wrapper");
@@ -310,36 +306,44 @@ async function abrirSOP(url,id){
   }
 }
 
-// ================= CERRAR =================
+// --- CERRAR ---
 function cerrarCanvas(){
   document.getElementById("canvas-overlay").style.display="none";
   document.getElementById("canvas-wrapper").innerHTML="";
 }
 
-// ================= COMENTARIOS =================
+// --- COMENTARIOS ARRASTRABLES ---
 function activarComentario(e){
     const rect = e.target.getBoundingClientRect();
     clickX = e.clientX - rect.left;
     clickY = e.clientY - rect.top;
 
     const wrapper = document.getElementById("canvas-wrapper");
-    const editDiv = document.createElement("div");
-    editDiv.contentEditable = "true";
-    editDiv.className = "comentario editable";
-    editDiv.style.left = clickX + "px";
-    editDiv.style.top = clickY + "px";
-    wrapper.appendChild(editDiv);
-    editDiv.focus();
+    const div = document.createElement("div");
+    div.className = "comentario editable";
+    div.style.left = clickX + "px";
+    div.style.top = clickY + "px";
+    div.contentEditable = "true";
 
-    editDiv.addEventListener("blur", async ()=>{
-        const texto = editDiv.innerText.replace("✖","").trim();
-        if(!texto){ editDiv.remove(); return; }
+    // Botón eliminar
+    const btnX = document.createElement("span");
+    btnX.innerHTML = "✖";
+    btnX.style.cursor = "pointer";
+    btnX.style.marginLeft = "6px";
+    btnX.addEventListener("click", ()=> div.remove());
+    div.appendChild(btnX);
 
+    wrapper.appendChild(div);
+    div.focus();
+
+    // Guardar comentario
+    div.addEventListener("blur", async ()=>{
+        const texto = div.innerText.replace("✖","").trim();
+        if(!texto){ div.remove(); return; }
         comentarios.push({x:clickX, y:clickY, comentario:texto});
-        editDiv.classList.remove("editable");
-        editDiv.innerHTML = texto + `<span style="float:right; cursor:pointer;">✖</span>`;
-
-        // Guardar en Sheet
+        div.classList.remove("editable");
+        div.innerHTML = texto + `<span style="float:right; cursor:pointer;">✖</span>`;
+        habilitarArrastre(div, comentarios.length - 1);
         try{
             await fetch(SHEET_API, {
                 method:"POST",
@@ -355,65 +359,92 @@ function activarComentario(e){
                     url_doc: SOP_URL
                 })
             });
-            console.log("Comentario guardado");
         }catch(err){ console.error(err); }
     });
 }
 
-function dibujarComentarios(){
-  const wrapper = document.getElementById("canvas-wrapper");
-  wrapper.querySelectorAll(".comentario").forEach(el => el.remove());
+function habilitarArrastre(div, idx){
+    let offsetX=0, offsetY=0, isDragging=false;
 
-  comentarios.forEach((c, idx) => {
-    const div = document.createElement("div");
-    div.className = "comentario";
-    div.style.left = c.x + "px";
-    div.style.top = c.y + "px";
-
-    const spanText = document.createElement("span");
-    spanText.textContent = c.comentario;
-    spanText.addEventListener("click", (e)=>{
-      e.stopPropagation();
-      clickX=c.x; clickY=c.y;
-      const txt=document.getElementById("comentario-text");
-      txt.value=c.comentario;
-      document.getElementById("modal").style.display="flex";
-      const btnSave = document.getElementById("btn-save");
-      btnSave.replaceWith(btnSave.cloneNode(true));
-      document.getElementById("btn-save").addEventListener("click", async ()=>{
-        const nuevoTexto = document.getElementById("comentario-text").value.trim();
-        if(!nuevoTexto) return alert("Escribe algo antes de guardar");
-        comentarios[idx].comentario = nuevoTexto;
-        dibujarComentarios();
-        document.getElementById("modal").style.display="none";
-        document.getElementById("comentario-text").value="";
-        try{ await fetch(SHEET_API,{method:"POST",body:JSON.stringify({tipo:"editar",id_sop:ID_SOP,comentario_idx:idx,comentario:nuevoTexto})}); }catch(err){console.error(err);}
-      });
+    div.addEventListener("mousedown", (e)=>{
+        if(e.target.tagName==="SPAN") return;
+        isDragging=true;
+        const rect=div.getBoundingClientRect();
+        offsetX=e.clientX-rect.left;
+        offsetY=e.clientY-rect.top;
+        div.style.cursor="move";
     });
 
-    const btnClose = document.createElement("i");
-    btnClose.className="fa-solid fa-xmark";
-    btnClose.style.cursor="pointer";
-    btnClose.style.marginLeft="6px";
-    btnClose.style.color="#c00";
-    btnClose.addEventListener("click",(e)=>{
-      e.stopPropagation(); comentarios.splice(idx,1); dibujarComentarios();
-      fetch(SHEET_API,{method:"POST",body:JSON.stringify({tipo:"eliminar",id_sop:ID_SOP,comentario_idx:idx})}).catch(err=>console.error(err));
+    document.addEventListener("mousemove", (e)=>{
+        if(!isDragging) return;
+        const wrapper=document.getElementById("canvas-wrapper");
+        let x = e.clientX - wrapper.getBoundingClientRect().left - offsetX;
+        let y = e.clientY - wrapper.getBoundingClientRect().top - offsetY;
+        x=Math.max(0, Math.min(x, wrapper.offsetWidth - div.offsetWidth));
+        y=Math.max(0, Math.min(y, wrapper.offsetHeight - div.offsetHeight));
+        div.style.left=x+"px";
+        div.style.top=y+"px";
+        comentarios[idx].x=x;
+        comentarios[idx].y=y;
     });
 
-    div.appendChild(spanText);
-    div.appendChild(btnClose);
-    wrapper.appendChild(div);
-  });
+    document.addEventListener("mouseup", async ()=>{
+        if(isDragging){
+            isDragging=false;
+            div.style.cursor="default";
+            try{
+                await fetch(SHEET_API,{
+                    method:"POST",
+                    body: JSON.stringify({
+                        tipo:"mover",
+                        id_sop: ID_SOP,
+                        comentario_idx: idx,
+                        x: comentarios[idx].x,
+                        y: comentarios[idx].y
+                    })
+                });
+            }catch(err){ console.error(err); }
+        }
+    });
 }
 
 async function cargarComentariosExistentes(){
-  try{
-    const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
-    const data = await res.json();
-    comentarios = data.map(c=>({x:c.x,y:c.y,comentario:c.comentario}));
-    dibujarComentarios();
-  }catch(err){ console.error("Error cargando comentarios",err);}
+    try{
+        const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
+        const data = await res.json();
+        comentarios = data.map(c=>({x:c.x,y:c.y,comentario:c.comentario}));
+        dibujarComentarios();
+    }catch(err){ console.error("Error cargando comentarios",err);}
+}
+
+function dibujarComentarios(){
+    const wrapper = document.getElementById("canvas-wrapper");
+    wrapper.querySelectorAll(".comentario").forEach(el=>el.remove());
+
+    comentarios.forEach((c, idx)=>{
+        const div=document.createElement("div");
+        div.className="comentario";
+        div.style.left=c.x+"px";
+        div.style.top=c.y+"px";
+        div.innerHTML=c.comentario+`<span style="float:right; cursor:pointer;">✖</span>`;
+
+        div.querySelector("span").addEventListener("click", e=>{
+            e.stopPropagation();
+            comentarios.splice(idx,1);
+            dibujarComentarios();
+            fetch(SHEET_API,{
+                method:"POST",
+                body: JSON.stringify({
+                    tipo:"eliminar",
+                    id_sop: ID_SOP,
+                    comentario_idx: idx
+                })
+            }).catch(err=>console.error(err));
+        });
+
+        habilitarArrastre(div, idx);
+        wrapper.appendChild(div);
+    });
 }
 </script>
 </body>
