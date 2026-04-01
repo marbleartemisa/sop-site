@@ -4,570 +4,312 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP</title>
-
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-  
-  
-/* ===== BODY ===== */
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background-image:url('/sop-site/wall0.png');
-  background-position:center;
-  background-repeat:no-repeat;
-  background-size:cover;
-  background-attachment:fixed;
 
-  color:#1f2937;
-}
+      /* ===== BODY ===== */
+      body{
+        margin:0;
+        font-family:'Inter',sans-serif;
+        background-image:url('/sop-site/wall0.png');
+        background-position:center;
+        background-repeat:no-repeat;
+        background-size:cover;
+        background-attachment:fixed;
+        color:#1f2937;
+      }
+      
+      .overlay{
+        background:rgba(0,0,0,0.25);
+        min-height:100vh;
+      }
+      
+      /* ===== NAVBAR ===== */
+      .navbar{
+        position:sticky;
+        top:0;
+        background:rgba(0,0,0,0.65);
+        backdrop-filter:blur(8px);
+        padding:10px 30px;
+        color:white;
+        font-weight:bold;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        z-index:999;
+      }
+      
+      .logo{
+        display:flex;
+        align-items:center;
+        gap:10px;
+      }
+      
+      .logo img{
+        height:40px;
+      }
+      
+      .menu{
+        display:flex;
+        gap:25px;
+      }
+      
+      .menu a{
+        color:white;
+        text-decoration:none;
+        font-weight:bold;
+        transition:.3s;
+      }
+      
+      .menu a:hover{
+        color:#00aaff;
+      }
+      
+      .menu-toggle{
+        display:none;
+        font-size:1.6rem;
+        cursor:pointer;
+      }
+      
+      /* ===== BANNER ===== */
+      .banner{
+        text-align:center;
+        padding:40px 20px 20px;
+        color:white;
+      }
+      
+      .banner h1{
+        margin:0;
+        font-size:2.2rem;
+      }
+      
+      .banner p{
+        margin:4px 0;
+        opacity:0.9;
+      }
+      
+      .cta-btn{
+        display:inline-block;
+        margin-top:15px;
+        padding:10px 25px;
+        border-radius:30px;
+        background:linear-gradient(135deg,#0072C6,#005a9e);
+        color:white;
+        text-decoration:none;
+        font-weight:bold;
+        transition:.3s;
+      }
+      
+      .cta-btn:hover{
+        transform:scale(1.05);
+      }
+      
+      /* ===== WELCOME ===== */
+      #welcome-msg{
+        position: fixed;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #00d1ff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        font-weight: bold;
+        z-index: 3000;
+        opacity: 0;
+        transition: all 0.5s ease;
+      }
+      
+      #welcome-msg.show{
+        opacity: 1;
+        top: 80px;
+      }
+      
+      /* ===== BUSCADOR ===== */
+      .search-filter-container{
+        max-width:950px;
+        margin:30px auto;
+        padding:0 20px;
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:15px;
+        align-items:center;
+      }
+      
+      .search-filter-container input,
+      .search-filter-container select{
+        width:250px;
+        padding:12px 15px;
+        border-radius:30px;
+        border:none;
+        font-size:1rem;
+        box-shadow:0 8px 20px rgba(0,0,0,0.25);
+        outline:none;
+      }
+      
+      /* ===== BOTONES DEPARTAMENTO ===== */
+      .dept-filter-bar{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:10px;
+        width:100%;
+        margin-top:10px;
+      }
+      
+      .dept-filter{
+        padding:8px 16px;
+        border-radius:20px;
+        border:none;
+        background:white;
+        box-shadow:0 6px 14px rgba(0,0,0,0.15);
+        font-size:.85rem;
+        cursor:pointer;
+        transition:.25s;
+      }
+      
+      .dept-filter:hover{
+        transform:scale(1.05);
+      }
+      
+      .dept-filter.active{
+        background:#0072C6;
+        color:white;
+      }
+      
+      /* ===== CONTENEDOR SOP ===== */
+      .sop-container{
+        max-width:1050px;
+        margin:40px auto 80px;
+        padding:0 20px;
+      }
+      
+      .sop-info{
+        background:white;
+        padding:12px 18px;
+        border-radius:12px;
+        margin-bottom:10px;
+        box-shadow:0 6px 20px rgba(0,0,0,0.15);
+        font-size:.9rem;
+      }
+      
+      /* ===== TABLA ===== */
+      .table-scroll{
+        max-height:550px;
+        overflow-y:auto;
+      }
+      
+      .sop-table{
+        width:100%;
+        border-collapse:collapse;
+      }
+      
+      .sop-table thead th{
+        position:sticky;
+        top:0;
+        background:#1e293b;
+        color:#cbd5e1;
+        padding:14px 18px;
+        font-size:.75rem;
+        text-transform:uppercase;
+      }
+      
+      .sop-table td{
+        padding:16px 18px;
+        border-bottom:1px solid #f1f5f9;
+      }
+      
+      .sop-table tbody tr:nth-child(even){
+        background:#f8fafc;
+      }
+      
+      .sop-table tbody tr:hover{
+        background:#eef2f7;
+      }
+      
+      /* ===== BOTON ===== */
+      .sop-btn{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:8px 16px;
+        border-radius:10px;
+        background:linear-gradient(135deg,#0072C6,#005a9e);
+        color:white;
+        text-decoration:none;
+        font-size:.85rem;
+      }
+      
+      .sop-btn:hover{
+        transform:scale(1.05);
+      }
+      
+      /* ===== BADGES ===== */
+      .dept-badge{
+        padding:6px 12px;
+        border-radius:999px;
+        font-size:.75rem;
+        font-weight:600;
+      }
+      
+      .dept-carpinteria{background:#e0f2fe;color:#0369a1;}
+      .dept-administracion{background:#ede9fe;color:#5b21b6;}
+      .dept-comercial{background:#dcfce7;color:#166534;}
+      .dept-stone{background:#fef3c7;color:#92400e;}
+      .dept-maquinarias{background:#fee2e2;color:#991b1b;}
+      .dept-vehiculos{background:#e5e7eb;color:#374151;}
+      .dept-ecopower{background:#cffafe;color:#0e7490;}
+      .dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
+      .dept-medidas{background:#f3e8ff;color:#7e22ce;}
+      .dept-taller{background:#dcfce7;color:#166534;}
+      
+      /* ===== LOGIN MODAL ===== */
+      #loginModal{
+        display:none;
+        position:fixed;
+        top:0; left:0;
+        width:100%; height:100%;
+        background:rgba(0,0,0,0.5);
+        justify-content:center;
+        align-items:center;
+        z-index:9999;
+      }
+      
+      #loginModal .modal-content{
+        background:#1e1e2f;
+        padding:30px 25px;
+        border-radius:12px;
+        width:95%;
+        max-width:380px;
+        text-align:center;
+        color:#fff;
+      }
+      
+      #loginModal select,
+      #loginModal input{
+        width:100%;
+        padding:10px;
+        margin-bottom:15px;
+        border-radius:8px;
+        border:none;
+      }
+      
+      #loginModal button{
+        width:100%;
+        padding:10px;
+        background:#ffcc00;
+        border:none;
+        border-radius:8px;
+        font-weight:bold;
+        cursor:pointer;
+      }
 
-.overlay{
-  background:rgba(0,0,0,0.25);
-  min-height:100vh;
-}
-
-/* ===== NAVBAR ===== */
-.navbar{
-  position:sticky;
-  top:0;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(8px);
-  padding:10px 30px;
-  color:white;
-  font-weight:bold;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:999;
-}
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.logo img{
-  height:40px;
-}
-
-.menu{
-  display:flex;
-  gap:25px;
-}
-
-.menu a{
-  color:white;
-  text-decoration:none;
-  font-weight:bold;
-  transition:.3s;
-}
-
-.menu a:hover{
-  color:#00aaff;
-}
-
-.menu-toggle{
-  display:none;
-  font-size:1.6rem;
-  cursor:pointer;
-}
-
-/* ===== BANNER ===== */
-.banner{
-  text-align:center;
-  padding:40px 20px 20px 20px;
-  color:white;
-}
-
-.banner h1{
-  margin:0;
-  font-size:2.2rem;
-}
-
-.banner p{
-  margin:4px 0;
-  opacity:0.9;
-}
-
-.cta-btn{
-  display:inline-block;
-  margin-top:15px;
-  padding:10px 25px;
-  border-radius:30px;
-  background:linear-gradient(135deg,#0072C6,#005a9e);
-  color:white;
-  text-decoration:none;
-  font-weight:bold;
-  transition:.3s;
-}
-
-.cta-btn:hover{
-  transform:scale(1.05);
-}
-
-
-/* Mensaje de bienvenida */
-#welcome-msg{
-    position: fixed; 
-    top: 60px; 
-    left: 50%;
-    transform: translateX(-50%);
-    background: #00d1ff;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-    font-weight: bold;
-    z-index: 3000;
-    opacity: 0;
-    transition: all 0.5s ease;
-}
-#welcome-msg.show{
-    opacity: 1;
-    top: 80px;
-}
-
-<!-- Mensaje de bienvenida -->
-<div id="welcome-msg"></div>
-/* ===== BUSCADOR ===== */
-/* Contenedor principal del buscador + filtro */
-.search-filter-container {
-    max-width: 950px;
-    margin: 30px auto;
-    padding: 0 20px;
-    display: flex;
-    flex-wrap: wrap;          /* permite que bajen en pantallas pequeñas */
-    justify-content: center;  /* centra horizontalmente */
-    gap: 15px;
-    align-items: center;      /* centra verticalmente si están al lado */
-}
-
-/* Input y select */
-.search-filter-container input,
-.search-filter-container select {
-    width: 250px;
-    padding: 12px 15px;
-    border-radius: 30px;
-    border: none;
-    font-size: 1rem;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    outline: none;
-}
-
-/* Barra de botones de departamento */
-.dept-filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;  /* centra los botones */
-    gap: 10px;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.dept-filter {
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: none;
-    background: white;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
-    font-size: .85rem;
-    cursor: pointer;
-    transition: .25s;
-}
-
-.dept-filter:hover {
-    transform: scale(1.05);
-}
-
-.dept-filter.active {
-    background: #0072C6;
-    color: white;
-}
-  
-.sop-info{
-background:white;
-padding:12px 18px;
-border-radius:12px;
-margin-bottom:10px;
-box-shadow:0 6px 20px rgba(0,0,0,0.15);
-font-size:.9rem;
-color:#374151;
-}
-/* CONTENEDOR */
-
-.sop-container{
-max-width:1050px;
-margin:40px auto 80px auto;
-padding:0 20px;
-}
-
-/* TARJETA */
-
-.sop-card{
-background:white;
-border-radius:16px;
-box-shadow:0 15px 40px rgba(0,0,0,0.25);
-overflow:hidden;
-}
-
-/* HEADER */
-
-.sop-card-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:18px 22px;
-background:#0f172a;
-color:white;
-font-weight:600;
-font-size:0.9rem;
-}
-
-.sop-count{
-opacity:.8;
-font-weight:400;
-}
-
-/* SCROLL */
-
-.table-scroll{
-max-height:550px;
-overflow-y:auto;
-}
-
-/* TABLA */
-
-.sop-table{
-width:100%;
-border-collapse:collapse;
-}
-
-/* CABECERA */
-
-.sop-table thead th{
-position:sticky;
-top:0;
-background:#1e293b;
-color:#cbd5e1;
-padding:14px 18px;
-font-size:.75rem;
-letter-spacing:.08em;
-text-transform:uppercase;
-font-weight:600;
-}
-
-/* FILAS */
-
-.sop-table td{
-padding:16px 18px;
-border-bottom:1px solid #f1f5f9;
-font-size:.95rem;
-}
-
-.sop-table tbody tr{
-transition:.2s;
-}
-
-.sop-table tbody tr:nth-child(even){
-background:#fafafa;
-}
-
-.sop-table tbody tr:hover{
-background:#f1f5f9;
-transform:translateX(3px);
-}
-
-/* TITULO SOP */
-
-.sop-title{
-font-weight:600;
-color:#0f172a;
-}
-
-/* BOTON */
-
-.sop-btn{
-display:inline-flex;
-align-items:center;
-gap:6px;
-padding:8px 16px;
-border-radius:10px;
-background:linear-gradient(135deg,#0072C6,#005a9e);
-color:white;
-text-decoration:none;
-font-size:.85rem;
-font-weight:500;
-transition:.25s;
-}
-
-.sop-btn:hover{
-transform:scale(1.05);
-background:linear-gradient(135deg,#005a9e,#003f6b);
-}
-
-/* SCROLLBAR */
-
-.table-scroll::-webkit-scrollbar{
-width:8px;
-}
-
-.table-scroll::-webkit-scrollbar-thumb{
-background:#cbd5e1;
-border-radius:10px;
-}
-  /* fondo sólido tabla */
-
-.sop-table tbody tr{
-background:white;
-}
-
-.sop-table tbody tr:nth-child(even){
-background:#f8fafc;
-}
-
-.sop-table tbody tr:hover{
-background:#eef2f7;
-}
-
-/* asegurar fondo en celdas */
-
-.sop-table td{
-background:inherit;
-}
-  
-  /* ===== VIDEOS ===== */
-.video-section{
-  max-width:1100px;
-  margin:40px auto;
-  padding:0 20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:20px;
-}
-
-.video-section iframe,
-.video-section video{
-  width:100%;
-  height:200px;
-  border-radius:15px;
-  object-fit:cover;
-  border:none;
-}
-
-/* ===== CARRUSEL PREMIUM LOOP INFINITO (tipo Apple / Tesla) ===== */
-
-.carousel-container-premium{
-  max-width:1000px;
-  margin:60px auto;
-  overflow:hidden;
-  border-radius:16px;
-  box-shadow:0 15px 35px rgba(0,0,0,0.35);
-  position:relative;
-}
-
-.carousel-track-premium{
-  display:flex;
-  gap:18px;
-  width:max-content;
-  animation:carouselMove 60s linear infinite;
-}
-
-.carousel-container-premium:hover .carousel-track-premium{
-  animation-play-state:paused;
-}
-
-.carousel-slide-premium{
-  flex:0 0 300px;
-}
-
-.carousel-slide-premium img{
-  width:100%;
-  height:200px;
-  object-fit:cover;
-  border-radius:12px;
-  transition:transform .4s, box-shadow .4s;
-}
-
-.carousel-slide-premium img:hover{
-  transform:scale(1.06);
-  box-shadow:0 10px 25px rgba(0,0,0,0.35);
-}
-
-/* animación infinita */
-@keyframes carouselMove{
-  from{
-    transform:translateX(0);
-  }
-  to{
-    transform:translateX(-50%);
-  }
-}
-
-/* responsive */
-
-@media(max-width:768px){
-
-.carousel-slide-premium{
-  flex:0 0 240px;
-}
-
-.carousel-slide-premium img{
-  height:160px;
-}
-
-}
-  
-/* ===== BADGES ===== */
-.dept-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:6px 12px;
-  border-radius:999px;
-  font-size:.75rem;
-  font-weight:600;
-}
-
-/* colores */
-
-.dept-carpinteria{background:#e0f2fe;color:#0369a1;}
-.dept-administracion{background:#ede9fe;color:#5b21b6;}
-.dept-comercial{background:#dcfce7;color:#166534;}
-.dept-taller{background:#dcfce7;color:#166534;}
-.dept-stone{background:#fef3c7;color:#92400e;}
-.dept-maquinarias{background:#fee2e2;color:#991b1b;}
-.dept-vehiculos{background:#e5e7eb;color:#374151;}
-.dept-ecopower{background:#cffafe;color:#0e7490;}
-.dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
-.dept-medidas{background:#f3e8ff;color:#7e22ce;}
-
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-  /* Menu */
-  .menu{
-    display:none;
-    flex-direction:column;
-    background:rgba(0,0,0,0.9);
-    position:absolute;
-    top:60px;
-    right:0;
-    width:200px;
-    padding:20px;
-  }
-
-  .menu.show{
-    display:flex;
-  }
-
-  .menu-toggle{
-    display:block;
-  }
-
-  /* Tabla responsive */
-  .sop-table, .sop-table thead, .sop-table tbody, .sop-table th, .sop-table td, .sop-table tr {
-    display: block;
-  }
-
-  .sop-table thead tr {
-    display: none; 
-  }
-
-  .sop-table tbody tr {
-    margin-bottom: 15px;
-    background: #f9f9f9;
-    border-radius: 12px;
-    padding: 10px;
-  }
-
-  .sop-table tbody td {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border-bottom: none;
-    font-size: 0.9rem;
-  }
-
-  .sop-table tbody td:before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #555;
-    margin-right: 10px;
-    flex: 0 0 40%;
-  }
-}
-
-/* Modal Login */
-/* Modal Login Mejorado */
-#loginModal {
-  display: none; 
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-#loginModal .modal-content {
-  background: #1e1e2f; /* Fondo oscuro */
-  padding: 30px 25px;
-  border-radius: 12px;
-  width: 95%;
-  max-width: 380px;
-  text-align: center;
-  color: #fff;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-}
-
-#loginModal h2 {
-  margin-bottom: 10px;
-  color: #ffcc00;
-}
-
-#loginModal p {
-  margin-bottom: 20px;
-  font-size: 14px;
-  color: #ccc;
-}
-
-#loginModal select,
-#loginModal input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border: none;
-  font-size: 14px;
-}
-
-#loginModal button {
-  width: 100%;
-  padding: 10px;
-  background: #ffcc00;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  font-weight: bold;
-  color: #1e1e2f;
-  transition: 0.3s;
-}
-
-#loginModal button:hover {
-  background: #e6b800;
-}
-  
 </style>
 </head>
-
 <body>
 <div class="overlay">
 
@@ -577,21 +319,25 @@ background:inherit;
     <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
+
   <div class="menu-toggle" onclick="toggleMenu()">
     <i class="fa-solid fa-bars"></i>
   </div>
-      <div class="menu">
-      <a href="/sop-site/">Inicio</a>
-      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-      <a href="/sop-site/Aportes/">Aportes SOP</a>     
-        <a href="#" onclick="editSOP()">Editar SOP</a>
-      <a href="#" onclick="openLogin('admin')">
-        <i class="fa-solid fa-user-shield"></i> Admin
-      </a>
-      <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a> 
-    </div>
+
+  <div class="menu">
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/Aportes/">Aportes SOP</a>     
+    <a href="#" onclick="editSOP()">Editar SOP</a>
+    <a href="#" onclick="openLogin()">
+      <i class="fa-solid fa-user-shield"></i> Login
+    </a>
+    <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a> 
+  </div>
 </div>
 
+<!-- MENSAJE BIENVENIDA -->
+<div id="welcome-msg"></div>
 
 <!-- BANNER -->
 <div class="banner">
@@ -601,9 +347,9 @@ background:inherit;
 </div>
 
 <!-- BUSCADOR -->
-
 <div class="search-filter-container">
   <input type="text" id="searchInput" placeholder="Buscar SOP...">
+
   <select id="deptFilter">
     <option value="">Todos los departamentos</option>
     <option value="comercial">Comercial</option>
@@ -632,164 +378,49 @@ background:inherit;
   </div>
 </div>
 
-  
-<!-- TABLA -->
+<!-- TABLA SOP -->
 <div class="sop-container" id="sopContainer"></div>
 
 <!-- VIDEOS -->
 <div class="video-section">
-    <video autoplay muted loop playsinline>
-        <source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
-    </video>
+  <video autoplay muted loop playsinline>
+    <source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
+  </video>
 
-    <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
 
-    <video autoplay muted loop playsinline>
-        <source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
-    </video>
+  <video autoplay muted loop playsinline>
+    <source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
+  </video>
 </div>
-
-<!-- CARRUSEL PREMIUM -->
-  <div class="carousel-container-premium">
-    <button class="carousel-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
-    <div class="carousel-track-premium">
-      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
-      <!-- duplicado para loop -->
-      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
-      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
-    </div>
-    <button class="carousel-btn next"><i class="fa-solid fa-chevron-right"></i></button>
-  </div>
-
 
 <!-- FOOTER -->
 <div class="footer" style="text-align:center;color:white;margin:30px 0;">
 © 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
 </div>
+
 </div>
-  
-<!-- LOGIN MODAL MODERNO -->
-<!-- Modal Login Obligatorio -->
-  
+
+<!-- LOGIN MODAL (UNO SOLO ✔️) -->
 <div id="loginModal">
   <div class="modal-content">
     <h2>Iniciar sesión</h2>
     <select id="loginUser">
       <option value="">Seleccione usuario</option>
     </select>
+
     <input type="password" id="loginPass" placeholder="Clave">
-    <div id="loginError" style="color:red; margin-top:10px; display:none;">Usuario o clave incorrecta</div>
+
+    <div id="loginError" style="color:red; display:none;">Usuario o clave incorrecta</div>
+
     <button id="loginBtn">Entrar</button>
-    <!-- NO HAY BOTÓN X -->
   </div>
 </div>
 
-  <!-- Modal Login Estilo Original Mejorado -->
-<!-- Modal Login Estilo Original Mejorado -->
-<div id="loginModal">
-  <div class="modal-content">
-    <h2>Bienvenido a Artemisa</h2>
-    <p>Seleccione su usuario y clave para continuar</p>
-    <select id="loginUser">
-      <option value="">Seleccione usuario</option>
-    </select>
-    <input type="password" id="loginPass" placeholder="Clave">
-    <div id="loginError" style="color:red; margin-top:10px; display:none;">Usuario o clave incorrecta</div>
-    <button id="loginBtn">Ingresar</button>
-  </div>
-</div>
-  
-  <div style="
-      background:#fff; 
-      padding:30px 25px; 
-      border-radius:12px; 
-      width:90%; 
-      max-width:360px; 
-      box-shadow:0 5px 20px rgba(0,0,0,0.4); 
-      text-align:center; 
-      position:relative;
-      box-sizing:border-box;
-  ">
-    <!-- Botón cerrar -->
-    <button onclick="closeLogin()" style="
-        position:absolute; 
-        top:10px; 
-        right:10px; 
-        background:none; 
-        border:none; 
-        font-size:20px; 
-        cursor:pointer;
-        color:#888;
-    ">&times;</button>
-
-    <h2 style="margin-bottom:25px; font-family:Arial,sans-serif;">Iniciar Sesión</h2>
-
-    <select id="loginUser" style="
-        width:100%; 
-        padding:12px; 
-        margin-bottom:15px; 
-        font-size:16px; 
-        border-radius:6px; 
-        border:1px solid #ccc;
-        box-sizing:border-box;
-    ">
-      <option value="">Seleccione usuario</option>
-    </select>
-
-    <input type="password" id="loginPass" placeholder="Clave" style="
-        width:100%; 
-        padding:12px; 
-        font-size:16px; 
-        border-radius:6px; 
-        border:1px solid #ccc; 
-        margin-bottom:15px;
-        box-sizing:border-box;
-    ">
-
-    <div id="loginError" style="
-        color:red; 
-        margin-bottom:15px; 
-        display:none; 
-        font-size:14px;
-    "></div>
-
-    <button id="loginBtn" style="
-        width:100%; 
-        padding:12px; 
-        font-size:16px; 
-        background:#007bff; 
-        color:#fff; 
-        border:none; 
-        border-radius:6px; 
-        cursor:pointer;
-        transition: background 0.3s;
-    " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">Entrar</button>
-  </div>
-</div>
 <script>
 
-  const usuarios = [
+/* ===== USUARIOS (NO TOCADO) ===== */
+const usuarios = [
   {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
   {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Administracion", correo:"frontdesk@artemisamarble.com"},
   {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:"sales@artemisamarble.com"},
@@ -799,41 +430,75 @@ background:inherit;
   {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor", depto:"Gerencia", correo:"wood@artemisamarble.com"}
 ];
 
-  // Variable global para guardar usuario activo
-    let currentUser = null;  
-  
-  /* MENU */
+let currentUser = null;
+let SOP_INDEX = [];
+
+/* ===== MENU ===== */
 function toggleMenu(){
   document.querySelector('.menu').classList.toggle('show');
 }
 
-/* SOP DATA */
-let SOP_INDEX = [];
+/* ===== LOGIN ===== */
+function openLogin(){
+  document.getElementById("loginModal").style.display = "flex";
+}
 
+function closeLogin(){
+  document.getElementById("loginModal").style.display = "none";
+}
+
+function populateUsers(){
+  const select = document.getElementById("loginUser");
+  select.innerHTML = '<option value="">Seleccione usuario</option>';
+  usuarios.forEach(u=>{
+    const opt = document.createElement("option");
+    opt.value = u.usuario;
+    opt.textContent = u.usuario;
+    select.appendChild(opt);
+  });
+}
+
+document.getElementById("loginBtn").addEventListener("click", ()=>{
+  const userName = document.getElementById("loginUser").value;
+  const pass = document.getElementById("loginPass").value;
+
+  const user = usuarios.find(u=>u.usuario===userName && u.clave===pass);
+
+  if(user){
+    currentUser = user;
+    localStorage.setItem("usuario", user.usuario);
+    closeLogin();
+    mostrarBienvenida(user.usuario);
+  }else{
+    document.getElementById("loginError").style.display = "block";
+  }
+});
+
+function mostrarBienvenida(nombre){
+  const msg = document.getElementById("welcome-msg");
+  msg.textContent = `Bienvenido, ${nombre}`;
+  msg.classList.add("show");
+  setTimeout(()=> msg.classList.remove("show"),3000);
+}
+
+/* ===== SOP DATA ===== */
 fetch('SOP_INDEX.json?v=' + Date.now())
-.then(res => res.json())
+.then(res=>res.json())
 .then(data=>{
   SOP_INDEX = data;
   sortByDepartment();
   renderSOP();
 });
 
-/* ORDEN */
 function sortByDepartment(){
   SOP_INDEX.sort((a,b)=>{
     if(a.department < b.department) return -1;
     if(a.department > b.department) return 1;
-    let A = (a.title||"").toLowerCase();
-    let B = (b.title||"").toLowerCase();
-    if(A < B) return -1;
-    if(A > B) return 1;
-    return 0;
+    return (a.title||"").localeCompare(b.title||"");
   });
 }
 
-/* RENDER TABLA + SCROLL SOLO DESPUÉS DE 20 FILAS */
 function renderSOP(filtered){
-
   const container = document.getElementById("sopContainer");
   const list = filtered || SOP_INDEX;
 
@@ -842,342 +507,117 @@ function renderSOP(filtered){
   Mostrando <strong>${list.length}</strong> SOP
   </div>
 
-  <div class="table-wrapper">
-
   <table class="sop-table">
-
   <thead>
   <tr>
   <th onclick="sortTable('department')">Departamento</th>
-  <th onclick="sortTable('title')">Procedimiento SOP</th>
+  <th onclick="sortTable('title')">Procedimiento</th>
   <th>Acción</th>
   </tr>
   </thead>
-
   <tbody>
   `;
 
   list.forEach(sop=>{
-
-  html+=`
-  <tr>
-
-  <td data-label="Departamento">
-  ${getDepartmentBadge(sop.department)}
-  </td>
-
-  <td data-label="Procedimiento">
-  <span class="sop-title">${sop.title}</span>
-  </td>
-
-  <td data-label="Acción">
-  <a class="sop-btn" href="/sop-site/viewer.html?doc=${sop.url}">
-  <i class="fa-solid fa-eye"></i> Ver
-  </a>
-  </td>
-
-  </tr>
-  `;
-
+    html += `
+    <tr>
+      <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
+      <td data-label="Procedimiento">${sop.title}</td>
+      <td>
+        <a class="sop-btn" href="/sop-site/viewer.html?doc=${sop.url}">
+        Ver
+        </a>
+      </td>
+    </tr>
+    `;
   });
 
-  html+=`
-  </tbody>
-  </table>
-
-  </div>
-  `;
-
+  html += `</tbody></table>`;
   container.innerHTML = html;
-
 }
-/* BADGE */
 
-  function getDepartmentBadge(dep){
+/* ===== BADGES ===== */
+function getDepartmentBadge(dep){
 
-  // Alias visual
-  if(dep === "produccion"){
-    dep = "carpinteria";
-  }
+  if(dep==="produccion") dep="carpinteria";
+  if(dep==="instalacion") dep="stone";
 
-
-     if(dep === "instalacion"){
-    dep = "stone";
-  }
-
-  const map = {
-    carpinteria:{name:"Carpintería",icon:"fa-hammer"},
-    administracion:{name:"Administración",icon:"fa-building"},
-    comercial:{name:"Comercial",icon:"fa-chart-line"},
-    stone:{name:"Stone",icon:"fa-screwdriver-wrench"},
-    maquinarias:{name:"Maquinarias",icon:"fa-gears"},
-    medidas:{name:"Medidas",icon:"fa-gears"},
-    vehiculos:{name:"Vehículos",icon:"fa-truck"},
-    ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
-    taller:{name:"Taller",icon:"fa-chart-line"},
-    "houzz-pro":{name:"Houzz Pro",icon:"fa-house"}
+  const names={
+    carpinteria:"Carpintería",
+    administracion:"Administración",
+    comercial:"Comercial",
+    stone:"Stone",
+    maquinarias:"Maquinarias",
+    vehiculos:"Vehículos",
+    ecopower:"Ecopowertech",
+    taller:"Taller",
+    medidas:"Medidas",
+    "houzz-pro":"Houzz Pro"
   };
 
-  const d = map[dep];
-  if(!d) return dep;
-
-  return `<span class="dept-badge dept-${dep}">
-  <i class="fa-solid ${d.icon}"></i> ${d.name}
-  </span>`;
+  return `<span class="dept-badge dept-${dep}">${names[dep]||dep}</span>`;
 }
 
-/* SEARCH */
+/* ===== FILTROS ===== */
 document.getElementById("searchInput").addEventListener("input",filterSOP);
 document.getElementById("deptFilter").addEventListener("change",filterSOP);
 
 function filterSOP(){
   const search = document.getElementById("searchInput").value.toLowerCase();
   const dept = document.getElementById("deptFilter").value;
+
   const filtered = SOP_INDEX.filter(sop=>{
-    const matchDept = dept==="" || sop.department===dept;
-    const matchSearch =
-      (sop.title||"").toLowerCase().includes(search) ||
-      (sop.keywords||"").toLowerCase().includes(search);
-    return matchDept && matchSearch;
+    return (!dept || sop.department===dept) &&
+    (sop.title.toLowerCase().includes(search));
   });
+
   renderSOP(filtered);
 }
 
-/* SORT */
+function filterDept(dep){
+  document.getElementById("deptFilter").value = dep;
+  filterSOP();
+}
+
+/* ===== SORT ===== */
 function sortTable(field){
   SOP_INDEX.sort((a,b)=>{
-    let A = (a[field]||"").toLowerCase();
-    let B = (b[field]||"").toLowerCase();
-    if(A<B) return -1;
-    if(A>B) return 1;
-    return 0;
+    return (a[field]||"").localeCompare(b[field]||"");
   });
   renderSOP();
 }
-function filterDept(dep){
 
-const buttons = document.querySelectorAll(".dept-filter");
-
-buttons.forEach(btn=>btn.classList.remove("active"));
-
-event.target.classList.add("active");
-
-document.getElementById("deptFilter").value = dep;
-
-filterSOP();
-
-}
-function adminLogin(){
-
-const password = prompt("Ingrese contraseña de administrador");
-
-if(password === "Artemisa2026"){   // puedes cambiar la clave
-
-    window.location.href="/sop-site/admin/";
-
-}else{
-
-    alert("Acceso denegado");
-}
-}
-
-// Abrir modal al cargar la página
-window.addEventListener("DOMContentLoaded", ()=>{
-    openLogin(); // abre modal al inicio
-    populateLoginSelect();
-});
-
-// Rellenar select de usuarios
-function populateLoginSelect(){
-    const select = document.getElementById("loginUser");
-    usuarios.forEach(u=>{
-        const opt = document.createElement("option");
-        opt.value = u.usuario;
-        opt.textContent = u.usuario;
-        select.appendChild(opt);
-    });
-}
-
-function openLogin(){
-    document.getElementById("loginModal").style.display = "flex";
-}
-
-function closeLogin(){
-    document.getElementById("loginModal").style.display = "none";
-}
-
-// Botón Entrar
-document.getElementById("loginBtn").addEventListener("click", ()=>{
-    const userName = document.getElementById("loginUser").value;
-    const pass = document.getElementById("loginPass").value;
-
-    const user = usuarios.find(u=>u.usuario===userName && u.clave===pass);
-    if(user){
-        currentUser = user; // ✅ guardar usuario global
-        closeLogin();
-        alert(`Bienvenido ${user.usuario} (${user.depto})`);
-    }else{
-        const error = document.getElementById("loginError");
-        error.style.display = "block";
-        error.textContent = "Usuario o clave incorrecta";
-    }
-});
-  // Abrir modal al cargar la página
-window.addEventListener("DOMContentLoaded", ()=>{
-    openLogin(); // abre modal al inicio
-    populateLoginSelect();
-});
-
-// Rellenar select de usuarios
-function populateLoginSelect(){
-    const select = document.getElementById("loginUser");
-    usuarios.forEach(u=>{
-        const opt = document.createElement("option");
-        opt.value = u.usuario;
-        opt.textContent = u.usuario;
-        select.appendChild(opt);
-    });
-}
-
-function openLogin(){
-    document.getElementById("loginModal").style.display = "flex";
-}
-
-function closeLogin(){
-    document.getElementById("loginModal").style.display = "none";
-}
-
-// Botón Entrar
-document.getElementById("loginBtn").addEventListener("click", ()=>{
-    const userName = document.getElementById("loginUser").value;
-    const pass = document.getElementById("loginPass").value;
-
-    const user = usuarios.find(u=>u.usuario===userName && u.clave===pass);
-    if(user){
-        currentUser = user; // ✅ guardar usuario global
-        closeLogin();
-        alert(`Bienvenido ${user.usuario} (${user.depto})`);
-    }else{
-        const error = document.getElementById("loginError");
-        error.style.display = "block";
-        error.textContent = "Usuario o clave incorrecta";
-    }
-});
-
-  
-  // Mostrar modal login al cargar la página si no hay usuario
-if(!localStorage.getItem("usuario")){
-    document.getElementById("loginModal").style.display = "flex";
-}
-
-// Función para mostrar bienvenida
-function mostrarBienvenida(nombre){
-    const msg = document.getElementById("welcome-msg");
-    msg.textContent = `Bienvenido, ${nombre}!`;
-    msg.classList.add("show");
-    setTimeout(()=>{ msg.classList.remove("show"); }, 3000);
-}
-
-// Botón login
-document.getElementById("btnLogin").addEventListener("click", loginUsuario);
-
-// Enter funciona como click en aceptar
-document.getElementById("clave").addEventListener("keypress", function(e){
-    if(e.key === "Enter"){
-        e.preventDefault();
-        document.getElementById("btnLogin").click();
-    }
-});
-
-
-// -----------------------------
-// FUNCIONES LOGIN
-// -----------------------------
-function mostrarBienvenida(nombre){
-  const msg = document.getElementById("welcome-msg");
-  msg.textContent = `Bienvenido, ${nombre}!`;
-  msg.classList.add("show");
-  setTimeout(()=>{ msg.classList.remove("show"); }, 3000);
-}
-
-function loginUsuario(){
-  const claveIngresada = document.getElementById("clave").value.trim();
-  if(!claveIngresada) return alert("Ingresa tu clave");
-
-  const usuario = usuarios.find(u => u.clave === claveIngresada);
-  if(!usuario){
-    alert("Clave incorrecta");
-    return;
-  }
-
-  // Guardar usuario en memoria y localStorage
-  currentUser = usuario;
-  localStorage.setItem("usuario", usuario.usuario);
-  localStorage.setItem("correo", usuario.correo);
-
-  // Cerrar modal
-  document.getElementById("loginModal").style.display = "none";
-
-  // Mostrar usuario en navbar
-  const spanUser = document.getElementById("usuario-logeado");
-  if(spanUser) spanUser.textContent = usuario.usuario;
-
-  // Mensaje bienvenida
-  mostrarBienvenida(usuario.usuario);
-}
-
-// -----------------------------
-// EVENTOS LOGIN
-// -----------------------------
-document.getElementById("btnLogin").addEventListener("click", loginUsuario);
-
-// Enter funciona como click
-document.getElementById("clave").addEventListener("keypress", function(e){
-  if(e.key === "Enter"){
-    e.preventDefault();
-    loginUsuario();
-  }
-});
-
-// Evita click fuera del modal
-document.getElementById("loginModal").addEventListener("click", e=> e.stopPropagation());
-document.getElementById("loginModal-content").addEventListener("click", e=> e.stopPropagation());
-
-// -----------------------------
-// ABRIR MODAL AL CARGAR SI NO HAY USUARIO
-// -----------------------------
-window.addEventListener("DOMContentLoaded", ()=>{
-  const usuarioGuardado = localStorage.getItem("usuario");
-  if(usuarioGuardado){
-    currentUser = usuarios.find(u => u.usuario === usuarioGuardado) || null;
-    if(currentUser){
-      const spanUser = document.getElementById("usuario-logeado");
-      if(spanUser) spanUser.textContent = currentUser.usuario;
-    }
-  } else {
-    document.getElementById("loginModal").style.display = "flex";
-  }
-});
-// -----------------------------
-// FUNCION EDITAR SOP
-// -----------------------------
+/* ===== EDITAR SOP ===== */
 function editSOP(){
   if(!currentUser){
-    alert("Debe iniciar sesión primero");
-    document.getElementById("loginModal").style.display = "flex";
+    alert("Debe iniciar sesión");
+    openLogin();
     return;
   }
 
-  const pass = prompt("Ingrese su clave para editar este SOP");
+  const pass = prompt("Ingrese su clave");
   if(pass === currentUser.clave){
-    window.location.href = "/sop-site/sop-viewer-edit/";
-  } else {
-    alert("Clave incorrecta, no puede editar");
+    window.location.href="/sop-site/sop-viewer-edit/";
+  }else{
+    alert("Clave incorrecta");
   }
 }
 
-</script>
+/* ===== INIT ===== */
+window.addEventListener("DOMContentLoaded", ()=>{
+  populateUsers();
+
+  const savedUser = localStorage.getItem("usuario");
+  if(savedUser){
+    currentUser = usuarios.find(u=>u.usuario===savedUser);
+    if(currentUser) mostrarBienvenida(currentUser.usuario);
+  }else{
+    openLogin();
+  }
+});
+
+</script>  
 </body>
 </html>
 
-
+  
