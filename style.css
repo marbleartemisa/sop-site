@@ -1,0 +1,86 @@
+/* ===== GENERAL ===== */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-image: url('/sop-site/wall0.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  color: #1f2937;
+}
+.overlay { background: rgba(0,0,0,0.25); min-height: 100vh; }
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: sticky;
+  top: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(8px);
+  padding: 10px 30px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 999;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo img { height: 40px; }
+.menu { display: flex; gap: 25px; }
+.menu a { color: white; text-decoration: none; font-weight: bold; transition: .3s; }
+.menu a:hover { color: #00aaff; }
+.menu-toggle { display: none; font-size: 1.6rem; cursor: pointer; }
+
+/* ===== LOGIN MODAL ===== */
+.login-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.login-box {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+  animation: fadeIn 0.4s ease;
+}
+.login-box h2 { margin-bottom: 20px; color: #0f172a; font-weight: 600; }
+.login-box select, .login-box input { width: 100%; padding: 12px 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; outline: none; transition: 0.3s; }
+.login-box select:focus, .login-box input:focus { border-color: #0072C6; box-shadow: 0 0 5px #0072C6; }
+.login-box button { width: 100%; padding: 12px; border: none; border-radius: 8px; background: linear-gradient(135deg,#0072C6,#005a9e); color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
+.login-box button:hover { transform: scale(1.03); background: linear-gradient(135deg,#005a9e,#003f6b); }
+
+@keyframes fadeIn { from {opacity:0; transform: translateY(-20px);} to {opacity:1; transform: translateY(0);} }
+
+/* ===== SOP TABLE ===== */
+.sop-container { max-width: 1050px; margin: 40px auto 80px auto; padding: 0 20px; }
+.sop-card, .sop-table { background: white; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); overflow: hidden; }
+.sop-table { width: 100%; border-collapse: collapse; }
+.sop-table thead th { position: sticky; top:0; background: #1e293b; color: #cbd5e1; padding: 14px 18px; font-size: .75rem; text-transform: uppercase; font-weight: 600; cursor: pointer; }
+.sop-table td { padding: 16px 18px; border-bottom: 1px solid #f1f5f9; font-size: .95rem; }
+.sop-table tbody tr:nth-child(even) { background: #f8fafc; }
+.sop-table tbody tr:hover { background: #eef2f7; transform: translateX(3px); }
+.sop-title { font-weight: 600; color: #0f172a; }
+.sop-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 10px; background: linear-gradient(135deg,#0072C6,#005a9e); color: white; font-size: .85rem; font-weight: 500; transition: .25s; }
+.sop-btn:hover { transform: scale(1.05); background: linear-gradient(135deg,#005a9e,#003f6b); }
+
+/* BADGES */
+.dept-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: .75rem; font-weight: 600; }
+.dept-carpinteria { background:#e0f2fe;color:#0369a1; }
+.dept-administracion { background:#ede9fe;color:#5b21b6; }
+.dept-comercial { background:#dcfce7;color:#166534; }
+.dept-stone { background:#fef3c7;color:#92400e; }
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  .menu { display:none; flex-direction:column; background:rgba(0,0,0,0.9); position:absolute; top:60px; right:0; width:200px; padding:20px; }
+  .menu.show { display:flex; }
+  .menu-toggle { display:block; }
+}
