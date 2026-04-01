@@ -506,15 +506,18 @@ background:inherit;
   <div class="menu-toggle" onclick="toggleMenu()">
     <i class="fa-solid fa-bars"></i>
   </div>
-  <div class="menu">
-  <a href="/sop-site/">Inicio</a>
-  <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-  <a href="/sop-site/biblioteca/">Biblioteca SOP</a>
-  <a href="#" onclick="adminLogin()">
-    <i class="fa-solid fa-user-shield"></i> Admin
-  </a>
+      <div class="menu">
+      <a href="/sop-site/">Inicio</a>
+      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+      <a href="/sop-site/Aportes/">Aportes SOP</a>    
+      <a href="#" onclick="openLogin('editor')">Editar SOP</a>  
+      <a href="#" onclick="openLogin('admin')">
+        <i class="fa-solid fa-user-shield"></i> Admin
+      </a>
+      <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a> 
+    </div>
 </div>
-</div>
+
 
 <!-- BANNER -->
 <div class="banner">
@@ -643,7 +646,77 @@ Taller
 © 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
 </div>
 </div>
+  
+<!-- LOGIN MODAL MODERNO -->
+<!-- Modal Login Responsive -->
+<div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
+  <div style="
+      background:#fff; 
+      padding:30px 25px; 
+      border-radius:12px; 
+      width:90%; 
+      max-width:360px; 
+      box-shadow:0 5px 20px rgba(0,0,0,0.4); 
+      text-align:center; 
+      position:relative;
+      box-sizing:border-box;
+  ">
+    <!-- Botón cerrar -->
+    <button onclick="closeLogin()" style="
+        position:absolute; 
+        top:10px; 
+        right:10px; 
+        background:none; 
+        border:none; 
+        font-size:20px; 
+        cursor:pointer;
+        color:#888;
+    ">&times;</button>
 
+    <h2 style="margin-bottom:25px; font-family:Arial,sans-serif;">Iniciar Sesión</h2>
+
+    <select id="loginUser" style="
+        width:100%; 
+        padding:12px; 
+        margin-bottom:15px; 
+        font-size:16px; 
+        border-radius:6px; 
+        border:1px solid #ccc;
+        box-sizing:border-box;
+    ">
+      <option value="">Seleccione usuario</option>
+    </select>
+
+    <input type="password" id="loginPass" placeholder="Clave" style="
+        width:100%; 
+        padding:12px; 
+        font-size:16px; 
+        border-radius:6px; 
+        border:1px solid #ccc; 
+        margin-bottom:15px;
+        box-sizing:border-box;
+    ">
+
+    <div id="loginError" style="
+        color:red; 
+        margin-bottom:15px; 
+        display:none; 
+        font-size:14px;
+    "></div>
+
+    <button id="loginBtn" style="
+        width:100%; 
+        padding:12px; 
+        font-size:16px; 
+        background:#007bff; 
+        color:#fff; 
+        border:none; 
+        border-radius:6px; 
+        cursor:pointer;
+        transition: background 0.3s;
+    " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">Entrar</button>
+  </div>
+</div>
 <script>
 /* MENU */
 function toggleMenu(){
@@ -825,6 +898,163 @@ if(password === "Artemisa2026"){   // puedes cambiar la clave
 }
 
 }
+
+    // -------- LOGIN LOCAL ---------
+// Lista de usuarios inline
+
+  const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Producción", correo:"damian@artemisamarble.com"},
+  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Producción", correo:"frontdesk@artemisamarble.com"},
+  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:"sales@artemisamarble.com"},
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:"accounting@artemisamarble.com "},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Gerencia", correo:"control@artemisamarble.com"}
+];
+
+let loginType = "editor"; // o "admin"
+
+// Abrir modal
+
+function openLogin(type){
+  loginType = type;
+
+  const user = localStorage.getItem("usuarioActivo");
+
+  // 🔥 SI YA ESTÁ LOGUEADO → solo pide clave (opcional)
+  if(user && type === "editor"){
+    document.getElementById("loginModal").style.display = "flex";
+    return;
+  }
+
+  document.getElementById("loginModal").style.display = "flex";
+  loadUsuarios();
+}
+  
+// Cerrar modal
+function closeLogin(){
+  document.getElementById("loginModal").style.display = "none";
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginError").style.display = "none";
+}
+
+// Cerrar con ESC
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeLogin(); });
+
+// Cargar usuarios
+function loadUsuarios(){
+  const select = document.getElementById("loginUser");
+  select.innerHTML = '<option value="">Seleccione usuario</option>';
+  usuarios.forEach(u => {
+    const opt = document.createElement("option");
+    opt.value = u.usuario;
+    opt.textContent = u.usuario;
+    select.appendChild(opt);
+  });
+
+// Función de logout
+function logout() {
+    // Limpiar datos de sesión
+    sessionStorage.removeItem("usuario");
+    sessionStorage.removeItem("token"); // si usas token
+    // Opcional: ocultar elementos de la app
+    document.getElementById("app").style.display = "none";
+    // Redirigir al login
+    window.location.href = "login.html";
+}
+
+  function mostrarUsuarioNavbar(){
+  const user = JSON.parse(localStorage.getItem("usuarioActivo"));
+  const div = document.getElementById("userInfo");
+  const logoutBtn = document.querySelector(".logout-btn");
+
+  if(user){
+    div.innerHTML = `<i class="fa-solid fa-user"></i> ${user.usuario} (${user.rol})`;
+    logoutBtn.style.display = "inline-block"; // mostrar logout
+  } else {
+    div.innerHTML = "";
+    logoutBtn.style.display = "none"; // ocultar logout
+  }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener("DOMContentLoaded", mostrarUsuarioNavbar);
+  
+// Login
+
+  function doLogin(){
+  const usuario = document.getElementById("loginUser").value.trim();
+  const clave = document.getElementById("loginPass").value.trim();
+  const errorMsg = document.getElementById("loginError");
+
+  errorMsg.style.display = "none";
+
+  if(!usuario || !clave){
+    errorMsg.innerText = "Seleccione usuario e ingrese la clave";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  const match = usuarios.find(u => u.usuario === usuario && u.clave === clave);
+
+  if(!match){
+    errorMsg.innerText = "Usuario o clave incorrectos";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  // Verificación de rol
+  if(loginType === "admin" && match.rol !== "admin"){
+    errorMsg.innerText = "No autorizado para Admin";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  if(loginType === "editor" && match.rol !== "editor"){
+    errorMsg.innerText = "No autorizado para Editar SOP";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  // Guardamos usuario en localStorage
+  const userData = {
+    usuario: match.usuario,
+    rol: match.rol,
+    depto: match.depto || "",
+    correo: match.correo || ""
+  };
+  localStorage.setItem("usuarioActivo", JSON.stringify(userData));
+
+  closeLogin();
+
+  // 🔹 Redirigir solo si es login desde menu
+  if(loginType === "admin" && match.rol === "admin"){
+    window.location.href = "/sop-site/admin/";
+  }
+  if(loginType === "editor" && match.rol === "editor" && window.location.pathname.includes("sop-viewer-edit")){
+    window.location.href = "/sop-site/sop-viewer-edit/";
+  }
+
+  // 🔹 Actualizar badge de usuario en navbar
+  mostrarUsuarioNavbar();
+}
+
+  
+// Eventos
+document.getElementById("loginBtn").addEventListener("click", doLogin);
+document.getElementById("loginPass").addEventListener("keypress", e => { if(e.key === "Enter") doLogin(); });
+
+ window.addEventListener("load", () => {
+  const user = localStorage.getItem("usuarioActivo");
+
+  if(!user){
+    openLogin("editor"); // obliga login
+  } else {
+    mostrarUsuarioNavbar(); // ❌ corregido aquí
+  }
+}); 
+
+
+</script>
+
 
 </script>
 </body>
