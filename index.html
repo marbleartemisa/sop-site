@@ -714,85 +714,153 @@ body{
   
 <script>
 
-/* MENU */
-function toggleMenu(){ document.querySelector('.menu').classList.toggle('show'); }
-
-
-/* ===== SOP DATA ===== */
-let SOP_INDEX = [];
-const SHEET_ID = "1zUZ37cWCS4N72AG5H2c_RRgjGhcQ5pj_D9qNBbRCRcI";
-const SHEET_NAME = "SOP_Admin";
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
-
+/* ================================
+   CONFIG
+================================ */
 const API_URL = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
-fetch(API_URL)
-  .then(res => res.json())
-  .then(data => {
+let SOP_INDEX = [];
 
-    console.log("DATA BACKEND:", data);
+/* ================================
+   INIT
+================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  initApp();
+});
 
-    if (!data || data.length === 0) {
-      document.getElementById("sopContainer").innerHTML =
-        "<div class='sop-info'>⚠️ No hay SOP disponibles</div>";
-      return;
-    }
-
-    SOP_INDEX = data.map(row => ({
-      id: row.ID_SOP || "SOP-" + Math.random(),
-      title: row.resumen || "--",
-      department: (row.departamento || "").toLowerCase().trim(),
-      url: row.links || "#",
-      keywords: ((row.objetivo || "") + " " + (row.areas || "")).toLowerCase()
-    }));
-
-    sortByDepartment();
-    renderSOP();
-
-  })
-  .catch(err => {
-    console.error("ERROR:", err);
-    document.getElementById("sopContainer").innerHTML =
-      "<div class='sop-info'>❌ Error cargando SOP</div>";
-  });
-  
-
-/* ORDEN */
-function sortByDepartment(){
-  SOP_INDEX.sort((a,b)=>{
-    if(a.department < b.department) return -1;
-    if(a.department > b.department) return 1;
-    let A = (a.title||"").toLowerCase();
-    let B = (b.title||"").toLowerCase();
-    if(A < B) return -1;
-    if(A > B) return 1;
-    return 0;
-  });
+function initApp(){
+  loadSOP();
+  setupEvents();
+  mostrarUsuarioNavbar();
+  checkLogin();
 }
 
-/* RENDER TABLA */
+/* ================================
+   FETCH SOP
+================================ */
+function loadSOP(){
+
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+
+      console.log("DATA RAW:", data);
+
+      // 🔥 Soporta cualquier formato
+      const rows = data.data || data.result || data || [];
+
+      if(!Array.isArray(rows) || rows.length === 0){
+        showMessage("⚠️ No hay SOP disponibles");
+        return;
+      }
+
+      SOP_INDEX = rows.map(row => ({
+        id: row.ID_SOP || "SOP-" + Math.random(),
+        title: row.resumen || "Sin título",
+        department: normalizeDept(row.departamento),
+        url: row.links || "#",
+        keywords: ((row.objetivo || "") + " " + (row.areas || "")).toLowerCase()
+      }));
+
+      sortByDepartment();
+      renderSOP();
+
+    })
+    .catch(err => {
+      console.error("ERROR:", err);
+      showMessage("❌ Error cargando SOP");
+    });
+
+}
+
+/* ================================
+   NORMALIZAR DEPTO
+================================ */
+function normalizeDept(dep){
+  if(!dep) return "";
+  dep = dep.toLowerCase().trim();
+
+  if(dep === "produccion") return "carpinteria";
+  if(dep === "instalacion") return "stone";
+
+  return dep;
+}
+
+/* ================================
+   RENDER
+================================ */
 function renderSOP(filtered){
+
   const container = document.getElementById("sopContainer");
   const list = filtered || SOP_INDEX;
 
-  let html = `<div class="sop-info">Mostrando <strong>${list.length}</strong> SOP</div><div class="table-wrapper"><table class="sop-table"><thead><tr><th onclick="sortTable('department')">Departamento</th><th onclick="sortTable('title')">Procedimiento SOP</th><th>Acción</th></tr></thead><tbody>`;
+  if(list.length === 0){
+    showMessage("⚠️ No hay resultados");
+    return;
+  }
 
-  list.forEach(sop=>{
-    html += `<tr>
+  let html = `
+  <div class="sop-info">
+    Mostrando <strong>${list.length}</strong> SOP
+  </div>
+
+  <div class="table-scroll">
+    <table class="sop-table">
+      <thead>
+        <tr>
+          <th onclick="sortTable('department')">Departamento</th>
+          <th onclick="sortTable('title')">Procedimiento</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  list.forEach(sop => {
+    html += `
+    <tr>
       <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
       <td data-label="Procedimiento"><span class="sop-title">${sop.title}</span></td>
-      <td data-label="Acción"><a class="sop-btn" href="/sop-site/viewer.html?doc=${encodeURIComponent(sop.url)}&id=${sop.id}"><i class="fa-solid fa-eye"></i> Ver</a></td>
-    </tr>`;
+      <td data-label="Acción">
+        <a class="sop-btn" href="/sop-site/viewer.html?doc=${encodeURIComponent(sop.url)}&id=${sop.id}">
+          <i class="fa-solid fa-eye"></i> Ver
+        </a>
+      </td>
+    </tr>
+    `;
   });
 
   html += `</tbody></table></div>`;
   container.innerHTML = html;
 }
 
-/* BADGES */
+function showMessage(msg){
+  document.getElementById("sopContainer").innerHTML =
+    `<div class='sop-info'>${msg}</div>`;
+}
+
+/* ================================
+   SORT
+================================ */
+function sortByDepartment(){
+  SOP_INDEX.sort((a,b)=>{
+    if(a.department < b.department) return -1;
+    if(a.department > b.department) return 1;
+    return a.title.localeCompare(b.title);
+  });
+}
+
+function sortTable(field){
+  SOP_INDEX.sort((a,b)=>{
+    return (a[field] || "").localeCompare(b[field] || "");
+  });
+  renderSOP();
+}
+
+/* ================================
+   BADGES
+================================ */
 function getDepartmentBadge(dep){
-  if(dep === "produccion") dep = "carpinteria";
-  if(dep === "instalacion") dep = "stone";
 
   const map = {
     carpinteria:{name:"Carpintería",icon:"fa-hammer"},
@@ -800,205 +868,125 @@ function getDepartmentBadge(dep){
     comercial:{name:"Comercial",icon:"fa-chart-line"},
     stone:{name:"Stone",icon:"fa-screwdriver-wrench"},
     maquinarias:{name:"Maquinarias",icon:"fa-gears"},
-    medidas:{name:"Medidas",icon:"fa-gears"},
+    medidas:{name:"Medidas",icon:"fa-ruler"},
     vehiculos:{name:"Vehículos",icon:"fa-truck"},
     ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
-    taller:{name:"Taller",icon:"fa-chart-line"},
+    taller:{name:"Taller",icon:"fa-tools"},
     "houzz-pro":{name:"Houzz Pro",icon:"fa-house"}
   };
 
   const d = map[dep];
-  if(!d) return dep;
-  return `<span class="dept-badge dept-${dep}"><i class="fa-solid ${d.icon}"></i> ${d.name}</span>`;
+  if(!d) return dep || "-";
+
+  return `<span class="dept-badge dept-${dep}">
+    <i class="fa-solid ${d.icon}"></i> ${d.name}
+  </span>`;
 }
 
-/* SEARCH & FILTER */
-document.getElementById("searchInput").addEventListener("input", filterSOP);
-document.getElementById("deptFilter").addEventListener("change", filterSOP);
+/* ================================
+   FILTER
+================================ */
+function setupEvents(){
+  document.getElementById("searchInput").addEventListener("input", filterSOP);
+  document.getElementById("deptFilter").addEventListener("change", filterSOP);
+}
 
 function filterSOP(){
+
   const search = document.getElementById("searchInput").value.toLowerCase();
   const dept = document.getElementById("deptFilter").value;
-  const filtered = SOP_INDEX.filter(sop=>{
-    const matchDept = dept==="" || sop.department===dept;
-    const matchSearch = (sop.title||"").toLowerCase().includes(search) || (sop.keywords||"").toLowerCase().includes(search);
+
+  const filtered = SOP_INDEX.filter(sop => {
+
+    const matchDept = !dept || sop.department === dept;
+
+    const matchSearch =
+      sop.title.toLowerCase().includes(search) ||
+      sop.keywords.includes(search);
+
     return matchDept && matchSearch;
   });
+
   renderSOP(filtered);
 }
 
-function sortTable(field){
-  SOP_INDEX.sort((a,b)=>{
-    let A = (a[field]||"").toLowerCase();
-    let B = (b[field]||"").toLowerCase();
-    if(A<B) return -1;
-    if(A>B) return 1;
-    return 0;
-  });
-  renderSOP();
-}
-
 function filterDept(dep, el){
-  const buttons = document.querySelectorAll(".dept-filter");
-  buttons.forEach(btn=>btn.classList.remove("active"));
-  el.classList.add("active");
+  document.querySelectorAll(".dept-filter").forEach(b => b.classList.remove("active"));
+  if(el) el.classList.add("active");
+
   document.getElementById("deptFilter").value = dep;
   filterSOP();
 }
 
-  // -------- LOGIN LOCAL ---------
-// Lista de usuarios inline
-
-  const usuarios = [
-  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Producción", correo:"damian@empresa.com"},
-  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Producción", correo:"alberto@empresa.com"},
-  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:"gabriel@empresa.com"},
-  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:"wendy@empresa.com"},
-  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Gerencia", correo:"carlos@empresa.com"}
+/* ================================
+   LOGIN (AISLADO)
+================================ */
+const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin"}
 ];
 
-let loginType = "editor"; // o "admin"
-
-// Abrir modal
-
-function openLogin(type){
-  loginType = type;
-
+function checkLogin(){
   const user = localStorage.getItem("usuarioActivo");
-
-  // 🔥 SI YA ESTÁ LOGUEADO → solo pide clave (opcional)
-  if(user && type === "editor"){
-    document.getElementById("loginModal").style.display = "flex";
-    return;
+  if(!user){
+    openLogin();
   }
+}
 
+function openLogin(){
   document.getElementById("loginModal").style.display = "flex";
   loadUsuarios();
 }
-  
-// Cerrar modal
+
 function closeLogin(){
   document.getElementById("loginModal").style.display = "none";
-  document.getElementById("loginPass").value = "";
-  document.getElementById("loginError").style.display = "none";
 }
 
-// Cerrar con ESC
-document.addEventListener("keydown", e => { if(e.key === "Escape") closeLogin(); });
-
-// Cargar usuarios
 function loadUsuarios(){
   const select = document.getElementById("loginUser");
   select.innerHTML = '<option value="">Seleccione usuario</option>';
-  usuarios.forEach(u => {
+
+  usuarios.forEach(u=>{
     const opt = document.createElement("option");
     opt.value = u.usuario;
     opt.textContent = u.usuario;
     select.appendChild(opt);
   });
-
-// Función de logout
-function logout() {
-    // Limpiar datos de sesión
-    sessionStorage.removeItem("usuario");
-    sessionStorage.removeItem("token"); // si usas token
-    // Opcional: ocultar elementos de la app
-    document.getElementById("app").style.display = "none";
-    // Redirigir al login
-    window.location.href = "login.html";
 }
 
-  function mostrarUsuarioNavbar(){
-  const user = JSON.parse(localStorage.getItem("usuarioActivo"));
-  const div = document.getElementById("userInfo");
-  const logoutBtn = document.querySelector(".logout-btn");
+function doLogin(){
 
-  if(user){
-    div.innerHTML = `<i class="fa-solid fa-user"></i> ${user.usuario} (${user.rol})`;
-    logoutBtn.style.display = "inline-block"; // mostrar logout
-  } else {
-    div.innerHTML = "";
-    logoutBtn.style.display = "none"; // ocultar logout
-  }
-}
+  const user = document.getElementById("loginUser").value;
+  const pass = document.getElementById("loginPass").value;
 
-// Ejecutar al cargar la página
-document.addEventListener("DOMContentLoaded", mostrarUsuarioNavbar);
-  
-// Login
-
-  function doLogin(){
-  const usuario = document.getElementById("loginUser").value.trim();
-  const clave = document.getElementById("loginPass").value.trim();
-  const errorMsg = document.getElementById("loginError");
-
-  errorMsg.style.display = "none";
-
-  if(!usuario || !clave){
-    errorMsg.innerText = "Seleccione usuario e ingrese la clave";
-    errorMsg.style.display = "block";
-    return;
-  }
-
-  const match = usuarios.find(u => u.usuario === usuario && u.clave === clave);
+  const match = usuarios.find(u => u.usuario === user && u.clave === pass);
 
   if(!match){
-    errorMsg.innerText = "Usuario o clave incorrectos";
-    errorMsg.style.display = "block";
+    alert("❌ Usuario o clave incorrectos");
     return;
   }
 
-  // Verificación de rol
-  if(loginType === "admin" && match.rol !== "admin"){
-    errorMsg.innerText = "No autorizado para Admin";
-    errorMsg.style.display = "block";
-    return;
-  }
-
-  if(loginType === "editor" && match.rol !== "editor"){
-    errorMsg.innerText = "No autorizado para Editar SOP";
-    errorMsg.style.display = "block";
-    return;
-  }
-
-  // Guardamos usuario en localStorage
-  const userData = {
-    usuario: match.usuario,
-    rol: match.rol,
-    depto: match.depto || "",
-    correo: match.correo || ""
-  };
-  localStorage.setItem("usuarioActivo", JSON.stringify(userData));
-
+  localStorage.setItem("usuarioActivo", JSON.stringify(match));
   closeLogin();
-
-  // 🔹 Redirigir solo si es login desde menu
-  if(loginType === "admin" && match.rol === "admin"){
-    window.location.href = "/sop-site/admin/";
-  }
-  if(loginType === "editor" && match.rol === "editor" && window.location.pathname.includes("sop-viewer-edit")){
-    window.location.href = "/sop-site/sop-viewer-edit/";
-  }
-
-  // 🔹 Actualizar badge de usuario en navbar
   mostrarUsuarioNavbar();
 }
 
-  
-// Eventos
-document.getElementById("loginBtn").addEventListener("click", doLogin);
-document.getElementById("loginPass").addEventListener("keypress", e => { if(e.key === "Enter") doLogin(); });
+function mostrarUsuarioNavbar(){
+  const user = JSON.parse(localStorage.getItem("usuarioActivo"));
+  const div = document.getElementById("userInfo");
 
- window.addEventListener("load", () => {
-  const user = localStorage.getItem("usuarioActivo");
-
-  if(!user){
-    openLogin("editor"); // obliga login
-  } else {
-    mostrarUsuarioNavbar(); // ❌ corregido aquí
+  if(user){
+    div.innerHTML = `<i class="fa-solid fa-user"></i> ${user.usuario}`;
   }
-}); 
+}
 
+function logout(){
+  localStorage.removeItem("usuarioActivo");
+  location.reload();
+}
+
+/* EVENTOS LOGIN */
+document.getElementById("loginBtn").addEventListener("click", doLogin);
 
 </script>
 </body>
