@@ -8,103 +8,980 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css">
+<style>
+/* ===== BODY ===== */
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background-image:url('/sop-site/wall0.png');
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-attachment:fixed;
+  color:#1f2937;
+}
+.overlay{
+  background:rgba(0,0,0,0.25);
+  min-height:100vh;
+}
+
+/* ===== NAVBAR ===== */
+.navbar{
+  position:sticky;
+  top:0;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(8px);
+  padding:10px 30px;
+  color:white;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:999;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logo img{
+  height:40px;
+}
+.menu{
+  display:flex;
+  gap:25px;
+}
+.menu a{
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  transition:.3s;
+}
+.menu a:hover{
+  color:#00aaff;
+}
+.menu-toggle{
+  display:none;
+  font-size:1.6rem;
+  cursor:pointer;
+}
+
+/* ===== BANNER ===== */
+.banner{
+  text-align:center;
+  padding:40px 20px 20px 20px;
+  color:white;
+}
+.banner h1{
+  margin:0;
+  font-size:2.2rem;
+}
+.banner p{
+  margin:4px 0;
+  opacity:0.9;
+}
+.cta-btn{
+  display:inline-block;
+  margin-top:15px;
+  padding:10px 25px;
+  border-radius:30px;
+  background:linear-gradient(135deg,#0072C6,#005a9e);
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  transition:.3s;
+}
+.cta-btn:hover{
+  transform:scale(1.05);
+}
+
+/* ===== BUSCADOR ===== */
+.search-container{
+  max-width:950px;
+  margin:30px auto;
+  padding:0 20px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+.search-container input,
+.search-container select{
+  width:100%;
+  padding:12px 15px;
+  border-radius:30px;
+  border:none;
+  font-size:1rem;
+  box-shadow:0 8px 20px rgba(0,0,0,0.25);
+  outline:none;
+}
+
+/* ===== SOP TABLE MODERN ===== */
+.dept-filter-bar{
+  max-width:1050px;
+  margin:20px auto;
+  padding:0 20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.dept-filter{
+  padding:8px 16px;
+  border-radius:20px;
+  border:none;
+  background:white;
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
+  font-size:.85rem;
+  cursor:pointer;
+  transition:.25s;
+}
+.dept-filter:hover{
+  transform:scale(1.05);
+}
+.dept-filter.active{
+  background:#0072C6;
+  color:white;
+}
+.sop-info{
+  background:white;
+  padding:12px 18px;
+  border-radius:12px;
+  margin-bottom:10px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.15);
+  font-size:.9rem;
+  color:#374151;
+}
+/* CONTENEDOR */
+.sop-container{
+  max-width:1050px;
+  margin:40px auto 80px auto;
+  padding:0 20px;
+}
+/* TARJETA */
+.sop-card{
+  background:white;
+  border-radius:16px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.25);
+  overflow:hidden;
+}
+/* HEADER */
+.sop-card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 22px;
+  background:#0f172a;
+  color:white;
+  font-weight:600;
+  font-size:0.9rem;
+}
+.sop-count{
+  opacity:.8;
+  font-weight:400;
+}
+/* SCROLL */
+.table-scroll{
+  max-height:550px;
+  overflow-y:auto;
+}
+/* TABLA */
+.sop-table{
+  width:100%;
+  border-collapse:collapse;
+}
+/* CABECERA */
+.sop-table thead th{
+  position:sticky;
+  top:0;
+  background:#1e293b;
+  color:#cbd5e1;
+  padding:14px 18px;
+  font-size:.75rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:600;
+}
+/* FILAS */
+.sop-table td{
+  padding:16px 18px;
+  border-bottom:1px solid #f1f5f9;
+  font-size:.95rem;
+}
+.sop-table tbody tr{
+  transition:.2s;
+}
+.sop-table tbody tr:nth-child(even){
+  background:#fafafa;
+}
+.sop-table tbody tr:hover{
+  background:#f1f5f9;
+  transform:translateX(3px);
+}
+/* TITULO SOP */
+.sop-title{
+  font-weight:600;
+  color:#0f172a;
+}
+/* BOTON */
+.sop-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 16px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#0072C6,#005a9e);
+  color:white;
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:500;
+  transition:.25s;
+}
+.sop-btn:hover{
+  transform:scale(1.05);
+  background:linear-gradient(135deg,#005a9e,#003f6b);
+}
+
+  .logout-btn{
+  padding:6px 10px;
+  border:none;
+  border-radius:8px;
+  background:#ef4444;
+  color:white;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.logout-btn:hover{
+  background:#dc2626;
+  transform:scale(1.05);
+}
+/* SCROLLBAR */
+.table-scroll::-webkit-scrollbar{
+  width:8px;
+}
+.table-scroll::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:10px;
+}
+/* fondo sólido tabla */
+.sop-table tbody tr{
+  background:white;
+}
+.sop-table tbody tr:nth-child(even){
+  background:#f8fafc;
+}
+.sop-table tbody tr:hover{
+  background:#eef2f7;
+}
+/* asegurar fondo en celdas */
+.sop-table td{
+  background:inherit;
+}
+
+/* ===== VIDEOS ===== */
+.video-section{
+  max-width:1100px;
+  margin:40px auto;
+  padding:0 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+}
+
+.video-section iframe,
+.video-section video{
+  width:100%;
+  height:200px;
+  border-radius:15px;
+  object-fit:cover;
+  border:none;
+}
+
+/* ===== CARRUSEL PREMIUM LOOP INFINITO (tipo Apple / Tesla) ===== */
+
+.carousel-container-premium{
+  max-width:1000px;
+  margin:60px auto;
+  overflow:hidden;
+  border-radius:16px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.35);
+  position:relative;
+}
+
+.carousel-track-premium{
+  display:flex;
+  gap:18px;
+  width:max-content;
+  animation:carouselMove 60s linear infinite;
+}
+
+.carousel-container-premium:hover .carousel-track-premium{
+  animation-play-state:paused;
+}
+
+.carousel-slide-premium{
+  flex:0 0 300px;
+}
+
+.carousel-slide-premium img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  border-radius:12px;
+  transition:transform .4s, box-shadow .4s;
+}
+
+.carousel-slide-premium img:hover{
+  transform:scale(1.06);
+  box-shadow:0 10px 25px rgba(0,0,0,0.35);
+}
+
+/* animación infinita */
+@keyframes carouselMove{
+  from{
+    transform:translateX(0);
+  }
+  to{
+    transform:translateX(-50%);
+  }
+}
+
+/* responsive */
+
+@media(max-width:768px){
+
+.carousel-slide-premium{
+  flex:0 0 240px;
+}
+
+.carousel-slide-premium img{
+  height:160px;
+}
+
+}
+
+
+/* BADGES */
+.dept-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:.75rem;
+  font-weight:600;
+}
+.dept-carpinteria{background:#e0f2fe;color:#0369a1;}
+.dept-administracion{background:#ede9fe;color:#5b21b6;}
+.dept-comercial{background:#dcfce7;color:#166534;}
+.dept-taller{background:#dcfce7;color:#166534;}
+.dept-stone{background:#fef3c7;color:#92400e;}
+.dept-maquinarias{background:#fee2e2;color:#991b1b;}
+.dept-vehiculos{background:#e5e7eb;color:#374151;}
+.dept-ecopower{background:#cffafe;color:#0e7490;}
+.dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
+.dept-medidas{background:#f3e8ff;color:#7e22ce;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .menu{
+    display:none;
+    flex-direction:column;
+    background:rgba(0,0,0,0.9);
+    position:absolute;
+    top:60px;
+    right:0;
+    width:200px;
+    padding:20px;
+  }
+  .menu.show{
+    display:flex;
+  }
+  .menu-toggle{
+    display:block;
+  }
+  .sop-table, .sop-table thead, .sop-table tbody, .sop-table th, .sop-table td, .sop-table tr {
+    display: block;
+  }
+
+  .sop-table thead tr { display: none; }
+  .sop-table tbody tr {
+    margin-bottom: 15px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .sop-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: none;
+    font-size: 0.9rem;
+  }
+  .sop-table tbody td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+    margin-right: 10px;
+    flex: 0 0 40%;
+  }
+}
+
+  /* Login Modal */
+.login-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+}
+
+.login-box {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+  animation: fadeIn 0.4s ease;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.login-box select,
+.login-box input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s;
+}
+
+.login-box select:focus,
+.login-box input:focus {
+  border-color: #0072C6;
+  box-shadow: 0 0 5px #0072C6;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#0072C6,#005a9e);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-box button:hover {
+  transform: scale(1.03);
+  background: linear-gradient(135deg,#005a9e,#003f6b);
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(-20px);}
+  to {opacity:1; transform: translateY(0);}
+}
+</style>
 </head>
+
 <body>
+<div class="overlay"> 
 
 <!-- NAVBAR -->
-<header class="navbar">
+<div class="navbar">
+
+  <!-- IZQUIERDA: LOGO -->
   <div class="logo">
-    <img src="logo.png" alt="Logo">
+    <img src="/sop-site/logo.png">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
-  <nav class="menu">
-    <a href="#">Inicio</a>
-    <a href="#">Registrar SOP</a>
-    <a href="#">Aportes SOP</a>
-    <a href="#" onclick="openLogin('editor')">Editar SOP</a>
-    <a href="#" onclick="openLogin('admin')">Admin</a>
-  </nav>
-  <div class="user-actions">
-    <span id="userInfo"></span>
-    <button onclick="logout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
-  </div>
-</header>
 
+  <!-- DERECHA: MENU + USER -->
+  <div style="display:flex; align-items:center; gap:15px;">
+
+    <!-- MENU DESKTOP -->
+    <div class="menu">
+      <a href="/sop-site/">Inicio</a>
+      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+      <a href="/sop-site/Aportes/">Aportes SOP</a>    
+      <a href="#" onclick="openLogin('editor')">Editar SOP</a>  
+      <a href="#" onclick="openLogin('admin')">
+        <i class="fa-solid fa-user-shield"></i> Admin
+      </a>
+      <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>  
+    </div>
+
+    <!-- USUARIO -->
+    <div id="userInfo" style="
+      font-size:0.8rem;
+      background:rgba(255,255,255,0.1);
+      padding:6px 12px;
+      border-radius:20px;
+      white-space:nowrap;
+    "></div>
+
+    <!-- BOTÓN LOGOUT -->
+    <button onclick="logout()" class="logout-btn">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+
+    <!-- MENU MOBILE -->
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+
+  </div>
+
+</div>
+  
 <!-- BANNER -->
-<section class="banner">
+<div class="banner">
   <h1>Biblioteca de Procedimientos Operativos Estándar</h1>
   <p>ARTEMISA MARBLE & CABINETS</p>
   <a href="#sopContainer" class="cta-btn">Ver SOP</a>
-</section>
+</div>
 
-<!-- FILTROS -->
-<section class="filters">
+<!-- BUSCADOR -->
+<div class="search-container">
   <input type="text" id="searchInput" placeholder="Buscar SOP...">
-  <div class="dept-buttons">
-    <button onclick="filterDept('')" class="dept-filter active">Todos</button>
-    <button onclick="filterDept('comercial')" class="dept-filter">Comercial</button>
-    <button onclick="filterDept('produccion')" class="dept-filter">Producción</button>
-    <button onclick="filterDept('instalacion')" class="dept-filter">Instalación</button>
-    <button onclick="filterDept('administracion')" class="dept-filter">Administración</button>
-    <button onclick="filterDept('maquinarias')" class="dept-filter">Maquinarias</button>
-    <button onclick="filterDept('vehiculos')" class="dept-filter">Vehículos</button>
-    <button onclick="filterDept('houzz-pro')" class="dept-filter">Houzz Pro</button>
-    <button onclick="filterDept('medidas')" class="dept-filter">Medidas</button>
-    <button onclick="filterDept('taller')" class="dept-filter">Taller</button>
-  </div>
-</section>
+  <select id="deptFilter">
+    <option value="">Todos los departamentos</option>
+    <option value="comercial">Comercial</option>
+    <option value="produccion">Producción</option>
+    <option value="instalacion">Instalación</option>
+    <option value="administracion">Administración</option>
+    <option value="maquinarias">Maquinarias</option>
+    <option value="vehiculos">Vehículos</option>
+    <option value="houzz-pro">Houzz Pro</option>
+    <option value="ecopower">Ecopowertech</option>
+    <option value="medidas">Medidas</option>
+    <option value="taller">Taller</option>
+  </select>
+</div>
 
-<!-- TABLA SOP -->
-<section class="sop-section">
-  <table id="sopTable">
-    <thead>
-      <tr>
-        <th>Código</th>
-        <th>Nombre SOP</th>
-        <th>Departamento</th>
-        <th>Última actualización</th>
-        <th>Responsable</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="sopContainer">
-      <!-- SOP dinámicos desde main.js -->
-    </tbody>
-  </table>
-</section>
+<!-- DEPT FILTER BUTTONS -->
+<div class="dept-filter-bar">
+<button onclick="filterDept('')" class="dept-filter active">Todos</button>
+<button onclick="filterDept('comercial',this)" class="dept-filter">Comercial</button>
+<button onclick="filterDept('produccion',this)" class="dept-filter">Carpintería</button>
+<button onclick="filterDept('instalacion',this)" class="dept-filter">Stone</button>
+<button onclick="filterDept('administracion',this)" class="dept-filter">Administración</button>
+<button onclick="filterDept('maquinarias',this)" class="dept-filter">Maquinarias</button>
+<button onclick="filterDept('vehiculos',this)" class="dept-filter">Vehículos</button>
+<button onclick="filterDept('houzz-pro',this)" class="dept-filter">Houzz-Pro</button>
+<button onclick="filterDept('medidas',this)" class="dept-filter">Medidas</button>
+<button onclick="filterDept('taller',this)" class="dept-filter">Taller</button>
+</div>
+  
+<!-- TABLA -->
+<div class="sop-container" id="sopContainer"></div>
 
 <!-- VIDEOS -->
-<section class="videos">
-  <video autoplay muted loop playsinline>
-    <source src="seleccion video 5.MP4" type="video/mp4">
-  </video>
-  <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
-  <video autoplay muted loop playsinline>
-    <source src="seleccion video super 1.mp4" type="video/mp4">
-  </video>
-</section>
+<div class="video-section">
+    <video autoplay muted loop playsinline>
+        <source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
+    </video>
 
-<!-- CARRUSEL -->
-<section class="carousel-premium">
-  <div class="carousel-track-premium">
-    <div class="slide"><img src="ABQM0471.JPG" alt="Imagen 1"></div>
-    <div class="slide"><img src="outlet.png" alt="Outlet"></div>
-    <div class="slide"><img src="VanitiesBath.png" alt="Vanities & Bath"></div>
-    <div class="slide"><img src="IMG_2393.JPG" alt="Imagen 4"></div>
-    <div class="slide"><img src="IHCH5272.JPG" alt="Imagen 5"></div>
+    <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
+
+    <video autoplay muted loop playsinline>
+        <source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
+    </video>
+</div>
+
+<!-- CARRUSEL PREMIUM -->
+  <div class="carousel-container-premium">
+    <button class="carousel-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="carousel-track-premium">
+      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
+      <!-- duplicado para loop -->
+      <div class="carousel-slide-premium"><img src="/sop-site/ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/outlet.png" alt="Outlet" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall1.jpg" alt="Wall 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/IMG_4646.jpg" alt="Imagen 7" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/Kitchen.jpg" alt="Kitchen" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/HOPE1380.JPG" alt="Imagen 9" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/JXUQ9396.JPG" alt="Imagen 10" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/POHQ5752.JPG" alt="Imagen 11" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="/sop-site/wall2.jpg" alt="Wall 2" loading="lazy"></div>
+    </div>
+    <button class="carousel-btn next"><i class="fa-solid fa-chevron-right"></i></button>
   </div>
-</section>
+
 
 <!-- FOOTER -->
-<footer class="footer">
-  © 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
-</footer>
+<div class="footer" style="text-align:center;color:white;background: rgba(0,0,0,0.65);margin:30px 0;">
+© 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
+</div>
+</div>
 
-<!-- LOGIN MODAL -->
-<div id="loginModal" class="login-modal" style="display:none;"></div>
+<!-- LOGIN MODAL MODERNO -->
+<!-- Modal Login Responsive -->
+<div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
+  <div style="
+      background:#fff; 
+      padding:30px 25px; 
+      border-radius:12px; 
+      width:90%; 
+      max-width:360px; 
+      box-shadow:0 5px 20px rgba(0,0,0,0.4); 
+      text-align:center; 
+      position:relative;
+      box-sizing:border-box;
+  ">
+    <!-- Botón cerrar -->
+    <button onclick="closeLogin()" style="
+        position:absolute; 
+        top:10px; 
+        right:10px; 
+        background:none; 
+        border:none; 
+        font-size:20px; 
+        cursor:pointer;
+        color:#888;
+    ">&times;</button>
 
-<script src="main.js" defer></script>
+    <h2 style="margin-bottom:25px; font-family:Arial,sans-serif;">Iniciar Sesión</h2>
+
+    <select id="loginUser" style="
+        width:100%; 
+        padding:12px; 
+        margin-bottom:15px; 
+        font-size:16px; 
+        border-radius:6px; 
+        border:1px solid #ccc;
+        box-sizing:border-box;
+    ">
+      <option value="">Seleccione usuario</option>
+    </select>
+
+    <input type="password" id="loginPass" placeholder="Clave" style="
+        width:100%; 
+        padding:12px; 
+        font-size:16px; 
+        border-radius:6px; 
+        border:1px solid #ccc; 
+        margin-bottom:15px;
+        box-sizing:border-box;
+    ">
+
+    <div id="loginError" style="
+        color:red; 
+        margin-bottom:15px; 
+        display:none; 
+        font-size:14px;
+    "></div>
+
+    <button id="loginBtn" style="
+        width:100%; 
+        padding:12px; 
+        font-size:16px; 
+        background:#007bff; 
+        color:#fff; 
+        border:none; 
+        border-radius:6px; 
+        cursor:pointer;
+        transition: background 0.3s;
+    " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">Entrar</button>
+  </div>
+</div>
+
+  
+<script>
+
+/* MENU */
+function toggleMenu(){ document.querySelector('.menu').classList.toggle('show'); }
+
+
+/* ===== SOP DATA ===== */
+let SOP_INDEX = [];
+const SHEET_ID = "1zUZ37cWCS4N72AG5H2c_RRgjGhcQ5pj_D9qNBbRCRcI";
+const SHEET_NAME = "SOP_Admin";
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+
+fetch(SHEET_URL)
+  .then(res => res.text())
+  .then(data => {
+    const json = JSON.parse(data.substring(47).slice(0,-2));
+    SOP_INDEX = json.table.rows.map(row => ({
+      id: row.c[9]?.v || "SOP-"+Date.now(),  // 🔹 id_sop
+      title: row.c[6]?.v || "--",
+      department: row.c[3]?.v || "--",
+      url: row.c[8]?.v || "#",
+      keywords: (row.c[4]?.v || "") + " " + (row.c[5]?.v || "")
+    }));
+    sortByDepartment();
+    renderSOP();
+  });
+
+/* ORDEN */
+function sortByDepartment(){
+  SOP_INDEX.sort((a,b)=>{
+    if(a.department < b.department) return -1;
+    if(a.department > b.department) return 1;
+    let A = (a.title||"").toLowerCase();
+    let B = (b.title||"").toLowerCase();
+    if(A < B) return -1;
+    if(A > B) return 1;
+    return 0;
+  });
+}
+
+/* RENDER TABLA */
+function renderSOP(filtered){
+  const container = document.getElementById("sopContainer");
+  const list = filtered || SOP_INDEX;
+
+  let html = `<div class="sop-info">Mostrando <strong>${list.length}</strong> SOP</div><div class="table-wrapper"><table class="sop-table"><thead><tr><th onclick="sortTable('department')">Departamento</th><th onclick="sortTable('title')">Procedimiento SOP</th><th>Acción</th></tr></thead><tbody>`;
+
+  list.forEach(sop=>{
+    html += `<tr>
+      <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
+      <td data-label="Procedimiento"><span class="sop-title">${sop.title}</span></td>
+      <td data-label="Acción"><a class="sop-btn" href="/sop-site/viewer.html?doc=${encodeURIComponent(sop.url)}&id=${sop.id}"><i class="fa-solid fa-eye"></i> Ver</a></td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  container.innerHTML = html;
+}
+
+/* BADGES */
+function getDepartmentBadge(dep){
+  if(dep === "produccion") dep = "carpinteria";
+  if(dep === "instalacion") dep = "stone";
+
+  const map = {
+    carpinteria:{name:"Carpintería",icon:"fa-hammer"},
+    administracion:{name:"Administración",icon:"fa-building"},
+    comercial:{name:"Comercial",icon:"fa-chart-line"},
+    stone:{name:"Stone",icon:"fa-screwdriver-wrench"},
+    maquinarias:{name:"Maquinarias",icon:"fa-gears"},
+    medidas:{name:"Medidas",icon:"fa-gears"},
+    vehiculos:{name:"Vehículos",icon:"fa-truck"},
+    ecopower:{name:"Ecopowertech",icon:"fa-bolt"},
+    taller:{name:"Taller",icon:"fa-chart-line"},
+    "houzz-pro":{name:"Houzz Pro",icon:"fa-house"}
+  };
+
+  const d = map[dep];
+  if(!d) return dep;
+  return `<span class="dept-badge dept-${dep}"><i class="fa-solid ${d.icon}"></i> ${d.name}</span>`;
+}
+
+/* SEARCH & FILTER */
+document.getElementById("searchInput").addEventListener("input", filterSOP);
+document.getElementById("deptFilter").addEventListener("change", filterSOP);
+
+function filterSOP(){
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const dept = document.getElementById("deptFilter").value;
+  const filtered = SOP_INDEX.filter(sop=>{
+    const matchDept = dept==="" || sop.department===dept;
+    const matchSearch = (sop.title||"").toLowerCase().includes(search) || (sop.keywords||"").toLowerCase().includes(search);
+    return matchDept && matchSearch;
+  });
+  renderSOP(filtered);
+}
+
+function sortTable(field){
+  SOP_INDEX.sort((a,b)=>{
+    let A = (a[field]||"").toLowerCase();
+    let B = (b[field]||"").toLowerCase();
+    if(A<B) return -1;
+    if(A>B) return 1;
+    return 0;
+  });
+  renderSOP();
+}
+
+function filterDept(dep, el){
+  const buttons = document.querySelectorAll(".dept-filter");
+  buttons.forEach(btn=>btn.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById("deptFilter").value = dep;
+  filterSOP();
+}
+
+  // -------- LOGIN LOCAL ---------
+// Lista de usuarios inline
+
+  const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Producción", correo:"damian@empresa.com"},
+  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Producción", correo:"alberto@empresa.com"},
+  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:"gabriel@empresa.com"},
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:"wendy@empresa.com"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Gerencia", correo:"carlos@empresa.com"}
+];
+
+let loginType = "editor"; // o "admin"
+
+// Abrir modal
+
+function openLogin(type){
+  loginType = type;
+
+  const user = localStorage.getItem("usuarioActivo");
+
+  // 🔥 SI YA ESTÁ LOGUEADO → solo pide clave (opcional)
+  if(user && type === "editor"){
+    document.getElementById("loginModal").style.display = "flex";
+    return;
+  }
+
+  document.getElementById("loginModal").style.display = "flex";
+  loadUsuarios();
+}
+  
+// Cerrar modal
+function closeLogin(){
+  document.getElementById("loginModal").style.display = "none";
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginError").style.display = "none";
+}
+
+// Cerrar con ESC
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeLogin(); });
+
+// Cargar usuarios
+function loadUsuarios(){
+  const select = document.getElementById("loginUser");
+  select.innerHTML = '<option value="">Seleccione usuario</option>';
+  usuarios.forEach(u => {
+    const opt = document.createElement("option");
+    opt.value = u.usuario;
+    opt.textContent = u.usuario;
+    select.appendChild(opt);
+  });
+
+// Función de logout
+function logout() {
+    // Limpiar datos de sesión
+    sessionStorage.removeItem("usuario");
+    sessionStorage.removeItem("token"); // si usas token
+    // Opcional: ocultar elementos de la app
+    document.getElementById("app").style.display = "none";
+    // Redirigir al login
+    window.location.href = "login.html";
+}
+
+  function mostrarUsuarioNavbar(){
+  const user = JSON.parse(localStorage.getItem("usuarioActivo"));
+  const div = document.getElementById("userInfo");
+  const logoutBtn = document.querySelector(".logout-btn");
+
+  if(user){
+    div.innerHTML = `<i class="fa-solid fa-user"></i> ${user.usuario} (${user.rol})`;
+    logoutBtn.style.display = "inline-block"; // mostrar logout
+  } else {
+    div.innerHTML = "";
+    logoutBtn.style.display = "none"; // ocultar logout
+  }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener("DOMContentLoaded", mostrarUsuarioNavbar);
+  
+// Login
+
+  function doLogin(){
+  const usuario = document.getElementById("loginUser").value.trim();
+  const clave = document.getElementById("loginPass").value.trim();
+  const errorMsg = document.getElementById("loginError");
+
+  errorMsg.style.display = "none";
+
+  if(!usuario || !clave){
+    errorMsg.innerText = "Seleccione usuario e ingrese la clave";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  const match = usuarios.find(u => u.usuario === usuario && u.clave === clave);
+
+  if(!match){
+    errorMsg.innerText = "Usuario o clave incorrectos";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  // Verificación de rol
+  if(loginType === "admin" && match.rol !== "admin"){
+    errorMsg.innerText = "No autorizado para Admin";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  if(loginType === "editor" && match.rol !== "editor"){
+    errorMsg.innerText = "No autorizado para Editar SOP";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  // Guardamos usuario en localStorage
+  const userData = {
+    usuario: match.usuario,
+    rol: match.rol,
+    depto: match.depto || "",
+    correo: match.correo || ""
+  };
+  localStorage.setItem("usuarioActivo", JSON.stringify(userData));
+
+  closeLogin();
+
+  // 🔹 Redirigir solo si es login desde menu
+  if(loginType === "admin" && match.rol === "admin"){
+    window.location.href = "/sop-site/admin/";
+  }
+  if(loginType === "editor" && match.rol === "editor" && window.location.pathname.includes("sop-viewer-edit")){
+    window.location.href = "/sop-site/sop-viewer-edit/";
+  }
+
+  // 🔹 Actualizar badge de usuario en navbar
+  mostrarUsuarioNavbar();
+}
+
+  
+// Eventos
+document.getElementById("loginBtn").addEventListener("click", doLogin);
+document.getElementById("loginPass").addEventListener("keypress", e => { if(e.key === "Enter") doLogin(); });
+
+ window.addEventListener("load", () => {
+  const user = localStorage.getItem("usuarioActivo");
+
+  if(!user){
+    openLogin("editor"); // obliga login
+  } else {
+    mostrarUsuarioNavbar(); // ❌ corregido aquí
+  }
+}); 
+
+
+</script>
 </body>
 </html>
