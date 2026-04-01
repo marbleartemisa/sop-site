@@ -3,423 +3,297 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Historial y Comentarios SOP - Artemisa Mejorado</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-/* GLOBAL */
-body { margin:0; font-family:'Inter',sans-serif; background:#f0f0f0; color:#1f2937; }
+<title>Historial y Comentarios SOP - Visor Profesional</title>
 
-/* NAVBAR */
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+/* ===== GLOBAL ===== */
+body {
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:#eef2f7;
+  color:#1f2937;
+}
+
+/* ===== NAVBAR ===== */
 .navbar{
   position:sticky;
   top:0;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(8px);
-  padding:10px 30px;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px);
+  padding:12px 30px;
   color:white;
-  font-weight:bold;
   display:flex;
   justify-content:space-between;
   align-items:center;
   z-index:1100;
 }
-.logo{ display:flex; align-items:center; gap:10px; }
-.logo img{ height:40px; }
-.menu{ display:flex; gap:25px; }
-.menu a{ color:white; text-decoration:none; font-weight:bold; transition:.3s; }
-.menu a:hover{ color:#00aaff; }
-.menu-toggle{ display:none; font-size:1.6rem; cursor:pointer; }
+.menu a{ color:white; margin-left:20px; text-decoration:none; }
+.menu a:hover{ color:#00d1ff; }
 
-/* OVERLAY Y TABLA */
+/* ===== TABLA ===== */
 .overlay { padding:20px; max-width:1200px; margin:auto;}
-h2{ color:#003366; margin-bottom:15px; text-align:center;}
-input, select{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
-table{ width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
-th, td{ padding:10px 12px; text-align:left; border-bottom:1px solid #ddd; }
-th{ background:#003366; color:white;}
-.estado{ display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:uppercase;}
-.pendiente{background:#fff4cc; color:#b38f00;}
-.tramite{background:#e6f0ff;color:#1a5fd0;}
-.rechazado{background:#fdecea;color:#c62828;}
-.aprobado{background:#e6f7ec;color:#1e7e34;}
+table{ width:100%; background:white; border-radius:10px; overflow:hidden;}
+th{ background:#003366; color:white; padding:10px;}
+td{ padding:10px; border-bottom:1px solid #ddd; }
 
-/* CANVAS */
+/* ===== VISOR SOP ===== */
 #canvas-overlay{
   display:none;
   position:fixed;
   top:50px;
-  left:0;
   width:100%;
   height:calc(100% - 50px);
-  background:rgba(0,0,0,0.35);
+  background:rgba(0,0,0,0.4);
   z-index:1000;
   overflow:auto;
 }
+
 #sop-container{
-  position:relative;
   margin:30px auto;
   width:90%;
-  max-width:1200px;
-  background:white;
+  max-width:1000px;
+  background:#f9fafb;
   border-radius:14px;
-  padding:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-}
-#canvas-wrapper{ position:relative; width:100%; }
-
-/* Comentarios */
-.comentario {
-  position: absolute;
-  background: rgba(255,255,100,0.9);
-  border: 1px solid #ffaa00;
-  padding: 6px 8px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #000;
-  max-width: 200px;
-  word-wrap: break-word;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 4px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  cursor:text;
-}
-.comentario.editable { outline: 2px dashed #00aaff; }
-
-/* BOTÓN CERRAR SOP */
-#btnCerrarSOP{ 
-  position:fixed; 
-  top:70px; 
-  right:20px; 
-  z-index:9999; 
-  padding:10px 16px; 
-  cursor:pointer; 
-  background:#c00; 
-  color:white; 
-  border:none; 
-  border-radius:10px; 
-  font-weight:bold;
-  box-shadow:0 3px 8px rgba(0,0,0,0.3);
+  padding:30px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.3);
 }
 
-/* MODAL */
+#canvas-wrapper{
+  position:relative;
+}
+
+/* ===== SOP LIMPIO ===== */
+.sop-content{
+  background:white;
+  padding:40px;
+  border-radius:10px;
+  line-height:1.6;
+}
+
+.sop-content h1,h2,h3{
+  color:#003366;
+  margin-top:20px;
+}
+
+.sop-content p{
+  margin:10px 0;
+}
+
+/* ocultar basura */
+.sop-content img:not([src]),
+.sop-content img[src=""],
+.sop-content iframe:empty,
+.sop-content .placeholder{
+  display:none !important;
+}
+
+/* ===== COMENTARIOS ===== */
+.comentario{
+  position:absolute;
+  background:#fff3a0;
+  border:1px solid #ffcc00;
+  padding:6px 8px;
+  border-radius:6px;
+  font-size:13px;
+  max-width:200px;
+  cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+
+.comentario:hover{
+  transform:scale(1.03);
+}
+
+/* ===== BOTONES ===== */
+#btnCerrarSOP{
+  position:fixed;
+  top:70px;
+  right:20px;
+  background:#c00;
+  color:white;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* ===== MODAL ===== */
 #modal{
   display:none;
   position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(6px);
-  justify-content:center; align-items:center;
-  z-index:2000;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
 }
+
 #modal-content{
-  background: rgba(0,0,0,0.85);
-  border-radius:14px;
+  background:#111;
   padding:20px;
+  border-radius:10px;
   width:350px;
-  color:#fff;
-  box-shadow:0 10px 25px rgba(0,0,0,0.5);
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  color:white;
 }
-#modal h3{ margin:0; font-weight:600; text-align:center; color:#00aaff; }
-#comentario-text{
-  width:100%; height:120px; padding:12px;
-  border:none; border-radius:10px;
-  background: rgba(255,255,255,0.15); color:#fff;
-  resize:vertical; font-size:15px;
+
+textarea{
+  width:100%;
+  height:120px;
+  margin-top:10px;
 }
-#comentario-text:focus{ background: rgba(255,255,255,0.25); outline:none; }
-#comentario-text::placeholder{ color: #ddd; font-style:italic; }
-#btn-save, #btn-cancel{
-  padding:10px 16px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:bold;
-}
-#btn-save{ background:#00d1ff; color:white; }
-#btn-save:hover{ background:#00a8cc; }
-#btn-cancel{ background:#555; color:white; }
-#btn-cancel:hover{ background:#333; }
 </style>
 </head>
+
 <body>
 
-<!-- NAVBAR -->
 <div class="navbar">
-  <div class="logo">
-    <img src="/sop-site/logo.png">
-    <span>ARTEMISA MARBLE & CABINETS</span>
-  </div>
-  <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+  <span>ARTEMISA</span>
   <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a>
-    <a href="#" onclick="openLogin('editor')">Editar SOP</a>
-    <a href="#" onclick="openLogin('admin')"><i class="fa-solid fa-user-shield"></i> Admin</a>
-    <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a>
+    <a href="#">Inicio</a>
   </div>
 </div>
 
-<!-- TABLA SOP -->
 <div class="overlay">
-  <h2>Historial de SOPs</h2>
-  <input type="text" id="buscarSOP" placeholder="Buscar...">
-  <select id="filtroEstado">
-    <option value="">Todos los estados</option>
-    <option value="Pendiente">Pendiente</option>
-    <option value="Trámite">Trámite</option>
-    <option value="Rechazado">Rechazado</option>
-    <option value="Aprobado">Aprobado</option>
-  </select>
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Empleado</th>
-          <th>Departamento</th>
-          <th>Objetivo</th>
-          <th>Áreas</th>
-          <th>Estado</th>
-          <th>Fecha / Hora</th>
-          <th>Abrir SOP</th>
-        </tr>
-      </thead>
-      <tbody id="tablaSOP"></tbody>
-    </table>
-  </div>
+  <h2>Historial SOP</h2>
+  <table>
+    <tbody id="tablaSOP"></tbody>
+  </table>
 </div>
 
-<!-- Canvas flotante -->
+<!-- VISOR -->
 <div id="canvas-overlay">
   <div id="sop-container">
-    <button id="btnCerrarSOP" onclick="cerrarCanvas()">Cerrar SOP</button>
+    <button id="btnCerrarSOP" onclick="cerrarCanvas()">Cerrar</button>
     <div id="canvas-wrapper"></div>
   </div>
 </div>
 
-<!-- Modal comentarios -->
+<!-- MODAL -->
 <div id="modal">
   <div id="modal-content">
     <h3>Editar comentario</h3>
-    <textarea id="comentario-text" placeholder="Nuevo comentario..."></textarea>
-    <div style="text-align:right;">
-      <button id="btn-save">Guardar</button>
-      <button id="btn-cancel">Cancelar</button>
-    </div>
+    <textarea id="comentario-text"></textarea>
+    <button onclick="guardarEdicion()">Guardar</button>
   </div>
 </div>
 
 <script>
-const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
+const API="https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
-let comentarios=[], clickX=0, clickY=0, SOP_URL="", ID_SOP="";
-const USUARIO = localStorage.getItem("usuario") || "";
-const CORREO = localStorage.getItem("correo") || "";
+let comentarios=[],ID_SOP="",editIndex=null;
 
-// TABLA SOP
-async function renderTabla(){
-  const tabla = document.getElementById("tablaSOP");
-  tabla.innerHTML="";
-  const filtro = document.getElementById("filtroEstado").value;
-  const buscar = document.getElementById("buscarSOP").value.toLowerCase();
-  try{
-    const res = await fetch(SHEET_API);
-    const data = await res.json();
-    data.forEach(row=>{
-      if(!row.ID_SOP) return;
-      const sop = {
-        Timestamp: row.Timestamp||"",
-        empleado: row.empleado||"",
-        departamento: row.departamento||"",
-        objetivo: row.objetivo||"",
-        areas: row.areas||"",
-        estado: row.estado||"Pendiente",
-        ID_SOP: row.ID_SOP,
-        url_doc: row.url_doc||row.links||""
-      };
-      if(filtro && sop.estado!==filtro) return;
-      if(buscar && !(sop.empleado.toLowerCase()+sop.objetivo.toLowerCase()).includes(buscar)) return;
-      const fila = document.createElement("tr");
-      fila.innerHTML=`
-        <td>${sop.empleado}</td>
-        <td>${sop.departamento}</td>
-        <td>${sop.objetivo}</td>
-        <td>${sop.areas}</td>
-        <td><span class="estado ${sop.estado.toLowerCase()}">${sop.estado}</span></td>
-        <td>${new Date(sop.Timestamp).toLocaleString()}</td>
-        <td><button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Abrir</button></td>
-      `;
-      tabla.appendChild(fila);
-    });
-  }catch(e){ console.error(e); alert("Error cargando SOPs"); }
+/* ===== TABLA ===== */
+async function cargarTabla(){
+  const res=await fetch(API);
+  const data=await res.json();
+  const tabla=document.getElementById("tablaSOP");
+
+  data.forEach(r=>{
+    if(!r.ID_SOP)return;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${r.objetivo}</td>
+      <td><button onclick="abrirSOP('${r.url_doc}','${r.ID_SOP}')">Abrir</button></td>
+    `;
+    tabla.appendChild(tr);
+  });
 }
-document.getElementById("buscarSOP").addEventListener("input", renderTabla);
-document.getElementById("filtroEstado").addEventListener("change", renderTabla);
-renderTabla();
+cargarTabla();
 
-// ABRIR SOP
+/* ===== ABRIR SOP ===== */
 async function abrirSOP(url,id){
-  SOP_URL=url; ID_SOP=id; comentarios=[];
-  const wrapper=document.getElementById("canvas-wrapper");
+  ID_SOP=id;
+  comentarios=[];
+
+  const wrap=document.getElementById("canvas-wrapper");
   document.getElementById("canvas-overlay").style.display="block";
-  wrapper.innerHTML="Cargando SOP...";
-  try{
-    const res = await fetch(url);
-    let html = await res.text();
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
 
-    // LIMPIAR contenedores vacíos de imágenes y otros elementos vacíos
-    tempDiv.querySelectorAll("img, iframe, .empty, .placeholder").forEach(el=>{
-      if(!el.src && !el.innerHTML.trim()) el.remove();
-    });
-    tempDiv.querySelectorAll("script, style").forEach(s=>s.remove());
-    tempDiv.style.margin="auto";
-    tempDiv.style.padding="20px";
-    tempDiv.style.background="#fff";
-    tempDiv.style.maxWidth="900px";
+  const html=await fetch(url).then(r=>r.text());
 
-    wrapper.innerHTML=""; wrapper.appendChild(tempDiv);
+  const div=document.createElement("div");
+  div.className="sop-content";
+  div.innerHTML=html;
 
-    // CARGAR comentarios
-    await cargarComentariosExistentes();
+  // limpiar basura
+  div.querySelectorAll("script,style").forEach(e=>e.remove());
 
-    // CLICK para agregar comentarios
-    wrapper.addEventListener("click", activarComentario);
-  }catch(err){
-    console.error(err);
-    wrapper.innerHTML="<p style='color:red;'>No se pudo cargar el SOP.</p>";
-  }
+  wrap.innerHTML="";
+  wrap.appendChild(div);
+
+  wrap.onclick=crearComentario;
+
+  cargarComentarios();
 }
 
-// CERRAR
-function cerrarCanvas(){
-  document.getElementById("canvas-overlay").style.display="none";
-  document.getElementById("canvas-wrapper").innerHTML="";
-}
+/* ===== CREAR ===== */
+function crearComentario(e){
+  const rect=e.currentTarget.getBoundingClientRect();
+  const x=e.clientX-rect.left;
+  const y=e.clientY-rect.top;
 
-// ACTIVAR comentario
-function activarComentario(e){
-  const wrapper = document.getElementById("canvas-wrapper");
-  const rect = wrapper.getBoundingClientRect();
-  clickX = e.clientX - rect.left;
-  clickY = e.clientY - rect.top;
+  const texto=prompt("Comentario:");
+  if(!texto)return;
 
-  const editDiv = document.createElement("div");
-  editDiv.contentEditable="true";
-  editDiv.className="comentario editable";
-  editDiv.style.left = clickX+"px";
-  editDiv.style.top = clickY+"px";
-  wrapper.appendChild(editDiv);
-  editDiv.focus();
+  comentarios.push({x,y,comentario:texto});
+  dibujar();
 
-  // BOTÓN X
-  const btnX = document.createElement("span");
-  btnX.innerHTML="✖"; btnX.style.cursor="pointer"; btnX.style.marginLeft="6px";
-  btnX.addEventListener("click", ()=>{ editDiv.remove(); });
-  editDiv.appendChild(btnX);
-
-  editDiv.addEventListener("blur", async ()=>{
-    const texto = editDiv.innerText.replace("✖","").trim();
-    if(!texto){ editDiv.remove(); return; }
-    comentarios.push({x:clickX, y:clickY, comentario:texto});
-    editDiv.classList.remove("editable");
-    editDiv.innerHTML = texto + `<span style="float:right; cursor:pointer;">✖</span>`;
-
-    try{
-      await fetch(SHEET_API,{
-        method:"POST",
-        body: JSON.stringify({
-          tipo:"comentario",
-          id_sop: ID_SOP,
-          usuario: USUARIO,
-          correo: CORREO,
-          comentario: texto,
-          x: clickX,
-          y: clickY,
-          page:1,
-          url_doc: SOP_URL
-        })
-      });
-      console.log("Comentario guardado");
-    }catch(err){ console.error(err);}
+  fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      tipo:"comentario",
+      id_sop:ID_SOP,
+      comentario:texto,
+      x,y
+    })
   });
 }
 
-// DIBUJAR comentarios
-function dibujarComentarios(){
-  const wrapper=document.getElementById("canvas-wrapper");
-  wrapper.querySelectorAll(".comentario").forEach(el=>el.remove());
+/* ===== DIBUJAR ===== */
+function dibujar(){
+  const wrap=document.getElementById("canvas-wrapper");
+  wrap.querySelectorAll(".comentario").forEach(e=>e.remove());
 
-  comentarios.forEach((c, idx)=>{
+  comentarios.forEach((c,i)=>{
     const div=document.createElement("div");
     div.className="comentario";
-    div.style.left=c.x+"px"; div.style.top=c.y+"px";
+    div.style.left=c.x+"px";
+    div.style.top=c.y+"px";
+    div.innerText=c.comentario;
 
-    const spanText=document.createElement("span");
-    spanText.textContent=c.comentario;
-    spanText.addEventListener("click",(e)=>{
+    div.onclick=(e)=>{
       e.stopPropagation();
-      clickX=c.x; clickY=c.y;
-      const txt = document.getElementById("comentario-text");
-      txt.value = c.comentario;
+      editIndex=i;
+      document.getElementById("comentario-text").value=c.comentario;
       document.getElementById("modal").style.display="flex";
+    };
 
-      const btnSave = document.getElementById("btn-save");
-      btnSave.replaceWith(btnSave.cloneNode(true));
-      const newBtnSave = document.getElementById("btn-save");
-
-      newBtnSave.addEventListener("click", async ()=>{
-        const nuevoTexto=document.getElementById("comentario-text").value.trim();
-        if(!nuevoTexto) return alert("Escribe algo antes de guardar");
-        comentarios[idx].comentario=nuevoTexto;
-        dibujarComentarios();
-        document.getElementById("modal").style.display="none";
-        document.getElementById("comentario-text").value="";
-
-        try{
-          await fetch(SHEET_API,{
-            method:"POST",
-            body:JSON.stringify({
-              tipo:"editar",
-              id_sop: ID_SOP,
-              comentario_idx: idx,
-              comentario: nuevoTexto
-            })
-          });
-        }catch(err){ console.error(err); }
-      });
-    });
-
-    const btnClose=document.createElement("i");
-    btnClose.className="fa-solid fa-xmark";
-    btnClose.style.cursor="pointer"; btnClose.style.marginLeft="6px"; btnClose.style.color="#c00";
-    btnClose.addEventListener("click",(e)=>{
-      e.stopPropagation(); comentarios.splice(idx,1); dibujarComentarios();
-      fetch(SHEET_API,{method:"POST", body:JSON.stringify({tipo:"eliminar",id_sop:ID_SOP,comentario_idx:idx})}).catch(err=>console.error(err));
-    });
-
-    div.appendChild(spanText); div.appendChild(btnClose);
-    wrapper.appendChild(div);
+    wrap.appendChild(div);
   });
 }
 
-// CARGAR comentarios
-async function cargarComentariosExistentes(){
-  try{
-    const res = await fetch(`${SHEET_API}?comments=${ID_SOP}`);
-    const data = await res.json();
-    comentarios = data.map(c=>({x:c.x,y:c.y,comentario:c.comentario}));
-    dibujarComentarios();
-  }catch(err){ console.error(err);}
+/* ===== EDITAR ===== */
+function guardarEdicion(){
+  const txt=document.getElementById("comentario-text").value;
+  comentarios[editIndex].comentario=txt;
+  dibujar();
+  document.getElementById("modal").style.display="none";
+}
+
+/* ===== CARGAR ===== */
+async function cargarComentarios(){
+  const res=await fetch(`${API}?comments=${ID_SOP}`);
+  const data=await res.json();
+  comentarios=data.map(c=>({x:c.x,y:c.y,comentario:c.comentario}));
+  dibujar();
+}
+
+/* ===== CERRAR ===== */
+function cerrarCanvas(){
+  document.getElementById("canvas-overlay").style.display="none";
 }
 </script>
+
 </body>
 </html>
