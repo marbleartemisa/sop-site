@@ -491,7 +491,8 @@ function populateUsers(){
   });
 }
 
-document.getElementById("loginBtn").addEventListener("click", ()=>{
+
+document.getElementById("loginBtn").addEventListener("click", ()=> {
   const userName = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
 
@@ -502,16 +503,33 @@ document.getElementById("loginBtn").addEventListener("click", ()=>{
     localStorage.setItem("usuario", user.usuario);
     closeLogin();
     mostrarBienvenida(user.usuario);
+    // 👉 Aquí es donde debes agregar:
+    mostrarUsuario(user); 
   }else{
     document.getElementById("loginError").style.display = "block";
   }
 });
+      
+function mostrarUsuario(user){
+  const userDiv = document.getElementById("userInfo");
+  const userNameSpan = document.getElementById("userName");
 
+  userNameSpan.textContent = user.usuario; // mostrar nombre
+  userDiv.style.display = "flex";          // mostrar bloque
+}
+      
 function mostrarBienvenida(nombre){
   const msg = document.getElementById("welcome-msg");
   msg.textContent = `Bienvenido, ${nombre}`;
   msg.classList.add("show");
   setTimeout(()=> msg.classList.remove("show"),3000);
+}
+
+function logout(){
+  currentUser = null;
+  localStorage.removeItem("usuario");
+  document.getElementById("userInfo").style.display = "none";
+  openLogin(); // opcional: abrir login nuevamente
 }
 
 /* ===== SOP DATA ===== */
@@ -637,6 +655,7 @@ function editSOP(){
 }
 
 /* ===== INIT ===== */
+
 window.addEventListener("DOMContentLoaded", ()=>{
 
   populateUsers();
@@ -644,12 +663,16 @@ window.addEventListener("DOMContentLoaded", ()=>{
   const savedUser = localStorage.getItem("usuario");
   if(savedUser){
     currentUser = usuarios.find(u=>u.usuario===savedUser);
-    if(currentUser) mostrarBienvenida(currentUser.usuario);
+    if(currentUser) {
+      mostrarBienvenida(currentUser.usuario);
+      // 👉 Aquí agregas:
+      mostrarUsuario(currentUser);
+    }
   }else{
     openLogin();
   }
 
-  // 🔥 ENTER PARA LOGIN
+  // ENTER para login
   document.getElementById("loginPass").addEventListener("keypress", function(e){
     if(e.key === "Enter"){
       e.preventDefault();
