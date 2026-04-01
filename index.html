@@ -878,17 +878,21 @@ function loadUsuarios(){
     opt.textContent = u.usuario;
     select.appendChild(opt);
   });
-}
-  function mostrarUsuarioTopbar(){
-  const data = JSON.parse(localStorage.getItem("usuarioActivo"));
-  if(!data) return;
 
-  document.getElementById("userInfo").innerHTML = `
-    <i class="fa-solid fa-user"></i> ${data.usuario} 
-    <span style="opacity:0.7">(${data.depto})</span>
-  `;
+
+function mostrarUsuarioNavbar(){
+  const user = JSON.parse(localStorage.getItem("usuarioActivo"));
+  const div = document.getElementById("userInfo");
+  if(user){
+    div.innerHTML = `<i class="fa-solid fa-user"></i> ${user.usuario} (${user.rol})`;
+  } else {
+    div.innerHTML = "";
+  }
 }
 
+// Ejecutar al cargar la página
+document.addEventListener("DOMContentLoaded", mostrarUsuarioNavbar);
+  
 // Login
 
   function doLogin(){
@@ -898,6 +902,12 @@ function loadUsuarios(){
 
   errorMsg.style.display = "none";
 
+  if(!usuario || !clave){
+    errorMsg.innerText = "Seleccione usuario e ingrese la clave";
+    errorMsg.style.display = "block";
+    return;
+  }
+
   const match = usuarios.find(u => u.usuario === usuario && u.clave === clave);
 
   if(!match){
@@ -906,19 +916,43 @@ function loadUsuarios(){
     return;
   }
 
-  // 🔥 GUARDAR USUARIO COMPLETO
-  localStorage.setItem("usuarioActivo", JSON.stringify(match));
+  // Verificación de rol
+  if(loginType === "admin" && match.rol !== "admin"){
+    errorMsg.innerText = "No autorizado para Admin";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  if(loginType === "editor" && match.rol !== "editor"){
+    errorMsg.innerText = "No autorizado para Editar SOP";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  // Guardamos usuario en localStorage
+  const userData = {
+    usuario: match.usuario,
+    rol: match.rol,
+    depto: match.depto || "",
+    correo: match.correo || ""
+  };
+  localStorage.setItem("usuarioActivo", JSON.stringify(userData));
 
   closeLogin();
 
-  // REDIRECCIÓN
-  if(loginType === "admin"){
+  // 🔹 Redirigir solo si es login desde menu
+  if(loginType === "admin" && match.rol === "admin"){
     window.location.href = "/sop-site/admin/";
-  } else {
+  }
+  if(loginType === "editor" && match.rol === "editor" && window.location.pathname.includes("sop-viewer-edit")){
     window.location.href = "/sop-site/sop-viewer-edit/";
   }
+
+  // 🔹 Actualizar badge de usuario en navbar
+  mostrarUsuarioNavbar();
 }
 
+  
 // Eventos
 document.getElementById("loginBtn").addEventListener("click", doLogin);
 document.getElementById("loginPass").addEventListener("keypress", e => { if(e.key === "Enter") doLogin(); });
