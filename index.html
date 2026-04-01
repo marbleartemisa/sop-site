@@ -1,33 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP</title>
+
+  <!-- Font Awesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Estilos CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<!-- VIDEO DE FONDO -->
-<video id="bgVideo" autoplay muted loop>
-  <source src="background.mp4" type="video/mp4">
-</video>
-
 <div class="overlay">
 
   <!-- NAVBAR -->
   <div class="navbar">
-    <div class="logo"><img src="logo.png"><span>ARTEMISA MARBLE & CABINETS</span></div>
+    <div class="logo">
+      <img src="logo.png" alt="Logo">
+      <span>ARTEMISA MARBLE & CABINETS</span>
+    </div>
+
     <div style="display:flex; align-items:center; gap:15px;">
       <div class="menu">
         <a href="#">Inicio</a>
         <a href="#">Registrar SOP</a>
         <a href="#">Aportes SOP</a>
         <a href="#" onclick="openLogin('editor')">Editar SOP</a>
-        <a href="#" onclick="openLogin('admin')">Admin</a>
+        <a href="#" onclick="openLogin('admin')"><i class="fa-solid fa-user-shield"></i> Admin</a>
+        <a href="#">Portal-Web</a>
       </div>
+
+      <div id="userInfo" style="font-size:0.8rem; background:rgba(255,255,255,0.1); padding:6px 12px; border-radius:20px; white-space:nowrap;"></div>
+
+      <button onclick="logout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+
       <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
     </div>
   </div>
@@ -39,26 +47,76 @@
     <a href="#sopContainer" class="cta-btn">Ver SOP</a>
   </div>
 
-  <!-- TABLA SOP -->
-  <div class="sop-container" id="sopContainer">
-    <div class="sop-info">Cargando SOP...</div>
+  <!-- BUSCADOR -->
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Buscar SOP...">
+    <select id="deptFilter">
+      <option value="">Todos los departamentos</option>
+      <option value="comercial">Comercial</option>
+      <option value="produccion">Producción</option>
+      <option value="instalacion">Instalación</option>
+      <option value="administracion">Administración</option>
+      <option value="maquinarias">Maquinarias</option>
+      <option value="vehiculos">Vehículos</option>
+      <option value="houzz-pro">Houzz Pro</option>
+      <option value="ecopower">Ecopowertech</option>
+      <option value="medidas">Medidas</option>
+      <option value="taller">Taller</option>
+    </select>
   </div>
 
-  <!-- CARRUSEL -->
+  <!-- DEPT FILTER BUTTONS -->
+  <div class="dept-filter-bar">
+    <button onclick="filterDept('')" class="dept-filter active">Todos</button>
+    <button onclick="filterDept('comercial',this)" class="dept-filter">Comercial</button>
+    <button onclick="filterDept('produccion',this)" class="dept-filter">Carpintería</button>
+    <button onclick="filterDept('instalacion',this)" class="dept-filter">Stone</button>
+    <button onclick="filterDept('administracion',this)" class="dept-filter">Administración</button>
+    <button onclick="filterDept('maquinarias',this)" class="dept-filter">Maquinarias</button>
+    <button onclick="filterDept('vehiculos',this)" class="dept-filter">Vehículos</button>
+    <button onclick="filterDept('houzz-pro',this)" class="dept-filter">Houzz-Pro</button>
+    <button onclick="filterDept('medidas',this)" class="dept-filter">Medidas</button>
+    <button onclick="filterDept('taller',this)" class="dept-filter">Taller</button>
+  </div>
+
+  <!-- TABLA SOP -->
+  <div class="sop-container" id="sopContainer"></div>
+
+  <!-- VIDEOS -->
+  <div class="video-section">
+    <video autoplay muted loop playsinline>
+      <source src="seleccion video 5.MP4" type="video/mp4">
+    </video>
+
+    <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
+
+    <video autoplay muted loop playsinline>
+      <source src="seleccion video super 1.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- CARRUSEL PREMIUM -->
   <div class="carousel-container-premium">
     <div class="carousel-track-premium">
-      <div class="carousel-slide-premium"><img src="ABQM0471.JPG"></div>
-      <div class="carousel-slide-premium"><img src="outlet.png"></div>
-      <div class="carousel-slide-premium"><img src="VanitiesBath.png"></div>
-      <div class="carousel-slide-premium"><img src="Kitchen.jpg"></div>
-      <!-- duplicado para loop -->
-      <div class="carousel-slide-premium"><img src="ABQM0471.JPG"></div>
-      <div class="carousel-slide-premium"><img src="outlet.png"></div>
+      <div class="carousel-slide-premium"><img src="ABQM0471.JPG" alt="Imagen 1" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="outlet.png" alt="Outlet" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="VanitiesBath.png" alt="Vanities & Bath" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="IMG_2393.JPG" alt="Imagen 4" loading="lazy"></div>
+      <div class="carousel-slide-premium"><img src="IHCH5272.JPG" alt="Imagen 5" loading="lazy"></div>
     </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer" style="text-align:center;color:white;background: rgba(0,0,0,0.65);margin:30px 0;">
+    © 2026 ARTEMISA MARBLE & CABINETS Rev 2.0
   </div>
 
 </div>
 
-<script src="main.js"></script>
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="login-modal" style="display:none;"></div>
+
+<!-- JS -->
+<script src="main.js" defer></script>
 </body>
 </html>
