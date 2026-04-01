@@ -288,6 +288,25 @@ function mostrarNotificacion(msg,tipo){
   setTimeout(()=>notif.remove(),4000);
 }
 
+ /* ===== EDITAR SOP ===== */
+function editSOP(){
+  if(!currentUser){
+    alert("Debe iniciar sesión");
+    openLogin();
+    return;
+  }
+
+  const pass = prompt("Ingrese su clave");
+  if(pass === currentUser.clave){
+    window.location.href="/sop-site/sop-viewer-edit/";
+  }else{
+    alert("Clave incorrecta");
+  }
+}
+
+/* ===== INIT ===== */
+
+
  // Al cargar la página, mostrar usuario si está guardado
 window.addEventListener("DOMContentLoaded", () => {
   const savedUser = localStorage.getItem("usuario");
