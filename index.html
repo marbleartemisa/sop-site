@@ -110,50 +110,7 @@ body{
 .cta-btn:hover{
   transform:scale(1.05);
 }
-  
-<!-- Modal Login -->
-<div id="modal-login">
-  <div id="modal-login-content">
-    <h3>Ingrese su clave</h3>
-    <input type="password" id="clave" placeholder="Clave">
-    <div style="text-align:right;">
-      <button id="btnLogin">Aceptar</button>
-    </div>
-  </div>
-</div>
 
-  /* Modal login */
-#modal-login{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background: rgba(0,0,0,0.45);
-    backdrop-filter: blur(6px);
-    z-index:2000;
-}
-#modal-login-content{
-    background: rgba(0,0,0,0.85);
-    border-radius:14px;
-    padding:20px;
-    width:300px;
-    color:#fff;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-#modal-login-content h3{ text-align:center; color:#00aaff; margin:0; }
-#modal-login-content input{
-    padding:10px; border-radius:8px; border:none; font-size:15px;
-    background: rgba(255,255,255,0.15); color:#fff;
-}
-#modal-login-content input:focus{ outline:none; background: rgba(255,255,255,0.25); }
-#modal-login-content button{
-    padding:10px 16px; border:none; border-radius:8px; background:#00d1ff; color:white; cursor:pointer; font-weight:bold;
-}
-#modal-login-content button:hover{ background:#00a8cc; }
 
 /* Mensaje de bienvenida */
 #welcome-msg{
@@ -191,14 +148,17 @@ body{
 .search-container input,
 .search-container select{
   width:100%;
+  max-width:400px; /* limita el estiramiento */
+  margin:0 auto;   /* centra horizontalmente */
   padding:12px 15px;
   border-radius:30px;
   border:none;
   font-size:1rem;
   box-shadow:0 8px 20px rgba(0,0,0,0.25);
   outline:none;
+  box-sizing:border-box;
 }
-
+  
 /* ===== SOP TABLE MODERN ===== */
 
 .dept-filter-bar{
@@ -213,24 +173,16 @@ gap:10px;
 
 }
 
-.dept-filter{
-
-padding:8px 16px;
-
-border-radius:20px;
-
-border:none;
-
-background:white;
-
-box-shadow:0 6px 14px rgba(0,0,0,0.15);
-
-font-size:.85rem;
-
-cursor:pointer;
-
-transition:.25s;
-
+  .dept-filter{
+  padding:8px 16px;
+  border-radius:20px;
+  border:none;
+  background:white;
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
+  font-size:.85rem;
+  cursor:pointer;
+  transition:.25s;
+  flex: 0 0 auto; /* evita que se estiren */
 }
 
 .dept-filter:hover{
@@ -1063,7 +1015,7 @@ document.getElementById("loginBtn").addEventListener("click", ()=>{
   
   // Mostrar modal login al cargar la página si no hay usuario
 if(!localStorage.getItem("usuario")){
-    document.getElementById("modal-login").style.display = "flex";
+    document.getElementById("loginModal").style.display = "flex";
 }
 
 // Función para mostrar bienvenida
@@ -1112,7 +1064,7 @@ function loginUsuario(){
   localStorage.setItem("correo", usuario.correo);
 
   // Cerrar modal
-  document.getElementById("modal-login").style.display = "none";
+  document.getElementById("loginModal").style.display = "none";
 
   // Mostrar usuario en navbar
   const spanUser = document.getElementById("usuario-logeado");
@@ -1136,8 +1088,8 @@ document.getElementById("clave").addEventListener("keypress", function(e){
 });
 
 // Evita click fuera del modal
-document.getElementById("modal-login").addEventListener("click", e=> e.stopPropagation());
-document.getElementById("modal-login-content").addEventListener("click", e=> e.stopPropagation());
+document.getElementById("loginModal").addEventListener("click", e=> e.stopPropagation());
+document.getElementById("loginModal-content").addEventListener("click", e=> e.stopPropagation());
 
 // -----------------------------
 // ABRIR MODAL AL CARGAR SI NO HAY USUARIO
@@ -1151,7 +1103,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
       if(spanUser) spanUser.textContent = currentUser.usuario;
     }
   } else {
-    document.getElementById("modal-login").style.display = "flex";
+    document.getElementById("loginModal").style.display = "flex";
   }
 });
 // -----------------------------
@@ -1160,7 +1112,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
 function editSOP(){
   if(!currentUser){
     alert("Debe iniciar sesión primero");
-    document.getElementById("modal-login").style.display = "flex";
+    document.getElementById("loginModal").style.display = "flex";
     return;
   }
 
