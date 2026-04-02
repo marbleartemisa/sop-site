@@ -346,16 +346,6 @@ async function cargarPuntos(idSOP){
   }
 }
 
-  
-
-// 🔹 Evento al cambiar el dropdown
-document.getElementById("selectSOP").addEventListener("change", (e) => {
-  cargarPuntos(e.target.value);
-});
-
-// ... tus otras funciones: login, cargarSOPs, cargarPuntos, etc.
-
-
 
 // EVENTOS
 document.getElementById("selectSOP").addEventListener("change",(e)=>cargarPuntos(e.target.value));
