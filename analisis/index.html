@@ -247,17 +247,17 @@ function logout(){ localStorage.removeItem("usuario"); localStorage.removeItem("
 
 // CARGAR SOPS
 
-async function cargarSOPs(){
+    async function cargarSOPs(){
   try{
-    const res = await fetch(SHEET_API);
+    const res = await fetch(`${SHEET_API}?listarSOPs=true`);
     const data = await res.json();
     const select = document.getElementById("selectSOP");
     select.innerHTML = '<option value="">Seleccione SOP</option>';
     data.forEach(row=>{
-      if(row.Id_Sop_Analisis){   // usa exactamente el nombre de columna de la hoja
+      if(row.Id_Sop_Analisis){   // usa exactamente el nombre de columna
         const opt = document.createElement("option");
-        opt.value = row.Id_Sop_Analisis;  // <- esto es clave
-        opt.textContent = row.Nombre_SOP; // puedes agregar row.Descripcion si quieres
+        opt.value = row.Id_Sop_Analisis;  
+        opt.textContent = row.Nombre_SOP; 
         select.appendChild(opt);
       }
     });
@@ -272,6 +272,8 @@ async function cargarPuntos(idSOP){
   tabla.innerHTML="";
   try{
     const res = await fetch(`${SHEET_API}?analisis=${idSOP}`);
+      
+      
     puntos = await res.json();
     console.log("Puntos recibidos:", puntos); // <-- agregar esta línea
     puntos.forEach((punto, idx)=>{
