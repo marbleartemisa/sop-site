@@ -341,12 +341,21 @@ async function guardarAnalisis(){
   const tabla = document.getElementById("tablaPuntos");
   const filas = tabla.querySelectorAll("tr");
 
+  // 🔹 crear array limpio con los campos correctos
+  const puntosAGuardar = [];
+
   filas.forEach((fila, idx)=>{
-    if(puntos[idx]){  // aseguramos que existe el punto
-      puntos[idx].Texto_Punto = fila.cells[1].innerText.trim();
-      puntos[idx].Texto_Ingles = fila.cells[2].innerText.trim();
-      puntos[idx].Comentarios = fila.cells[4].innerText.trim();
-      puntos[idx].Estado = fila.cells[5].querySelector("select").value;
+    const punto = puntos[idx];
+    if(punto){
+      puntosAGuardar.push({
+        Id_Punto: punto.ID_Punto || punto.Id_Punto, // clave única
+        Usuario: punto.Usuario || "",
+        Fecha: punto.Fecha || "",
+        Texto_Punto: fila.cells[1].innerText.trim(),
+        Texto_Ingles: fila.cells[2].innerText.trim(),
+        Comentarios: fila.cells[4].innerText.trim(),
+        Estado: fila.cells[5].querySelector("select").value
+      });
     }
   });
 
@@ -357,14 +366,16 @@ async function guardarAnalisis(){
       body: JSON.stringify({
         tipo:"analisis",
         id_sop: currentSOP,
-        puntos: puntos
+        puntos: puntosAGuardar
       })
     });
 
-    if(res.ok){
+    const result = await res.json();
+
+    if(res.ok && result.success){
       alert("Cambios guardados correctamente!");
     } else {
-      console.error("Error guardando:", res.statusText);
+      console.error("Error guardando:", result);
       alert("Error guardando los cambios.");
     }
 
