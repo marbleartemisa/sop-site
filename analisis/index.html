@@ -363,29 +363,32 @@ window.addEventListener("DOMContentLoaded", ()=>{
   }else openLogin();
 });    
 
-// 🔹 GUARDAR CAMBIOS DE UNA FILA
 
+
+// 🔹 GUARDAR CAMBIOS DE UNA FILA
 document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
-  if (!e.target.closest(".btn-save-row")) return;
+  if (!e.target.closest(".btn-save-row")) return; // solo botones de guardar
+
   const fila = e.target.closest("tr");
-  const idx = fila.dataset.index; // ✅ NUEVO
+  const idx = fila.dataset.index;
   const punto = puntos[idx];
 
   if (!punto) return alert("Fila no encontrada");
-    if (!currentUser) {
-  alert("Debes iniciar sesión");
-  return;
-}
-if (!punto.Id_Punto && !punto.ID_Punto) {
-  alert("Error: Id_Punto no existe");
-  console.error("Punto sin ID:", punto);
-  return;
-}
-    
+  if (!currentUser) {
+    alert("Debes iniciar sesión");
+    return;
+  }
+  if (!punto.Id_Punto && !punto.ID_Punto) {
+    alert("Error: Id_Punto no existe");
+    console.error("Punto sin ID:", punto);
+    return;
+  }
+
+  // 🔹 Construimos objeto con los campos exactos que tu backend necesita
   const dataFila = {
     Id_Punto: punto.Id_Punto || punto.ID_Punto,
     Id_Sop_Analisis: currentSOP,
-    Usuario: currentUser?.usuario || punto.Usuario || "",
+    Usuario: currentUser.usuario,
     Fecha: new Date().toLocaleString(),
     Texto_Punto: fila.cells[1].innerText.trim(),
     Texto_Ingles: fila.cells[2].innerText.trim(),
@@ -393,46 +396,40 @@ if (!punto.Id_Punto && !punto.ID_Punto) {
     Estado: fila.cells[5].querySelector("select").value
   };
 
-  // Simulamos formulario para evitar CORS
-const formBody = new URLSearchParams();
-formBody.append("tipo", "analisis");
-formBody.append("id_sop", currentSOP);
-formBody.append("puntos", JSON.stringify([dataFila]));
+  // 🔹 Debug: mostrar objeto antes de enviar
+  console.log("📤 Enviando al backend (dataFila):", dataFila);
 
-// 🔍 DEBUG 1: ver exactamente lo que se envía
-console.log("📤 Enviando al backend (dataFila):", dataFila);
-console.log("📤 Enviando al backend (formBody):", formBody.toString());
+  try {
+    // 🔹 Enviamos solo el arreglo de puntos como JSON
+    const res = await fetch(SHEET_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify([dataFila])
+    });
 
-try {
-  const res = await fetch(SHEET_API, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-    body: formBody.toString()
-  });
+    // 🔹 Debug: estado HTTP
+    console.log("📡 Status HTTP:", res.status, res.statusText);
 
-  // 🔍 DEBUG 2: estado HTTP
-  console.log("📡 Status HTTP:", res.status, res.statusText);
+    const result = await res.json();
 
-  const result = await res.json();
+    // 🔹 Debug: respuesta del backend
+    console.log("📥 Respuesta backend:", result);
 
-  // 🔍 DEBUG 3: respuesta del backend
-  console.log("📥 Respuesta backend:", result);
+    if (res.ok && result.success) {
+      console.log("✅ Guardado exitoso");
+      alert("Fila guardada correctamente!");
+    } else {
+      console.error("❌ Error guardando fila:", result);
+      alert("Error guardando fila, revisa consola");
+    }
 
-  if (res.ok && result.success) {
-    console.log("✅ Guardado exitoso");
-    alert("Fila guardada correctamente!");
-  } else {
-    console.error("❌ Error guardando fila:", result);
-    alert("Error guardando fila, revisa consola");
+  } catch (err) {
+    // 🔹 Debug: error de red / fetch
+    console.error("🚨 Error en fetch POST:", err);
+    alert("Error guardando fila (fetch fallido)");
   }
-
-} catch (err) {
-  // 🔍 DEBUG 4: error de red / fetch
-  console.error("🚨 Error en fetch POST:", err);
-  alert("Error guardando fila (fetch fallido)");
-}
-
 });
+
 
 
 // MODAL COMENTARIO
