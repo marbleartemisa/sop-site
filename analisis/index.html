@@ -312,7 +312,7 @@ async function cargarPuntos(idSOP){
     // 🔹 Llenar la tabla
     puntos.forEach((punto, idx)=>{
       const fila = document.createElement("tr");
-     fila.dataset.index = idx; // ✅ INSERTAR ESTA LINEA
+     fila.dataset.id = punto.Id_Punto;// ✅ INSERTAR ESTA LINEA
  fila.innerHTML = `
   <td>${idx+1}</td>
   <td contenteditable="true">${punto.Texto_Punto || ''}</td>
@@ -360,8 +360,15 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
   if (!e.target.closest(".btn-save-row")) return;
 
   const fila = e.target.closest("tr");
-  const idx = fila.dataset.index;
-  const punto = puntos[idx];
+  const idPunto = fila.dataset.id;
+
+  const punto = puntos.find(p =>
+      String(p.Id_Punto).trim() === String(idPunto).trim()
+    );
+  if (!punto) {
+  console.error("Id_Punto no encontrado:", idPunto);
+  return alert("Error: Id_Punto inválido");
+}
 
   if (!punto) return alert("Fila no encontrada");
   if (!currentUser) return alert("Debes iniciar sesión");
@@ -379,7 +386,7 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
     Estado: fila.cells[5].querySelector("select").value
   };
 
-  console.log("📤 Enviando:", dataFila);
+  console.log("📤 Enviando ID:", punto.Id_Punto);
 
   try {
     const res = await fetch(SHEET_API,{
