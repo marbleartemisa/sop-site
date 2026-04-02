@@ -369,47 +369,55 @@ window.addEventListener("DOMContentLoaded", ()=>{
   }else openLogin();
 });    
 
-document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
-  if(e.target.closest(".btn-save-row")){
-    const fila = e.target.closest("tr");
-    const idx = fila.rowIndex - 1; // porque tbody es cero-index
-    const punto = puntos[idx];
-    if(!punto) return alert("Fila no encontrada");
+// 🔹 GUARDAR CAMBIOS DE UNA FILA
 
+document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
+  if (e.target.closest(".btn-save-row")) {
+    const fila = e.target.closest("tr");
+    const idx = fila.rowIndex - 1; // tbody es 0-index
+    const punto = puntos[idx];
+    if (!punto) return alert("Fila no encontrada");
+
+    // 🔹 Preparamos datos igual que SOP_Aportes
     const dataFila = {
-      Id_Punto: punto.ID_Punto || punto.Id_Punto,
+      Id_Punto: punto.Id_Punto || punto.ID_Punto,
       Id_Sop_Analisis: currentSOP,
-      Usuario: punto.Usuario || "",
-      Fecha: punto.Fecha || "",
+      Usuario: currentUser?.usuario || punto.Usuario || "",
+      Fecha: new Date().toLocaleString(),
       Texto_Punto: fila.cells[1].innerText.trim(),
       Texto_Ingles: fila.cells[2].innerText.trim(),
       Comentarios: fila.cells[4].innerText.trim(),
       Estado: fila.cells[5].querySelector("select").value
     };
 
+    // 🔹 FormData simulado para evitar CORS
+    const formBody = new URLSearchParams();
+    formBody.append("tipo", "analisis");
+    formBody.append("id_sop", currentSOP);
+    formBody.append("puntos", JSON.stringify([dataFila])); // aunque sea 1 fila, enviamos array
+
     try {
       const res = await fetch(SHEET_API, {
-        method:"POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tipo:"analisis",
-          id_sop: currentSOP,
-          puntos: [dataFila]  // enviamos un array con solo esta fila
-        })
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+        body: formBody.toString()
       });
       const result = await res.json();
-      if(res.ok && result.success){
+      if (res.ok && result.success) {
         alert("Fila guardada correctamente!");
       } else {
         console.error("Error guardando fila:", result);
         alert("Error guardando fila");
       }
-    } catch(err){
-      console.error(err);
+    } catch (err) {
+      console.error("Error en fetch POST:", err);
       alert("Error guardando fila");
     }
   }
 });
+
+
+
 // MODAL COMENTARIO
 function cerrarModal(){ document.getElementById("modal").style.display="none"; }
 </script>
