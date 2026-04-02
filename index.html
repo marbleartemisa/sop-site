@@ -224,19 +224,38 @@
       }
       
 
-.sop-table tbody tr {
-    background: rgba(255, 255, 255, 0.6); /* blanco translúcido */
-}
-
-.sop-table tbody tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.sop-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.8); /* más visible al pasar el mouse */
-}
-
+      .sop-table tbody tr {
+          background: rgba(255, 255, 255, 0.6); /* blanco translúcido */
+      }
       
+      .sop-table tbody tr:nth-child(even) {
+          background: rgba(255, 255, 255, 0.5);
+      }
+      
+      .sop-table tbody tr:hover {
+          background: rgba(255, 255, 255, 0.8); /* más visible al pasar el mouse */
+      }
+
+      /* ===== NOMBRE SOP (COLUMNA PROCEDIMIENTO) ===== */
+.sop-nombre {
+  font-weight: 600;              /* más negrita pero elegante */
+  font-size: 15px;               /* un poco más grande */
+  color: #1f2d3d;                /* color profesional */
+  letter-spacing: 0.3px;         /* mejora lectura */
+  transition: all 0.2s ease;     /* animación suave */
+}
+
+/* Efecto al pasar el mouse */
+.sop-nombre:hover {
+  color: #007bff;                /* azul moderno */
+  cursor: pointer;
+  transform: translateX(3px);    /* pequeño movimiento */
+}
+
+/* Opcional: que toda la fila reaccione */
+tr:hover .sop-nombre {
+  color: #007bff;
+}
       /* ===== BOTON ===== */
       .sop-btn{
         display:inline-flex;
@@ -573,7 +592,7 @@ function renderSOP(filtered){
     html += `
     <tr>
       <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
-      <td data-label="Procedimiento">${sop.title}</td>
+     <td data-label="Procedimiento" class="sop-nombre">${sop.title}</td>
       <td>
         <a class="sop-btn" href="/sop-site/viewer.html?doc=${sop.url}">
         Ver
