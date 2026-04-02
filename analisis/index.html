@@ -202,9 +202,6 @@ select{ width:100%;}
     </table>
   </div>
 
-
-  
-  <button onclick="guardarAnalisis()">💾 Guardar Cambios</button>
 </div>
 
 <!-- MODAL COMENTARIO -->
@@ -321,20 +318,25 @@ async function cargarPuntos(idSOP){
     // 🔹 Llenar la tabla
     puntos.forEach((punto, idx)=>{
       const fila = document.createElement("tr");
-      fila.innerHTML = `
-        <td>${idx+1}</td>
-        <td contenteditable="true">${punto.Texto_Punto || ''}</td>
-        <td contenteditable="true">${punto.Texto_Ingles || ''}</td>
-        <td>${punto.Usuario || ''}</td>
-        <td contenteditable="true">${punto.Comentarios || ''}</td>
-        <td>
-          <select>
-            <option value="Pendiente" ${punto.Estado==='Pendiente'?'selected':''}>Pendiente</option>
-            <option value="Aceptado" ${punto.Estado==='Aceptado'?'selected':''}>Aceptado</option>
-            <option value="Rechazado" ${punto.Estado==='Rechazado'?'selected':''}>Rechazado</option>
-          </select>
-        </td>
-      `;
+ fila.innerHTML = `
+  <td>${idx+1}</td>
+  <td contenteditable="true">${punto.Texto_Punto || ''}</td>
+  <td contenteditable="true">${punto.Texto_Ingles || ''}</td>
+  <td>${punto.Usuario || ''}</td>
+  <td contenteditable="true">${punto.Comentarios || ''}</td>
+  <td>
+    <select>
+      <option value="Pendiente" ${punto.Estado==='Pendiente'?'selected':''}>Pendiente</option>
+      <option value="Aceptado" ${punto.Estado==='Aceptado'?'selected':''}>Aceptado</option>
+      <option value="Rechazado" ${punto.Estado==='Rechazado'?'selected':''}>Rechazado</option>
+    </select>
+  </td>
+  <td>
+    <button class="btn-save-row" title="Guardar fila">
+      <i class="fa-solid fa-floppy-disk"></i>
+    </button>
+  </td>
+`;
       tabla.appendChild(fila);
     });
 
@@ -344,6 +346,8 @@ async function cargarPuntos(idSOP){
   }
 }
 
+  
+
 // 🔹 Evento al cambiar el dropdown
 document.getElementById("selectSOP").addEventListener("change", (e) => {
   cargarPuntos(e.target.value);
@@ -351,64 +355,7 @@ document.getElementById("selectSOP").addEventListener("change", (e) => {
 
 // ... tus otras funciones: login, cargarSOPs, cargarPuntos, etc.
 
-// 🔹 GUARDAR CAMBIOS
-async function guardarAnalisis(){
-  const tabla = document.getElementById("tablaPuntos");
-  const filas = tabla.querySelectorAll("tr");
 
-  const puntosAGuardar = [];
-
-  filas.forEach((fila, idx)=>{
-    const punto = puntos[idx];
-    if(punto){
-      puntosAGuardar.push({
-        Id_Punto: punto.ID_Punto || punto.Id_Punto,
-        Id_Sop_Analisis: currentSOP, // ahora enviamos la columna
-        Usuario: punto.Usuario || "",
-        Fecha: punto.Fecha || "",
-        Texto_Punto: fila.cells[1].innerText.trim(),
-        Texto_Ingles: fila.cells[2].innerText.trim(),
-        Comentarios: fila.cells[4].innerText.trim(),
-        Estado: fila.cells[5].querySelector("select").value
-      });
-    }
-  });
-
-  if(!currentSOP){
-    alert("Debe seleccionar un SOP antes de guardar");
-    return;
-  }
-
-  if(puntosAGuardar.length === 0){
-    alert("No hay puntos para guardar");
-    return;
-  }
-
-  try{
-    const res = await fetch(SHEET_API,{
-      method:"POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tipo:"analisis",
-        id_sop: currentSOP,
-        puntos: puntosAGuardar
-      })
-    });
-
-    const result = await res.json();
-
-    if(res.ok && result.success){
-      alert("Cambios guardados correctamente!");
-    } else {
-      console.error("Error guardando:", result);
-      alert("Error guardando los cambios.");
-    }
-
-  }catch(e){
-    console.error(e);
-    alert("Error guardando");
-  }
-}
 
 // EVENTOS
 document.getElementById("selectSOP").addEventListener("change",(e)=>cargarPuntos(e.target.value));
@@ -422,7 +369,47 @@ window.addEventListener("DOMContentLoaded", ()=>{
   }else openLogin();
 });    
 
+document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
+  if(e.target.closest(".btn-save-row")){
+    const fila = e.target.closest("tr");
+    const idx = fila.rowIndex - 1; // porque tbody es cero-index
+    const punto = puntos[idx];
+    if(!punto) return alert("Fila no encontrada");
 
+    const dataFila = {
+      Id_Punto: punto.ID_Punto || punto.Id_Punto,
+      Id_Sop_Analisis: currentSOP,
+      Usuario: punto.Usuario || "",
+      Fecha: punto.Fecha || "",
+      Texto_Punto: fila.cells[1].innerText.trim(),
+      Texto_Ingles: fila.cells[2].innerText.trim(),
+      Comentarios: fila.cells[4].innerText.trim(),
+      Estado: fila.cells[5].querySelector("select").value
+    };
+
+    try {
+      const res = await fetch(SHEET_API, {
+        method:"POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tipo:"analisis",
+          id_sop: currentSOP,
+          puntos: [dataFila]  // enviamos un array con solo esta fila
+        })
+      });
+      const result = await res.json();
+      if(res.ok && result.success){
+        alert("Fila guardada correctamente!");
+      } else {
+        console.error("Error guardando fila:", result);
+        alert("Error guardando fila");
+      }
+    } catch(err){
+      console.error(err);
+      alert("Error guardando fila");
+    }
+  }
+});
 // MODAL COMENTARIO
 function cerrarModal(){ document.getElementById("modal").style.display="none"; }
 </script>
