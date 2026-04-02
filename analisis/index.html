@@ -379,7 +379,7 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
     Estado: fila.cells[5].querySelector("select").value
   };
 
-  console.log("📤 Enviando al backend:", dataFila);
+  console.log("📤 Enviando:", dataFila);
 
   try {
     const res = await fetch(SHEET_API,{
@@ -387,10 +387,9 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
   body: JSON.stringify({
     tipo:"analisis",
     id_sop: currentSOP,
-    puntos: puntosAGuardar
+    puntos: [dataFila]
   })
 });
-    
     const result = await res.json();
     console.log("📥 Respuesta backend:", result);
 
