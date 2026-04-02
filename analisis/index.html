@@ -192,16 +192,20 @@ async function cargarPuntos(idSOP){
 
   try{
     const res = await fetch(`${SHEET_API}?analisis=${idSOP}`);
-    puntos = await res.json();
+  puntos = (await res.json()).map(p => ({
+  ...p,
+  Id_Punto: (p.Id_Punto || p.ID_Punto || "").toString().trim()
+}));
     console.log("Puntos recibidos del backend:", puntos);
 
     if(!puntos || puntos.length === 0){
       tabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">No hay puntos para este SOP</td></tr>`;
       return;
     }
-
+      
     puntos.forEach((punto, idx)=>{
       const fila = document.createElement("tr");
+      fila.dataset.index = idx; // ✅ INSERTAR ESTA LINEA
       fila.innerHTML = `
         <td>${idx+1}</td>
         <td contenteditable="true">${punto.Texto_Punto || ''}</td>
@@ -237,10 +241,18 @@ selectSOP.addEventListener("change",(e)=>cargarPuntos(e.target.value));
 document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
   if (!e.target.closest(".btn-save-row")) return;
   const fila = e.target.closest("tr");
-  const idx = fila.rowIndex - 0; // tbody index base 0
+    const idx = fila.dataset.index; // ✅ NUEVO
   const punto = puntos[idx];
   if (!punto) return alert("Fila no encontrada");
-
+  if (!currentUser) {
+  alert("Debes iniciar sesión");
+  return;
+}
+if (!punto.Id_Punto && !punto.ID_Punto) {
+  alert("Error: Id_Punto no existe");
+  console.error("Punto sin ID:", punto);
+  return;
+}
   const dataFila = {
     Id_Punto: punto.Id_Punto || punto.ID_Punto,
     Id_Sop_Analisis: currentSOP,
@@ -252,24 +264,43 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
     Estado: fila.cells[5].querySelector("select").value
   };
 
-  const formBody = new URLSearchParams();
-  formBody.append("tipo", "analisis");
-  formBody.append("id_sop", currentSOP);
-  formBody.append("puntos", JSON.stringify([dataFila]));
+const formBody = new URLSearchParams();
+formBody.append("tipo", "analisis");
+formBody.append("id_sop", currentSOP);
+formBody.append("puntos", JSON.stringify([dataFila]));
 
-  try {
-    const res = await fetch(SHEET_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-      body: formBody.toString()
-    });
-    const result = await res.json();
-    if (res.ok && result.success) alert("Fila guardada correctamente!");
-    else { console.error("Error guardando fila:", result); alert("Error guardando fila"); }
-  } catch (err) {
-    console.error("Error en fetch POST:", err);
-    alert("Error guardando fila (fetch fallido)");
+// 🔍 DEBUG 1: ver exactamente lo que se envía
+console.log("📤 Enviando al backend (dataFila):", dataFila);
+console.log("📤 Enviando al backend (formBody):", formBody.toString());
+
+try {
+  const res = await fetch(SHEET_API, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+    body: formBody.toString()
+  });
+
+  // 🔍 DEBUG 2: estado HTTP
+  console.log("📡 Status HTTP:", res.status, res.statusText);
+
+  const result = await res.json();
+
+  // 🔍 DEBUG 3: respuesta del backend
+  console.log("📥 Respuesta backend:", result);
+
+  if (res.ok && result.success) {
+    console.log("✅ Guardado exitoso");
+    alert("Fila guardada correctamente!");
+  } else {
+    console.error("❌ Error guardando fila:", result);
+    alert("Error guardando fila, revisa consola");
   }
+
+} catch (err) {
+  // 🔍 DEBUG 4: error de red / fetch
+  console.error("🚨 Error en fetch POST:", err);
+  alert("Error guardando fila (fetch fallido)");
+}
 });
 
 // DOMContentLoaded
