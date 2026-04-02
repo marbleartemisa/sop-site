@@ -45,6 +45,26 @@ h2{ color:#003366; margin-bottom:15px; text-align:center;}
 input, select, textarea{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
 table{ width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
 th, td{ padding:10px 12px; text-align:left; border-bottom:1px solid #ddd; vertical-align: middle;}
+/* Ajuste columnas para comentarios y estado */
+table th:nth-child(5), table td:nth-child(5) {
+  width: 35%;       /* Comentarios más ancha */
+  min-width: 180px; /* mínimo ancho para escribir */
+}
+
+table th:nth-child(6), table td:nth-child(6) {
+  width: 15%;       /* Estado más ancho para mostrar completo */
+}
+
+td[contenteditable="true"] {
+  min-height: 40px;        /* más alto para escribir varios renglones */
+  white-space: pre-wrap;   /* permite que el texto haga wrap */
+}
+
+/* Que el select de Estado ocupe todo el ancho de la celda */
+td select {
+  width: 100%;
+}
+    
 th{ background:#003366; color:white;}
 button{ padding:8px 12px; border:none; border-radius:6px; cursor:pointer; background:#00aaff; color:white; font-weight:bold; transition:.3s;}
 button:hover{ background:#0077aa;}
@@ -316,28 +336,43 @@ document.getElementById("selectSOP").addEventListener("change", (e) => {
     
 
 // GUARDAR CAMBIOS
+
 async function guardarAnalisis(){
   const tabla = document.getElementById("tablaPuntos");
   const filas = tabla.querySelectorAll("tr");
+
   filas.forEach((fila, idx)=>{
-    puntos[idx].Texto_Punto = fila.cells[1].innerText;
-    puntos[idx].Texto_Ingles = fila.cells[2].innerText;
-    puntos[idx].Comentarios = fila.cells[4].innerText;
-    puntos[idx].Estado = fila.cells[5].querySelector("select").value;
+    if(puntos[idx]){  // aseguramos que existe el punto
+      puntos[idx].Texto_Punto = fila.cells[1].innerText.trim();
+      puntos[idx].Texto_Ingles = fila.cells[2].innerText.trim();
+      puntos[idx].Comentarios = fila.cells[4].innerText.trim();
+      puntos[idx].Estado = fila.cells[5].querySelector("select").value;
+    }
   });
+
   try{
-    await fetch(SHEET_API,{
+    const res = await fetch(SHEET_API,{
       method:"POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         tipo:"analisis",
         id_sop: currentSOP,
         puntos: puntos
       })
     });
-    alert("Cambios guardados correctamente!");
-  }catch(e){ console.error(e); alert("Error guardando"); }
-}
 
+    if(res.ok){
+      alert("Cambios guardados correctamente!");
+    } else {
+      console.error("Error guardando:", res.statusText);
+      alert("Error guardando los cambios.");
+    }
+
+  }catch(e){
+    console.error(e);
+    alert("Error guardando");
+  }
+}
 
 // EVENTOS
 document.getElementById("selectSOP").addEventListener("change",(e)=>cargarPuntos(e.target.value));
