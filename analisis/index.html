@@ -333,9 +333,10 @@ async function cargarPuntos(idSOP){
 document.getElementById("selectSOP").addEventListener("change", (e) => {
   cargarPuntos(e.target.value);
 });
-    
 
-// GUARDAR CAMBIOS
+// ... tus otras funciones: login, cargarSOPs, cargarPuntos, etc.
+
+// 🔹 GUARDAR CAMBIOS
 async function guardarAnalisis(){
   const tabla = document.getElementById("tablaPuntos");
   const filas = tabla.querySelectorAll("tr");
@@ -346,8 +347,8 @@ async function guardarAnalisis(){
     const punto = puntos[idx];
     if(punto){
       puntosAGuardar.push({
-        Id_Punto: punto.ID_Punto || punto.Id_Punto, // clave única
-        Id_Sop_Analisis: currentSOP,                // ahora enviamos la columna
+        Id_Punto: punto.ID_Punto || punto.Id_Punto,
+        Id_Sop_Analisis: currentSOP, // ahora enviamos la columna
         Usuario: punto.Usuario || "",
         Fecha: punto.Fecha || "",
         Texto_Punto: fila.cells[1].innerText.trim(),
@@ -357,6 +358,16 @@ async function guardarAnalisis(){
       });
     }
   });
+
+  if(!currentSOP){
+    alert("Debe seleccionar un SOP antes de guardar");
+    return;
+  }
+
+  if(puntosAGuardar.length === 0){
+    alert("No hay puntos para guardar");
+    return;
+  }
 
   try{
     const res = await fetch(SHEET_API,{
@@ -394,7 +405,8 @@ window.addEventListener("DOMContentLoaded", ()=>{
     currentUser = usuarios.find(u=>u.usuario===savedUser);
     if(currentUser) mostrarUsuario(currentUser);
   }else openLogin();
-});
+});    
+
 
 // MODAL COMENTARIO
 function cerrarModal(){ document.getElementById("modal").style.display="none"; }
