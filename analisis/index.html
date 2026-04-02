@@ -3,15 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- ⚡ Evitar caché del navegador -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-
-
-  <!-- CSS con versión -->
-  <link rel="stylesheet" href="style.css?v=20260402-1015">
   
   <!-- FontAwesome (puede quedarse igual) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -364,28 +355,20 @@ window.addEventListener("DOMContentLoaded", ()=>{
 });    
 
 
-
 // 🔹 GUARDAR CAMBIOS DE UNA FILA
 document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
-  if (!e.target.closest(".btn-save-row")) return; // solo botones de guardar
+  if (!e.target.closest(".btn-save-row")) return;
 
   const fila = e.target.closest("tr");
   const idx = fila.dataset.index;
   const punto = puntos[idx];
 
   if (!punto) return alert("Fila no encontrada");
-  if (!currentUser) {
-    alert("Debes iniciar sesión");
-    return;
-  }
-  if (!punto.Id_Punto && !punto.ID_Punto) {
-    alert("Error: Id_Punto no existe");
-    console.error("Punto sin ID:", punto);
-    return;
-  }
+  if (!currentUser) return alert("Debes iniciar sesión");
+  if (!punto.Id_Punto && !punto.ID_Punto) return alert("Error: Id_Punto no existe");
 
-  // 🔹 Construimos objeto con los campos exactos que tu backend necesita
   const dataFila = {
+    tipo: "puntos", // obligatorio para el backend
     Id_Punto: punto.Id_Punto || punto.ID_Punto,
     Id_Sop_Analisis: currentSOP,
     Usuario: currentUser.usuario,
@@ -396,27 +379,19 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
     Estado: fila.cells[5].querySelector("select").value
   };
 
-  // 🔹 Debug: mostrar objeto antes de enviar
-  console.log("📤 Enviando al backend (dataFila):", dataFila);
+  console.log("📤 Enviando al backend:", dataFila);
 
   try {
-    // 🔹 Enviamos solo el arreglo de puntos como JSON
     const res = await fetch(SHEET_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify([dataFila])
+      body: JSON.stringify(dataFila) // ⚠️ enviar directamente, no en array
     });
 
-    // 🔹 Debug: estado HTTP
-    console.log("📡 Status HTTP:", res.status, res.statusText);
-
     const result = await res.json();
-
-    // 🔹 Debug: respuesta del backend
     console.log("📥 Respuesta backend:", result);
 
     if (res.ok && result.success) {
-      console.log("✅ Guardado exitoso");
       alert("Fila guardada correctamente!");
     } else {
       console.error("❌ Error guardando fila:", result);
@@ -424,12 +399,10 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
     }
 
   } catch (err) {
-    // 🔹 Debug: error de red / fetch
     console.error("🚨 Error en fetch POST:", err);
     alert("Error guardando fila (fetch fallido)");
   }
-});
-
+});  
 
 
 // MODAL COMENTARIO
