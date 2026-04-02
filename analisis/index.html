@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Análisis de SOP - Reunión</title>
+<title>Análisis de SOP - Reunión Rev 1.0</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 /* GLOBAL */
@@ -336,8 +336,7 @@ document.getElementById("selectSOP").addEventListener("change", (e) => {
     
 
 // GUARDAR CAMBIOS
-
- async function guardarAnalisis(){
+async function guardarAnalisis(){
   const tabla = document.getElementById("tablaPuntos");
   const filas = tabla.querySelectorAll("tr");
 
@@ -348,6 +347,7 @@ document.getElementById("selectSOP").addEventListener("change", (e) => {
     if(punto){
       puntosAGuardar.push({
         Id_Punto: punto.ID_Punto || punto.Id_Punto, // clave única
+        Id_Sop_Analisis: currentSOP,                // ahora enviamos la columna
         Usuario: punto.Usuario || "",
         Fecha: punto.Fecha || "",
         Texto_Punto: fila.cells[1].innerText.trim(),
