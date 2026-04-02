@@ -249,20 +249,19 @@ function logout(){ localStorage.removeItem("usuario"); localStorage.removeItem("
 
 async function cargarSOPs(){
   try{
-    const res = await fetch(SHEET_API + "?sop_analisis=true");
+    const res = await fetch(SHEET_API);
     const data = await res.json();
     const select = document.getElementById("selectSOP");
-    select.innerHTML = '<option value="">Seleccione SOP</option>'; // limpiar antes
+    select.innerHTML = '<option value="">Seleccione SOP</option>';
     data.forEach(row=>{
-      const opt = document.createElement("option");
-      opt.value = row.Id_Sop_Analisis;   // <-- usar exactamente como en sheet
-      opt.textContent = row.Nombre_SOP + " - " + (row.Descripcion || "");
-      select.appendChild(opt);
+      if(row.Id_Sop_Analisis){   // usa exactamente el nombre de columna de la hoja
+        const opt = document.createElement("option");
+        opt.value = row.Id_Sop_Analisis;  // <- esto es clave
+        opt.textContent = row.Nombre_SOP; // puedes agregar row.Descripcion si quieres
+        select.appendChild(opt);
+      }
     });
-  }catch(e){
-    console.error(e);
-    alert("Error cargando SOPs");
-  }
+  }catch(e){ console.error(e); alert("Error cargando SOPs"); }
 }
     
 // CARGAR PUNTOS
