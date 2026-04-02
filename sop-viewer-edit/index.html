@@ -192,22 +192,23 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
     <i class="fa-solid fa-bars"></i>
   </div>
 
-  <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a>     
-    <a href="#" onclick="editSOP()">Editar SOP</a>
-    <a href="#" onclick="openLogin()">
-      <i class="fa-solid fa-user-shield"></i> Login
-    </a>
-    <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a> 
-    <div class="user-info" id="userInfo" style="display:none;">
-      <span id="userName"></span>
-      <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
-        <i class="fa-solid fa-right-from-bracket"></i>
-      </button>
-    </div>
-  </div>
+<div class="menu">
+  <a href="/sop-site/">Inicio</a>
+  <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+  <a href="/sop-site/Aportes/">Aportes SOP</a>     
+  <a href="#" onclick="editSOP()">Editar SOP</a>
+  <a href="#" onclick="openLogin()">
+    <i class="fa-solid fa-user-shield"></i> Login
+  </a>
+  <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a> 
+</div>
+
+<!-- 🔥 FUERA del menu -->
+<div class="user-info" id="userInfo" style="display:none;">
+  <span id="userName"></span>
+  <button onclick="logout()" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+    <i class="fa-solid fa-right-from-bracket"></i>
+  </button>
 </div>
 
 <!-- HISTORIAL SOP -->
