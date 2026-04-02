@@ -255,7 +255,7 @@ async function cargarSOPs(){
     select.innerHTML = '<option value="">Seleccione SOP</option>'; // limpiar antes
     data.forEach(row=>{
       const opt = document.createElement("option");
-      opt.value = row.ID_SOP;           // coincide con backend
+      opt.value = row.Id_Sop_Analisis;   // <-- usar exactamente como en sheet
       opt.textContent = row.Nombre_SOP + " - " + (row.Descripcion || "");
       select.appendChild(opt);
     });
@@ -264,6 +264,7 @@ async function cargarSOPs(){
     alert("Error cargando SOPs");
   }
 }
+    
 // CARGAR PUNTOS
 
 async function cargarPuntos(idSOP){
@@ -273,6 +274,7 @@ async function cargarPuntos(idSOP){
   try{
     const res = await fetch(`${SHEET_API}?analisis=${idSOP}`);
     puntos = await res.json();
+    console.log("Puntos recibidos:", puntos); // <-- agregar esta línea
     puntos.forEach((punto, idx)=>{
       const fila = document.createElement("tr");
       fila.innerHTML = `
@@ -293,6 +295,7 @@ async function cargarPuntos(idSOP){
     });
   }catch(e){ console.error(e); }
 }
+    
 
 // GUARDAR CAMBIOS
 async function guardarAnalisis(){
