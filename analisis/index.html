@@ -382,12 +382,15 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
   console.log("📤 Enviando al backend:", dataFila);
 
   try {
-    const res = await fetch(SHEET_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dataFila) // ⚠️ enviar directamente, no en array
-    });
-
+    const res = await fetch(SHEET_API,{
+  method:"POST",
+  body: JSON.stringify({
+    tipo:"analisis",
+    id_sop: currentSOP,
+    puntos: puntosAGuardar
+  })
+});
+    
     const result = await res.json();
     console.log("📥 Respuesta backend:", result);
 
