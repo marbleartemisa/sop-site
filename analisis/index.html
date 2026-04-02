@@ -337,11 +337,10 @@ document.getElementById("selectSOP").addEventListener("change", (e) => {
 
 // GUARDAR CAMBIOS
 
-async function guardarAnalisis(){
+ async function guardarAnalisis(){
   const tabla = document.getElementById("tablaPuntos");
   const filas = tabla.querySelectorAll("tr");
 
-  // 🔹 crear array limpio con los campos correctos
   const puntosAGuardar = [];
 
   filas.forEach((fila, idx)=>{
