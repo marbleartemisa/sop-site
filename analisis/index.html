@@ -246,22 +246,24 @@ function mostrarUsuario(user){
 function logout(){ localStorage.removeItem("usuario"); localStorage.removeItem("correo"); currentUser=null; openLogin(); }
 
 // CARGAR SOPS
+
 async function cargarSOPs(){
   try{
-    const res = await fetch(SHEET_API);
+    const res = await fetch(SHEET_API + "?sop_analisis=true");
     const data = await res.json();
     const select = document.getElementById("selectSOP");
+    select.innerHTML = '<option value="">Seleccione SOP</option>'; // limpiar antes
     data.forEach(row=>{
-      if(row.Id_Sop_Analisis){
-        const opt = document.createElement("option");
-        opt.value = row.Id_Sop_Analisis;
-        opt.textContent = row.Nombre_SOP;
-        select.appendChild(opt);
-      }
+      const opt = document.createElement("option");
+      opt.value = row.ID_SOP;           // coincide con backend
+      opt.textContent = row.Nombre_SOP + " - " + (row.Descripcion || "");
+      select.appendChild(opt);
     });
-  }catch(e){ console.error(e); alert("Error cargando SOPs"); }
+  }catch(e){
+    console.error(e);
+    alert("Error cargando SOPs");
+  }
 }
-
 // CARGAR PUNTOS
 
 async function cargarPuntos(idSOP){
