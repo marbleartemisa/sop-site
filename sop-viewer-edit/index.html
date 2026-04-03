@@ -305,98 +305,46 @@ const CORREO = localStorage.getItem("correo") || "";
 
 // TABLA SOP
 async function renderTabla(){
-
   const tabla = document.getElementById("tablaSOP");
-  if(!tabla){
-    console.error("No existe tablaSOP en el DOM");
-    return;
-  }
-
-  const filtroEl = document.getElementById("filtroEstado");
-  const buscarEl = document.getElementById("buscarSOP");
-
-  const filtro = filtroEl ? filtroEl.value : "";
-  const buscar = buscarEl ? buscarEl.value.toLowerCase() : "";
-
-  tabla.innerHTML = "";
-
+  tabla.innerHTML="";
+  const filtro = document.getElementById("filtroEstado").value;
+  const buscar = document.getElementById("buscarSOP").value.toLowerCase();
   try{
-
-    // 🔵 loader seguro (sin romper si no existe)
-    if(typeof showLoader === "function") showLoader();
-
     const res = await fetch(SHEET_API);
-
-    if(!res.ok){
-      throw new Error("HTTP Error: " + res.status);
-    }
-
     const data = await res.json();
-
-    if(!Array.isArray(data)){
-      console.error("Respuesta no es array:", data);
-      return;
-    }
-
-    const fragment = document.createDocumentFragment();
-
-    data.forEach(row => {
-
+    data.forEach(row=>{
       if(!row.ID_SOP) return;
-
       const sop = {
-        Timestamp: row.Timestamp || "",
-        empleado: row.empleado || "",
-        departamento: row.departamento || "",
-        objetivo: row.objetivo || "",
-        areas: row.areas || "",
-        estado: row.estado || "Pendiente",
+        Timestamp: row.Timestamp||"",
+        empleado: row.empleado||"",
+        departamento: row.departamento||"",
+        objetivo: row.objetivo||"",
+        areas: row.areas||"",
+        estado: row.estado||"Pendiente",
         ID_SOP: row.ID_SOP,
-        url_doc: row.url_doc || row.links || ""
+        url_doc: row.url_doc||row.links||""
       };
-
-      if(filtro && sop.estado !== filtro) return;
-
-      const texto = (sop.empleado + " " + sop.objetivo).toLowerCase();
-      if(buscar && !texto.includes(buscar)) return;
-
+      if(filtro && sop.estado!==filtro) return;
+      if(buscar && !(sop.empleado.toLowerCase()+sop.objetivo.toLowerCase()).includes(buscar)) return;
       const fila = document.createElement("tr");
-
-      fila.innerHTML = `
+      fila.innerHTML=`
         <td>${sop.empleado}</td>
         <td>${sop.departamento}</td>
         <td>${sop.objetivo}</td>
         <td>${sop.areas}</td>
-        <td>
-          <span class="estado ${sop.estado.toLowerCase()}">
-            ${sop.estado}
-          </span>
-        </td>
-        <td>${sop.Timestamp ? new Date(sop.Timestamp).toLocaleString() : ""}</td>
-        <td>
-          <button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
-            💬 Abrir
-          </button>
-        </td>
+        <td><span class="estado ${sop.estado.toLowerCase()}">${sop.estado}</span></td>
+        <td>${new Date(sop.Timestamp).toLocaleString()}</td>
+        <td><button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Abrir</button></td>
       `;
-
-      fragment.appendChild(fila);
+      tabla.appendChild(fila);
     });
-
-    tabla.appendChild(fragment);
-
-  }catch(e){
-
-    console.error("renderTabla error:", e);
-    alert("Error cargando SOPs");
-
-  }finally{
-
-    // 🔵 siempre ocultar loader sin romper
-    if(typeof hideLoader === "function") hideLoader();
-
-  }
+  }catch(e){ console.error(e); alert("Error cargando SOPs"); }
 }
+document.getElementById("buscarSOP").addEventListener("input", renderTabla);
+document.getElementById("filtroEstado").addEventListener("change", renderTabla);
+renderTabla();
+
+  
 // ABRIR SOP
 async function abrirSOP(url,id){
   SOP_URL=url; ID_SOP=id; comentarios=[];
