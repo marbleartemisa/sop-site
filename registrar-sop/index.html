@@ -205,24 +205,29 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files);
 
 
+ 
 
   try{
     // 1️⃣ Subir archivos y obtener URLs
-    const response=await fetch(SCRIPT_URL,{
-method:"POST",
- body:JSON.stringify({
-       tipo:"nuevo_sop",   // 🔥 NUEVO (CLAVE)
-       employee:nombre,
-        correo:correo,
-        cargo:cargo,
-        departamento:depto,
-        objetivo:objetivo,
-        areas:areas,
-        resumen:resumen,
-        date:fechaActual,
-        files:archivosBase64
-      })
-    });
+  const response = await fetch(SCRIPT_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    tipo: "nuevo_sop",
+    employee: nombre,
+    correo: correo,
+    cargo: cargo,
+    departamento: depto,
+    objetivo: objetivo,
+    areas: areas,
+    resumen: resumen,
+    date: fechaActual,
+    files: archivosBase64
+  })
+});
+
     const result=await response.json();
    console.log("RESPUESTA COMPLETA BACKEND:", result);
     const links=result.links || [];
