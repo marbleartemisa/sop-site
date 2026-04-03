@@ -224,6 +224,7 @@ method:"POST",
       })
     });
     const result=await response.json();
+   console.log("RESPUESTA COMPLETA BACKEND:", result);
     const links=result.links || [];
 
     console.log("Links recibidos del endpoint:", links);
