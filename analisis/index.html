@@ -277,7 +277,7 @@ function mostrarUsuario(user){
   if(user){ userName.textContent = user.usuario; userInfo.style.display="flex"; }
   else userInfo.style.display="none";
 }
-function logout(){ localStorage.removeItem("usuario"); localStorage.removeItem("correo"); currentUser=null; openLogin(); }
+function logout(){ localStorage.removeItem("usuario"); localStorage.removeItem("correo"); currentUser=null;  }
 
 // CARGAR SOPS
 
