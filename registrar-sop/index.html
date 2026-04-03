@@ -164,17 +164,33 @@ document.getElementById("employee").addEventListener("change",function(){
 })
 
 // Convertir archivos a Base64
+
+
 function archivosA_Base64(files){
-  return Promise.all(Array.from(files).map(file=>{
-    return new Promise((resolve,reject)=>{
-      const reader=new FileReader();
-      reader.onload=()=>resolve({name:file.name,data:reader.result,type:file.type});
-      reader.onerror=reject;
+  return Promise.all(Array.from(files).map(file => {
+    return new Promise((resolve) => {
+
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        resolve({
+          name: file.name,
+          type: file.type,
+          data: reader.result
+        });
+      };
+
+      reader.onerror = () => {
+        console.warn("ERROR leyendo archivo:", file.name);
+        resolve(null); // no rompe todo
+      };
+
       reader.readAsDataURL(file);
-    })
-  }));
+    });
+  })).then(results => results.filter(r => r !== null));
 }
 
+ 
 // Manejo formulario
 const btn=document.getElementById("btnEnviar");
 const btnText=btn.querySelector(".btn-text");
@@ -205,8 +221,12 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files);
 
 
+console.log("ARCHIVOS RAW INPUT:", archivosInput.files);
+console.log("ARCHIVOS BASE64:", archivosBase64);
  
-
+if (archivosBase64.length !== archivosInput.files.length) {
+  console.warn("Algunos archivos no se convirtieron correctamente");
+}
   try{
     // 1️⃣ Subir archivos y obtener URLs
  
