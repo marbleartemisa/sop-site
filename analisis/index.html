@@ -277,7 +277,13 @@ function mostrarUsuario(user){
   if(user){ userName.textContent = user.usuario; userInfo.style.display="flex"; }
   else userInfo.style.display="none";
 }
-function logout(){ localStorage.removeItem("usuario"); localStorage.removeItem("correo"); currentUser=null;  }
+
+  function logout(){
+  currentUser = null;
+  localStorage.removeItem("usuario");
+  document.getElementById("userInfo").style.display = "none";
+window.location.href = "https://marbleartemisa.github.io/sop-site/";
+}
 
 // CARGAR SOPS
 
