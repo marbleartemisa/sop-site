@@ -337,6 +337,11 @@ async function cargarPuntos(idSOP){
   </td>
 `;
       tabla.appendChild(fila);
+      setTimeout(() => {
+      document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+      el.setAttribute('spellcheck', 'false');
+        });
+      }, 0);
     });
 
   }catch(e){
