@@ -209,11 +209,9 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
 
   try{
     // 1️⃣ Subir archivos y obtener URLs
-  const response = await fetch(SCRIPT_URL, {
+ 
+const response = await fetch(SCRIPT_URL, {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
   body: JSON.stringify({
     tipo: "nuevo_sop",
     employee: nombre,
@@ -228,6 +226,8 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   })
 });
 
+
+   
     const result=await response.json();
    console.log("RESPUESTA COMPLETA BACKEND:", result);
     const links=result.links || [];
