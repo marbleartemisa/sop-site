@@ -423,11 +423,21 @@ const dataFila = {
 // MODAL COMENTARIO
 function cerrarModal(){ document.getElementById("modal").style.display="none"; }
 
+
   function renderTabla(){
   const tabla = document.getElementById("tablaPuntos");
   tabla.innerHTML = "";
 
-  puntos.forEach((punto, idx)=>{
+  // 🔹 FILTRAR antes de renderizar
+  const visibles = puntos.filter(p => (p.Estado || "").toLowerCase() !== "rechazado");
+
+  // 🔹 Si no hay datos visibles
+  if(visibles.length === 0){
+    tabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">No hay registros activos</td></tr>`;
+    return;
+  }
+
+  visibles.forEach((punto, idx)=>{
     const fila = document.createElement("tr");
     fila.dataset.id = punto.Id_Punto;
 
@@ -454,7 +464,6 @@ function cerrarModal(){ document.getElementById("modal").style.display="none"; }
     tabla.appendChild(fila);
   });
 }
-
   function sortTable(colIndex){
 
   if(currentSortColumn === colIndex){
