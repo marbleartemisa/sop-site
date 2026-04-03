@@ -307,19 +307,38 @@ const CORREO = localStorage.getItem("correo") || "";
 async function renderTabla(){
 
   const tabla = document.getElementById("tablaSOP");
-  const filtro = document.getElementById("filtroEstado").value;
-  const buscar = document.getElementById("buscarSOP").value.toLowerCase();
+  if(!tabla){
+    console.error("No existe tablaSOP en el DOM");
+    return;
+  }
+
+  const filtroEl = document.getElementById("filtroEstado");
+  const buscarEl = document.getElementById("buscarSOP");
+
+  const filtro = filtroEl ? filtroEl.value : "";
+  const buscar = buscarEl ? buscarEl.value.toLowerCase() : "";
 
   tabla.innerHTML = "";
 
-  showLoader(); // 🔵 INICIO LOADER
-
   try{
 
+    // 🔵 loader seguro (sin romper si no existe)
+    if(typeof showLoader === "function") showLoader();
+
     const res = await fetch(SHEET_API);
+
+    if(!res.ok){
+      throw new Error("HTTP Error: " + res.status);
+    }
+
     const data = await res.json();
 
-    let fragment = document.createDocumentFragment(); // ⚡ mejor performance
+    if(!Array.isArray(data)){
+      console.error("Respuesta no es array:", data);
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
 
     data.forEach(row => {
 
@@ -336,15 +355,10 @@ async function renderTabla(){
         url_doc: row.url_doc || row.links || ""
       };
 
-      // filtros seguros
       if(filtro && sop.estado !== filtro) return;
 
-      const textoBusqueda = (
-        (sop.empleado || "") + " " +
-        (sop.objetivo || "")
-      ).toLowerCase();
-
-      if(buscar && !textoBusqueda.includes(buscar)) return;
+      const texto = (sop.empleado + " " + sop.objetivo).toLowerCase();
+      if(buscar && !texto.includes(buscar)) return;
 
       const fila = document.createElement("tr");
 
@@ -358,9 +372,7 @@ async function renderTabla(){
             ${sop.estado}
           </span>
         </td>
-        <td>
-          ${sop.Timestamp ? new Date(sop.Timestamp).toLocaleString() : ""}
-        </td>
+        <td>${sop.Timestamp ? new Date(sop.Timestamp).toLocaleString() : ""}</td>
         <td>
           <button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
             💬 Abrir
@@ -371,17 +383,20 @@ async function renderTabla(){
       fragment.appendChild(fila);
     });
 
-    tabla.appendChild(fragment); // ⚡ render único
+    tabla.appendChild(fragment);
 
   }catch(e){
-    console.error(e);
+
+    console.error("renderTabla error:", e);
     alert("Error cargando SOPs");
 
   }finally{
-    hideLoader(); // 🔵 SIEMPRE SE OCULTA
+
+    // 🔵 siempre ocultar loader sin romper
+    if(typeof hideLoader === "function") hideLoader();
+
   }
 }
-
 // ABRIR SOP
 async function abrirSOP(url,id){
   SOP_URL=url; ID_SOP=id; comentarios=[];
