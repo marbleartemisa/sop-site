@@ -177,16 +177,18 @@ select{ width:100%;}
     <option value="">Seleccione SOP</option>
   </select>
 
+
+  
   <div class="table-container">
     <table>
       <thead>
         <tr>
-          <th>#</th>
-          <th>Punto (Español)</th>
-          <th>Punto (Inglés)</th>
-          <th>Usuario</th>
-          <th>Comentarios</th>
-          <th>Estado</th>
+          <th onclick="sortTable(0)">#</th>
+          <th onclick="sortTable(1)">Punto (Español)</th>
+          <th onclick="sortTable(2)">Punto (Inglés)</th>
+          <th onclick="sortTable(3)">Usuario</th>
+          <th onclick="sortTable(4)">Comentarios</th>
+          <th onclick="sortTable(5)">Estado</th>
         </tr>
       </thead>
       <tbody id="tablaPuntos"></tbody>
@@ -234,6 +236,8 @@ const usuarios = [
 
 let puntos = [];
 let currentSOP = null;
+let currentSortColumn = null;
+let sortDirection = 1;
 
 // POPULAR SELECT USUARIOS
 function populateUsers(){
@@ -436,6 +440,69 @@ const dataFila = {
 
 // MODAL COMENTARIO
 function cerrarModal(){ document.getElementById("modal").style.display="none"; }
+
+  function renderTabla(){
+  const tabla = document.getElementById("tablaPuntos");
+  tabla.innerHTML = "";
+
+  puntos.forEach((punto, idx)=>{
+    const fila = document.createElement("tr");
+    fila.dataset.id = punto.Id_Punto;
+
+    fila.innerHTML = `
+      <td>${idx+1}</td>
+      <td contenteditable="true" spellcheck="false">${punto.Texto_Punto || ''}</td>
+      <td contenteditable="true" spellcheck="false">${punto.Texto_Ingles || ''}</td>
+      <td>${punto.Usuario || ''}</td>
+      <td contenteditable="true" spellcheck="false">${punto.Comentarios || ''}</td>
+      <td>
+        <select>
+          <option value="Pendiente" ${punto.Estado==='Pendiente'?'selected':''}>Pendiente</option>
+          <option value="Aceptado" ${punto.Estado==='Aceptado'?'selected':''}>Aceptado</option>
+          <option value="Rechazado" ${punto.Estado==='Rechazado'?'selected':''}>Rechazado</option>
+        </select>
+      </td>
+      <td>
+        <button class="btn-save-row">
+          <i class="fa-solid fa-floppy-disk"></i>
+        </button>
+      </td>
+    `;
+
+    tabla.appendChild(fila);
+  });
+}
+
+  function sortTable(colIndex){
+
+  if(currentSortColumn === colIndex){
+    sortDirection *= -1;
+  }else{
+    currentSortColumn = colIndex;
+    sortDirection = 1;
+  }
+
+  puntos.sort((a,b)=>{
+
+    let valA="", valB="";
+
+    if(colIndex===1){ valA = a.Texto_Punto || ""; valB = b.Texto_Punto || ""; }
+    if(colIndex===2){ valA = a.Texto_Ingles || ""; valB = b.Texto_Ingles || ""; }
+    if(colIndex===3){ valA = a.Usuario || ""; valB = b.Usuario || ""; }
+    if(colIndex===4){ valA = a.Comentarios || ""; valB = b.Comentarios || ""; }
+    if(colIndex===5){ valA = a.Estado || ""; valB = b.Estado || ""; }
+
+    valA = valA.toString().toLowerCase();
+    valB = valB.toString().toLowerCase();
+
+    if(valA < valB) return -1 * sortDirection;
+    if(valA > valB) return 1 * sortDirection;
+    return 0;
+  });
+
+  renderTabla();
+}
+  
 </script>
 </body>
 </html>
