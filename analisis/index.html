@@ -406,9 +406,19 @@ const dataFila = {
     const result = await res.json();
     console.log("📥 Respuesta backend:", result);
 
-    if (res.ok && result.success) {
-      alert("Fila guardada correctamente!");
-    } else {
+   if (res.ok && result.success) {
+
+  // 🔹 Actualizar el estado en memoria
+  punto.Estado = dataFila.Estado;
+  punto.Texto_Punto = dataFila.Texto_Punto;
+  punto.Texto_Ingles = dataFila.Texto_Ingles;
+  punto.Comentarios = dataFila.Comentarios;
+
+  // 🔹 Re-render tabla
+  renderTabla();
+
+  alert("Fila guardada correctamente!");
+} else {
       console.error("❌ Error guardando fila:", result);
       alert("Error guardando fila, revisa consola");
     }
@@ -420,6 +430,8 @@ const dataFila = {
 });  
 
 
+
+  
 // MODAL COMENTARIO
 function cerrarModal(){ document.getElementById("modal").style.display="none"; }
 
