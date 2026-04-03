@@ -334,24 +334,15 @@ const CORREO = localStorage.getItem("correo") || "";
 
 // TABLA SOP
 async function renderTabla(){
-
   const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML="";
-
   const filtro = document.getElementById("filtroEstado").value;
   const buscar = document.getElementById("buscarSOP").value.toLowerCase();
-
   try{
-
-    // 🔥 MOSTRAR LOADER ANTES DEL FETCH
-    showLoader();
-
     const res = await fetch(SHEET_API);
     const data = await res.json();
-
     data.forEach(row=>{
       if(!row.ID_SOP) return;
-
       const sop = {
         Timestamp: row.Timestamp||"",
         empleado: row.empleado||"",
@@ -362,12 +353,9 @@ async function renderTabla(){
         ID_SOP: row.ID_SOP,
         url_doc: row.url_doc||row.links||""
       };
-
       if(filtro && sop.estado!==filtro) return;
       if(buscar && !(sop.empleado.toLowerCase()+sop.objetivo.toLowerCase()).includes(buscar)) return;
-
       const fila = document.createElement("tr");
-
       fila.innerHTML=`
         <td>${sop.empleado}</td>
         <td>${sop.departamento}</td>
@@ -377,19 +365,13 @@ async function renderTabla(){
         <td>${new Date(sop.Timestamp).toLocaleString()}</td>
         <td><button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Abrir</button></td>
       `;
-
       tabla.appendChild(fila);
     });
-
-  }catch(e){
-    console.error(e);
-    alert("Error cargando SOPs");
-  }finally{
-
-    // 🔥 SIEMPRE OCULTA EL LOADER (haya error o no)
-    hideLoader();
-  }
+  }catch(e){ console.error(e); alert("Error cargando SOPs"); }
 }
+document.getElementById("buscarSOP").addEventListener("input", renderTabla);
+document.getElementById("filtroEstado").addEventListener("change", renderTabla);
+renderTabla();
 
   
 // ABRIR SOP
