@@ -244,6 +244,11 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
   </div>
 </div>
 
+<div id="loader" style="display:none; text-align:center; padding:20px;">
+  <i class="fa-solid fa-spinner fa-spin" style="font-size:30px; color:#003366;"></i>
+  <p>Cargando datos...</p>
+</div>  
+
 <!-- Canvas flotante -->
 <div id="canvas-overlay">
   <div id="sop-container">
@@ -300,44 +305,82 @@ const CORREO = localStorage.getItem("correo") || "";
 
 // TABLA SOP
 async function renderTabla(){
+
   const tabla = document.getElementById("tablaSOP");
-  tabla.innerHTML="";
   const filtro = document.getElementById("filtroEstado").value;
   const buscar = document.getElementById("buscarSOP").value.toLowerCase();
+
+  tabla.innerHTML = "";
+
+  showLoader(); // 🔵 INICIO LOADER
+
   try{
+
     const res = await fetch(SHEET_API);
     const data = await res.json();
-    data.forEach(row=>{
+
+    let fragment = document.createDocumentFragment(); // ⚡ mejor performance
+
+    data.forEach(row => {
+
       if(!row.ID_SOP) return;
+
       const sop = {
-        Timestamp: row.Timestamp||"",
-        empleado: row.empleado||"",
-        departamento: row.departamento||"",
-        objetivo: row.objetivo||"",
-        areas: row.areas||"",
-        estado: row.estado||"Pendiente",
+        Timestamp: row.Timestamp || "",
+        empleado: row.empleado || "",
+        departamento: row.departamento || "",
+        objetivo: row.objetivo || "",
+        areas: row.areas || "",
+        estado: row.estado || "Pendiente",
         ID_SOP: row.ID_SOP,
-        url_doc: row.url_doc||row.links||""
+        url_doc: row.url_doc || row.links || ""
       };
-      if(filtro && sop.estado!==filtro) return;
-      if(buscar && !(sop.empleado.toLowerCase()+sop.objetivo.toLowerCase()).includes(buscar)) return;
+
+      // filtros seguros
+      if(filtro && sop.estado !== filtro) return;
+
+      const textoBusqueda = (
+        (sop.empleado || "") + " " +
+        (sop.objetivo || "")
+      ).toLowerCase();
+
+      if(buscar && !textoBusqueda.includes(buscar)) return;
+
       const fila = document.createElement("tr");
-      fila.innerHTML=`
+
+      fila.innerHTML = `
         <td>${sop.empleado}</td>
         <td>${sop.departamento}</td>
         <td>${sop.objetivo}</td>
         <td>${sop.areas}</td>
-        <td><span class="estado ${sop.estado.toLowerCase()}">${sop.estado}</span></td>
-        <td>${new Date(sop.Timestamp).toLocaleString()}</td>
-        <td><button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Abrir</button></td>
+        <td>
+          <span class="estado ${sop.estado.toLowerCase()}">
+            ${sop.estado}
+          </span>
+        </td>
+        <td>
+          ${sop.Timestamp ? new Date(sop.Timestamp).toLocaleString() : ""}
+        </td>
+        <td>
+          <button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
+            💬 Abrir
+          </button>
+        </td>
       `;
-      tabla.appendChild(fila);
+
+      fragment.appendChild(fila);
     });
-  }catch(e){ console.error(e); alert("Error cargando SOPs"); }
+
+    tabla.appendChild(fragment); // ⚡ render único
+
+  }catch(e){
+    console.error(e);
+    alert("Error cargando SOPs");
+
+  }finally{
+    hideLoader(); // 🔵 SIEMPRE SE OCULTA
+  }
 }
-document.getElementById("buscarSOP").addEventListener("input", renderTabla);
-document.getElementById("filtroEstado").addEventListener("change", renderTabla);
-renderTabla();
 
 // ABRIR SOP
 async function abrirSOP(url,id){
@@ -500,8 +543,7 @@ function dibujarComentarios(){
       });
     });
 
-
-
+    
     // Botón X para eliminar
     const btnClose = document.createElement("i");
     btnClose.className = "fa-solid fa-xmark";
@@ -544,6 +586,14 @@ async function cargarComentariosExistentes(){
 
 function closeLogin(){
   document.getElementById("loginModal").style.display = "none";
+}
+
+  function showLoader(){
+  document.getElementById("loader").style.display = "block";
+}
+
+function hideLoader(){
+  document.getElementById("loader").style.display = "none";
 }
 
 function populateUsers(){
