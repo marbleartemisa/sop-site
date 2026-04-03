@@ -378,20 +378,20 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
   if (!currentUser) return alert("Debes iniciar sesión");
   if (!punto.Id_Punto && !punto.ID_Punto) return alert("Error: Id_Punto no existe");
 
-  const dataFila = {
-  tipo: "puntos",
-  Id_Punto: punto.Id_Punto || punto.ID_Punto,
+const dataFila = {
+  Id_Punto: punto.Id_Punto,
   Id_Sop_Analisis: currentSOP,
 
-  // 🔒 NO tocar (mantener original)
-  Usuario: punto.Usuario,
-  Fecha: punto.Fecha,
+  // ❌ YA NO mandes Usuario original
+  // Usuario: currentUser.usuario,
 
-  // 🆕 tracking de edición
+  // ❌ YA NO mandes Fecha original
+  // Fecha: new Date(),
+
+  // ✅ NUEVO
   Usuario_Update: currentUser.usuario,
   Fecha_Update: new Date().toLocaleString(),
 
-  // ✏️ campos editables
   Texto_Punto: fila.cells[1].innerText.trim(),
   Texto_Ingles: fila.cells[2].innerText.trim(),
   Comentarios: fila.cells[4].innerText.trim(),
@@ -400,6 +400,9 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
 
   console.log("📤 Enviando ID:", punto.Id_Punto);
 
+
+
+  
   try {
     const res = await fetch(SHEET_API,{
   method:"POST",
