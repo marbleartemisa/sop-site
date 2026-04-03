@@ -225,8 +225,12 @@ let currentUser = null;
 const usuarios = [
   {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", correo:"damian@artemisamarble.com"},
   {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", correo:"frontdesk@artemisamarble.com"},
-  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", correo:"control@artemisamarble.com"}
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", correo:"accounting@artemisamarble.com"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", correo:"control@artemisamarble.com"},
+  {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor", correo:"jenny@artemisamarble.com"},
+  {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor", correo:"wood@artemisamarble.com"}
 ];
+
 
 let puntos = [];
 let currentSOP = null;
@@ -375,16 +379,24 @@ document.getElementById("tablaPuntos").addEventListener("click", async (e) => {
   if (!punto.Id_Punto && !punto.ID_Punto) return alert("Error: Id_Punto no existe");
 
   const dataFila = {
-    tipo: "puntos", // obligatorio para el backend
-    Id_Punto: punto.Id_Punto || punto.ID_Punto,
-    Id_Sop_Analisis: currentSOP,
-    Usuario: currentUser.usuario,
-    Fecha: new Date().toLocaleString(),
-    Texto_Punto: fila.cells[1].innerText.trim(),
-    Texto_Ingles: fila.cells[2].innerText.trim(),
-    Comentarios: fila.cells[4].innerText.trim(),
-    Estado: fila.cells[5].querySelector("select").value
-  };
+  tipo: "puntos",
+  Id_Punto: punto.Id_Punto || punto.ID_Punto,
+  Id_Sop_Analisis: currentSOP,
+
+  // 🔒 NO tocar (mantener original)
+  Usuario: punto.Usuario,
+  Fecha: punto.Fecha,
+
+  // 🆕 tracking de edición
+  Usuario_Update: currentUser.usuario,
+  Fecha_Update: new Date().toLocaleString(),
+
+  // ✏️ campos editables
+  Texto_Punto: fila.cells[1].innerText.trim(),
+  Texto_Ingles: fila.cells[2].innerText.trim(),
+  Comentarios: fila.cells[4].innerText.trim(),
+  Estado: fila.cells[5].querySelector("select").value
+};
 
   console.log("📤 Enviando ID:", punto.Id_Punto);
 
