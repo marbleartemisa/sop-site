@@ -535,10 +535,13 @@ function login(){
     document.getElementById("loginError").style.display = "block";
   }
 }
+
+
 function logout(){
-  localStorage.removeItem("usuario");
   currentUser = null;
+  localStorage.removeItem("usuario");
   document.getElementById("userInfo").style.display = "none";
+window.location.href = "https://marbleartemisa.github.io/sop-site/";
 }
   
   
