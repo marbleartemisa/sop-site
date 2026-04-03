@@ -146,18 +146,6 @@
 </head>
 <body>
 
-let currentUser = null;
-
-const usuarios = [
-  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor"},
-  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor"},
-  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor"},
-  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor"},
-  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin"},
-  {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor"},
-  {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor"}
-];
-
   <!-- NAVBAR -->
 <div class="navbar">
 
@@ -282,6 +270,18 @@ const usuarios = [
   </div>
 
 <script>
+const usuarios = [
+  {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
+  {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Administracion", correo:"frontdesk@artemisamarble.com"},
+  {usuario:"Gabriel Batista", clave:"Gab1975", rol:"editor", depto:"Comercial", correo:"sales@artemisamarble.com"},
+  {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:"accounting@artemisamarble.com"},
+  {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Control", correo:"control@artemisamarble.com"},
+  {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor", depto:"Comercial", correo:"jenny@artemisamarble.com"},
+  {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor", depto:"Gerencia", correo:"wood@artemisamarble.com"}
+];
+
+let currentUser = null;
+  
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
 document.getElementById("modalAporte").style.display = "none";
