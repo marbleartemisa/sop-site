@@ -588,12 +588,11 @@ function mostrarUsuario(user){
 
 // Cerrar sesión
 
-  function logout(){
-  localStorage.removeItem("usuario");
-  localStorage.removeItem("correo");
+function logout(){
   currentUser = null;
+  localStorage.removeItem("usuario");
   document.getElementById("userInfo").style.display = "none";
-  openLogin();
+window.location.href = "https://marbleartemisa.github.io/sop-site/";
 }
 
 // Al cargar la página, mostrar usuario si está guardado
