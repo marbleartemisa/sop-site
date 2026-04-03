@@ -140,6 +140,9 @@ select{ width:100%;}
   from{opacity:0; transform:translateY(-20px);}
   to{opacity:1; transform:translateY(0);}
 }
+  th{
+  cursor:pointer;
+}
 </style>
 </head>
 <body>
@@ -301,56 +304,29 @@ async function cargarPuntos(idSOP){
   const tabla = document.getElementById("tablaPuntos");
   tabla.innerHTML = ""; // limpiar tabla
 
-  if(!idSOP) return; // si no hay SOP seleccionado, no hacemos nada
+  if(!idSOP) return;
 
   try{
-    // 🔹 Llamada a la API usando exactamente el parámetro 'analisis'
     const res = await fetch(`${SHEET_API}?analisis=${idSOP}`);
+
     puntos = (await res.json()).map(p => ({
-  ...p,
-  Id_Punto: (p.Id_Punto || p.ID_Punto || "").toString().trim()
-}));
+      ...p,
+      Id_Punto: (p.Id_Punto || p.ID_Punto || "").toString().trim()
+    }));
+
     console.log("Puntos recibidos del backend:", puntos);
 
     if(!puntos || puntos.length === 0){
-      tabla.innerHTML = `<tr><td colspan="6" style="text-align:center;">No hay puntos para este SOP</td></tr>`;
+      tabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">No hay puntos para este SOP</td></tr>`;
       return;
     }
 
-    // 🔹 Llenar la tabla
-    puntos.forEach((punto, idx)=>{
-      const fila = document.createElement("tr");
-     fila.dataset.id = punto.Id_Punto;// ✅ INSERTAR ESTA LINEA
- fila.innerHTML = `
-  <td>${idx+1}</td>
-  <td contenteditable="true">${punto.Texto_Punto || ''}</td>
-  <td contenteditable="true">${punto.Texto_Ingles || ''}</td>
-  <td>${punto.Usuario || ''}</td>
-  <td contenteditable="true">${punto.Comentarios || ''}</td>
-  <td>
-    <select>
-      <option value="Pendiente" ${punto.Estado==='Pendiente'?'selected':''}>Pendiente</option>
-      <option value="Aceptado" ${punto.Estado==='Aceptado'?'selected':''}>Aceptado</option>
-      <option value="Rechazado" ${punto.Estado==='Rechazado'?'selected':''}>Rechazado</option>
-    </select>
-  </td>
-  <td>
-    <button class="btn-save-row" title="Guardar fila">
-      <i class="fa-solid fa-floppy-disk"></i>
-    </button>
-  </td>
-`;
-      tabla.appendChild(fila);
-      setTimeout(() => {
-      document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-      el.setAttribute('spellcheck', 'false');
-        });
-      }, 0);
-    });
+    // ✅ AQUÍ está el cambio clave
+    renderTabla();
 
   }catch(e){
     console.error("Error cargando puntos:", e);
-    tabla.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red;">Error cargando puntos</td></tr>`;
+    tabla.innerHTML = `<tr><td colspan="7" style="text-align:center;color:red;">Error cargando puntos</td></tr>`;
   }
 }
 
