@@ -204,7 +204,7 @@ document.getElementById("sopForm").addEventListener("submit", async function(e){
   let archivosBase64=[];
   if(archivosInput.files.length>0) archivosBase64=await archivosA_Base64(archivosInput.files);
 
-
+console.log("ARCHIVOS BASE64:", archivosBase64);
  
   try{
     // 1️⃣ Subir archivos y obtener URLs
