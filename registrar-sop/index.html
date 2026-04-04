@@ -253,6 +253,17 @@ const response = await fetch(SCRIPT_URL, {
   })
 });   
 
+const text = await response.text();
+let result;
+try {
+  result = JSON.parse(text);
+} catch(e){
+  console.error("Error leyendo respuesta del backend:", e);
+  return;
+}
+
+const links = Array.isArray(result.links) ? result.links : [];
+console.log("URLs obtenidas de los archivos:", links);   
 
 const text = await response.text();
 console.log("RAW RESPONSE BACKEND:", text);
