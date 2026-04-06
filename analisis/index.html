@@ -9,7 +9,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Análisis de SOP  Rev 1.0</title>
+<title>Análisis de SOP</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 /* GLOBAL */
@@ -483,22 +483,7 @@ function cerrarModal(){ document.getElementById("modal").style.display="none"; }
   });
 }
 
-  // 🔹 Destacar opción de menú según URL
-function destacarMenu() {
-  const links = document.querySelectorAll(".menu a");
-  const path = window.location.pathname; // ruta actual
-  links.forEach(link => {
-    if (link.getAttribute("href") === path) {
-      link.classList.add("active");
-    } else {
-      link.classList.remove("active");
-    }
-  });
-}
 
-window.addEventListener("DOMContentLoaded", () => {
-  destacarMenu();
-});
   
   function sortTable(colIndex){
 
@@ -529,6 +514,23 @@ window.addEventListener("DOMContentLoaded", () => {
 
   renderTabla();
 }
+
+  // 🔹 Destacar opción de menú según URL
+function destacarMenu() {
+  const links = document.querySelectorAll(".menu a");
+  const path = window.location.pathname; // ruta actual
+  links.forEach(link => {
+    if (link.getAttribute("href") === path) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  destacarMenu();
+});
   
 </script>
 </body>
