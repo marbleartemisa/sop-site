@@ -44,6 +44,12 @@ body{
 .menu a{ color:white; text-decoration:none; font-weight:bold; transition:.3s; }
 .menu a:hover{ color:#00aaff; }
 .menu-toggle{ display:none; font-size:1.6rem; cursor:pointer; }
+  .menu a.active {
+  background: #003366;   /* color de fondo destacado */
+  color: #fff;           /* texto blanco */
+  border-radius: 6px;
+  padding: 5px 10px;
+}
 
 /* OVERLAY Y TABLA */
 .overlay { padding:20px; max-width:1200px; margin:auto;}
@@ -476,6 +482,24 @@ function cerrarModal(){ document.getElementById("modal").style.display="none"; }
     tabla.appendChild(fila);
   });
 }
+
+  // 🔹 Destacar opción de menú según URL
+function destacarMenu() {
+  const links = document.querySelectorAll(".menu a");
+  const path = window.location.pathname; // ruta actual
+  links.forEach(link => {
+    if (link.getAttribute("href") === path) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  destacarMenu();
+});
+  
   function sortTable(colIndex){
 
   if(currentSortColumn === colIndex){
