@@ -425,7 +425,7 @@ const dataFila = {
   Fecha_Update: new Date().toLocaleString(),
 
   Texto_Punto: fila.cells[1].innerText.trim(),
-  Texto_Ingles: fila.cells[2].innerText.trim(),
+  // Texto_Ingles: fila.cells[2].innerText.trim(),
   Comentarios: fila.cells[4].innerText.trim(),
   Estado: fila.cells[5].querySelector("select").value
 };
@@ -452,7 +452,7 @@ const dataFila = {
   // 🔹 Actualizar el estado en memoria
   punto.Estado = dataFila.Estado;
   punto.Texto_Punto = dataFila.Texto_Punto;
-  punto.Texto_Ingles = dataFila.Texto_Ingles;
+  //punto.Texto_Ingles = dataFila.Texto_Ingles;
   punto.Comentarios = dataFila.Comentarios;
 
   // 🔹 Re-render tabla
@@ -500,7 +500,7 @@ const visibles = puntos.filter(p => {
     fila.innerHTML = `
       <td>${idx+1}</td>
       <td contenteditable="true" spellcheck="false">${punto.Texto_Punto || ''}</td>
-      <td contenteditable="true" spellcheck="false">${punto.Texto_Ingles || ''}</td>
+      // <td contenteditable="true" spellcheck="false">${punto.Texto_Ingles || ''}</td>
       <td>${punto.Usuario || ''}</td>
       <td contenteditable="true" spellcheck="false">${punto.Comentarios || ''}</td>
       <td>
@@ -538,7 +538,7 @@ const visibles = puntos.filter(p => {
     let valA="", valB="";
 
     if(colIndex===1){ valA = a.Texto_Punto || ""; valB = b.Texto_Punto || ""; }
-    if(colIndex===2){ valA = a.Texto_Ingles || ""; valB = b.Texto_Ingles || ""; }
+   //  if(colIndex===2){ valA = a.Texto_Ingles || ""; valB = b.Texto_Ingles || ""; }
     if(colIndex===3){ valA = a.Usuario || ""; valB = b.Usuario || ""; }
     if(colIndex===4){ valA = a.Comentarios || ""; valB = b.Comentarios || ""; }
     if(colIndex===5){ valA = a.Estado || ""; valB = b.Estado || ""; }
