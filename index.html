@@ -66,7 +66,13 @@
       .menu a:hover{
         color:#00aaff;
       }
-      
+
+      .menu a.active {
+              background: #003366;   /* color de fondo destacado */
+              color: #fff;           /* texto blanco */
+              border-radius: 6px;
+              padding: 5px 10px;
+            }
       .menu-toggle{
         display:none;
         font-size:1.6rem;
@@ -656,6 +662,23 @@ function filterDept(dep){
   document.getElementById("deptFilter").value = dep;
   filterSOP();
 }
+
+// 🔹 Destacar opción de menú según URL
+function destacarMenu() {
+  const links = document.querySelectorAll(".menu a");
+  const path = window.location.pathname; // ruta actual
+  links.forEach(link => {
+    if (link.getAttribute("href") === path) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  destacarMenu();
+});
 
 /* ===== SORT ===== */
 function sortTable(field){
