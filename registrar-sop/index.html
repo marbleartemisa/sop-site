@@ -18,6 +18,13 @@ body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/
 .menu{display:flex;gap:25px;}
 .menu a{color:white;text-decoration:none;font-weight:bold;transition:.3s;}
 .menu a:hover{color:#00aaff;transform:scale(1.05);}
+
+ .menu a.active {
+  background: #003366;   /* color de fondo destacado */
+  color: #fff;           /* texto blanco */
+  border-radius: 6px;
+  padding: 5px 10px;
+}
 .menu-toggle{display:none;font-size:1.6rem;cursor:pointer;}
 .container{max-width:900px;margin:50px auto;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:30px;border-radius:18px;box-shadow:0 15px 35px rgba(0,0,0,0.3);}
 h1{text-align:center;margin-bottom:25px;color:#003366;}
@@ -346,6 +353,23 @@ function mostrarNotificacion(msg,tipo){
   document.body.appendChild(notif);
   setTimeout(()=>notif.remove(),4000);
 }
+
+ // 🔹 Destacar opción de menú según URL
+function destacarMenu() {
+  const links = document.querySelectorAll(".menu a");
+  const path = window.location.pathname; // ruta actual
+  links.forEach(link => {
+    if (link.getAttribute("href") === path) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  destacarMenu();
+});
 
  /* ===== EDITAR SOP ===== */
 function editSOP(){
