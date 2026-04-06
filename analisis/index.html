@@ -499,29 +499,30 @@ const visibles = puntos.filter(p => {
     const fila = document.createElement("tr");
     fila.dataset.id = punto.Id_Punto;
 
-    fila.innerHTML = `
-      <td>${idx+1}</td>
-      <td contenteditable="true" spellcheck="false">${punto.Texto_Punto || ''}</td>
-      <td>${punto.Usuario || ''}</td>
-      <td contenteditable="true" spellcheck="false">${punto.Comentarios || ''}</td>
-      <td>
-        <select>
-          <option value="Pendiente" ${punto.Estado==='Pendiente'?'selected':''}>Pendiente</option>
-          <option value="Aceptado" ${punto.Estado==='Aceptado'?'selected':''}>Aceptado</option>
-          <option value="Rechazado" ${punto.Estado==='Rechazado'?'selected':''}>Rechazado</option>
-          <option value="Preseleccionado" ${punto.Estado==='Preseleccionado'?'selected':''}>Preseleccionado</option>
-        </select>
-      </td>
-      <td>
-        <button class="btn-save-row">
-          <i class="fa-solid fa-floppy-disk"></i>
-        </button>
-      </td>
-    `;
+  fila.innerHTML = `
+  <td>${idx+1}</td> <!-- # -->
+  <td contenteditable="true" spellcheck="false">${punto.Texto_Punto || ''}</td> <!-- Punto Español -->
+  <td>${punto.Usuario || ''}</td> <!-- Usuario -->
+  <td contenteditable="true" spellcheck="false">${punto.Comentarios || ''}</td> <!-- Comentarios -->
+  <td>
+    <select>
+      <option value="Pendiente" ${punto.Estado==='Pendiente'?'selected':''}>Pendiente</option>
+      <option value="Aceptado" ${punto.Estado==='Aceptado'?'selected':''}>Aceptado</option>
+      <option value="Rechazado" ${punto.Estado==='Rechazado'?'selected':''}>Rechazado</option>
+      <option value="Preseleccionado" ${punto.Estado==='Preseleccionado'?'selected':''}>Preseleccionado</option>
+    </select>
+  </td>
+  <td>
+    <button class="btn-save-row">
+      <i class="fa-solid fa-floppy-disk"></i>
+    </button>
+  </td>
+`;
 
     tabla.appendChild(fila);
   });
 }
+
 
 
 
