@@ -142,6 +142,42 @@
     @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
 
     #aporte_timestamp_display { font-size:0.8rem; color:#666; margin-bottom:5px; }
+
+    /* OCULTAR HAMBURGER EN PC */
+.menu-toggle {
+  display: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+  .menu-toggle {
+    display: block; /* 👈 SOLO en móvil */
+  }
+
+  .menu {
+    display: none; /* oculto por defecto */
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.95);
+    flex-direction: column;
+    text-align: center;
+    padding: 15px 0;
+  }
+
+  .menu a {
+    display: block;
+    margin: 10px 0;
+  }
+
+  .menu.active {
+    display: flex; /* se abre */
+  }
+}
   </style>
 </head>
 <body>
@@ -292,6 +328,10 @@ function archivosA_Base64(files){
       reader.readAsDataURL(file);
     });
   }));
+}
+
+  function toggleMenu(){
+  document.querySelector(".menu").classList.toggle("active");
 }
 
 function mostrarNotificacion(msg, tipo) {
