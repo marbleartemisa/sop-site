@@ -240,9 +240,9 @@ select{ width:100%;}
         <tr>
           <th onclick="sortTable(0)">#</th>
           <th onclick="sortTable(1)">Pregunta Fact Finding</th>
-          <th onclick="sortTable(3)">Usuario</th>
-          <th onclick="sortTable(4)">Comentarios</th>
-          <th onclick="sortTable(5)">Estado</th>
+          <th onclick="sortTable(2)">Usuario</th>
+          <th onclick="sortTable(3)">Comentarios</th>
+          <th onclick="sortTable(4)">Estado</th>
         </tr>
       </thead>
       <tbody id="tablaPuntos"></tbody>
@@ -251,6 +251,8 @@ select{ width:100%;}
 
 </div>
 
+
+  
 <!-- MODAL COMENTARIO -->
 <div id="modal">
   <div id="modal-content">
@@ -548,11 +550,11 @@ fila.innerHTML = `
 
     let valA="", valB="";
 
-   if(colIndex===1){ valA = a.Texto_Punto || ""; valB = b.Texto_Punto || ""; }
-    if(colIndex===2){ valA = a.Usuario || ""; valB = b.Usuario || ""; }
-    if(colIndex===3){ valA = a.Comentarios || ""; valB = b.Comentarios || ""; }
-    if(colIndex===4){ valA = a.Estado || ""; valB = b.Estado || ""; }
-
+      if(colIndex===1){ valA = a.Texto_Punto || ""; valB = b.Texto_Punto || ""; }       // Pregunta Fact Finding
+      if(colIndex===2){ valA = a.Usuario || ""; valB = b.Usuario || ""; }              // Usuario
+      if(colIndex===3){ valA = a.Comentarios || ""; valB = b.Comentarios || ""; }      // Comentarios
+      if(colIndex===4){ valA = a.Estado || ""; valB = b.Estado || ""; }                // Estado
+    
     valA = valA.toString().toLowerCase();
     valB = valB.toString().toLowerCase();
 
