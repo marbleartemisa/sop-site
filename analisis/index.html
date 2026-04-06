@@ -88,6 +88,7 @@ select{ width:100%;}
 .pendiente{background:#fff4cc; color:#b38f00;}
 .aceptado{background:#e6f7ec;color:#1e7e34;}
 .rechazado{background:#fdecea;color:#c62828;}
+.preseleccionado{background:#fdecea;color:#c62828;}
 
 /* MODAL COMENTARIO */
 #modal{
@@ -478,6 +479,7 @@ function cerrarModal(){ document.getElementById("modal").style.display="none"; }
           <option value="Pendiente" ${punto.Estado==='Pendiente'?'selected':''}>Pendiente</option>
           <option value="Aceptado" ${punto.Estado==='Aceptado'?'selected':''}>Aceptado</option>
           <option value="Rechazado" ${punto.Estado==='Rechazado'?'selected':''}>Rechazado</option>
+          <option value="Preseleccionado" ${punto.Estado==='Preseleccionado'?'selected':''}>Preseleccionado</option>
         </select>
       </td>
       <td>
