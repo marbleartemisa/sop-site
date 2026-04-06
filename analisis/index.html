@@ -90,6 +90,25 @@ select{ width:100%;}
 .rechazado{background:#fdecea;color:#c62828;}
 .preseleccionado{background:#fdecea;color:#c62828;}
 
+.btn-filtro {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #00aaff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-filtro:hover {
+  background: #0077aa;
+}
+
+.btn-filtro.active {
+  background: #003366; /* botón activo */
+}
+  
 /* MODAL COMENTARIO */
 #modal{
   display:none;
@@ -194,10 +213,17 @@ select{ width:100%;}
   <select id="selectSOP">
     <option value="">Seleccione SOP</option>
   </select>
-
-
   
-  <div class="table-container">
+<div class="table-container">
+
+  <!-- BOTONES DE FILTRO -->
+  <div id="filtrosEstado" style="margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="btn-filtro" data-estado="">Todos</button>
+    <button class="btn-filtro" data-estado="Pendiente">Pendiente</button>
+    <button class="btn-filtro" data-estado="Aceptado">Aprobado</button>
+    <button class="btn-filtro" data-estado="Rechazado">Rechazado</button>
+    <button class="btn-filtro" data-estado="Preseleccionado">Preseleccionado</button>
+  </div>
     <table>
       <thead>
         <tr>
@@ -455,8 +481,11 @@ function cerrarModal(){ document.getElementById("modal").style.display="none"; }
   const tabla = document.getElementById("tablaPuntos");
   tabla.innerHTML = "";
 
-  // 🔹 FILTRAR antes de renderizar
-  const visibles = puntos.filter(p => (p.Estado || "").toLowerCase() !== "rechazado");
+ // 🔹 FILTRAR según botón activo
+const visibles = puntos.filter(p => {
+  if (!filtroEstadoActual) return true; // todos
+  return p.Estado === filtroEstadoActual;
+});
 
   // 🔹 Si no hay datos visibles
   if(visibles.length === 0){
@@ -540,6 +569,22 @@ function destacarMenu() {
 
 window.addEventListener("DOMContentLoaded", () => {
   destacarMenu();
+});
+
+  let filtroEstadoActual = ""; // estado seleccionado por los botones
+
+const botones = document.querySelectorAll(".btn-filtro");
+botones.forEach(btn => {
+  btn.addEventListener("click", () => {
+    filtroEstadoActual = btn.dataset.estado; // actualizar filtro
+
+    // quitar clase active de todos
+    botones.forEach(b => b.classList.remove("active"));
+    // marcar este como activo
+    btn.classList.add("active");
+
+    renderTabla();
+  });
 });
   
 </script>
