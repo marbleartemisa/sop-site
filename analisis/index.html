@@ -58,16 +58,16 @@ h2{ color:#003366; margin-bottom:15px; text-align:center;}
 input, select, textarea{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
 table{ width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
 th, td{ padding:10px 12px; text-align:left; border-bottom:1px solid #ddd; vertical-align: middle;}
-/* Ajuste columnas para comentarios y estado */
+/* Comentarios ahora es la 4ta columna */
+table th:nth-child(4), table td:nth-child(4) {
+  width: 40%;  /* más espacio para comentarios */
+  min-width: 180px;
+}
+
+/* Estado ahora es la 5ta columna */
 table th:nth-child(5), table td:nth-child(5) {
-  width: 35%;       /* Comentarios más ancha */
-  min-width: 180px; /* mínimo ancho para escribir */
+  width: 15%;
 }
-
-table th:nth-child(6), table td:nth-child(6) {
-  width: 15%;       /* Estado más ancho para mostrar completo */
-}
-
 td[contenteditable="true"] {
   min-height: 40px;        /* más alto para escribir varios renglones */
   white-space: pre-wrap;   /* permite que el texto haga wrap */
@@ -77,7 +77,10 @@ td[contenteditable="true"] {
 td select {
   width: 100%;
 }
-    
+
+
+
+  
 th{ background:#003366; color:white;}
 button{ padding:8px 12px; border:none; border-radius:6px; cursor:pointer; background:#00aaff; color:white; font-weight:bold; transition:.3s;}
 button:hover{ background:#0077aa;}
@@ -229,7 +232,6 @@ select{ width:100%;}
         <tr>
           <th onclick="sortTable(0)">#</th>
           <th onclick="sortTable(1)">Punto (Español)</th>
-          <th onclick="sortTable(2)">Punto (Inglés)</th>
           <th onclick="sortTable(3)">Usuario</th>
           <th onclick="sortTable(4)">Comentarios</th>
           <th onclick="sortTable(5)">Estado</th>
@@ -500,7 +502,6 @@ const visibles = puntos.filter(p => {
     fila.innerHTML = `
       <td>${idx+1}</td>
       <td contenteditable="true" spellcheck="false">${punto.Texto_Punto || ''}</td>
-      <td contenteditable="true" spellcheck="false">${punto.Texto_Ingles || ''}</td>
       <td>${punto.Usuario || ''}</td>
       <td contenteditable="true" spellcheck="false">${punto.Comentarios || ''}</td>
       <td>
@@ -523,6 +524,7 @@ const visibles = puntos.filter(p => {
 }
 
 
+
   
   function sortTable(colIndex){
 
@@ -537,11 +539,10 @@ const visibles = puntos.filter(p => {
 
     let valA="", valB="";
 
-    if(colIndex===1){ valA = a.Texto_Punto || ""; valB = b.Texto_Punto || ""; }
-    if(colIndex===2){ valA = a.Texto_Ingles || ""; valB = b.Texto_Ingles || ""; }
-    if(colIndex===3){ valA = a.Usuario || ""; valB = b.Usuario || ""; }
-    if(colIndex===4){ valA = a.Comentarios || ""; valB = b.Comentarios || ""; }
-    if(colIndex===5){ valA = a.Estado || ""; valB = b.Estado || ""; }
+   if(colIndex===1){ valA = a.Texto_Punto || ""; valB = b.Texto_Punto || ""; }
+    if(colIndex===2){ valA = a.Usuario || ""; valB = b.Usuario || ""; }
+    if(colIndex===3){ valA = a.Comentarios || ""; valB = b.Comentarios || ""; }
+    if(colIndex===4){ valA = a.Estado || ""; valB = b.Estado || ""; }
 
     valA = valA.toString().toLowerCase();
     valB = valB.toString().toLowerCase();
