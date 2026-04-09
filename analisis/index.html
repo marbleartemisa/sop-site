@@ -426,24 +426,27 @@ const dataFila = {
   Id_Punto: punto.Id_Punto,
   Id_Sop_Analisis: currentSOP,
 
-  // ❌ YA NO mandes Usuario original
-  // Usuario: currentUser.usuario,
-
-  // ❌ YA NO mandes Fecha original
-  // Fecha: new Date(),
-
-  // ✅ NUEVO
   Usuario_Update: currentUser.usuario,
   Fecha_Update: new Date().toLocaleString(),
 
   Texto_Punto: fila.cells[1].innerText.trim(),
-   Texto_Ingles: fila.cells[2].innerText.trim(),
-  Comentarios: fila.cells[4].innerText.trim(),
-  Estado: fila.cells[5].querySelector("select").value
+
+  // ❌ ELIMINA Texto_Ingles si no está en UI
+  // Texto_Ingles: "",
+
+  Comentarios: fila.cells[3].innerText.trim(),
+
+  Estado: fila.cells[4].querySelector("select").value
 };
 
   console.log("📤 Enviando ID:", punto.Id_Punto);
 
+
+
+
+
+
+  
 
 
   
