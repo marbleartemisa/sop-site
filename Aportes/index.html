@@ -335,8 +335,6 @@ const usuarios = [
 let currentUser = null;
   
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  emailjs.init("iR8ieJnOkI4_sr8TH"); // 👈 aquí está bien 
 
 document.getElementById("modalAporte").style.display = "none";
 
@@ -482,20 +480,15 @@ async function enviarAporte() {
   const texto = btn.querySelector(".texto");
   const spinner = btn.querySelector(".spinner");
 
-const id = document.getElementById("aporte_id_sop").value;
-const valor = document.getElementById("aporte_employee").value;
-const comentario = document.getElementById("aporte_comentario").value;
-
-const datos = valor.split("|");
-const empleado = datos[0];
-const correo = datos[1];
-const departamento = datos[3];
-
+  const id = document.getElementById("aporte_id_sop").value;
+  const valor = document.getElementById("aporte_employee").value;
+  const comentario = document.getElementById("aporte_comentario").value;
 
   if (!id) return mostrarNotificacion("SOP no identificado", "error");
   if (!valor) return mostrarNotificacion("Seleccione empleado", "error");
   if (!comentario) return mostrarNotificacion("Debe escribir un comentario", "error");
 
+  const datos = valor.split("|");
 
 const payload = {
   tipo: "aporte",   // 🔥 CLAVE DEL SISTEMA
@@ -522,16 +515,6 @@ const payload = {
     }
     
     console.log("📤 Payload:", payload);
-    
-    let filesHTML = "";
-
-    if (payload.archivos && payload.archivos.length > 0) {
-      filesHTML = payload.archivos
-        .map(f => `<p>📎 ${f.name}</p>`)
-        .join("");
-    } else {
-      filesHTML = "Sin archivos adjuntos";
-    }
 
  const res = await fetch(SCRIPT_URL_SOP_ADMIN, {
   method: "POST",
@@ -546,22 +529,7 @@ const payload = {
     if (!result.success) {
       throw new Error(result.error || "Error backend");
     }
-        emailjs.send("service_vkt5xuo", "template_vc7447e", {
-        employee: empleado,
-        department: departamento,
-        cargo: "",
-        objective: "Aporte a SOP ID: " + id,
-        areas: "",
-        summary: comentario,
-        date: new Date().toLocaleString(),
-        files: "Ver adjuntos en sistema SOP"
-              })
-              .then(() => {
-                console.log("📧 Email enviado");
-              })
-              .catch(err => {
-                console.error("❌ Error EmailJS:", err);
-              }); 
+
     mostrarNotificacion("Aporte enviado correctamente", "success");
     cerrarAporte();
     renderTabla();
