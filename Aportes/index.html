@@ -481,20 +481,20 @@ async function enviarAporte() {
   const texto = btn.querySelector(".texto");
   const spinner = btn.querySelector(".spinner");
 
-  const id = document.getElementById("aporte_id_sop").value;
-  const valor = document.getElementById("aporte_employee").value;
-  const comentario = document.getElementById("aporte_comentario").value;
+const id = document.getElementById("aporte_id_sop").value;
+const valor = document.getElementById("aporte_employee").value;
+const comentario = document.getElementById("aporte_comentario").value;
 
 const datos = valor.split("|");
 const empleado = datos[0];
 const correo = datos[1];
 const departamento = datos[3];
 
+
   if (!id) return mostrarNotificacion("SOP no identificado", "error");
   if (!valor) return mostrarNotificacion("Seleccione empleado", "error");
   if (!comentario) return mostrarNotificacion("Debe escribir un comentario", "error");
 
-  const datos = valor.split("|");
 
 const payload = {
   tipo: "aporte",   // 🔥 CLAVE DEL SISTEMA
