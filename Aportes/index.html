@@ -525,21 +525,25 @@ const payload = {
     console.log("📥 RAW:", text);
 
     const result = JSON.parse(text);
-      emailjs.send("service_vkt5xuo","template_vc7447e",{
-      employee: datos[0],
-      department: datos[3],
-      cargo: "Aporte SOP",
-      objective: "Aporte a SOP",
-      areas: "",
-      summary: comentario,
-      date: new Date().toLocaleString(),
-      files: ""
-    })
-    .then(()=>mostrarNotificacion("Aporte enviado + email","success"))
-    .catch(err=>{
-      console.error(err);
-      mostrarNotificacion("Aporte guardado pero error email","error");
-    });
+        emailjs.send("service_vkt5xuo","template_vc7447e",{
+          employee: datos[0],
+          department: datos[3],
+          cargo: "Aporte SOP",
+          objective: "Aporte a SOP",
+          areas: "N/A",
+          summary: comentario,
+          date: new Date().toLocaleString(),
+          files: "<p>Sin archivos en aporte</p>"
+        })
+        .then(res=>{
+          console.log("EMAIL OK RESPONSE:", res);
+          mostrarNotificacion("Email enviado","success");
+        })
+        .catch(err=>{
+          console.error("EMAIL ERROR:", err);
+          mostrarNotificacion("Error email aporte","error");
+        });
+
 
     
     if (!result.success) {
