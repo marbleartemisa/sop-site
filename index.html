@@ -213,6 +213,10 @@
         width:100%;
         border-collapse:collapse;
       }
+
+      .sop-table tbody tr{
+      cursor:pointer;
+      }
       
       .sop-table thead th{
         position:sticky;
@@ -604,18 +608,21 @@ function renderSOP(filtered){
 
   list.forEach(sop=>{
     html += `
-    <tr>
-      <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
-     <td data-label="Procedimiento" class="sop-nombre">${sop.title}</td>
-      <td>
-        <a class="sop-btn" href="/sop-site/viewer.html?doc=${sop.url}">
-        Ver
-        </a>
-      </td>
-    </tr>
+            <tr onclick="openSOP('${sop.url}')" style="cursor:pointer;">
+              <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
+              <td data-label="Procedimiento" class="sop-nombre">${sop.title}</td>
+              <td>
+                <a class="sop-btn" 
+                   href="/sop-site/viewer.html?doc=${sop.url}"
+                   onclick="event.stopPropagation()">
+                Ver
+                </a>
+              </td>
+            </tr>
     `;
   });
 
+      
   html += `</tbody></table>`;
   container.innerHTML = html;
 }
@@ -702,6 +709,10 @@ function editSOP(){
   }else{
     alert("Clave incorrecta");
   }
+}
+
+function openSOP(url){
+  window.location.href = "/sop-site/viewer.html?doc=" + url;
 }
 
 /* ===== INIT ===== */
