@@ -93,12 +93,38 @@
     input, select { margin-bottom:15px; padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; }
 
     .table-container { overflow-x:auto; margin-bottom:20px; }
-
-    table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
-    th { background:#003366; color:white; padding:12px 15px; text-align:left; vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     
- 
+     table {
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+    }
 
+    th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+
+    button {
+      border: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: #003366;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+  button:hover {
+    transform: scale(1.05);
+    background: #0055aa;
+  }
+      .estado {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+        border-radius: 999px;
+      }
     td {
   padding: 10px 12px;
   border-bottom: 1px solid #ddd;
@@ -152,6 +178,11 @@
     @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
 
     #aporte_timestamp_display { font-size:0.8rem; color:#666; margin-bottom:5px; }
+
+    tr:hover {
+        background: #f3f6ff;
+        transition: 0.2s;
+      }
 
     /* OCULTAR HAMBURGER EN PC */
 .menu-toggle {
@@ -311,9 +342,9 @@
       <input type="file" id="aporte_archivos" multiple>
       <div style="display:flex; gap:10px;">
         <button class="send" id="btnEnviarAporte" onclick="enviarAporte()">
-  <span class="texto">Enviar</span>
-  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
-</button>
+            <span class="texto">Enviar</span>
+            <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
+          </button>
 
         
         <button class="cancel" onclick="cerrarAporte()">Cancelar</button>
@@ -322,6 +353,7 @@
   </div>
 
 <script>
+
 const usuarios = [
   {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
   {usuario:"Alberto Molina", clave:"Alb1975", rol:"editor", depto:"Administracion", correo:"frontdesk@artemisamarble.com"},
@@ -335,7 +367,10 @@ const usuarios = [
 let currentUser = null;
   
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  emailjs.init("TU_PUBLIC_KEY");
+</script>
 document.getElementById("modalAporte").style.display = "none";
 
 function archivosA_Base64(files){
@@ -439,9 +474,7 @@ function destacarMenu() {
   });
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  destacarMenu();
-});  
+ 
 function abrirAporte(id) {
   document.getElementById("modalAporte").style.display = "flex";
   document.getElementById("aporte_id_sop").value = id;
@@ -531,6 +564,18 @@ const payload = {
     }
 
     mostrarNotificacion("Aporte enviado correctamente", "success");
+    emailjs.send("TU_SERVICE_ID", "TU_TEMPLATE_ID", {
+          empleado: datos[0],
+          correo: datos[1],
+          comentario: comentario,
+          id_sop: id
+        })
+        .then(() => {
+          console.log("Email enviado");
+        })
+        .catch(err => {
+          console.error("Error EmailJS:", err);
+        });
     cerrarAporte();
     renderTabla();
 
