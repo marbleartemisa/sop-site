@@ -333,7 +333,7 @@ const usuarios = [
 ];
 
 let currentUser = null;
-emailjs.init("iR8ieJnOkI4_sr8TH"); // tu user ID EmailJS  
+  
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
 document.getElementById("modalAporte").style.display = "none";
@@ -524,28 +524,8 @@ const payload = {
     const text = await res.text();
     console.log("📥 RAW:", text);
 
-        // 2️⃣ Preparar HTML para email
-    let filesHTML = "";
-    if(Array.isArray(links) && links.length > 0){
-      filesHTML = links.map(l => `<p>📎 <a href="${l}" target="_blank">${l}</a></p>`).join("");
-    }
+    const result = JSON.parse(text);
 
-    // 3️⃣ Enviar EmailJS
-    emailjs.send("service_vkt5xuo","template_vc7447e",{
-      employee:nombre,
-      department:depto,
-      cargo:cargo,
-      objective:objetivo,
-      areas:areas,
-      summary:resumen,
-      date:fechaActual,
-      files:filesHTML
-    })
-    .then(()=>mostrarNotificacion("Solicitud enviada correctamente","success"))
-    .catch(err=>{console.error(err); mostrarNotificacion("Error enviando correo","error")});
-
-
-    
     if (!result.success) {
       throw new Error(result.error || "Error backend");
     }
