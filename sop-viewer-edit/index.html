@@ -19,7 +19,7 @@
         background-attachment:fixed;
         color:#1f2937;
       }
-
+ 
 
 /* NAVBAR */
 .navbar{
@@ -47,20 +47,81 @@
   padding: 5px 10px;
 }
   
+  
 .menu-toggle{ display:none; font-size:1.6rem; cursor:pointer; }
 
 /* OVERLAY Y TABLA */
 .overlay { padding:20px; max-width:1200px; margin:auto;}
 h2{ color:#003366; margin-bottom:15px; text-align:center;}
 input, select{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
-table{ width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
-th, td{ padding:10px 12px; text-align:left; border-bottom:1px solid #ddd; }
-th{ background:#003366; color:white;}
+
+.table-container{
+  width:100%;
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  min-width:1200px; /* 🔥 CLAVE: evita que se comprima */
+  border-collapse:collapse;
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+th:nth-child(2), td:nth-child(2){ /* Departamento */
+  min-width:160px;
+  white-space:nowrap;
+}
+
+th:nth-child(3), td:nth-child(3){ /* Objetivo */
+  min-width:300px;
+}
+
+th:nth-child(4), td:nth-child(4){ /* Áreas */
+  min-width:200px;
+}
+
+th:nth-child(6), td:nth-child(6){ /* Fecha */
+  min-width:180px;
+  white-space:nowrap;
+}
+
+td{
+  vertical-align:middle;
+  line-height:1.4;
+}
+  
 .estado{ display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:uppercase;}
 .pendiente{background:#fff4cc; color:#b38f00;}
 .tramite{background:#e6f0ff;color:#1a5fd0;}
 .rechazado{background:#fdecea;color:#c62828;}
 .aprobado{background:#e6f7ec;color:#1e7e34;}
+
+  /* ===== BADGES DEPARTAMENTO / AREA ===== */
+
+.badge{
+  display:inline-block;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+  white-space:nowrap;
+  text-transform:capitalize;
+}
+
+/* Colores */
+.dept-carpinteria{background:#e0f2fe;color:#0369a1;}
+.dept-administracion{background:#ede9fe;color:#5b21b6;}
+.dept-comercial{background:#dcfce7;color:#166534;}
+.dept-stone{background:#fef3c7;color:#92400e;}
+.dept-maquinarias{background:#fee2e2;color:#991b1b;}
+.dept-vehiculos{background:#e5e7eb;color:#374151;}
+.dept-ecopower{background:#cffafe;color:#0e7490;}
+.dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
+.dept-medidas{background:#f3e8ff;color:#7e22ce;}
+.dept-taller{background:#dcfce7;color:#166534;}
 
 /* CANVAS */
 #canvas-overlay{
@@ -340,6 +401,12 @@ let comentarios=[], clickX=0, clickY=0, SOP_URL="", ID_SOP="";
 const USUARIO = localStorage.getItem("usuario") || "";
 const CORREO = localStorage.getItem("correo") || "";
 
+
+function capitalizar(texto){
+  if(!texto) return "";
+  return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+}
+
 // TABLA SOP
 async function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
@@ -366,9 +433,17 @@ async function renderTabla(){
       const fila = document.createElement("tr");
       fila.innerHTML=`
         <td>${sop.empleado}</td>
-        <td>${sop.departamento}</td>
+        
+        <td><span class="badge dept-${(sop.departamento||"").toLowerCase()}">
+            ${capitalizar(sop.departamento)}
+        </span></td>
+        
         <td>${sop.objetivo}</td>
-        <td>${sop.areas}</td>
+        
+        <td><span class="badge dept-${(sop.areas||"").toLowerCase()}">
+          ${capitalizar(sop.areas)}
+        </span></td>
+
         <td><span class="estado ${sop.estado.toLowerCase()}">${sop.estado}</span></td>
         <td>${new Date(sop.Timestamp).toLocaleString()}</td>
         <td><button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Abrir</button></td>
@@ -381,7 +456,7 @@ document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 renderTabla();
 
-  
+
 // ABRIR SOP
 async function abrirSOP(url,id){
   SOP_URL=url; ID_SOP=id; comentarios=[];
