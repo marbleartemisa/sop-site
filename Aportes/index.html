@@ -90,7 +90,7 @@
     
     .overlay { min-height:100vh; 
               padding:20px; 
-              max-width:1200px; 
+              max-width:1400px; 
               margin:auto; }
 
               
@@ -102,10 +102,11 @@
         margin:40px auto 80px;
         padding:0 10px;
       }
+
     .sop-table{
-        width:100%;
-        table-layout: fixed; /* 🔥 clave anti-scroll */
-      }
+          width: 100%;
+          table-layout: auto; /* 🔥 vuelve a comportamiento natural */
+        }
 
     /* OBJETIVO (NO PARTIR NOMBRES) */
     
@@ -191,9 +192,60 @@
             color:#166534;
           }
    
-      .table-container{
-        overflow-x: hidden;
-      }
+        .table-container{
+            overflow-x: auto;
+          }
+
+            /* EMPLEADO */
+        .sop-table th:nth-child(1),
+        .sop-table td:nth-child(1){
+          min-width: 160px;
+        }
+        
+        /* DEPARTAMENTO */
+        .sop-table th:nth-child(2),
+        .sop-table td:nth-child(2){
+          min-width: 160px;
+        }
+        
+        /* OBJETIVO (grande) */
+        .sop-table th:nth-child(3),
+        .sop-table td:nth-child(3){
+          min-width: 300px;
+        }
+        
+        /* AREAS (🔥 PROBLEMA TUYO) */
+        .sop-table th:nth-child(4),
+        .sop-table td:nth-child(4){
+          min-width: 220px;
+          white-space: nowrap; /* 🔥 evita "administracion" partido */
+        }
+        
+        /* ESTADO */
+        .sop-table th:nth-child(5),
+        .sop-table td:nth-child(5){
+          min-width: 130px;
+        }
+        
+        /* FECHA */
+        .sop-table th:nth-child(6),
+        .sop-table td:nth-child(6){
+          min-width: 180px;
+          white-space: nowrap;
+        }
+        
+        /* ARCHIVOS */
+        .sop-table th:nth-child(7),
+        .sop-table td:nth-child(7){
+          min-width: 120px;
+        }
+        
+        /* APORTAR (🔥 botón cortado) */
+        .sop-table th:nth-child(8),
+        .sop-table td:nth-child(8){
+          min-width: 120px;
+          text-align: center;
+        }
 
     table {
             width: 100%;
@@ -255,9 +307,6 @@
         border-bottom: 1px solid #ddd;
         text-align: left;
         vertical-align: top;
-
-  word-break: break-word;   /* ✅ permite cortar texto */
-  white-space: normal;      /* ✅ evita tabla infinita */
 }
       
     th:nth-child(3),             /* Objetivo */
