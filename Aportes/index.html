@@ -156,7 +156,22 @@
   word-break: break-word;   /* ✅ permite cortar texto */
   white-space: normal;      /* ✅ evita tabla infinita */
 }
-    th:nth-child(3), td:nth-child(3) { max-width: 250px; } /* Objetivo */
+      
+    th:nth-child(3),             /* Objetivo */
+        td:nth-child(3) {
+          max-width: 400px;   /* 👈 más ancho */
+          white-space: nowrap;  /* 👈 evita saltos de línea */
+          overflow: hidden;
+          text-overflow: ellipsis; /* 👈 pone ... si es muy largo */
+        }
+          
+          td:nth-child(3):hover {
+            white-space: normal;
+            position: relative;
+            z-index: 10;
+            background: white;
+          }
+    
     th:nth-child(4), td:nth-child(4) { max-width: 200px; } /* Áreas */
 
     .estado { display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; border:1px solid transparent; }
@@ -300,7 +315,7 @@
           <tr>
             <th>Empleado</th>
             <th>Departamento</th>
-            <th>Objetivo</th>
+            <th>SOP</th>
             <th>Áreas</th>
             <th>Estado</th>
             <th>Fecha / Hora</th>
