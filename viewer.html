@@ -145,8 +145,28 @@ let params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 let idSOP = params.get("id");
 const frame = document.getElementById("frame");
+frame.onload = function () {
+    try {
+        const docFrame = frame.contentDocument || frame.contentWindow.document;
+
+        const style = docFrame.createElement("style");
+        style.innerHTML = `
+            body {
+                max-width: 900px !important;
+                margin: 40px auto !important;
+                display: block !important;
+            }
+        `;
+
+        docFrame.head.appendChild(style);
+    } catch (e) {
+        console.log("No se pudo modificar el iframe:", e);
+    }
+};
 if(doc) frame.src = doc;
 
+
+    
 function openNew() {
     if(doc) window.open(doc, "_blank");
 }
