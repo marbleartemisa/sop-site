@@ -491,6 +491,7 @@ async function enviarAporte() {
   const datos = valor.split("|");
 
 const payload = {
+  tipo: "aporte",   // 🔥 CLAVE DEL SISTEMA
   id_sop: id.trim(),
   empleado: datos[0],
   correo: datos[1],
