@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Historial y Comentarios SOP - Artemisa Rev Mejorada</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
 <style>
 /* GLOBAL */
   
@@ -51,23 +53,64 @@
 .menu-toggle{ display:none; font-size:1.6rem; cursor:pointer; }
 
 /* OVERLAY Y TABLA */
-.overlay { padding:20px; max-width:1200px; margin:auto;}
+  .overlay {
+  padding:20px;
+  max-width:1500px; /* 🔥 más ancho */
+  margin:auto;
+}
+  
 h2{ color:#003366; margin-bottom:15px; text-align:center;}
 input, select{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
 
 .table-container{
-  width:100%;
   overflow-x:auto;
 }
 
 table{
   width:100%;
-  min-width:1200px; /* 🔥 CLAVE: evita que se comprima */
+  min-width:1300px;
   border-collapse:collapse;
   background:white;
-  border-radius:12px;
+  border-radius:14px;
   overflow:hidden;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+  
+
+th{
+  background:#0f172a; /* 🔥 azul oscuro moderno */
+  color:#e2e8f0;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  padding:14px 16px;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+td{
+  font-size:14px;
+}
+
+.estado{
+  font-size:11px;
+  padding:6px 12px;
+  border-radius:999px;
+}
+  
+tbody tr{
+  background: rgba(255,255,255,0.75);
+  transition: all 0.2s ease;
+}
+
+tbody tr:nth-child(even){
+  background: rgba(255,255,255,0.65);
+}
+
+tbody tr:hover{
+  background: rgba(255,255,255,0.95);
+  transform: scale(1.01);
 }
 
 th:nth-child(2), td:nth-child(2){ /* Departamento */
@@ -91,6 +134,12 @@ th:nth-child(6), td:nth-child(6){ /* Fecha */
 td{
   vertical-align:middle;
   line-height:1.4;
+}
+
+th, td{
+  padding:14px 16px;
+  text-align:left;
+  border-bottom:1px solid #e5e7eb;
 }
   
 .estado{ display:inline-block; padding:6px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:uppercase;}
@@ -122,6 +171,33 @@ td{
 .dept-houzz-pro{background:#f3e8ff;color:#7e22ce;}
 .dept-medidas{background:#f3e8ff;color:#7e22ce;}
 .dept-taller{background:#dcfce7;color:#166534;}
+
+  /* EMPLEADO */
+th:nth-child(1), td:nth-child(1){
+  min-width:180px;
+  font-weight:500;
+}
+
+/* DEPARTAMENTO */
+th:nth-child(2), td:nth-child(2){
+  min-width:180px;
+}
+
+/* OBJETIVO (🔥 CLAVE) */
+th:nth-child(3), td:nth-child(3){
+  min-width:380px;
+}
+
+/* AREAS */
+th:nth-child(4), td:nth-child(4){
+  min-width:220px;
+}
+
+/* FECHA */
+th:nth-child(6), td:nth-child(6){
+  min-width:200px;
+  white-space:nowrap;
+}
 
 /* CANVAS */
 #canvas-overlay{
