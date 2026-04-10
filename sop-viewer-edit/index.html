@@ -18,12 +18,12 @@
         background-position:center;
         background-repeat:no-repeat;
         background-size:cover;
-        background-attachment:fixed;
+        background-attachment:fixed;F
         color:#1f2937;
       }
  
 
-/* NAVBAR */
+/* NAVBAR */F
 .navbar{
   position:sticky;
   top:0;
@@ -476,6 +476,7 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <script>
 let currentUser = null;
 const usuarios = [
@@ -494,7 +495,26 @@ const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcT
 let comentarios=[], clickX=0, clickY=0, SOP_URL="", ID_SOP="";
 const USUARIO = localStorage.getItem("usuario") || "";
 const CORREO = localStorage.getItem("correo") || "";
+  
+const deptMap = {
+  instalacion: "Stone",
+  produccion: "Carpinteria",
+  comercial: "Comercial",
+  administracion: "Administración",
+  maquinarias: "Maquinarias",
+  vehiculos: "Vehículos"
+};
+  
+function normalizarDepartamento(dep){
+  if(!dep) return "";
 
+  const mapa = {
+    "instalacion": "stone",
+    "produccion": "carpinteria"
+  };
+
+  return mapa[dep.toLowerCase()] || dep.toLowerCase();
+}
 
 function capitalizar(texto){
   if(!texto) return "";
@@ -504,54 +524,96 @@ function capitalizar(texto){
 // TABLA SOP
 async function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
-  tabla.innerHTML="";
+  tabla.innerHTML = "";
+
   const filtro = document.getElementById("filtroEstado").value;
   const buscar = document.getElementById("buscarSOP").value.toLowerCase();
+
   try{
     const res = await fetch(SHEET_API);
     const data = await res.json();
-    data.forEach(row=>{
-      if(!row.ID_SOP) return;
-      const sop = {
-        Timestamp: row.Timestamp||"",
-        empleado: row.empleado||"",
-        departamento: row.departamento||"",
-        objetivo: row.objetivo||"",
-        areas: row.areas||"",
-        estado: row.estado||"Pendiente",
-        ID_SOP: row.ID_SOP,
-        url_doc: row.url_doc||row.links||""
-      };
-      if(filtro && sop.estado!==filtro) return;
-      if(buscar && !(sop.empleado.toLowerCase()+sop.objetivo.toLowerCase()).includes(buscar)) return;
-      const fila = document.createElement("tr");
-      fila.innerHTML=`
-        <td>${sop.empleado}</td>
-        
-        <td><span class="badge dept-${(sop.departamento||"").toLowerCase()}">
-            ${capitalizar(sop.departamento)}
-        </span></td>
-        
-        <td>${sop.objetivo}</td>
-        
-        <td><span class="badge dept-${(sop.areas||"").toLowerCase()}">
-          ${capitalizar(sop.areas)}
-        </span></td>
 
-        <td><span class="estado ${sop.estado.toLowerCase()}">${sop.estado}</span></td>
-        <td>${new Date(sop.Timestamp).toLocaleString()}</td>
-          <td>
-            <button class="btn-icon" onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
-              <i class="fa-solid fa-comment-dots"></i>
-            </button>
-          </td>
+    data.forEach(row => {
+      if(!row.ID_SOP) return;
+
+      const sop = {
+        Timestamp: row.Timestamp || "",
+        empleado: row.empleado || "",
+        departamento: row.departamento || "",
+        objetivo: row.objetivo || "",
+        areas: row.areas || "",
+        estado: row.estado || "Pendiente",
+        ID_SOP: row.ID_SOP,
+        url_doc: row.url_doc || row.links || ""
+      };
+
+      // 🔥 FILTROS
+      if(filtro && sop.estado !== filtro) return;
+
+      if(buscar && !(
+        (sop.empleado + " " + sop.objetivo)
+        .toLowerCase()
+        .includes(buscar)
+      )) return;
+
+      // 🔥 NORMALIZAR DEPARTAMENTO Y AREAS
+      const depKey = (sop.departamento || "").toLowerCase();
+      const areaKey = (sop.areas || "").toLowerCase();
+
+      const depLabel = deptMap[depKey] || sop.departamento;
+      const areaLabel = deptMap[areaKey] || sop.areas;
+
+      // 🔥 CREAR FILA
+      const fila = document.createElement("tr");
+
+      fila.innerHTML = `
+        <td>${sop.empleado}</td>
+
+        <td>
+          <span class="badge dept-${depKey}">
+            ${depLabel}
+          </span>
+        </td>
+
+        <td>${sop.objetivo}</td>
+
+        <td>
+          <span class="badge dept-${areaKey}">
+            ${areaLabel}
+          </span>
+        </td>
+
+        <td>
+          <span class="estado ${sop.estado.toLowerCase()}">
+            ${sop.estado}
+          </span>
+        </td>
+
+        <td>
+          ${sop.Timestamp ? new Date(sop.Timestamp).toLocaleString() : ""}
+        </td>
+
+        <td>
+          <button class="btn-icon"
+            onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
+            <i class="fa-solid fa-comment-dots"></i>
+          </button>
+        </td>
       `;
+
       tabla.appendChild(fila);
     });
-  }catch(e){ console.error(e); alert("Error cargando SOPs"); }
+
+  }catch(e){
+    console.error(e);
+    alert("Error cargando SOPs");
+  }
 }
+
+// 🔥 EVENTOS
 document.getElementById("buscarSOP").addEventListener("input", renderTabla);
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
+
 renderTabla();
 
 
@@ -671,6 +733,7 @@ function activarComentario(e){
         }catch(err){ console.error(err); }
     });
 }
+
 
 
 // DIBUJAR COMENTARIOS
