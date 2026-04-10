@@ -55,10 +55,28 @@
 /* OVERLAY Y TABLA */
   .overlay {
   padding:20px;
-  max-width:1500px; /* 🔥 más ancho */
+  max-width:1600px; /* 🔥 más ancho */
   margin:auto;
 }
-  
+
+.btn-icon{
+  background:#003366;
+  color:white;
+  border:none;
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:0.2s;
+}
+
+.btn-icon:hover{
+  transform:scale(1.1);
+  background:#0055aa;
+}
 h2{ color:#003366; margin-bottom:15px; text-align:center;}
 input, select{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
 
@@ -522,7 +540,11 @@ async function renderTabla(){
 
         <td><span class="estado ${sop.estado.toLowerCase()}">${sop.estado}</span></td>
         <td>${new Date(sop.Timestamp).toLocaleString()}</td>
-        <td><button onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">💬 Abrir</button></td>
+          <td>
+            <button class="btn-icon" onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
+              <i class="fa-solid fa-comment-dots"></i>
+            </button>
+          </td>
       `;
       tabla.appendChild(fila);
     });
