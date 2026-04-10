@@ -6,6 +6,11 @@
   <title>Aportes SOP - ARTEMISA MARBLE & CABINETS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
+      <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+      <script>
+        emailjs.init("iR8ieJnOkI4_sr8TH");
+      </script>
+  
   <style>
     body{
         margin:0;
@@ -93,18 +98,35 @@
     input, select { margin-bottom:15px; padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; }
 
     .table-container { overflow-x:auto; margin-bottom:20px; }
-    
-     table {
-      border-collapse: separate;
-      border-spacing: 0;
-      overflow: hidden;
-    }
 
-    th {
-        position: sticky;
-        top: 0;
-        z-index: 2;
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       }
+      
+      th {
+        background: #003366;
+        color: white;
+        padding: 14px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+      }
+      
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        font-size: 0.9rem;
+      }
+
+      tr:hover {
+        background: #f5f8ff;
+        transition: 0.2s;
+      }
+    
 
     button {
       border: none;
@@ -126,10 +148,10 @@
         border-radius: 999px;
       }
     td {
-  padding: 10px 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-  vertical-align: top;
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        vertical-align: top;
 
   word-break: break-word;   /* ✅ permite cortar texto */
   white-space: normal;      /* ✅ evita tabla infinita */
@@ -179,10 +201,7 @@
 
     #aporte_timestamp_display { font-size:0.8rem; color:#666; margin-bottom:5px; }
 
-    tr:hover {
-        background: #f3f6ff;
-        transition: 0.2s;
-      }
+
 
     /* OCULTAR HAMBURGER EN PC */
 .menu-toggle {
@@ -367,10 +386,7 @@ const usuarios = [
 let currentUser = null;
   
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  emailjs.init("TU_PUBLIC_KEY");
-</script>
+
 document.getElementById("modalAporte").style.display = "none";
 
 function archivosA_Base64(files){
