@@ -569,6 +569,7 @@ const usuarios = [
 ];
 
 let currentUser = null;
+let SOP_DATA = []; // 🔥 cache de datos
   
 const SCRIPT_URL_SOP_ADMIN = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcTwKh9Aqxv9NyrXx45xauMchS06AhwcQ2bnzWEBkwXu1pdO_/exec";
 
@@ -606,6 +607,17 @@ function iconoArchivo(link, nombre="archivo") {
   return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
 }
 
+  async function cargarDatos() {
+  try {
+    const res = await fetch(SCRIPT_URL_SOP_ADMIN);
+    SOP_DATA = await res.json();
+    renderTabla(); // 🔥 render inicial
+  } catch(e) {
+    console.error(e);
+    mostrarNotificacion("Error cargando los SOPs","error");
+  }
+}
+
 async function renderTabla() {
   const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML = "";
@@ -613,9 +625,8 @@ async function renderTabla() {
   const buscar = document.getElementById("buscarSOP").value.toLowerCase();
 
   try {
-    const res = await fetch(SCRIPT_URL_SOP_ADMIN);
-    const data = await res.json();
-
+    const data = SOP_DATA;
+    
     data.forEach(row => {
           const sop = {
   Timestamp: row.Timestamp || row[0] || "",
@@ -633,8 +644,8 @@ async function renderTabla() {
 
 
       if (filtroEstado && sop.estado !== filtroEstado) return;
-      if (buscar && !(sop.empleado.toLowerCase() + sop.objetivo.toLowerCase() + sop.departamento.toLowerCase()).includes(buscar)) return;
-
+      const texto = (sop.empleado || "") + (sop.objetivo || "") + (sop.departamento || "");
+        if (buscar && !texto.toLowerCase().includes(buscar)) return;
       let estadoClass = "pendiente";
       if (sop.estado === "Trámite") estadoClass = "tramite";
       if (sop.estado === "Rechazado") estadoClass = "rechazado";
@@ -795,7 +806,7 @@ const payload = {
           console.error("Error EmailJS:", err);
         });
     cerrarAporte();
-    renderTabla();
+    cargarDatos();
 
   } catch (err) {
     console.error(err);
@@ -839,7 +850,12 @@ async function cargarHistorial(id){
     historial.innerHTML = "Error cargando historial";
   }
 }
-document.getElementById("buscarSOP").addEventListener("input", renderTabla);
+let timeoutBusqueda;
+
+document.getElementById("buscarSOP").addEventListener("input", () => {
+  clearTimeout(timeoutBusqueda);
+  timeoutBusqueda = setTimeout(renderTabla, 300);
+});
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 
 renderTabla();
