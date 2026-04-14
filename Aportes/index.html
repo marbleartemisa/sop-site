@@ -639,7 +639,7 @@ async function renderTabla() {
   estado: row.estado || row[7] || "Pendiente",
   links: row.links || row[8] || "",
   ID_SOP: row.ID_SOP || row[9] || ""   // ← ESTA LINEA FALTABA
-};;
+};
 
 
 
@@ -654,14 +654,15 @@ async function renderTabla() {
  const archivosHTML = sop.links 
   ? sop.links.split("\n").map(l => iconoArchivo(l.trim())).join(" ")
   : ""
-const fecha = new Date(sop.Timestamp).toLocaleString();
+const fecha = sop.Timestamp ? new Date(sop.Timestamp).toLocaleString() : "";
+      
 
 const fila = document.createElement("tr");
 fila.innerHTML = `
   <td>${sop.empleado}</td>
   
   <td>
-      <span class="dept-badge dept-${sop.departamento.toLowerCase().replace(/\s/g,'-')}">
+      <span class="dept-badge dept-${(sop.departamento || "").toLowerCase().replace(/\s/g,'-')}">
         ${formatearTexto(sop.departamento)}
       </span>
   </td>
@@ -669,7 +670,7 @@ fila.innerHTML = `
   <td>${sop.objetivo}</td>
   
   <td>
-      <span class="dept-badge dept-${sop.areas.toLowerCase().replace(/\s/g,'-')}">
+      <span class="dept-badge dept-${(sop.areas || "").toLowerCase().replace(/\s/g,'-')}">
         ${formatearTexto(sop.areas)}
       </span>
   </td>
@@ -687,20 +688,6 @@ fila.innerHTML = `
     console.error(e);
     mostrarNotificacion("Error cargando los SOPs","error");
   }
-}
-
-
-// 🔹 Destacar opción de menú según URL
-function destacarMenu() {
-  const links = document.querySelectorAll(".menu a");
-  const path = window.location.pathname; // ruta actual
-  links.forEach(link => {
-    if (link.getAttribute("href") === path) {
-      link.classList.add("active");
-    } else {
-      link.classList.remove("active");
-    }
-  });
 }
 
  
@@ -858,8 +845,9 @@ document.getElementById("buscarSOP").addEventListener("input", () => {
 });
 document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 
-renderTabla();
+cargarDatos();
 
+  
 function adminLogin(){
   const password = prompt("Ingrese contraseña de administrador");
   if(password==="Artemisa2026") window.location.href="/sop-site/admin/";
