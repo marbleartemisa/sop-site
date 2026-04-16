@@ -1,11 +1,27 @@
 [
   {
+    "title": "ASISTENCIA HORARIOS TARDANZAS DÍAS OFF",
+    "department": "administracion",
+    "keywords": "asistencia horarios tardanzas dÍas off",
+    "objective": "",
+    "description": "",
+    "url": "administracion/SOP-ASISTENCIA-HORARIOS-TARDANZAS-DÍAS-OFF/index.html"
+  },
+  {
     "title": "COMPRA SLABS",
     "department": "administracion",
     "keywords": "compra slabs",
     "objective": "",
     "description": "",
     "url": "administracion/SOP-COMPRA-SLABS/index.html"
+  },
+  {
+    "title": "GUIA SISTEMA SOP",
+    "department": "administracion",
+    "keywords": "guia sistema sop",
+    "objective": "",
+    "description": "",
+    "url": "administracion/SOP-GUIA-SISTEMA-SOP/index.html"
   },
   {
     "title": "RECEPCION SINK",
