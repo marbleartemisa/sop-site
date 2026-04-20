@@ -426,6 +426,17 @@ tr:hover .sop-nombre {
     padding: 10px 0;
     border-bottom: 1px solid rgba(255,255,255,0.1);
   }
+
+  .navbar-center{
+    display:none;
+  }
+
+  /* 🔥 activar menu mobile */
+  .menu{
+    display:flex;
+  }
+
+
 }
 
 /* OVERLAY (CORRECTO FUERA DEL MEDIA QUERY) */
@@ -464,7 +475,16 @@ tr:hover .sop-nombre {
   align-items:center;
   gap:15px;
 }
-      
+
+/* 🔥 OCULTAR MENU MOBILE EN DESKTOP */
+.menu{
+  display:none;
+}
+
+/* 🔥 SOLO EL MENU DEL NAVBAR SE VE EN DESKTOP */
+.navbar-center .menu{
+  display:flex;
+}      
 </style>
 </head>
 <body>
