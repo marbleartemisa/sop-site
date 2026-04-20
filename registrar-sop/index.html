@@ -141,7 +141,75 @@ th{background:#003366;color:white;}
 .notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
-@media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
+@media (max-width: 900px){
+
+  .navbar{
+    width: 100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 12px;
+    flex-wrap:nowrap;
+  }
+
+  .logo span{
+    display:none;
+  }
+
+  .menu-toggle{
+    display:block;
+    font-size:24px;
+    color:white;
+    z-index:10001;
+  }
+
+  .menu{
+    position:fixed;
+    top:0;
+    right:-100%;
+    width:280px;
+    height:100vh;
+    background:rgba(0,0,0,0.95);
+
+    display:flex;
+    flex-direction:column;
+    padding:80px 20px;
+    gap:15px;
+
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+
+    transition:0.3s ease;
+    z-index:10000;
+  }
+
+  .menu.show{
+    right:0;
+  }
+
+  .menu a{
+    padding:12px 0;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+  }
+
+  .menu-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    z-index:9999;
+  }
+
+  .menu-overlay.show{
+    display:block;
+  }
+}
+
+.no-scroll{
+  overflow:hidden;
+}
+
+  
 .spinner{margin-left:8px;}
 
 label{
@@ -174,6 +242,8 @@ label{
     <i class="fa-solid fa-bars"></i>
   </div>
 
+  <div class="menu-overlay" onclick="toggleMenu()"></div>
+  
   <!-- MENU CENTRADO -->
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
@@ -276,11 +346,21 @@ emailjs.init("iR8ieJnOkI4_sr8TH"); // tu user ID EmailJS
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
 
 // Toggle menu
-function toggleMenu(){document.querySelector('.menu').classList.toggle('show');}
+  
+function toggleMenu(){
+  document.querySelector('.menu').classList.toggle('show');
+  document.querySelector('.menu-overlay').classList.toggle('show');
+  document.body.classList.toggle('no-scroll');
+}
+
+  
 document.getElementById("employee").addEventListener("change",function(){
   let datos=this.value.split("|");
   document.getElementById("departamento").value=datos[3] || ""
 })
+
+
+  
 
 // Convertir archivos a Base64
 function archivosA_Base64(files){
@@ -507,9 +587,9 @@ function editSOP(){
  // Al cargar la página, mostrar usuario si está guardado
 
 
-window.addEventListener("DOMContentLoaded", () => {
+ window.addEventListener("DOMContentLoaded", () => {
 
-  populateUsers(); // 🔥 IMPORTANTE
+  populateUsers();
 
   const savedUser = localStorage.getItem("usuario");
 
@@ -519,11 +599,19 @@ window.addEventListener("DOMContentLoaded", () => {
       mostrarUsuario(currentUser);
     }
   }else{
-    openLogin(); // opcional
+    openLogin();
   }
 
-});
+  // 🔥 CERRAR MENU AL HACER CLICK
+  document.querySelectorAll(".menu a").forEach(link => {
+    link.addEventListener("click", () => {
+      document.querySelector(".menu").classList.remove("show");
+      document.querySelector(".menu-overlay").classList.remove("show");
+      document.body.classList.remove("no-scroll");
+    });
+  });
 
+}); 
  
 </script>
 
