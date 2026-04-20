@@ -9,7 +9,17 @@
 
 <style>
 
-      /* ===== BODY ===== */
+/* ===== BODY ===== */
+*{
+  box-sizing: border-box;
+}
+
+html, body{
+      overflow-x: hidden;
+      max-width: 100%;
+}
+
+      
       body{
         margin:0;
         font-family:'Inter',sans-serif;
@@ -176,7 +186,7 @@
       
       .search-filter-container input,
       .search-filter-container select{
-        width:250px;
+        width:100%;
         padding:12px 15px;
         border-radius:30px;
         border:none;
@@ -400,7 +410,7 @@ tr:hover .sop-nombre {
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:10px 15px;
+    padding:10px 12px;
     flex-wrap:nowrap;
   }
 
@@ -415,12 +425,13 @@ tr:hover .sop-nombre {
   }
 
   .navbar-right{
-    flex: 0;
+    flex: 1;
+    justify-content: flex-end;
     display:flex;
     align-items:center;
     gap:12px;
   }
-
+       
   .logo span{
     display:none;
   }
@@ -465,6 +476,7 @@ tr:hover .sop-nombre {
   .menu-overlay{
     display:none;
     position:fixed;
+    inset:0;
     top:0;
     left:0;
     width:100%;
@@ -473,6 +485,7 @@ tr:hover .sop-nombre {
     z-index:9999;
   }
 
+       
   .menu-overlay.show{
     display:block;
   }
@@ -882,14 +895,17 @@ window.addEventListener("DOMContentLoaded", ()=>{
   });
 
   // ✅ ESTE ES EL LUGAR CORRECTO
-  document.querySelectorAll(".menu a").forEach(link => {
-    link.addEventListener("click", () => {
-      document.querySelector(".menu").classList.remove("show");
-    });
+document.querySelectorAll(".menu a").forEach(link => {
+  link.addEventListener("click", () => {
+    document.querySelector(".menu").classList.remove("show");
+    document.querySelector(".menu-overlay").classList.remove("show");
+    document.body.classList.remove("no-scroll");
   });
+});
 
 });
- 
+
+
       
 </script>  
      
