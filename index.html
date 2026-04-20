@@ -366,6 +366,26 @@ tr:hover .sop-nombre {
 /* ===== MOBILE MENU ===== */
 @media (max-width: 900px){
 
+  .navbar{
+    flex-wrap: nowrap; /* 🔥 evita que se rompa en 2 líneas */
+    padding: 10px 15px;
+    align-items: center;
+  }
+
+  /* LOGO */
+  .logo span{
+    display: none; /* 🔥 SOLO esto es necesario */
+  }
+
+  /* USER + HAMBURGER */
+  .navbar-right{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+  }
+
+  /* MENU MOBILE */
   .menu{
     position: fixed;
     top: 0;
@@ -397,6 +417,7 @@ tr:hover .sop-nombre {
   }
 }
 
+/* OVERLAY (CORRECTO FUERA DEL MEDIA QUERY) */
 .menu-overlay{
   display:none;
   position:fixed;
@@ -427,40 +448,49 @@ tr:hover .sop-nombre {
 
 <!-- NAVBAR -->
 <div class="navbar">
+
+  <!-- LOGO -->
   <div class="logo">
-    <img src="/sop-site/logo.png">
+    <img src="/sop-site/logo.png" alt="Artemisa Marble">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
 
-<div class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
-  <i class="fa-solid fa-bars"></i>
-</div>
-      
-<div class="menu">
+  <!-- RIGHT SIDE (USER + HAMBURGER) -->
+  <div class="navbar-right">
 
-  <a href="/sop-site/">Inicio</a>
-  <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-  <a href="/sop-site/Aportes/">Aportes SOP</a> 
-  <a href="/sop-site/analisis/">Análisis SOP</a> 
-  <a href="/sop-site/admin/">Admin</a> 
-  <a href="#" onclick="editSOP()">Editar SOP</a>
-  <a href="#" onclick="openLogin()">
-    <i class="fa-solid fa-user-shield"></i> Login
-  </a>
-  <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a> 
+    <!-- USER INFO -->
+    <div class="user-info" id="userInfo" style="display:none;">
+      <span id="userName"></span>
+      <button onclick="logout()" title="Cerrar sesión">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
 
-</div>
+    <!-- HAMBURGER -->
+    <div class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+      <i class="fa-solid fa-bars"></i>
+    </div>
 
-<div class="menu-overlay" onclick="toggleMenu()"></div>
-
-      
-  <!-- ✅ Mover user-info fuera de menu -->
-  <div class="user-info" id="userInfo" style="display:none;">
-    <span id="userName"></span>
-    <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </button>
   </div>
+
+  <!-- MENU (SIDEBAR MOBILE / DESKTOP LINKS) -->
+  <div class="menu">
+
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/Aportes/">Aportes SOP</a>
+    <a href="/sop-site/analisis/">Análisis SOP</a>
+    <a href="/sop-site/admin/">Admin</a>
+    <a href="#" onclick="editSOP()">Editar SOP</a>
+    <a href="#" onclick="openLogin()">
+      <i class="fa-solid fa-user-shield"></i> Login
+    </a>
+    <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>
+
+  </div>
+
+  <!-- OVERLAY MOBILE MENU -->
+  <div class="menu-overlay" onclick="toggleMenu()"></div>
 
 </div>
       
