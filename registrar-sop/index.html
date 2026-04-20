@@ -293,7 +293,79 @@ label{
 ::placeholder{
     color:#6b7280;
 }
- 
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* columnas como home */
+.navbar-left,
+.navbar-center,
+.navbar-right{
+  display:flex;
+  align-items:center;
+}
+
+/* RIGHT layout */
+.navbar-right{
+  gap:12px;
+}
+
+/* USER VISIBILITY */
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:white;
+  font-size:14px;
+}
+
+/* LOGO TEXT SIZE (IMPORTANTE) */
+.logo span{
+  font-size:14px;
+  font-weight:600;
+}
+
+/* HAMBURGER FIX */
+.menu-toggle{
+  font-size:24px;
+  color:white;
+}
+
+/* MOBILE FIX EXACTO COMO HOME */
+@media (max-width:900px){
+
+  .navbar-left{
+    flex:1;
+  }
+
+  .navbar-center{
+    display:none;
+  }
+
+  .navbar-right{
+    flex:1;
+    justify-content:flex-end;
+    gap:10px;
+  }
+
+  .logo span{
+    display:none;
+  }
+
+  .menu-toggle{
+    display:block;
+    font-size:24px;
+  }
+
+  .user-info span{
+    font-size:13px;
+  }
+}
+
+  
 </style>
 </head>
 <body>
@@ -303,29 +375,33 @@ label{
  <!-- NAVBAR -->
 <div class="navbar">
 
-  <!-- IZQUIERDA -->
+  <!-- LEFT -->
   <div class="navbar-left">
     <div class="logo">
-      <img src="/sop-site/logo.png">
+      <img src="/sop-site/logo.png" alt="logo">
       <span>ARTEMISA MARBLE & CABINETS</span>
     </div>
   </div>
 
-  <!-- CENTRO (USUARIO) -->
-  <div class="navbar-center">
+  <!-- CENTER (vacío como home) -->
+  <div class="navbar-center"></div>
+
+  <!-- RIGHT -->
+  <div class="navbar-right">
+
+    <!-- USER -->
     <div class="user-info" id="userInfo" style="display:none;">
       <span id="userName"></span>
-      <button onclick="logout()">
+      <button onclick="logout()" style="background:none;border:none;color:white;cursor:pointer;">
         <i class="fa-solid fa-right-from-bracket"></i>
       </button>
     </div>
-  </div>
 
-  <!-- DERECHA -->
-  <div class="navbar-right">
+    <!-- HAMBURGER -->
     <div class="menu-toggle" onclick="toggleMenu()">
       <i class="fa-solid fa-bars"></i>
     </div>
+
   </div>
 
 </div>
