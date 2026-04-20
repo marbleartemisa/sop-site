@@ -462,7 +462,9 @@ tr:hover .sop-nombre {
 }
 
 /* OVERLAY (CORRECTO FUERA DEL MEDIA QUERY) */
+
 .menu-overlay{
+  display:none;              /* 🔥 CLAVE */
   position:fixed;
   top:0;
   left:0;
@@ -471,7 +473,7 @@ tr:hover .sop-nombre {
   background:rgba(0,0,0,0.5);
   z-index:9998;
 }
-
+      
 .menu-overlay.show{
   display:block;
 }
@@ -871,67 +873,28 @@ function destacarMenu() {
 
 window.addEventListener("DOMContentLoaded", () => {
   destacarMenu();
-});
-
-/* ===== SORT ===== */
-function sortTable(field){
-  SOP_INDEX.sort((a,b)=>{
-    return (a[field]||"").localeCompare(b[field]||"");
-  });
-  renderSOP();
-}
-
-/* ===== EDITAR SOP ===== */
-function editSOP(){
-  if(!currentUser){
-    alert("Debe iniciar sesión");
-    openLogin();
-    return;
-  }
-
-  const pass = prompt("Ingrese su clave");
-  if(pass === currentUser.clave){
-    window.location.href="/sop-site/sop-viewer-edit/";
-  }else{
-    alert("Clave incorrecta");
-  }
-}
-
-function openSOP(url){
-  window.location.href = "/sop-site/viewer.html?doc=" + url;
-}
-
-/* ===== INIT ===== */
-
-window.addEventListener("DOMContentLoaded", ()=>{
-
   populateUsers();
 
   const savedUser = localStorage.getItem("usuario");
   if(savedUser){
-    currentUser = usuarios.find(u=>u.usuario===savedUser);
-    if(currentUser) {
+    currentUser = usuarios.find(u => u.usuario === savedUser);
+    if(currentUser){
       mostrarBienvenida(currentUser.usuario);
       mostrarUsuario(currentUser);
     }
-  }else{
+  } else {
     openLogin();
   }
 
-  document.getElementById("loginPass").addEventListener("keypress", function(e){
-    if(e.key === "Enter"){
-      e.preventDefault();
-      document.getElementById("loginBtn").click();
-    }
-  });
-
-  // ✅ ESTE ES EL LUGAR CORRECTO
-  document.querySelectorAll(".desktop-menu a").forEach(link => {
-  link.addEventListener("click", () => {
-    document.querySelector(".desktop-menu");
-  });
-});
-
+  const passInput = document.getElementById("loginPass");
+  if(passInput){
+    passInput.addEventListener("keypress", function(e){
+      if(e.key === "Enter"){
+        e.preventDefault();
+        document.getElementById("loginBtn").click();
+      }
+    });
+  }
 });
  
 
