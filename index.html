@@ -890,33 +890,34 @@ function destacarMenu() {
   });
 }
 
+ 
 window.addEventListener("DOMContentLoaded", () => {
+
   destacarMenu();
   populateUsers();
 
   const savedUser = localStorage.getItem("usuario");
+
   if(savedUser){
-    currentUser = usuarios.find(u => u.usuario === savedUser);
+
+    // 🔥 NORMALIZAR (clave)
+    currentUser = usuarios.find(u => 
+      u.usuario.trim().toLowerCase() === savedUser.trim().toLowerCase()
+    );
+
     if(currentUser){
-      mostrarBienvenida(currentUser.usuario);
       mostrarUsuario(currentUser);
+      mostrarBienvenida(currentUser.usuario);
+    }else{
+      console.warn("Usuario no encontrado en lista:", savedUser);
+      openLogin();
     }
-  } else {
+
+  }else{
     openLogin();
   }
 
-  const passInput = document.getElementById("loginPass");
-  if(passInput){
-    passInput.addEventListener("keypress", function(e){
-      if(e.key === "Enter"){
-        e.preventDefault();
-        document.getElementById("loginBtn").click();
-      }
-    });
-  }
 });
- 
-
 </script>  
 </body>
 </html>
