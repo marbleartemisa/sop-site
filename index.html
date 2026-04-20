@@ -20,6 +20,9 @@
         background-attachment:fixed;
         color:#1f2937;
       }
+      html, body{
+        overflow-x: hidden;
+      }
       
       .overlay{
         background:rgba(0,0,0,0.25);
@@ -148,7 +151,7 @@
       
       .search-filter-container input,
       .search-filter-container select{
-        width:250px;
+        width:100%;
         padding:12px 15px;
         border-radius:30px;
         border:none;
@@ -389,7 +392,8 @@ tr:hover .sop-nombre {
   .menu{
     position: fixed;
     top: 0;
-    right: -100%;
+    right: 0;
+    transform: translateX(100%);
     width: 260px;
     height: 100vh;
     background: rgba(0,0,0,0.95);
@@ -400,9 +404,9 @@ tr:hover .sop-nombre {
     z-index: 9999;
   }
 
-  .menu.show{
-    right: 0;
-  }
+ .menu.show{
+  transform: translateX(0);
+      }
 
   .menu-toggle{
     display: block;
@@ -431,6 +435,9 @@ tr:hover .sop-nombre {
 
 .menu-overlay.show{
   display:block;
+}
+.no-scroll{
+  overflow: hidden;
 }
       
 </style>
@@ -589,8 +596,13 @@ let SOP_INDEX = [];
 /* ===== MENU ===== */
 
 function toggleMenu(){
-  document.querySelector('.menu').classList.toggle('show');
-  document.querySelector('.menu-overlay').classList.toggle('show');
+  const menu = document.querySelector('.menu');
+  const overlay = document.querySelector('.menu-overlay');
+
+  menu.classList.toggle('show');
+  overlay.classList.toggle('show');
+
+  document.body.classList.toggle('no-scroll');
 }
       
 /* ===== LOGIN ===== */
