@@ -363,6 +363,55 @@ tr:hover .sop-nombre {
     object-fit: cover; /* mantiene proporción y recorta si es necesario */
 }
 
+/* ===== MOBILE MENU ===== */
+@media (max-width: 900px){
+
+  .menu{
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 260px;
+    height: 100vh;
+    background: rgba(0,0,0,0.95);
+    flex-direction: column;
+    padding: 80px 20px;
+    gap: 15px;
+    transition: 0.3s;
+    z-index: 9999;
+  }
+
+  .menu.show{
+    right: 0;
+  }
+
+  .menu-toggle{
+    display: block;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .menu a{
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+}
+
+.menu-overlay{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  z-index:9998;
+}
+
+.menu-overlay.show{
+  display:block;
+}
+      
 </style>
 </head>
 <body>
@@ -383,23 +432,28 @@ tr:hover .sop-nombre {
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
 
-  <div class="menu-toggle" onclick="toggleMenu()">
-    <i class="fa-solid fa-bars"></i>
-  </div>
-
+<div class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+  <i class="fa-solid fa-bars"></i>
+</div>
+      
 <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a> 
-    <a href="/sop-site/analisis/">Análisis SOP</a> 
-    <a href="/sop-site/admin/">Admin</a> 
-    <a href="#" onclick="editSOP()">Editar SOP</a>
-    <a href="#" onclick="openLogin()">
-      <i class="fa-solid fa-user-shield"></i> Login
-    </a>
-    <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a> 
-  </div>
 
+  <a href="/sop-site/">Inicio</a>
+  <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+  <a href="/sop-site/Aportes/">Aportes SOP</a> 
+  <a href="/sop-site/analisis/">Análisis SOP</a> 
+  <a href="/sop-site/admin/">Admin</a> 
+  <a href="#" onclick="editSOP()">Editar SOP</a>
+  <a href="#" onclick="openLogin()">
+    <i class="fa-solid fa-user-shield"></i> Login
+  </a>
+  <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a> 
+
+</div>
+
+<div class="menu-overlay" onclick="toggleMenu()"></div>
+
+      
   <!-- ✅ Mover user-info fuera de menu -->
   <div class="user-info" id="userInfo" style="display:none;">
     <span id="userName"></span>
@@ -503,10 +557,12 @@ let currentUser = null;
 let SOP_INDEX = [];
 
 /* ===== MENU ===== */
+
 function toggleMenu(){
   document.querySelector('.menu').classList.toggle('show');
+  document.querySelector('.menu-overlay').classList.toggle('show');
 }
-
+      
 /* ===== LOGIN ===== */
 function openLogin(){
   document.getElementById("loginModal").style.display = "flex";
@@ -729,14 +785,12 @@ window.addEventListener("DOMContentLoaded", ()=>{
     currentUser = usuarios.find(u=>u.usuario===savedUser);
     if(currentUser) {
       mostrarBienvenida(currentUser.usuario);
-      // 👉 Aquí agregas:
       mostrarUsuario(currentUser);
     }
   }else{
     openLogin();
   }
 
-  // ENTER para login
   document.getElementById("loginPass").addEventListener("keypress", function(e){
     if(e.key === "Enter"){
       e.preventDefault();
@@ -744,8 +798,16 @@ window.addEventListener("DOMContentLoaded", ()=>{
     }
   });
 
-});
+  // ✅ ESTE ES EL LUGAR CORRECTO
+  document.querySelectorAll(".menu a").forEach(link => {
+    link.addEventListener("click", () => {
+      document.querySelector(".menu").classList.remove("show");
+    });
+  });
 
+});
+ 
+      
 </script>  
 </body>
 </html>
