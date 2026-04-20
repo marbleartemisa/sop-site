@@ -43,6 +43,8 @@
         align-items:center;
         z-index:999;
       }
+      .menu { display: none; }
+      .navbar-center .menu { display: flex; }
       
       .logo{
         display:flex;
@@ -366,6 +368,26 @@ tr:hover .sop-nombre {
     object-fit: cover; /* mantiene proporción y recorta si es necesario */
 }
 
+.mobile-menu{
+  position: fixed;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
+  width: 260px;
+  height: 100vh;
+  background: rgba(0,0,0,0.95);
+  flex-direction: column;
+  padding: 80px 20px;
+  gap: 15px;
+  transition: 0.3s;
+  z-index: 9999;
+  display: flex;
+}
+
+.mobile-menu.show{
+  transform: translateX(0);
+}
+
 /* ===== MOBILE MENU ===== */
 @media (max-width: 900px){
 
@@ -435,13 +457,13 @@ tr:hover .sop-nombre {
   .menu{
     display:flex;
   }
-
+ 
+  .mobile-menu{ display:flex; }
 
 }
 
 /* OVERLAY (CORRECTO FUERA DEL MEDIA QUERY) */
 .menu-overlay{
-  display:none;
   position:fixed;
   top:0;
   left:0;
@@ -476,15 +498,7 @@ tr:hover .sop-nombre {
   gap:15px;
 }
 
-/* 🔥 OCULTAR MENU MOBILE EN DESKTOP */
-.menu{
-  display:none;
-}
-
-/* 🔥 SOLO EL MENU DEL NAVBAR SE VE EN DESKTOP */
-.navbar-center .menu{
-  display:flex;
-}      
+     
 </style>
 </head>
 <body>
@@ -546,7 +560,7 @@ tr:hover .sop-nombre {
 </div>
 
 <!-- 🔥 MENU MOBILE (FUERA DEL NAVBAR) -->
-<div class="menu">
+<div class="menu mobile-menu">
   <a href="/sop-site/">Inicio</a>
   <a href="/sop-site/registrar-sop/">Registrar SOP</a>
   <a href="/sop-site/Aportes/">Aportes SOP</a>
@@ -657,7 +671,7 @@ let SOP_INDEX = [];
 /* ===== MENU ===== */
 
 function toggleMenu(){
-  const menu = document.querySelector('.menu:not(.navbar-center .menu)');
+  const menu = document.querySelector('.mobile-menu');
   const overlay = document.querySelector('.menu-overlay');
 
   menu.classList.toggle('show');
