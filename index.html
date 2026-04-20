@@ -40,6 +40,29 @@
         align-items:center;
         z-index:999;
       }
+
+
+      /* IZQUIERDA */
+      .navbar-left{
+        flex:1;
+      }
+      
+      /* CENTRO MENU (PC ONLY) */
+      .navbar-center{
+        flex:2;
+        display:flex;
+        justify-content:center;
+      }
+      
+      /* DERECHA */
+      .navbar-right{
+        flex:1;
+        display:flex;
+        justify-content:flex-end;
+        align-items:center;
+        gap:15px;
+      }
+
       
       .logo{
         display:flex;
@@ -51,9 +74,12 @@
         height:40px;
       }
       
+ 
+      /* MENU PC */
       .menu{
         display:flex;
-        gap:25px;
+        gap:20px;
+        align-items:center;
       }
       
       .menu a{
@@ -364,44 +390,68 @@ tr:hover .sop-nombre {
 }
 
 /* ===== MOBILE MENU ===== */
-@media (max-width: 900px){
 
-  .navbar{
-    flex-wrap: nowrap; /* 🔥 evita que se rompa en 2 líneas */
-    padding: 10px 15px;
-    align-items: center;
+  @media (max-width: 900px){
+
+      .navbar{
+          flex-wrap: nowrap; /* 🔥 evita que se rompa en 2 líneas */
+          padding: 10px 15px;
+          align-items: center;
+        }
+
+
+  .navbar-center{
+    display:none; /* 🔥 OCULTA MENU PC */
   }
 
-  /* LOGO */
+  .menu-toggle{
+    display:block;
+    font-size:24px;
+    color:white;
+  }
+
+ /* LOGO */
   .logo span{
     display: none; /* 🔥 SOLO esto es necesario */
   }
+        
 
-  /* USER + HAMBURGER */
-  .navbar-right{
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: auto;
+/* USER + HAMBURGER */
+      .navbar-right{
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-left: auto;
+      }
+        
+  /* USER CENTRADO SOLO SI QUIERES */
+  .user-info{
+    margin-right:10px;
   }
 
-  /* MENU MOBILE */
+  /* MENU LATERAL CON SCROLL */
   .menu{
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 260px;
-    height: 100vh;
-    background: rgba(0,0,0,0.95);
-    flex-direction: column;
-    padding: 80px 20px;
-    gap: 15px;
-    transition: 0.3s;
-    z-index: 9999;
+    position:fixed;
+    top:0;
+    right:-100%;
+    width:280px;
+    height:100vh;
+    background:rgba(0,0,0,0.95);
+    flex-direction:column;
+    padding:80px 20px;
+    gap:15px;
+    overflow-y:auto;   /* 🔥 SCROLL CLAVE */
+    max-height:100vh;
+    transition:0.3s;
+    z-index:9999;
   }
 
+ .menu{
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+   }
   .menu.show{
-    right: 0;
+    right:0;
   }
 
   .menu-toggle{
@@ -449,29 +499,45 @@ tr:hover .sop-nombre {
 <!-- NAVBAR -->
 <div class="navbar">
 
-  <!-- LOGO -->
-  <div class="logo">
-    <img src="/sop-site/logo.png" alt="Artemisa Marble">
-    <span>ARTEMISA MARBLE & CABINETS</span>
+  <!-- LEFT -->
+  <div class="navbar-left">
+    <div class="logo">
+      <img src="/sop-site/logo.png" alt="logo">
+      <span>ARTEMISA MARBLE & CABINETS</span>
+    </div>
   </div>
 
-  <!-- RIGHT SIDE (USER + HAMBURGER) -->
+  <!-- CENTER (MENU DESKTOP) -->
+  <div class="navbar-center">
+    <div class="menu">
+      <a href="/sop-site/">Inicio</a>
+      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+      <a href="/sop-site/Aportes/">Aportes SOP</a>
+      <a href="/sop-site/analisis/">Análisis SOP</a>
+      <a href="/sop-site/admin/">Admin</a>
+      <a href="#" onclick="editSOP()">Editar SOP</a>
+      <a href="#" onclick="openLogin()">Login</a>
+      <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
   <div class="navbar-right">
 
-    <!-- USER INFO -->
     <div class="user-info" id="userInfo" style="display:none;">
       <span id="userName"></span>
-      <button onclick="logout()" title="Cerrar sesión">
+      <button onclick="logout()">
         <i class="fa-solid fa-right-from-bracket"></i>
       </button>
     </div>
 
-    <!-- HAMBURGER -->
-    <div class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+    <div class="menu-toggle" onclick="toggleMenu()">
       <i class="fa-solid fa-bars"></i>
     </div>
 
   </div>
+
+</div>
 
   <!-- MENU (SIDEBAR MOBILE / DESKTOP LINKS) -->
   <div class="menu">
