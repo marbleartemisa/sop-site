@@ -657,7 +657,7 @@ let SOP_INDEX = [];
 /* ===== MENU ===== */
 
 function toggleMenu(){
-  const menu = document.querySelector('.menu');
+  const menu = document.querySelector('.menu:not(.navbar-center .menu)');
   const overlay = document.querySelector('.menu-overlay');
 
   menu.classList.toggle('show');
@@ -834,7 +834,18 @@ function filterDept(dep){
 
 // 🔹 Destacar opción de menú según URL
 function destacarMenu() {
-  const links = document.querySelectorAll(".menu a");
+  const links = document.querySelectorAll('.menu:not(.navbar-center .menu) a').forEach(link => {
+    link.addEventListener("click", () => {
+    const menu = document.querySelector('.menu:not(.navbar-center .menu)');
+    const overlay = document.querySelector('.menu-overlay');
+
+    menu.classList.remove("show");
+    overlay.classList.remove("show");
+    document.body.classList.remove("no-scroll");
+  });
+});
+
+      
   const path = window.location.pathname; // ruta actual
   links.forEach(link => {
     if (link.getAttribute("href") === path) {
