@@ -9,17 +9,7 @@
 
 <style>
 
-/* ===== BODY ===== */
-*{
-  box-sizing: border-box;
-}
-
-html, body{
-      overflow-x: hidden;
-      max-width: 100%;
-}
-
-      
+      /* ===== BODY ===== */
       body{
         margin:0;
         font-family:'Inter',sans-serif;
@@ -50,29 +40,6 @@ html, body{
         align-items:center;
         z-index:999;
       }
-
-
-      /* IZQUIERDA */
-      .navbar-left{
-        flex:1;
-      }
-      
-      /* CENTRO MENU (PC ONLY) */
-      .navbar-center{
-        flex:2;
-        display:flex;
-        justify-content:center;
-      }
-      
-      /* DERECHA */
-      .navbar-right{
-        flex:1;
-        display:flex;
-        justify-content:flex-end;
-        align-items:center;
-        gap:15px;
-      }
-
       
       .logo{
         display:flex;
@@ -84,12 +51,9 @@ html, body{
         height:40px;
       }
       
- 
-      /* MENU PC */
       .menu{
         display:flex;
-        gap:20px;
-        align-items:center;
+        gap:25px;
       }
       
       .menu a{
@@ -114,8 +78,6 @@ html, body{
         font-size:1.6rem;
         cursor:pointer;
       }
-
-
       
       /* ===== BANNER ===== */
       .banner{
@@ -186,7 +148,7 @@ html, body{
       
       .search-filter-container input,
       .search-filter-container select{
-        width:100%;
+        width:250px;
         padding:12px 15px;
         border-radius:30px;
         border:none;
@@ -402,98 +364,75 @@ tr:hover .sop-nombre {
 }
 
 /* ===== MOBILE MENU ===== */
-
- @media (max-width: 900px){
+@media (max-width: 900px){
 
   .navbar{
-    width: 100%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px 12px;
-    flex-wrap:nowrap;
+    flex-wrap: nowrap; /* 🔥 evita que se rompa en 2 líneas */
+    padding: 10px 15px;
+    align-items: center;
   }
 
-  .navbar-left{
-    flex: 1;
-    display:flex;
-    align-items:center;
-  }
-
-  .navbar-center{
-    display:none !important;
-  }
-
-  .navbar-right{
-    flex: 1;
-    justify-content: flex-end;
-    display:flex;
-    align-items:center;
-    gap:12px;
-  }
-       
+  /* LOGO */
   .logo span{
-    display:none;
+    display: none; /* 🔥 SOLO esto es necesario */
   }
 
-  .menu-toggle{
-    display:block;
-    font-size:24px;
-    color:white;
-    z-index:10001;
+  /* USER + HAMBURGER */
+  .navbar-right{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
   }
 
-  /* 🔥 MENU FULL CONTROL */
+  /* MENU MOBILE */
   .menu{
-    position:fixed;
-    top:0;
-    right:-100%;
-    width:280px;
-    height:100vh;
-    background:rgba(0,0,0,0.95);
-    display:flex;
-    flex-direction:column;
-    padding:80px 20px;
-    gap:15px;
-
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-
-    transition:0.3s ease;
-    z-index:10000;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 260px;
+    height: 100vh;
+    background: rgba(0,0,0,0.95);
+    flex-direction: column;
+    padding: 80px 20px;
+    gap: 15px;
+    transition: 0.3s;
+    z-index: 9999;
   }
 
   .menu.show{
-    right:0;
+    right: 0;
+  }
+
+  .menu-toggle{
+    display: block;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
   }
 
   .menu a{
-    padding:12px 0;
-    border-bottom:1px solid rgba(255,255,255,0.1);
-  }
-
-  /* 🔥 OVERLAY FULL FIX */
-  .menu-overlay{
-    display:none;
-    position:fixed;
-    inset:0;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.5);
-    z-index:9999;
-  }
-
-       
-  .menu-overlay.show{
-    display:block;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
   }
 }
 
-.no-scroll{
-  overflow:hidden;
+/* OVERLAY (CORRECTO FUERA DEL MEDIA QUERY) */
+.menu-overlay{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  z-index:9998;
 }
+
+.menu-overlay.show{
+  display:block;
+}
+      
 </style>
 </head>
 <body>
@@ -508,54 +447,52 @@ tr:hover .sop-nombre {
       
 
 <!-- NAVBAR -->
-
 <div class="navbar">
 
-  <!-- LEFT -->
-  <div class="navbar-left">
-    <div class="logo">
-      <img src="/sop-site/logo.png" alt="logo">
-      <span>ARTEMISA MARBLE & CABINETS</span>
-    </div>
+  <!-- LOGO -->
+  <div class="logo">
+    <img src="/sop-site/logo.png" alt="Artemisa Marble">
+    <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
 
-  <!-- CENTER SOLO PARA DESKTOP (VACÍO o elimínalo si quieres) -->
-  <div class="navbar-center"></div>
-
-  <!-- RIGHT -->
+  <!-- RIGHT SIDE (USER + HAMBURGER) -->
   <div class="navbar-right">
 
+    <!-- USER INFO -->
     <div class="user-info" id="userInfo" style="display:none;">
       <span id="userName"></span>
-      <button onclick="logout()">
+      <button onclick="logout()" title="Cerrar sesión">
         <i class="fa-solid fa-right-from-bracket"></i>
       </button>
     </div>
 
-    <div class="menu-toggle" onclick="toggleMenu()">
+    <!-- HAMBURGER -->
+    <div class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
       <i class="fa-solid fa-bars"></i>
     </div>
 
   </div>
+
+  <!-- MENU (SIDEBAR MOBILE / DESKTOP LINKS) -->
+  <div class="menu">
+
+    <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+    <a href="/sop-site/Aportes/">Aportes SOP</a>
+    <a href="/sop-site/analisis/">Análisis SOP</a>
+    <a href="/sop-site/admin/">Admin</a>
+    <a href="#" onclick="editSOP()">Editar SOP</a>
+    <a href="#" onclick="openLogin()">
+      <i class="fa-solid fa-user-shield"></i> Login
+    </a>
+    <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>
+
+  </div>
+
+  <!-- OVERLAY MOBILE MENU -->
+  <div class="menu-overlay" onclick="toggleMenu()"></div>
+
 </div>
-
-<!-- 🔥 MENU FUERA DEL NAVBAR -->
-<div class="menu">
-  <a href="/sop-site/">Inicio</a>
-  <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-  <a href="/sop-site/Aportes/">Aportes SOP</a>
-  <a href="/sop-site/analisis/">Análisis SOP</a>
-  <a href="/sop-site/admin/">Admin</a>
-  <a href="#" onclick="editSOP()">Editar SOP</a>
-  <a href="#" onclick="openLogin()">
-    <i class="fa-solid fa-user-shield"></i> Login
-  </a>
-  <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>
-</div>
-
-<!-- OVERLAY -->
-<div class="menu-overlay" onclick="toggleMenu()"></div>
-
       
 <!-- MENSAJE BIENVENIDA -->
 <div id="welcome-msg"></div>
@@ -654,9 +591,8 @@ let SOP_INDEX = [];
 function toggleMenu(){
   document.querySelector('.menu').classList.toggle('show');
   document.querySelector('.menu-overlay').classList.toggle('show');
-
-  document.body.classList.toggle('no-scroll');
 }
+      
 /* ===== LOGIN ===== */
 function openLogin(){
   document.getElementById("loginModal").style.display = "flex";
@@ -893,21 +829,16 @@ window.addEventListener("DOMContentLoaded", ()=>{
   });
 
   // ✅ ESTE ES EL LUGAR CORRECTO
-document.querySelectorAll(".menu a").forEach(link => {
-  link.addEventListener("click", () => {
-    document.querySelector(".menu").classList.remove("show");
-    document.querySelector(".menu-overlay").classList.remove("show");
-    document.body.classList.remove("no-scroll");
+  document.querySelectorAll(".menu a").forEach(link => {
+    link.addEventListener("click", () => {
+      document.querySelector(".menu").classList.remove("show");
+    });
   });
-});
 
 });
-
-
+ 
       
 </script>  
-     
 </body>
 </html>
 
-  
