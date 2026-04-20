@@ -395,10 +395,21 @@ tr:hover .sop-nombre {
     padding: 10px 15px;
     align-items: center;
   }
+       .navbar-right{
+    justify-content:center;
+    width:100%;
+  }
+
+  .user-info{
+    justify-content:center;
+    width:100%;
+  }
 
 .navbar-center{
     display:none; /* 🔥 escondes menú desktop */
   }
+
+      
 
 
   /* LOGO */
@@ -499,6 +510,13 @@ tr:hover .sop-nombre {
   gap:15px;
 }
 
+      
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:white;
+}
      
 </style>
 </head>
@@ -544,7 +562,7 @@ tr:hover .sop-nombre {
   <div class="navbar-right">
 
     <!-- USER -->
-    <div class="user-info" id="userInfo" style="display:none;">
+    <div class="user-info" id="userInfo" style="display:flex; display:none;">
       <span id="userName"></span>
       <button onclick="logout()" title="Cerrar sesión">
         <i class="fa-solid fa-right-from-bracket"></i>
@@ -727,7 +745,8 @@ function mostrarUsuario(user){
   userNameSpan.textContent = user.usuario; // mostrar nombre
   userDiv.style.display = "flex";          // mostrar bloque
 }
-      
+
+  
 function mostrarBienvenida(nombre){
   const msg = document.getElementById("welcome-msg");
   msg.textContent = `Bienvenido, ${nombre}`;
