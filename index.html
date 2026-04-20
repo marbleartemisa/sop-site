@@ -375,6 +375,11 @@ tr:hover .sop-nombre {
     align-items: center;
   }
 
+.navbar-center{
+    display:none; /* 🔥 escondes menú desktop */
+  }
+
+
   /* LOGO */
   .logo span{
     display: none; /* 🔥 SOLO esto es necesario */
@@ -387,6 +392,8 @@ tr:hover .sop-nombre {
     gap: 12px;
     margin-left: auto;
   }
+
+      
 
   /* MENU MOBILE */
   .menu{
@@ -439,6 +446,24 @@ tr:hover .sop-nombre {
 .no-scroll{
   overflow: hidden;
 }
+
+.navbar-left{
+  flex:1;
+}
+
+.navbar-center{
+  flex:2;
+  display:flex;
+  justify-content:center;
+}
+
+.navbar-right{
+  flex:1;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:15px;
+}
       
 </style>
 </head>
@@ -456,16 +481,34 @@ tr:hover .sop-nombre {
 <!-- NAVBAR -->
 <div class="navbar">
 
-  <!-- LOGO -->
-  <div class="logo">
-    <img src="/sop-site/logo.png" alt="Artemisa Marble">
-    <span>ARTEMISA MARBLE & CABINETS</span>
+  <!-- IZQUIERDA -->
+  <div class="navbar-left">
+    <div class="logo">
+      <img src="/sop-site/logo.png" alt="Artemisa Marble">
+      <span>ARTEMISA MARBLE & CABINETS</span>
+    </div>
   </div>
 
-  <!-- RIGHT SIDE (USER + HAMBURGER) -->
+  <!-- CENTRO (SOLO DESKTOP) -->
+  <div class="navbar-center">
+    <div class="menu">
+      <a href="/sop-site/">Inicio</a>
+      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+      <a href="/sop-site/Aportes/">Aportes SOP</a>
+      <a href="/sop-site/analisis/">Análisis SOP</a>
+      <a href="/sop-site/admin/">Admin</a>
+      <a href="#" onclick="editSOP()">Editar SOP</a>
+      <a href="#" onclick="openLogin()">
+        <i class="fa-solid fa-user-shield"></i> Login
+      </a>
+      <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>
+    </div>
+  </div>
+
+  <!-- DERECHA -->
   <div class="navbar-right">
 
-    <!-- USER INFO -->
+    <!-- USER -->
     <div class="user-info" id="userInfo" style="display:none;">
       <span id="userName"></span>
       <button onclick="logout()" title="Cerrar sesión">
@@ -480,26 +523,24 @@ tr:hover .sop-nombre {
 
   </div>
 
-  <!-- MENU (SIDEBAR MOBILE / DESKTOP LINKS) -->
-  <div class="menu">
-
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a>
-    <a href="/sop-site/analisis/">Análisis SOP</a>
-    <a href="/sop-site/admin/">Admin</a>
-    <a href="#" onclick="editSOP()">Editar SOP</a>
-    <a href="#" onclick="openLogin()">
-      <i class="fa-solid fa-user-shield"></i> Login
-    </a>
-    <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>
-
-  </div>
-
-  <!-- OVERLAY MOBILE MENU -->
-  <div class="menu-overlay" onclick="toggleMenu()"></div>
-
 </div>
+
+<!-- 🔥 MENU MOBILE (FUERA DEL NAVBAR) -->
+<div class="menu">
+  <a href="/sop-site/">Inicio</a>
+  <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+  <a href="/sop-site/Aportes/">Aportes SOP</a>
+  <a href="/sop-site/analisis/">Análisis SOP</a>
+  <a href="/sop-site/admin/">Admin</a>
+  <a href="#" onclick="editSOP()">Editar SOP</a>
+  <a href="#" onclick="openLogin()">
+    <i class="fa-solid fa-user-shield"></i> Login
+  </a>
+  <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>
+</div>
+
+<!-- 🔥 OVERLAY -->
+<div class="menu-overlay" onclick="toggleMenu()"></div>
       
 <!-- MENSAJE BIENVENIDA -->
 <div id="welcome-msg"></div>
