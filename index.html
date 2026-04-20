@@ -43,8 +43,7 @@
         align-items:center;
         z-index:999;
       }
-      .menu { display: none; }
-      .navbar-center .menu { display: flex; }
+ 
       
       .logo{
         display:flex;
@@ -56,7 +55,7 @@
         height:40px;
       }
       
-      .menu{
+        .desktop-menu{
         display:flex;
         gap:25px;
       }
@@ -525,7 +524,7 @@ tr:hover .sop-nombre {
 
   <!-- CENTRO (SOLO DESKTOP) -->
   <div class="navbar-center">
-    <div class="menu">
+    <div class="menu desktop-menu">
       <a href="/sop-site/">Inicio</a>
       <a href="/sop-site/registrar-sop/">Registrar SOP</a>
       <a href="/sop-site/Aportes/">Aportes SOP</a>
@@ -927,15 +926,15 @@ window.addEventListener("DOMContentLoaded", ()=>{
   });
 
   // ✅ ESTE ES EL LUGAR CORRECTO
-  document.querySelectorAll(".menu a").forEach(link => {
-    link.addEventListener("click", () => {
-      document.querySelector(".menu").classList.remove("show");
-    });
+  document.querySelectorAll(".desktop-menu a").forEach(link => {
+  link.addEventListener("click", () => {
+    document.querySelector(".desktop-menu");
   });
+});
 
 });
  
-      
+
 </script>  
 </body>
 </html>
