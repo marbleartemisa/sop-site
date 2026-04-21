@@ -393,9 +393,10 @@ tr:hover .sop-nombre {
   .navbar{
     flex-wrap: nowrap; /* 🔥 evita que se rompa en 2 líneas */
     padding: 10px 15px;
+    display:flex;
     align-items: center;
   }
-       .navbar-right{
+  .navbar-right{
     justify-content:center;
     width:100%;
   }
@@ -492,24 +493,19 @@ tr:hover .sop-nombre {
   overflow: hidden;
 }
 
-.navbar-left{
-  flex:1;
-}
+
 
 .navbar-center{
-  flex:2;
   display:flex;
   justify-content:center;
 }
 
 .navbar-right{
-  flex:1;
   display:flex;
-  justify-content:flex-end;
   align-items:center;
   gap:15px;
+  margin-left:auto; /* 🔥 CLAVE */
 }
-
       
 .user-info{
   display:flex;
