@@ -54,6 +54,7 @@
       .menu{
         display:flex;
         gap:25px;
+        transition: all 0.3s ease; /* 👈 AQUÍ */
       }
       
       .menu a{
@@ -73,11 +74,58 @@
               border-radius: 6px;
               padding: 5px 10px;
             }
-      .menu-toggle{
-        display:none;
-        font-size:1.6rem;
-        cursor:pointer;
-      }
+
+            .menu-toggle{
+              display:none;
+              font-size:1.6rem;
+              cursor:pointer;
+            }
+            
+            /* ✅ MOBILE */
+            @media (max-width: 900px){
+            
+              -toggle{
+                display:block; /* 👈 aparece hamburger */
+              }
+            
+              .menu{
+                position:absolute;
+                top:60px;
+                right:0;
+                background:rgba(0,0,0,0.95);
+                width:100%;
+                flex-direction:column;
+                align-items:center;
+                gap:15px;
+                padding:20px 0;
+                display:none; /* 👈 oculto por defecto */
+              }
+            
+              .menu.show{
+                display:flex; /* 👈 se abre */
+              }
+            .navbar{
+                    padding:10px 15px;
+                  }
+                  
+                  .logo span{
+                    font-size:0.9rem;
+                  }
+            }
+
+      @media (max-width: 900px){
+
+              .menu{
+                position:absolute;
+              }
+              .user-info{
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                gap:10px;
+                margin-top:10px;
+              }
+            }
       
       /* ===== BANNER ===== */
       .banner{
@@ -719,7 +767,6 @@ function openSOP(url){
 }
 
 /* ===== INIT ===== */
-
 window.addEventListener("DOMContentLoaded", ()=>{
 
   populateUsers();
@@ -729,7 +776,6 @@ window.addEventListener("DOMContentLoaded", ()=>{
     currentUser = usuarios.find(u=>u.usuario===savedUser);
     if(currentUser) {
       mostrarBienvenida(currentUser.usuario);
-      // 👉 Aquí agregas:
       mostrarUsuario(currentUser);
     }
   }else{
@@ -744,8 +790,15 @@ window.addEventListener("DOMContentLoaded", ()=>{
     }
   });
 
-});
+  // ✅ 👇 AQUÍ MISMO
+  document.querySelectorAll('.menu a').forEach(link=>{
+    link.addEventListener('click', ()=>{
+      document.querySelector('.menu').classList.remove('show');
+    });
+  });
 
+});
+      
 </script>  
 </body>
 </html>
