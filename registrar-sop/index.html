@@ -70,27 +70,74 @@ body{
 /* FORM */
 .container{
   max-width:900px;
-  margin:50px auto;
-  background:rgba(255,255,255,0.9);
-  padding:30px;
-  border-radius:15px;
+  margin:60px auto;
+  padding:40px;
+  background:rgba(255,255,255,0.92);
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);
+  backdrop-filter:blur(12px);
+}
+
+h1{
+  text-align:center;
+  margin-bottom:25px;
+  font-size:1.6rem;
+  color:#0f172a;
 }
 
 input,select,textarea{
   width:100%;
-  padding:12px;
-  margin:8px 0;
+  padding:14px;
+  margin:10px 0;
+  border-radius:12px;
+  border:1px solid #e5e7eb;
+  background:white;
+  transition:0.2s;
+  font-size:0.95rem;
+}
+
+input:focus,select:focus,textarea:focus{
+  border-color:#0072C6;
+  box-shadow:0 0 0 3px rgba(0,114,198,0.15);
+  outline:none;
 }
 
 button{
   width:100%;
-  padding:14px;
-  background:#0072C6;
-  color:white;
+  padding:15px;
   border:none;
-  border-radius:30px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#0072C6,#00aaff);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
 }
 
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(0,114,198,0.35);
+}
+.notification{
+  position:fixed;
+  top:20px;
+  right:20px;
+  padding:14px 18px;
+  border-radius:12px;
+  color:white;
+  font-weight:500;
+  box-shadow:0 10px 30px rgba(0,0,0,0.25);
+  z-index:9999;
+  animation:fadeIn 0.3s ease;
+}
+
+.notification.success{background:#16a34a;}
+.notification.error{background:#dc2626;}
+
+@keyframes fadeIn{
+  from{transform:translateY(-10px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
 /* LOGIN */
 #loginModal{
   display:none;
@@ -187,6 +234,8 @@ button{
 
 <input type="file" id="archivos" multiple>
 
+let isSubmitting = false;
+
 <button type="submit" id="btnEnviar">
 Registrar
 </button>
@@ -220,37 +269,66 @@ function archivosBase64(files){
   }));
 }
 
-document.getElementById("sopForm").addEventListener("submit", async function(e){
-e.preventDefault();
 
-let emp=document.getElementById("employee").value.split("|");
+  
+document.getElementById("sopForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
 
-let files=document.getElementById("archivos").files;
-let base64=await archivosBase64(files);
+  const form = this;
+  const btn = document.getElementById("btnEnviar");
 
-fetch(SCRIPT_URL,{
-  method:"POST",
-  body:JSON.stringify({
-    tipo:"nuevo_sop",
-    employee:emp[0],
-    correo:emp[1],
-    departamento:document.getElementById("departamento").value,
-    objetivo:document.getElementById("objetivo").value,
-    areas:document.getElementById("areas").value,
-    resumen:document.getElementById("resumen").value,
-    files:base64
-  })
-})
-.then(r=>r.json())
-.then(d=>{
-  alert("Enviado correctamente");
-})
-.catch(err=>{
-  alert("Error");
+  // 🚫 evitar doble envío
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.innerText = "Enviando...";
+
+  try {
+    const emp = document.getElementById("employee").value.split("|");
+
+    const files = document.getElementById("archivos").files;
+    const base64 = files.length ? await archivosBase64(files) : [];
+
+    const payload = {
+      tipo: "nuevo_sop",
+      employee: emp[0] || "",
+      correo: emp[1] || "",
+      departamento: document.getElementById("departamento").value.trim(),
+      objetivo: document.getElementById("objetivo").value.trim(),
+      areas: document.getElementById("areas").value.trim(),
+      resumen: document.getElementById("resumen").value.trim(),
+      files: base64
+    };
+
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Error en el servidor");
+    }
+
+    // ✔ éxito
+    alert("Enviado correctamente");
+    form.reset();
+
+  } catch (err) {
+    console.error("Error SOP:", err);
+    alert("Error al enviar el formulario");
+
+  } finally {
+    isSubmitting = false;
+    btn.disabled = false;
+    btn.innerText = "Registrar Solicitud";
+    this.reset();
+  }
 });
-
-});
-
+  
 </script>
 <script>
 
@@ -460,14 +538,20 @@ function logout(){
 window.location.href = "https://marbleartemisa.github.io/sop-site/";
 }
 
+
+
 function mostrarNotificacion(msg,tipo){
   const notif=document.createElement("div");
   notif.className="notification "+tipo;
   notif.innerText=msg;
-  document.body.appendChild(notif);
-  setTimeout(()=>notif.remove(),4000);
-}
 
+  document.body.appendChild(notif);
+
+  setTimeout(()=>{
+    notif.remove();
+  },3000);
+}
+  
  // 🔹 Destacar opción de menú según URL
 function destacarMenu() {
   const links = document.querySelectorAll(".menu a");
