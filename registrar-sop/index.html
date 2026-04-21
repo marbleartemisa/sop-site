@@ -3,168 +3,166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registrar SOP - ARTEMISA</title>
+<title>Registrar SOP - ARTEMISA MARBLE & CABINETS</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
-body{
-  margin:0;
-  font-family:'Segoe UI',Arial,sans-serif;
-  background:url('/sop-site/wall5.png') no-repeat center top;
-  background-size:cover;
-}
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
 
 .overlay{
   background:rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
   min-height:100vh;
 }
 
-/* NAVBAR */
-.navbar{
-  position:sticky;
-  top:0;
-  background:rgba(0,0,0,0.7);
-  padding:10px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  color:white;
-  z-index:999;
-}
-
+ 
+.navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
 .logo{display:flex;align-items:center;gap:10px;}
 .logo img{height:40px;}
+.menu{display:flex;gap:25px;}
+.menu a{color:white;text-decoration:none;font-weight:bold;transition:.3s;}
+.menu a:hover{color:#00aaff;transform:scale(1.05);}
 
-.menu{
-  display:flex;
-  gap:20px;
+ .menu a.active {
+  background: #003366;   /* color de fondo destacado */
+  color: #fff;           /* texto blanco */
+  border-radius: 6px;
+  padding: 5px 10px;
 }
+.menu-toggle{display:none;font-size:1.6rem;cursor:pointer;}
 
-.menu a{
-  color:white;
-  text-decoration:none;
-}
-
-.menu a:hover{color:#00aaff;}
-
-.menu-toggle{display:none;cursor:pointer;}
-
-/* MOBILE */
-@media(max-width:768px){
-  .menu{
-    display:none;
-    position:absolute;
-    top:60px;
-    right:0;
-    background:black;
-    flex-direction:column;
-    padding:15px;
-    width:200px;
-  }
-  .menu.show{display:flex;}
-  .menu-toggle{display:block;}
-}
-
-/* FORM */
 .container{
-  max-width:900px;
-  margin:60px auto;
-  padding:40px;
-  background:rgba(255,255,255,0.92);
-  border-radius:18px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.25);
-  backdrop-filter:blur(12px);
+    max-width:900px;
+    margin:60px auto;
+    padding:40px;
+
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,0.4);
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.35);
 }
 
+ 
 h1{
   text-align:center;
   margin-bottom:25px;
-  font-size:1.6rem;
   color:#0f172a;
+  font-weight:700;
 }
 
-input,select,textarea{
-  width:100%;
-  padding:14px;
-  margin:10px 0;
-  border-radius:12px;
-  border:1px solid #e5e7eb;
-  background:white;
-  transition:0.2s;
-  font-size:0.95rem;
-}
+input, textarea, select{
+    width:100%;
+    padding:14px;
+    margin:10px 0;
 
-input:focus,select:focus,textarea:focus{
-  border-color:#0072C6;
-  box-shadow:0 0 0 3px rgba(0,114,198,0.15);
-  outline:none;
-}
+    border-radius:12px;
+    border:1px solid #d0d7de;
 
-button{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:999px;
-  background:linear-gradient(135deg,#0072C6,#00aaff);
-  color:white;
-  font-weight:600;
-  cursor:pointer;
-  transition:0.3s;
+    background:#ffffff;
+    color:#1a1a1a;
+
+    font-size:0.95rem;
+    outline:none;
+
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+
+    transition:all .25s ease;
+}
+ 
+input:focus, textarea:focus, select:focus{
+    border:1px solid #00aaff;
+    box-shadow:0 0 0 2px rgba(0,170,255,0.2);
+    background:rgba(255,255,255,0.25);
+}
+ 
+textarea{height:auto;}
+
+ button{
+    width:100%;
+    padding:14px;
+    margin-top:15px;
+
+    border:none;
+    border-radius:40px;
+
+    background:linear-gradient(135deg,#00aaff,#0072C6);
+    color:white;
+
+    font-weight:600;
+    letter-spacing:.5px;
+
+    cursor:pointer;
+
+    transition:.3s;
 }
 
 button:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 25px rgba(0,114,198,0.35);
-}
-.notification{
-  position:fixed;
-  top:20px;
-  right:20px;
-  padding:14px 18px;
-  border-radius:12px;
-  color:white;
-  font-weight:500;
-  box-shadow:0 10px 30px rgba(0,0,0,0.25);
-  z-index:9999;
-  animation:fadeIn 0.3s ease;
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(0,170,255,0.4);
 }
 
-.notification.success{background:#16a34a;}
-.notification.error{background:#dc2626;}
-
-@keyframes fadeIn{
-  from{transform:translateY(-10px);opacity:0;}
-  to{transform:translateY(0);opacity:1;}
-}
-/* LOGIN */
-#loginModal{
-  display:none;
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,0.6);
-  justify-content:center;
-  align-items:center;
+select{
+    color:#1a1a1a;
+    background:#ffffff;
 }
 
-#loginModal div{
-  background:#1e1e2f;
-  padding:25px;
-  border-radius:10px;
-  width:90%;
-  max-width:350px;
-  color:white;
+/* opciones del dropdown */
+option{
+    background:#1e1e2f;
+    color:white;
 }
 
+/* opcional: quitar estilo feo del navegador */
+select{
+    color:#1a1a1a;
+    background:#ffffff;
+    border:1px solid #d0d7de;
+    cursor:pointer;
+}
+ 
+.grid-container{max-width:1100px;margin:40px auto;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:30px;border-radius:18px;box-shadow:0 15px 35px rgba(0,0,0,0.3);}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;}
+th{background:#003366;color:white;}
+.estado{padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:bold;}
+.pendiente{background:#fff3cd;color:#856404;}
+.tramite{background:#cce5ff;color:#004085;}
+.rechazado{background:#f8d7da;color:#721c24;}
+.aprobado{background:#d4edda;color:#155724;}
+.footer{text-align:center;padding:30px;color:white;background:#003366;margin-top:50px;}
+.notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
+.notification.success{background:#28a745;}
+.notification.error{background:#dc3545;}
+@media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
+.spinner{margin-left:8px;}
+
+label{
+    font-size:0.8rem;
+    color:#374151;
+    font-weight:600;
+    margin-top:12px;
+    display:block;
+}
+ 
+::placeholder{
+    color:#6b7280;
+}
+ 
 </style>
 </head>
-
 <body>
 <div class="overlay">
 
-<!-- NAVBAR -->
+
+ <!-- NAVBAR -->
 <div class="navbar">
 
   <div class="logo">
@@ -173,173 +171,66 @@ button:hover{
   </div>
 
   <div class="menu-toggle" onclick="toggleMenu()">
-    <i class="fa fa-bars"></i>
+    <i class="fa-solid fa-bars"></i>
   </div>
 
+  <!-- MENU CENTRADO -->
   <div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a>
-    <a href="/sop-site/analisis/">Análisis SOP</a>
+    <a href="/sop-site/Aportes/">Aportes SOP</a> 
+    <a href="/sop-site/analisis/">Análisis SOP</a> 
     <a href="#" onclick="editSOP()">Editar SOP</a>
-    <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>
+     <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>  
   </div>
 
+  <!-- USUARIO A LA DERECHA -->
   <div class="user-info" id="userInfo" style="display:none;">
     <span id="userName"></span>
-    <button onclick="logout()">Salir</button>
+    <button onclick="logout()" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
   </div>
 
-</div>
+</div> <!-- 🔥 ESTE CIERRE ES CLAVE -->
+ 
+ <!-- LOGIN MODAL -->
+<div id="loginModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:9999;">
+  <div style="background:#1e1e2f;padding:30px;border-radius:12px;width:90%;max-width:350px;text-align:center;color:white;">
+    <h3>Iniciar sesión</h3>
 
-<!-- LOGIN -->
-<div id="loginModal">
-  <div>
-    <h3>Login</h3>
-    <select id="loginUser"></select>
-    <input type="password" id="loginPass" placeholder="Clave">
+    <select id="loginUser" style="width:100%;padding:10px;margin-bottom:10px;border-radius:6px;">
+      <option value="">Seleccione usuario</option>
+    </select>
+
+    <input type="password" id="loginPass" placeholder="Clave" style="width:100%;padding:10px;margin-bottom:10px;border-radius:6px;">
+
+    <div id="loginError" style="color:red;display:none;">Datos incorrectos</div>
+
     <button onclick="login()">Entrar</button>
   </div>
 </div>
 
+ 
 
-  <!-- FORMULARIO -->
-<div class="container">
-<h1>Registrar Solicitud de SOP - Rev 4.02</h1>
-<form id="sopForm" enctype="multipart/form-data">
-<label>Empleado</label>
-<select id="employee" required>
-<option value="">Seleccione empleado</option>
-<option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
-<option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
-<option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
-<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
-<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
-<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
-<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
-<option value="Kevin Pastor|sales4@artemisamarble.com|Ventas|Comercial">Kevin Pastor - Ventas</option>
-<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-</select>
-
-
-<input type="text" id="departamento" placeholder="Departamento" required>
-<input type="text" id="objetivo" placeholder="Objetivo" required>
-<input type="text" id="areas" placeholder="Áreas" required>
-<textarea id="resumen" placeholder="Resumen" required></textarea>
-
+<input type="text" id="departamento" placeholder="Área / Departamento" required>
+<input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
+<input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
+<textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
+<label>Adjuntar archivos (PDF o imágenes)</label>
 <input type="file" id="archivos" multiple>
 
-
-
 <button type="submit" id="btnEnviar">
-Registrar
+  <span class="btn-text">Registrar Solicitud</span>
+  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
 </button>
-
 </form>
 </div>
 
-<div class="footer">© 2026 ARTEMISA</div>
 
+<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
 </div>
-
-<script>
-function toggleMenu(){
-  document.querySelector('.menu').classList.toggle('show');
-}
-
-document.getElementById("employee").addEventListener("change",function(){
-  let d=this.value.split("|");
-  document.getElementById("departamento").value=d[3] || "";
-});
-
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
-  let isSubmitting = false;
-
-function archivosBase64(files){
-  return Promise.all([...files].map(f=>{
-    return new Promise(res=>{
-      const r=new FileReader();
-      r.onload=()=>res({name:f.name,data:r.result});
-      r.readAsDataURL(f);
-    });
-  }));
-}
-
-let isSubmitting = false; // 👈 AQUÍ (GLOBAL)
   
-document.getElementById("sopForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const form = this;
-  const btn = document.getElementById("btnEnviar");
-
-  // 🚫 evitar doble envío (REQUIERE isSubmitting global)
-  if (isSubmitting) return;
-  isSubmitting = true;
-
-  btn.disabled = true;
-  btn.innerText = "Enviando...";
-
-  try {
-    const emp = document.getElementById("employee").value.split("|");
-
-    const files = document.getElementById("archivos").files;
-    const base64 = files.length ? await archivosBase64(files) : [];
-
-    const payload = {
-      tipo: "nuevo_sop",
-      employee: emp[0] || "",
-      correo: emp[1] || "",
-      departamento: document.getElementById("departamento").value.trim(),
-      objetivo: document.getElementById("objetivo").value.trim(),
-      areas: document.getElementById("areas").value.trim(),
-      resumen: document.getElementById("resumen").value.trim(),
-      files: base64
-    };
-
-    const response = await fetch(SCRIPT_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    // 🔴 evitar crash si el backend no devuelve JSON válido
-    let data;
-    try {
-      data = await response.json();
-    } catch (e) {
-      data = {};
-    }
-
-    if (!response.ok) {
-      throw new Error(data?.message || "Error en el servidor");
-    }
-
-    // ✔ éxito
-    alert("Enviado correctamente");
-    form.reset();
-
-  } catch (err) {
-    console.error("Error SOP:", err);
-    alert("Error al enviar el formulario");
-
-  } finally {
-    // 🔴 liberar bloqueo SIEMPRE
-    isSubmitting = false;
-    btn.disabled = false;
-    btn.innerText = "Registrar Solicitud";
-    form.reset();
-  }
-});
-  
-</script>
 <script>
 
 
@@ -390,10 +281,6 @@ const spinner=btn.querySelector(".spinner");
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
 
-  // 🔴 BLOQUEO ANTI-DOBLE CLICK
-  if(isSubmitting) return;
-  isSubmitting = true;
-
   let datosEmpleado=document.getElementById("employee").value.split("|");
   let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3];
   let depto=document.getElementById("departamento").value.trim();
@@ -433,12 +320,7 @@ console.log("ARCHIVOS BASE64:", archivosBase64);
     files: archivosBase64
   })
 });
-    let result;
-        try {
-          result = await response.json();
-        } catch (e) {
-          throw new Error("Respuesta inválida del servidor");
-        }
+    const result=await response.json();
     const links=result.links || [];
 
     console.log("Links recibidos del endpoint:", links);
@@ -488,17 +370,13 @@ console.log("ARCHIVOS BASE64:", archivosBase64);
   }catch(err){
     console.error("Error al registrar SOP:", err);
     mostrarNotificacion("Ocurrió un error al registrar SOP","error");
-      }finally{
-      btn.disabled=false; 
-      btnText.innerText="Registrar Solicitud"; 
-      spinner.style.display="none";
-      this.reset();
-    
-      // 🔴 desbloquear envío
-      isSubmitting = false;
-    }
-    })
-    
+  }finally{
+    btn.disabled=false; 
+    btnText.innerText="Registrar Solicitud"; 
+    spinner.style.display="none";
+    this.reset();
+  }
+})
 
   function adminLogin(){
 
@@ -561,20 +439,14 @@ function logout(){
 window.location.href = "https://marbleartemisa.github.io/sop-site/";
 }
 
-
-
 function mostrarNotificacion(msg,tipo){
   const notif=document.createElement("div");
   notif.className="notification "+tipo;
   notif.innerText=msg;
-
   document.body.appendChild(notif);
-
-  setTimeout(()=>{
-    notif.remove();
-  },3000);
+  setTimeout(()=>notif.remove(),4000);
 }
-  
+
  // 🔹 Destacar opción de menú según URL
 function destacarMenu() {
   const links = document.querySelectorAll(".menu a");
@@ -634,7 +506,5 @@ window.addEventListener("DOMContentLoaded", () => {
  
 </script>
 
-</body>
-</html>
 </body>
 </html>
