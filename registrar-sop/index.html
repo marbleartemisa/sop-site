@@ -258,6 +258,7 @@ document.getElementById("employee").addEventListener("change",function(){
 });
 
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
+  let isSubmitting = false;
 
 function archivosBase64(files){
   return Promise.all([...files].map(f=>{
@@ -277,8 +278,10 @@ document.getElementById("sopForm").addEventListener("submit", async function (e)
   const form = this;
   const btn = document.getElementById("btnEnviar");
 
-  // 🚫 evitar doble envío
-  if (btn.disabled) return;
+  // 🚫 evitar doble envío (REQUIERE isSubmitting global)
+  if (isSubmitting) return;
+  isSubmitting = true;
+
   btn.disabled = true;
   btn.innerText = "Enviando...";
 
@@ -307,7 +310,13 @@ document.getElementById("sopForm").addEventListener("submit", async function (e)
       body: JSON.stringify(payload)
     });
 
-    const data = await response.json().catch(() => ({}));
+    // 🔴 evitar crash si el backend no devuelve JSON válido
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      data = {};
+    }
 
     if (!response.ok) {
       throw new Error(data?.message || "Error en el servidor");
@@ -322,10 +331,11 @@ document.getElementById("sopForm").addEventListener("submit", async function (e)
     alert("Error al enviar el formulario");
 
   } finally {
+    // 🔴 liberar bloqueo SIEMPRE
     isSubmitting = false;
     btn.disabled = false;
     btn.innerText = "Registrar Solicitud";
-    this.reset();
+    form.reset();
   }
 });
   
@@ -380,6 +390,10 @@ const spinner=btn.querySelector(".spinner");
 document.getElementById("sopForm").addEventListener("submit", async function(e){
   e.preventDefault();
 
+  // 🔴 BLOQUEO ANTI-DOBLE CLICK
+  if(isSubmitting) return;
+  isSubmitting = true;
+
   let datosEmpleado=document.getElementById("employee").value.split("|");
   let nombre=datosEmpleado[0], correo=datosEmpleado[1], cargo=datosEmpleado[2], departamentoEmpleado=datosEmpleado[3];
   let depto=document.getElementById("departamento").value.trim();
@@ -419,7 +433,12 @@ console.log("ARCHIVOS BASE64:", archivosBase64);
     files: archivosBase64
   })
 });
-    const result=await response.json();
+    let result;
+        try {
+          result = await response.json();
+        } catch (e) {
+          throw new Error("Respuesta inválida del servidor");
+        }
     const links=result.links || [];
 
     console.log("Links recibidos del endpoint:", links);
@@ -469,13 +488,17 @@ console.log("ARCHIVOS BASE64:", archivosBase64);
   }catch(err){
     console.error("Error al registrar SOP:", err);
     mostrarNotificacion("Ocurrió un error al registrar SOP","error");
-  }finally{
-    btn.disabled=false; 
-    btnText.innerText="Registrar Solicitud"; 
-    spinner.style.display="none";
-    this.reset();
-  }
-})
+      }finally{
+      btn.disabled=false; 
+      btnText.innerText="Registrar Solicitud"; 
+      spinner.style.display="none";
+      this.reset();
+    
+      // 🔴 desbloquear envío
+      isSubmitting = false;
+    }
+    })
+    
 
   function adminLogin(){
 
