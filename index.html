@@ -739,14 +739,16 @@ document.getElementById("loginBtn").addEventListener("click", ()=> {
   }
 });
       
+
 function mostrarUsuario(user){
   const userDiv = document.getElementById("userInfo");
   const userNameSpan = document.getElementById("userName");
 
-  userNameSpan.textContent = user.usuario; // mostrar nombre
-  userDiv.style.display = "flex";          // mostrar bloque
-}
+  console.log("Mostrando usuario:", user); // 👈 DEBUG
 
+  userNameSpan.textContent = user.usuario;
+  userDiv.style.display = "flex";
+}
   
 function mostrarBienvenida(nombre){
   const msg = document.getElementById("welcome-msg");
