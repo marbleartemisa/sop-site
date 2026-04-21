@@ -59,11 +59,14 @@
         height:40px;
       }
       
+
       .menu{
         display:flex;
         gap:25px;
-        transition: all 0.3s ease; /* 👈 AQUÍ */
+        flex:1;                /* 🔥 ocupa espacio disponible */
+        justify-content:center; /* 🔥 lo centra */
       }
+      
       
       .menu a{
         color:white;
@@ -128,14 +131,16 @@
               }
             
               /* ===== USER INFO ===== */
-              .user-info{
-                display:flex;
-                justify-content:center;
-                align-items:center;
-                gap:10px;
-                margin-top:10px;
-              }
+                .user-info{
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    white-space:nowrap;
+                    flex-shrink:0;   /* 🔥 NO se encoge */
+                  }
             }
+
+
 
             @media (max-width: 900px){
             
