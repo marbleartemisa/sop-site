@@ -234,7 +234,7 @@ button:hover{
 
 <input type="file" id="archivos" multiple>
 
-let isSubmitting = false;
+
 
 <button type="submit" id="btnEnviar">
 Registrar
@@ -269,7 +269,7 @@ function archivosBase64(files){
   }));
 }
 
-
+let isSubmitting = false; // 👈 AQUÍ (GLOBAL)
   
 document.getElementById("sopForm").addEventListener("submit", async function (e) {
   e.preventDefault();
