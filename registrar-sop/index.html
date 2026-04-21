@@ -141,8 +141,58 @@ th{background:#003366;color:white;}
 .notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
 .notification.success{background:#28a745;}
 .notification.error{background:#dc3545;}
-@media(max-width:768px){.menu{display:none;flex-direction:column;background:rgba(0,0,0,0.9);position:absolute;top:60px;right:0;width:200px;padding:20px;border-radius:10px 0 0 10px;}.menu.show{display:flex;}.menu-toggle{display:block;}}
-.spinner{margin-left:8px;}
+/* =========================
+   MOBILE NAVBAR FIX (FINAL)
+========================= */
+@media (max-width: 768px){
+
+  .navbar{
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  /* 🔥 HAMBURGER */
+  .menu-toggle{
+    display: block;
+    font-size: 1.8rem;
+    cursor: pointer;
+    z-index: 1001;
+  }
+
+  /* 🔥 MENU OCULTO POR DEFECTO */
+  .menu{
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    left: 0;
+
+    flex-direction: column;
+    background: rgba(0,0,0,0.95);
+    padding: 20px;
+    gap: 15px;
+
+    z-index: 999;
+  }
+
+  /* 🔥 MENU ABIERTO */
+  .menu.show{
+    display: flex;
+  }
+
+  /* 🔥 USUARIO ARRIBA O CENTRADO */
+  .user-info{
+    display: none; /* oculto en mobile para evitar choque */
+  }
+
+  /* opcional: logo más compacto */
+  .logo span{
+    font-size: 0.85rem;
+  }
+}
+
+  .spinner{margin-left:8px;}
 
 label{
     font-size:0.8rem;
@@ -276,7 +326,12 @@ emailjs.init("iR8ieJnOkI4_sr8TH"); // tu user ID EmailJS
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
 
 // Toggle menu
-function toggleMenu(){document.querySelector('.menu').classList.toggle('show');}
+
+function toggleMenu(){
+  document.querySelector('.menu').classList.toggle('show');
+}
+  
+  
 document.getElementById("employee").addEventListener("change",function(){
   let datos=this.value.split("|");
   document.getElementById("departamento").value=datos[3] || ""
