@@ -290,14 +290,13 @@
         max-height:550px;
         overflow-y:auto;
       }
-      
+
       .sop-table{
-        width:100%;
-       table-layout:fixed; /* 🔥 clave */
-        border-collapse:collapse;
-      }
+              width:100%;
+              border-collapse:collapse;
+            }
 
-
+      
       .sop-table tbody tr{
       cursor:pointer;
       }
@@ -316,7 +315,14 @@
         padding:16px 18px;
         border-bottom:1px solid #f1f5f9;
       }
-      
+      .sop-table td:last-child{
+        text-align:right;
+        white-space:nowrap;
+      }
+
+      .sop-table td:nth-child(2){
+        word-break:break-word;
+      }
 
       .sop-table tbody tr {
           background: rgba(255, 255, 255, 0.6); /* blanco translúcido */
@@ -329,6 +335,8 @@
       .sop-table tbody tr:hover {
           background: rgba(255, 255, 255, 0.8); /* más visible al pasar el mouse */
       }
+
+      
 
       /* ===== NOMBRE SOP (COLUMNA PROCEDIMIENTO) ===== */
 .sop-nombre {
