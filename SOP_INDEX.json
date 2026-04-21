@@ -328,12 +328,28 @@
     "url": "produccion/SOP-CUIDADO-HERRAMIENTAS-CARPINTERIA/index.html"
   },
   {
+    "title": "FLUJO TRABAJO CARPINTERIA",
+    "department": "produccion",
+    "keywords": "flujo trabajo carpinteria",
+    "objective": "",
+    "description": "",
+    "url": "produccion/SOP-FLUJO-TRABAJO-CARPINTERIA/index.html"
+  },
+  {
     "title": "INSTALACION CABINETS",
     "department": "produccion",
     "keywords": "instalacion cabinets",
     "objective": "",
     "description": "",
     "url": "produccion/SOP-INSTALACION-CABINETS/index.html"
+  },
+  {
+    "title": "LECTURA LABELS",
+    "department": "produccion",
+    "keywords": "lectura labels",
+    "objective": "",
+    "description": "",
+    "url": "produccion/SOP-LECTURA-LABELS/index.html"
   },
   {
     "title": "POLITICA NIVELES",
