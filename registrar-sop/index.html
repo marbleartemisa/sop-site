@@ -9,8 +9,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Nuevo&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-<style>f
-body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
+<style>
+
+/* =========================
+   BASE
+========================= */
+body{
+  margin:0;
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:url('/sop-site/wall5.png') no-repeat center top;
+  background-size:cover;
+}
 
 .overlay{
   background:rgba(0,0,0,0.45);
@@ -18,365 +27,323 @@ body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/
   min-height:100vh;
 }
 
- 
+/* =========================
+   NAVBAR
+========================= */
 .navbar{
   position:sticky;
   top:0;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(8px);
-  padding:10px 30px;
-  color:white;
-  font-weight:bold;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
+  padding:10px 30px;
 
-  
-.logo{display:flex;
-      align-items:center;
-      gap:10px;}
-  
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(8px);
+
+  color:white;
+  font-weight:bold;
+  font-family:'Nuevo','Segoe UI',Arial;
+  z-index:999;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
 .logo img{height:40px;}
+
+.brand-text{
+  color:white;
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+/* MENU DESKTOP */
 .menu{
-  display:flex;gap:25px;}
+  display:flex;
+  gap:25px;
+  flex:1;
+  justify-content:center;
+}
+
 .menu a{
   color:white;
   text-decoration:none;
   font-weight:bold;
-  transition:.3s;}
-  
+  transition:.3s;
+}
+
 .menu a:hover{
   color:#00aaff;
-  transform:scale(1.05);}
-
- .menu a.active {
-  background: #003366;   /* color de fondo destacado */
-  color: #fff;           /* texto blanco */
-  border-radius: 6px;
-  padding: 5px 10px;
-}
-.menu-toggle{display:none;font-size:1.6rem;cursor:pointer;}
-
-.container{
-    max-width:900px;
-    margin:60px auto;
-    padding:40px;
-
-    background:rgba(255,255,255,0.85);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-
-    border-radius:20px;
-    border:1px solid rgba(255,255,255,0.4);
-
-    box-shadow:
-        0 15px 40px rgba(0,0,0,0.35);
+  transform:scale(1.05);
 }
 
- 
-h1{
-  text-align:center;
-  margin-bottom:25px;
-  color:#0f172a;
-  font-weight:700;
+.menu a.active{
+  background:#003366;
+  border-radius:6px;
+  padding:5px 10px;
 }
 
-input, textarea, select{
-    width:100%;
-    padding:14px;
-    margin:10px 0;
-
-    border-radius:12px;
-    border:1px solid #d0d7de;
-
-    background:#ffffff;
-    color:#1a1a1a;
-
-    font-size:0.95rem;
-    outline:none;
-
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
-
-    transition:all .25s ease;
-}
- 
-input:focus, textarea:focus, select:focus{
-    border:1px solid #00aaff;
-    box-shadow:0 0 0 2px rgba(0,170,255,0.2);
-    background:rgba(255,255,255,0.25);
-}
- 
-textarea{height:auto;}
-
- button{
-    width:100%;
-    padding:14px;
-    margin-top:15px;
-
-    border:none;
-    border-radius:40px;
-
-    background:linear-gradient(135deg,#00aaff,#0072C6);
-    color:white;
-
-    font-weight:600;
-    letter-spacing:.5px;
-
-    cursor:pointer;
-
-    transition:.3s;
+.menu-toggle{
+  display:none;
+  font-size:1.6rem;
+  cursor:pointer;
 }
 
-button:hover{
-    transform:translateY(-2px);
-    box-shadow:0 10px 25px rgba(0,170,255,0.4);
-}
-
-select{
-    color:#1a1a1a;
-    background:#ffffff;
-}
-
-/* opciones del dropdown */
-option{
-    background:#1e1e2f;
-    color:white;
-}
-
-/* opcional: quitar estilo feo del navegador */
-select{
-    color:#1a1a1a;
-    background:#ffffff;
-    border:1px solid #d0d7de;
-    cursor:pointer;
-}
- 
-.grid-container{max-width:1100px;margin:40px auto;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:30px;border-radius:18px;box-shadow:0 15px 35px rgba(0,0,0,0.3);}
-table{width:100%;border-collapse:collapse;}
-th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;}
-th{background:#003366;color:white;}
-.estado{padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:bold;}
-.pendiente{background:#fff3cd;color:#856404;}
-.tramite{background:#cce5ff;color:#004085;}
-.rechazado{background:#f8d7da;color:#721c24;}
-.aprobado{background:#d4edda;color:#155724;}
-.footer{text-align:center;padding:30px;color:white;background:#003366;margin-top:50px;}
-.notification{position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:12px;color:white;font-weight:bold;box-shadow:0 5px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0.95;}
-.notification.success{background:#28a745;}
-.notification.error{background:#dc3545;}
-/* =========================
-   MOBILE NAVBAR FIX (FINAL)
-========================= */
-@media (max-width: 768px){
-
-  .navbar{
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
-
-  /* 🔥 HAMBURGER */
-  .menu-toggle{
-    display: block;
-    font-size: 1.8rem;
-    cursor: pointer;
-    z-index: 1001;
-  }
-
-  /* 🔥 MENU OCULTO POR DEFECTO */
-  .menu{
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 0;
-    left: 0;
-
-    flex-direction: column;
-    background: rgba(0,0,0,0.95);
-    padding: 20px;
-    gap: 15px;
-
-    z-index: 999;
-  }
-
-  /* 🔥 MENU ABIERTO */
-  .menu.show{
-    display: flex;
-  }
-
-  /* 🔥 USUARIO ARRIBA O CENTRADO */
-  .user-info{
-    display: none; /* oculto en mobile para evitar choque */
-  }
-  .user-info{
-    white-space:nowrap;
-    flex-shrink:0;
-  }
-
-
-  /* opcional: logo más compacto */
-  .logo span{
-    font-size: 0.85rem;
-  }
-}
-
-  .spinner{margin-left:8px;}
-
-label{
-    font-size:0.8rem;
-    color:#374151;
-    font-weight:600;
-    margin-top:12px;
-    display:block;
-}
-
-  /* texto empresa visible por defecto (PC) */
-.brand-text{
-  color:white;
-  font-weight:bold;
-  margin-left:10px;
-  white-space:nowrap;
-}
-
-/* ===== MOBILE ===== */
-@media(max-width:768px){
-
-  /* ocultar texto empresa en móvil */
-  .brand-text{
-    display:none;
-  }
-
-  /* ajustar logo */
-  .logo img{
-    height:32px;
-  }
-
-  /* navbar más compacto */
-  .navbar{
-    padding:10px 12px;
-  }
-
-  /* usuario en una línea */
-
-  .user-info{
+/* USUARIO */
+.user-info{
   display:flex;
   align-items:center;
   gap:8px;
-  white-space:nowrap;   /* 🔥 evita salto de línea */
-  flex-shrink:0;        /* 🔥 evita que se encoja */
+  white-space:nowrap;
+  flex-shrink:0;
 }
-
 
 #userName{
   max-width:150px;
   overflow:hidden;
-  text-overflow:ellipsis; 
-  white-space:nowrap;   /* 🔥 refuerzo */
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
+
+/* =========================
+   FORM / UI
+========================= */
+.container{
+  max-width:900px;
+  margin:60px auto;
+  padding:40px;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(10px);
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.4);
+  box-shadow:0 15px 40px rgba(0,0,0,0.35);
 }
-  
+
+h1{
+  text-align:center;
+  margin-bottom:25px;
+  color:#0f172a;
+}
+
+input, textarea, select{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:12px;
+  border:1px solid #d0d7de;
+  background:#fff;
+  font-size:.95rem;
+  transition:.25s;
+}
+
+input:focus, textarea:focus, select:focus{
+  border:1px solid #00aaff;
+  box-shadow:0 0 0 2px rgba(0,170,255,0.2);
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:15px;
+  border:none;
+  border-radius:40px;
+  background:linear-gradient(135deg,#00aaff,#0072C6);
+  color:white;
+  cursor:pointer;
+}
+
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(0,170,255,0.4);
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media(max-width:768px){
+
+  .navbar{
+    padding:10px 15px;
+  }
+
+  /* ocultar texto largo */
+  .brand-text{
+    display:none;
+  }
+
+  .logo img{
+    height:30px;
+  }
+
+  /* hamburger visible */
+  .menu-toggle{
+    display:block;
+    z-index:3000;
+  }
+
+  /* ocultar usuario en top */
+  .user-info{
+    display:none;
+  }
+
+  /* MENU TIPO APP */
+  .menu{
+    position:fixed;
+    top:0;
+    right:-100%;
+    width:75%;
+    height:100vh;
+
+    flex-direction:column;
+    gap:20px;
+    padding:30px 20px;
+
+    background:#0b0b0f;
+    transition:.3s;
+    z-index:2000;
+  }
+
+  .menu.show{
+    right:0;
+  }
+
+}
+
+/* overlay del menu */
+.menu::before{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:-1;
+}
+
+.spinner{margin-left:8px;}
+
+label{
+  font-size:.8rem;
+  color:#374151;
+  font-weight:600;
+  display:block;
+  margin-top:12px;
+}
 
 ::placeholder{
-    color:#6b7280;
+  color:#6b7280;
 }
- 
+
 </style>
 </head>
 <body>
 <div class="overlay">
 
+  <!-- NAVBAR -->
+  <div class="navbar">
 
- <!-- NAVBAR -->
-<div class="navbar">
+    <div class="logo">
+      <img src="/sop-site/logo.png" alt="Logo">
+      <span>ARTEMISA MARBLE & CABINETS</span>
+    </div>
 
-  <div class="logo">
-    <img src="/sop-site/logo.png">
-    <span>ARTEMISA MARBLE & CABINETS</span>
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+
+    <!-- MENU -->
+    <div class="menu">
+      <a href="/sop-site/">Inicio</a>
+      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+      <a href="/sop-site/Aportes/">Aportes SOP</a>
+      <a href="/sop-site/analisis/">Análisis SOP</a>
+      <a href="javascript:void(0)" onclick="editSOP()">Editar SOP</a>
+      <a href="/sop-site/admin/">Admin</a>
+      <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>
+    </div>
+
+    <!-- USER INFO -->
+    <div class="user-info" id="userInfo">
+      <span id="userName"></span>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+
   </div>
 
-  <div class="menu-toggle" onclick="toggleMenu()">
-    <i class="fa-solid fa-bars"></i>
+  <!-- LOGIN MODAL -->
+  <div id="loginModal" class="modal-login">
+    <div class="modal-content">
+      <h3>Iniciar sesión</h3>
+
+      <select id="loginUser" class="input">
+        <option value="">Seleccione usuario</option>
+      </select>
+
+      <input type="password" id="loginPass" class="input" placeholder="Clave">
+
+      <div id="loginError" class="error-msg">Datos incorrectos</div>
+
+      <button class="btn-login" onclick="login()">Entrar</button>
+    </div>
   </div>
 
-  <!-- MENU CENTRADO -->
+  <!-- FORMULARIO -->
+  <div class="container">
+    <h1>Registrar Solicitud de SOP</h1>
 
-<div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a> 
-    <a href="/sop-site/analisis/">Análisis SOP</a> 
-    <a href="#" onclick="editSOP()">Editar SOP</a>
-    <a href="/sop-site/admin/">Admin</a> 
-    <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a> 
+    <form id="sopForm" enctype="multipart/form-data">
+
+      <label>Empleado</label>
+      <select id="employee" class="input" required>
+        <option value="">Seleccione empleado</option>
+
+        <option data-email="damian@artemisamarble.com" data-role="Presidente" data-dept="Ventas">Damian Molina - Presidente</option>
+        <option data-email="frontdesk@artemisamarble.com" data-role="Frontdesk" data-dept="Administracion">Alberto Molina - Frontdesk</option>
+        <option data-email="sales@artemisamarble.com" data-role="Ventas" data-dept="Comercial">Gabriel Batista - Ventas</option>
+        <option data-email="jenny@artemisamarble.com" data-role="Manager" data-dept="Ventas">Jenny Perez - Manager</option>
+        <option data-email="wood@artemisamarble.com" data-role="Shopdrawing" data-dept="Diseño">Yozusi Urdaneta - Shopdrawing</option>
+        <option data-email="yoandry@artemisamarble.com" data-role="Manager" data-dept="Producción">Yoandry Perez - Manager</option>
+        <option data-email="accounting@artemisamarble.com" data-role="Accounting" data-dept="Administracion">Wendy Romanach - Accounting</option>
+        <option data-email="rolando@artemisamarble.com" data-role="Medidor" data-dept="Medida">Rolando Diaz - Medidor</option>
+        <option data-email="jobs@artemisamarble.com" data-role="Shopdrawing" data-dept="Diseño">Krishna Camila Rojas - Shopdrawing</option>
+        <option data-email="stone.production@artemisamarble.com" data-role="Medidor" data-dept="Medida">Gregorio Abreu - Medidor</option>
+        <option data-email="sales3@artemisamarble.com" data-role="Shopdrawing" data-dept="Diseño">Juan Pablo Molina - Shopdrawing</option>
+        <option data-email="info@artemisamarble.com" data-role="Ventas" data-dept="Comercial">Eliana Pineda - Ventas</option>
+        <option data-email="control@artemisamarble.com" data-role="Controller" data-dept="Control">Carlos Herrera - Controller</option>
+      </select>
+
+      <input type="text" id="departamento" class="input" placeholder="Área / Departamento" required>
+      <input type="text" id="objetivo" class="input" placeholder="Objetivo del SOP" required>
+      <input type="text" id="areas" class="input" placeholder="Áreas o roles involucrados" required>
+
+      <textarea id="resumen" class="input" rows="4" placeholder="Resumen de instrucciones" required></textarea>
+
+      <label>Adjuntar archivos (PDF o imágenes)</label>
+      <input type="file" id="archivos" multiple>
+
+      <button type="submit" id="btnEnviar" class="btn-submit">
+        <span class="btn-text">Registrar Solicitud</span>
+        <span class="spinner" hidden>
+          <i class="fa fa-spinner fa-spin"></i>
+        </span>
+      </button>
+
+    </form>
   </div>
-  
-  <!-- USUARIO A LA DERECHA -->
-  <div class="user-info" id="userInfo" style="display:none;">
-    <span id="userName"></span>
-    <button onclick="logout()" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </button>
-  </div>
 
-</div> <!-- 🔥 ESTE CIERRE ES CLAVE -->
- 
- <!-- LOGIN MODAL -->
-<div id="loginModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:9999;">
-  <div style="background:#1e1e2f;padding:30px;border-radius:12px;width:90%;max-width:350px;text-align:center;color:white;">
-    <h3>Iniciar sesión</h3>
+  <!-- FOOTER -->
+  <div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
 
-    <select id="loginUser" style="width:100%;padding:10px;margin-bottom:10px;border-radius:6px;">
-      <option value="">Seleccione usuario</option>
-    </select>
-
-    <input type="password" id="loginPass" placeholder="Clave" style="width:100%;padding:10px;margin-bottom:10px;border-radius:6px;">
-
-    <div id="loginError" style="color:red;display:none;">Datos incorrectos</div>
-
-    <button onclick="login()">Entrar</button>
-  </div>
 </div>
+</body>
 
-<!-- FORMULARIO -->
-<div class="container">
-<h1>Registrar Solicitud de SOP</h1>
-<form id="sopForm" enctype="multipart/form-data">
-<label>Empleado</label>
-<select id="employee" required>
-<option value="">Seleccione empleado</option>
-<option value="Damian Molina|damian@artemisamarble.com|Presidente|Ventas">Damian Molina - Presidente</option>
-<option value="Alberto Molina|frontdesk@artemisamarble.com|Frontdesk|Administracion">Alberto Molina - Frontdesk</option>
-<option value="Gabriel Batista|sales@artemisamarble.com|Ventas|Comercial">Gabriel Batista - Ventas</option>
-<option value="Jenny Perez|jenny@artemisamarble.com|Manager|Ventas">Jenny Perez - Manager</option>
-<option value="Yozusi Urdaneta|wood@artemisamarble.com|Shopdrawing|Diseño">Yozusi Urdaneta - Shopdrawing</option>
-<option value="Yoandry Perez|yoandry@artemisamarble.com|Manager|Producción">Yoandry Perez - Manager</option>
-<option value="Wendy Romanach|accounting@artemisamarble.com|Accounting|Administracion">Wendy Romanach - Accounting</option>
-<option value="Rolando Diaz|rolando@artemisamarble.com|Medidor|Medida">Rolando Diaz - Medidor</option>
-<option value="Krishna Camila Rojas|jobs@artemisamarble.com|Shopdrawing|Diseño">Krishna Camila Rojas - Shopdrawing</option>
-<option value="Gregorio Abreu|stone.production@artemisamarble.com|Medidor|Medida">Gregorio Abreu - Medidor</option>
-<option value="Juan Pablo Molina|sales3@artemisamarble.com|Shopdrawing|Diseño">Juan Pablo Molina - Shopdrawing</option>
-<option value="Eliana Pineda|info@artemisamarble.com|Ventas|Comercial">Eliana Pineda - Ventas</option>
-<option value="Carlos Herrera|control@artemisamarble.com|Controller|Control">Carlos Herrera - Controller</option>
-</select>
-
-<input type="text" id="departamento" placeholder="Área / Departamento" required>
-<input type="text" id="objetivo" placeholder="Objetivo del SOP" required>
-<input type="text" id="areas" placeholder="Áreas o roles involucrados" required>
-<textarea id="resumen" rows="4" placeholder="Resumen de instrucciones" required></textarea>
-<label>Adjuntar archivos (PDF o imágenes)</label>
-<input type="file" id="archivos" multiple>
-
-<button type="submit" id="btnEnviar">
-  <span class="btn-text">Registrar Solicitud</span>
-  <span class="spinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
-</button>
-</form>
-</div>
-
-
-<div class="footer">© 2026 ARTEMISA MARBLE & CABINETS</div>
-</div>
   
 <script>
 
