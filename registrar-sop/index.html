@@ -32,13 +32,23 @@ body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/
   align-items:center;
   z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
 
-
   
-.logo{display:flex;align-items:center;gap:10px;}
+.logo{display:flex;
+      align-items:center;
+      gap:10px;}
+  
 .logo img{height:40px;}
-.menu{display:flex;gap:25px;}
-.menu a{color:white;text-decoration:none;font-weight:bold;transition:.3s;}
-.menu a:hover{color:#00aaff;transform:scale(1.05);}
+.menu{
+  display:flex;gap:25px;}
+.menu a{
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  transition:.3s;}
+  
+.menu a:hover{
+  color:#00aaff;
+  transform:scale(1.05);}
 
  .menu a.active {
   background: #003366;   /* color de fondo destacado */
@@ -199,6 +209,11 @@ th{background:#003366;color:white;}
   .user-info{
     display: none; /* oculto en mobile para evitar choque */
   }
+  .user-info{
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
 
   /* opcional: logo más compacto */
   .logo span{
@@ -243,15 +258,25 @@ label{
   }
 
   /* usuario en una línea */
+
   .user-info{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    white-space:nowrap;
-    font-size:13px;
-  }
+  display:flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;   /* 🔥 evita salto de línea */
+  flex-shrink:0;        /* 🔥 evita que se encoja */
 }
- 
+
+
+#userName{
+  max-width:150px;
+  overflow:hidden;
+  text-overflow:ellipsis; 
+  white-space:nowrap;   /* 🔥 refuerzo */
+}
+}
+  
+
 ::placeholder{
     color:#6b7280;
 }
