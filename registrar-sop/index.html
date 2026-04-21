@@ -19,7 +19,21 @@ body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/
 }
 
  
-.navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
+.navbar{
+  position:sticky;
+  top:0;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(8px);
+  padding:10px 30px;
+  color:white;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
+
+
+  
 .logo{display:flex;align-items:center;gap:10px;}
 .logo img{height:40px;}
 .menu{display:flex;gap:25px;}
@@ -200,6 +214,42 @@ label{
     font-weight:600;
     margin-top:12px;
     display:block;
+}
+
+  /* texto empresa visible por defecto (PC) */
+.brand-text{
+  color:white;
+  font-weight:bold;
+  margin-left:10px;
+  white-space:nowrap;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:768px){
+
+  /* ocultar texto empresa en móvil */
+  .brand-text{
+    display:none;
+  }
+
+  /* ajustar logo */
+  .logo img{
+    height:32px;
+  }
+
+  /* navbar más compacto */
+  .navbar{
+    padding:10px 12px;
+  }
+
+  /* usuario en una línea */
+  .user-info{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+    font-size:13px;
+  }
 }
  
 ::placeholder{
