@@ -149,70 +149,85 @@ iframe {
   </div>
 </div>
 
+
 <script>
 let params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 let idSOP = params.get("id");
+
 const frame = document.getElementById("frame");
+
 frame.onload = function () {
     try {
         const docFrame = frame.contentDocument || frame.contentWindow.document;
 
         const style = docFrame.createElement("style");
-       
 
-style.innerHTML = `
-    body {
-        max-width: 900px !important;
-        margin: 40px auto !important;
-        display: block !important;
+        style.innerHTML = `
+            body {
+                max-width: 900px !important;
+                margin: 40px auto !important;
+                display: block !important;
 
-        background: white !important;
-        padding: 60px 70px !important;
-        border-radius: 10px !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,.08) !important;
+                background: white !important;
+                padding: 60px 70px !important;
+                border-radius: 10px !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,.08) !important;
 
-        font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif !important;
+                font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif !important;
 
-        line-height: 1.6 !important;
-        font-size: 16px !important;
-        letter-spacing: 0.2px !important;
-        color: #1f2937 !important;
+                line-height: 1.6 !important;
+                font-size: 16px !important;
+                letter-spacing: 0.2px !important;
+                color: #1f2937 !important;
 
-        -webkit-font-smoothing: antialiased !important;
-        -moz-osx-font-smoothing: grayscale !important;
-        text-rendering: optimizeLegibility !important;
+                -webkit-font-smoothing: antialiased !important;
+                -moz-osx-font-smoothing: grayscale !important;
+                text-rendering: optimizeLegibility !important;
+            }
+
+            h1 {
+                font-size: 26px !important;
+                margin-bottom: 20px !important;
+            }
+
+            h2 {
+                font-size: 20px !important;
+                margin-top: 30px !important;
+            }
+
+            h3 {
+                font-size: 17px !important;
+                margin-top: 20px !important;
+            }
+
+            p {
+                margin: 12px 0 !important;
+            }
+        `;
+
+        docFrame.head.appendChild(style);
+
+    } catch (e) {
+        console.log("No se pudo modificar el iframe:", e);
     }
+};
 
-    /* 👇 AQUÍ VA LO QUE PREGUNTAS */
-    h1 {
-        font-size: 26px !important;
-        margin-bottom: 20px !important;
-    }
+if (doc) frame.src = doc;
 
-    h2 {
-        font-size: 20px !important;
-        margin-top: 30px !important;
-    }
 
-    h3 {
-        font-size: 17px !important;
-        margin-top: 20px !important;
-    }
+// ======================
+// FUNCIONES
+// ======================
 
-    p {
-        margin: 12px 0 !important;
-    }
-`;
-
-    
 function openNew() {
-    if(doc) window.open(doc, "_blank");
+    if (doc) window.open(doc, "_blank");
 }
 
 function downloadDoc(url) {
     if (!url) url = doc;
     if (!url) return alert("No hay documento");
+
     const link = document.createElement("a");
     link.href = url;
     link.target = "_blank";
@@ -222,46 +237,56 @@ function downloadDoc(url) {
 }
 
 function printDoc() {
-    if(frame.contentWindow) frame.contentWindow.print();
+    if (frame.contentWindow) frame.contentWindow.print();
 }
+
 
 // ======================
 // NAVIGACION SOP
 // ======================
+
 fetch('SOP_INDEX.json')
-  .then(res => res.json())
-  .then(data => {
-    if (!data.length) return;
+    .then(res => res.json())
+    .then(data => {
+        if (!data.length) return;
 
-    if (!doc) doc = data[0].url;
+        if (!doc) doc = data[0].url;
 
-    const sopList = data.map(s => s.url);
-    let currentIndex = sopList.indexOf(doc);
-    if (currentIndex === -1) currentIndex = 0;
+        const sopList = data.map(s => s.url);
+        let currentIndex = sopList.indexOf(doc);
+        if (currentIndex === -1) currentIndex = 0;
 
-    const currentSOP = data[currentIndex];
-    document.getElementById("title").innerText = currentSOP.title.toUpperCase();
+        const currentSOP = data[currentIndex];
+        document.getElementById("title").innerText =
+            currentSOP.title.toUpperCase();
 
-    window.prevSOP = function() {
-      if(currentIndex > 0) {
-        const prev = data[currentIndex-1];
-        window.location.href = `viewer.html?doc=${prev.url}&id=${prev.id}`;
-      }
-    };
+        window.prevSOP = function () {
+            if (currentIndex > 0) {
+                const prev = data[currentIndex - 1];
+                window.location.href =
+                    `viewer.html?doc=${prev.url}&id=${prev.id}`;
+            }
+        };
 
-    window.nextSOP = function() {
-      if(currentIndex < data.length-1) {
-        const next = data[currentIndex+1];
-        window.location.href = `viewer.html?doc=${next.url}&id=${next.id}`;
-      }
-    };
+        window.nextSOP = function () {
+            if (currentIndex < data.length - 1) {
+                const next = data[currentIndex + 1];
+                window.location.href =
+                    `viewer.html?doc=${next.url}&id=${next.id}`;
+            }
+        };
 
-    // deshabilitar botones si estamos en límites
-    document.getElementById("prevDoc").classList.toggle("disabled", currentIndex === 0);
-    document.getElementById("nextDoc").classList.toggle("disabled", currentIndex === data.length-1);
-  })
-  .catch(err => console.error("Error cargando SOP_INDEX.json:", err));
+        document.getElementById("prevDoc")
+            .classList.toggle("disabled", currentIndex === 0);
+
+        document.getElementById("nextDoc")
+            .classList.toggle("disabled", currentIndex === data.length - 1);
+    })
+    .catch(err =>
+        console.error("Error cargando SOP_INDEX.json:", err)
+    );
 </script>
+
 
 </body>
 </html>
