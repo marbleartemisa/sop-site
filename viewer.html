@@ -5,12 +5,19 @@
 <title>Viewer SOP Pro - Artemisa</title>
 
 <style>
+
+
 body {
     margin: 0;
     background: #eef2f7;
-    font-family: "Segoe UI", Arial, sans-serif;
-}
 
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+    
 .topbar {
     background: #0f172a;
     color: white;
@@ -150,14 +157,53 @@ frame.onload = function () {
         const docFrame = frame.contentDocument || frame.contentWindow.document;
 
         const style = docFrame.createElement("style");
-        style.innerHTML = `
-            body {
-                max-width: 900px !important;
-                margin: 40px auto !important;
-                display: block !important;
-            }
-        `;
+       
 
+style.innerHTML = `
+    * {
+        font-family: inherit !important;
+    }
+
+    body {
+        max-width: 900px !important;
+        margin: 40px auto !important;
+        display: block !important;
+
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
+
+        line-height: 1.6 !important;
+        font-size: 16px !important;
+        letter-spacing: 0.2px !important;
+        color: #1f2937 !important;
+
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+    }
+
+    h1, h2, h3, h4 {
+        font-weight: 600 !important;
+        letter-spacing: 0.2px !important;
+        color: #0f172a !important;
+    }
+
+    p {
+        margin: 10px 0 !important;
+        line-height: 1.65 !important;
+    }
+
+    ul, ol {
+        padding-left: 20px !important;
+    }
+
+    li {
+        margin-bottom: 6px !important;
+    }
+
+    strong {
+        font-weight: 600 !important;
+    }
+`;        
         docFrame.head.appendChild(style);
     } catch (e) {
         console.log("No se pudo modificar el iframe:", e);
