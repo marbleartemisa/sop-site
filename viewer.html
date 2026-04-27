@@ -216,6 +216,32 @@ style.innerHTML = `
         color: #0f172a !important;
         font-weight: 600;
     }
+    /* =========================
+   FIX HEADER PRIMERA PAGINA
+   ========================= */
+
+/* Empuja el encabezado superior (línea + texto) */
+
+body > *:first-child {
+    margin-top: 80px !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    color: #334155 !important;
+}
+
+/* Mejora título principal */
+h1 {
+    text-align: center !important;
+    margin-top: 40px !important;
+    margin-bottom: 40px !important;
+}
+
+/* Control de línea horizontal del encabezado */
+hr {
+    margin-top: 60px !important;
+    margin-bottom: 30px !important;
+}
+
 `;        
         docFrame.head.appendChild(style);
     } catch (e) {
