@@ -166,9 +166,8 @@ style.innerHTML = `
 
     body {
         max-width: 900px !important;
-        margin: 40px auto !important;
-        display: block !important;
-
+        margin: 80px auto 60px auto !important; /* 👈 AUMENTA margen superior */
+        padding-top: 20px !important; /* 👈 ESTO LO ARREGLA VISUALMENTE */
         font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
 
         line-height: 1.6 !important;
@@ -202,6 +201,20 @@ style.innerHTML = `
 
     strong {
         font-weight: 600 !important;
+    }
+    a {
+    color: #1d4ed8 !important;
+    text-decoration: none !important;
+    font-weight: 500;
+    }
+    
+    a:hover {
+        text-decoration: underline !important;
+    }
+    
+    a[href^="#"] {
+        color: #0f172a !important;
+        font-weight: 600;
     }
 `;        
         docFrame.head.appendChild(style);
