@@ -8,15 +8,18 @@
 
 
 body {
-    margin: 0;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    padding: 40px 0 !important;
     background: #eef2f7;
-
-    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-
+    font-family: "Segoe UI", Arial, sans-serif !important;
+     transform-origin: top center;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
+
+  
     
 .topbar {
     background: #0f172a;
@@ -166,8 +169,6 @@ style.innerHTML = `
 
     body {
         max-width: 900px !important;
-        margin: 80px auto 60px auto !important; /* 👈 AUMENTA margen superior */
-        padding-top: 20px !important; /* 👈 ESTO LO ARREGLA VISUALMENTE */
         font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
 
         line-height: 1.6 !important;
@@ -220,10 +221,11 @@ style.innerHTML = `
    FIX HEADER PRIMERA PAGINA
    ========================= */
 
+   
+
 /* Empuja el encabezado superior (línea + texto) */
 
 body > *:first-child {
-    margin-top: 80px !important;
     text-align: center !important;
     font-size: 12px !important;
     color: #334155 !important;
