@@ -854,48 +854,23 @@ function renderSOP(filtered){
   </div>
 
   <table class="sop-table">
-    <thead>
-      <tr>
-        <th>Departamento</th>
-        <th>Procedimiento</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody>
+  <thead>
+    <tr>
+      <th>Departamento</th>
+      <th>Procedimiento</th>
+    </tr>
+  </thead>
+  <tbody>
   `;
 
-  list.forEach((sop, index)=>{
+  list.forEach(sop=>{
     html += `
-      <tr class="sop-row" data-index="${index}">
-        
-        <td>
-          ${getDepartmentBadge(sop.department)}
-        </td>
+      <tr onclick="openSOP('${sop.url}')" class="sop-row">
+
+        <td>${getDepartmentBadge(sop.department)}</td>
 
         <td class="sop-nombre">
           ${sop.title}
-          
-          <!-- 👇 MOBILE EXPAND -->
-          <div class="sop-mobile-extra">
-            <button class="expand-btn" onclick="toggleExpand(${index})">
-              Ver detalles
-            </button>
-
-            <div class="expand-content" id="expand-${index}">
-              <a class="sop-btn"
-                 href="/sop-site/viewer.html?doc=${sop.url}"
-                 onclick="event.stopPropagation()">
-                 Abrir SOP
-              </a>
-            </div>
-          </div>
-        </td>
-
-        <td class="desktop-only">
-          <a class="sop-btn"
-             href="/sop-site/viewer.html?doc=${sop.url}">
-             Ver
-          </a>
         </td>
 
       </tr>
