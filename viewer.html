@@ -159,97 +159,108 @@ frame.onload = function () {
     try {
         const docFrame = frame.contentDocument || frame.contentWindow.document;
 
+        // ==========================
+        // ESTILO GENERAL DOCUMENTO
+        // ==========================
         const style = docFrame.createElement("style");
-       
 
-style.innerHTML = `
-    * {
-        font-family: inherit !important;
-    }
+        style.innerHTML = `
+            body{
+                max-width:900px !important;
+                margin:0 auto !important;
+                padding:30px 0 60px 0 !important;
+                font-family:"Segoe UI",Arial,sans-serif !important;
+                line-height:1.6 !important;
+                font-size:16px !important;
+                color:#1f2937 !important;
+            }
 
-    body {
-        max-width: 900px !important;
-        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
+            h1,h2,h3,h4{
+                color:#0f172a !important;
+                font-weight:700 !important;
+            }
 
-        line-height: 1.6 !important;
-        font-size: 16px !important;
-        letter-spacing: 0.2px !important;
-        color: #1f2937 !important;
+            p,li{
+                line-height:1.65 !important;
+            }
+        `;
 
-        -webkit-font-smoothing: antialiased !important;
-        -moz-osx-font-smoothing: grayscale !important;
-        text-rendering: optimizeLegibility !important;
-    }
-
-    h1, h2, h3, h4 {
-        font-weight: 600 !important;
-        letter-spacing: 0.2px !important;
-        color: #0f172a !important;
-    }
-
-    p {
-        margin: 10px 0 !important;
-        line-height: 1.65 !important;
-    }
-
-    ul, ol {
-        padding-left: 20px !important;
-    }
-
-    li {
-        margin-bottom: 6px !important;
-    }
-
-    strong {
-        font-weight: 600 !important;
-    }
-    a {
-    color: #1d4ed8 !important;
-    text-decoration: none !important;
-    font-weight: 500;
-    }
-    
-    a:hover {
-        text-decoration: underline !important;
-    }
-    
-    a[href^="#"] {
-        color: #0f172a !important;
-        font-weight: 600;
-    }
-    /* =========================
-   FIX HEADER PRIMERA PAGINA
-   ========================= */
-
-   
-
-/* Empuja el encabezado superior (línea + texto) */
-
-body > *:first-child {
-    text-align: center !important;
-    font-size: 12px !important;
-    color: #334155 !important;
-}
-
-/* Mejora título principal */
-h1 {
-    text-align: center !important;
-    margin-top: 40px !important;
-    margin-bottom: 40px !important;
-}
-
-/* Control de línea horizontal del encabezado */
-hr {
-    margin-top: 60px !important;
-    margin-bottom: 30px !important;
-}
-
-`;        
         docFrame.head.appendChild(style);
+
+        // ==========================
+        // DETECTAR / OCULTAR HEADER ORIGINAL PDF
+        // ==========================
+        const elements = [...docFrame.body.querySelectorAll("*")];
+
+        elements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+
+            const isTopArea = rect.top < 180;
+
+            const looksLikeHeaderText =
+                el.innerText &&
+                el.innerText.toUpperCase().includes("SOP") &&
+                el.innerText.length < 120;
+
+            const isSmallLogo =
+                el.tagName === "IMG" &&
+                rect.height < 120 &&
+                rect.top < 200;
+
+            const isDivider =
+                el.tagName === "HR";
+
+            if (
+                isTopArea &&
+                (looksLikeHeaderText || isSmallLogo || isDivider)
+            ) {
+                el.style.display = "none";
+            }
+        });
+
+        // ==========================
+        // INSERTAR HEADER CORPORATIVO
+        // ==========================
+        const customHeader = docFrame.createElement("div");
+
+        customHeader.innerHTML = `
+            <div style="
+                max-width:900px;
+                margin:0 auto 40px auto;
+                padding-bottom:20px;
+                border-bottom:2px solid #cbd5e1;
+                text-align:center;
+            ">
+                <img src='/sop-site/logo.png'
+                     style='height:70px;margin-bottom:12px;'>
+
+                <div style='
+                    font-size:13px;
+                    color:#64748b;
+                    font-weight:600;
+                    letter-spacing:.8px;
+                '>
+                    ARTEMISA MARBLE & CABINETS
+                </div>
+
+                <h1 style='
+                    margin-top:15px;
+                    font-size:28px;
+                    font-weight:700;
+                    color:#0f172a;
+                '>
+                    ${document.getElementById("title").innerText}
+                </h1>
+            </div>
+        `;
+
+        docFrame.body.prepend(customHeader);
+
     } catch (e) {
         console.log("No se pudo modificar el iframe:", e);
     }
 };
+    
 if(doc) frame.src = doc;
 
 
