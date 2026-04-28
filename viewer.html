@@ -187,36 +187,22 @@ frame.onload = function () {
 
         docFrame.head.appendChild(style);
 
-        // ==========================
-        // DETECTAR / OCULTAR HEADER ORIGINAL PDF
-        // ==========================
-        const elements = [...docFrame.body.querySelectorAll("*")];
-
-        elements.forEach(el => {
-            const rect = el.getBoundingClientRect();
-
-            const isTopArea = rect.top < 180;
-
-            const looksLikeHeaderText =
-                el.innerText &&
-                el.innerText.toUpperCase().includes("SOP") &&
-                el.innerText.length < 120;
-
-            const isSmallLogo =
-                el.tagName === "IMG" &&
-                rect.height < 120 &&
-                rect.top < 200;
-
-            const isDivider =
-                el.tagName === "HR";
-
-            if (
-                isTopArea &&
-                (looksLikeHeaderText || isSmallLogo || isDivider)
-            ) {
-                el.style.display = "none";
-            }
-        });
+  
+            // ==========================
+            // OCULTAR HEADER ORIGINAL CON MÁSCARA SUPERIOR
+            // ==========================
+            const headerMask = docFrame.createElement("div");
+            
+            headerMask.style.position = "absolute";
+            headerMask.style.top = "0";
+            headerMask.style.left = "0";
+            headerMask.style.width = "100%";
+            headerMask.style.height = "340px";   // ← Ajustable
+            headerMask.style.background = "#ffffff";
+            headerMask.style.zIndex = "999";
+            
+            docFrame.body.style.position = "relative";
+            docFrame.body.prepend(headerMask);
 
         // ==========================
         // INSERTAR HEADER CORPORATIVO
