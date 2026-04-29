@@ -5,15 +5,19 @@
 <title>Viewer SOP Pro - Artemisa</title>
 
 <style>
-/* =========================
-   LAYOUT PRINCIPAL (NO TOCAR)
-   ========================= */
+
+
 body {
     margin: 0;
     background: #eef2f7;
-    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-}
 
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+    
 .topbar {
     background: #0f172a;
     color: white;
@@ -30,6 +34,7 @@ body {
 
 .brand {
     font-weight: 600;
+    letter-spacing: .4px;
     font-size: 15px;
 }
 
@@ -51,6 +56,21 @@ body {
     align-items: center;
 }
 
+.doc-header .tool {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: .2s;
+}
+
+.doc-header .tool:hover {
+    background: #2563eb;
+    color: white;
+}
+
 .doc-area {
     display: flex;
     justify-content: center;
@@ -69,21 +89,8 @@ body {
 
 iframe {
     width: 100%;
-    height: 95vh;
+    height: 95vh; /* <- altura casi completa de la pantalla */
     border: none;
-}
-
-button.tool {
-    background: white;
-    border: 1px solid #e2e8f0;
-    padding: 7px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.tool.disabled {
-    opacity: .5;
-    pointer-events: none;
 }
 
 #prevDocBtn, #nextDocBtn {
@@ -97,14 +104,23 @@ button.tool {
     border-radius: 50%;
     font-size: 20px;
     cursor: pointer;
+    z-index: 500;
+    transition: background 0.3s;
+}
+
+#prevDocBtn:hover, #nextDocBtn:hover {
+    background: rgba(0,0,0,0.7);
 }
 
 #prevDocBtn { left: 0; }
 #nextDocBtn { right: 0; }
 
+.tool.disabled {
+    opacity: .5;
+    pointer-events: none;
+}
 </style>
 </head>
-
 <body>
 
 <div class="topbar">
@@ -134,119 +150,163 @@ button.tool {
 <script>
 let params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
-
+let idSOP = params.get("id");
 const frame = document.getElementById("frame");
-
 frame.onload = function () {
     try {
         const docFrame = frame.contentDocument || frame.contentWindow.document;
 
         const style = docFrame.createElement("style");
+       
 
-        style.innerHTML = `
-/* =========================
-   ESTILO DEL DOCUMENTO (IFRAME)
+style.innerHTML = `
+    * {
+        font-family: inherit !important;
+    }
+
+    body {
+        max-width: 900px !important;
+        margin: 80px auto 60px auto !important; /* 👈 AUMENTA margen superior */
+        padding-top: 20px !important; /* 👈 ESTO LO ARREGLA VISUALMENTE */
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
+
+        line-height: 1.6 !important;
+        font-size: 16px !important;
+        letter-spacing: 0.2px !important;
+        color: #1f2937 !important;
+
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+    }
+
+    
+
+    h1, h2, h3, h4 {
+        font-weight: 600 !important;
+        letter-spacing: 0.2px !important;
+        color: #0f172a !important;
+    }
+
+    p {
+        margin: 10px 0 !important;
+        line-height: 1.65 !important;
+    }
+
+    ul, ol {
+        padding-left: 20px !important;
+    }
+
+    li {
+        margin-bottom: 6px !important;
+    }
+
+    strong {
+        font-weight: 600 !important;
+    }
+    a {
+    color: #1d4ed8 !important;
+    text-decoration: none !important;
+    font-weight: 500;
+    }
+    
+    a:hover {
+        text-decoration: underline !important;
+    }
+    
+    a[href^="#"] {
+        color: #0f172a !important;
+        font-weight: 600;
+    }
+    /* =========================
+   FIX HEADER PRIMERA PAGINA
    ========================= */
+
+/* Empuja el encabezado superior (línea + texto) */
 
 body {
-    max-width: 900px !important;
-    margin: 80px auto 60px auto !important;
-    padding-top: 20px !important;
-    font-family: "Segoe UI", Arial, sans-serif !important;
-    line-height: 1.6 !important;
-    font-size: 16px !important;
-    color: #1f2937 !important;
+    padding-top: 60px !important; /* empuja TODO sin romper el layout */
 }
 
-/* Tipografía */
-h1, h2, h3 {
+/* Mejora título principal */
+h1 {
     text-align: center !important;
-    margin: 30px 0 !important;
+    margin-top: 40px !important;
+    margin-bottom: 40px !important;
 }
 
-/* Texto */
-p {
-    margin: 10px 0 !important;
-}
-
-ul {
-    padding-left: 20px !important;
-}
-
-/* =========================
-   FIX HEADER (SUAVE Y SEGURO)
-   ========================= */
-
-/* Solo afecta primeros bloques */
-body > *:nth-child(1),
-body > *:nth-child(2),
-body > *:nth-child(3) {
-    text-align: center !important;
-    margin-bottom: 10px !important;
-}
-
-/* Línea */
+/* Control de línea horizontal del encabezado */
 hr {
-    margin: 20px 0 !important;
-    border: none !important;
-    border-top: 1px solid #cbd5e1 !important;
+     margin: 20px 0 !important;
+    margin-bottom: 30px !important;
+    position: static !important;
 }
 
-/* Separación limpia */
-hr + * {
-    margin-top: 15px !important;
-}
-`;
-
+`;        
         docFrame.head.appendChild(style);
-
     } catch (e) {
-        console.log("Error iframe:", e);
+        console.log("No se pudo modificar el iframe:", e);
     }
 };
+if(doc) frame.src = doc;
 
-if (doc) frame.src = doc;
 
-/* FUNCIONES */
+    
 function openNew() {
     if(doc) window.open(doc, "_blank");
 }
 
-function downloadDoc() {
-    if (!doc) return;
-    const a = document.createElement("a");
-    a.href = doc;
-    a.target = "_blank";
-    a.click();
+function downloadDoc(url) {
+    if (!url) url = doc;
+    if (!url) return alert("No hay documento");
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 }
 
 function printDoc() {
-    frame.contentWindow.print();
+    if(frame.contentWindow) frame.contentWindow.print();
 }
 
-/* NAV */
+// ======================
+// NAVIGACION SOP
+// ======================
 fetch('SOP_INDEX.json')
-.then(res => res.json())
-.then(data => {
-    let index = data.findIndex(x => x.url === doc);
-    if(index < 0) index = 0;
+  .then(res => res.json())
+  .then(data => {
+    if (!data.length) return;
 
-    document.getElementById("title").innerText = data[index].title;
+    if (!doc) doc = data[0].url;
 
-    window.prevSOP = () => {
-        if(index > 0){
-            const prev = data[index-1];
-            location.href = \`viewer.html?doc=\${prev.url}\`;
-        }
-    }
+    const sopList = data.map(s => s.url);
+    let currentIndex = sopList.indexOf(doc);
+    if (currentIndex === -1) currentIndex = 0;
 
-    window.nextSOP = () => {
-        if(index < data.length-1){
-            const next = data[index+1];
-            location.href = \`viewer.html?doc=\${next.url}\`;
-        }
-    }
-});
+    const currentSOP = data[currentIndex];
+    document.getElementById("title").innerText = currentSOP.title.toUpperCase();
+
+    window.prevSOP = function() {
+      if(currentIndex > 0) {
+        const prev = data[currentIndex-1];
+        window.location.href = `viewer.html?doc=${prev.url}&id=${prev.id}`;
+      }
+    };
+
+    window.nextSOP = function() {
+      if(currentIndex < data.length-1) {
+        const next = data[currentIndex+1];
+        window.location.href = `viewer.html?doc=${next.url}&id=${next.id}`;
+      }
+    };
+
+    // deshabilitar botones si estamos en límites
+    document.getElementById("prevDoc").classList.toggle("disabled", currentIndex === 0);
+    document.getElementById("nextDoc").classList.toggle("disabled", currentIndex === data.length-1);
+  })
+  .catch(err => console.error("Error cargando SOP_INDEX.json:", err));
 </script>
 
 </body>
