@@ -151,78 +151,104 @@ iframe {
 let params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 let idSOP = params.get("id");
-
 const frame = document.getElementById("frame");
-
 frame.onload = function () {
     try {
         const docFrame = frame.contentDocument || frame.contentWindow.document;
 
         const style = docFrame.createElement("style");
+       
 
-        style.innerHTML = `
+style.innerHTML = `
+    * {
+        font-family: inherit !important;
+    }
+
+    body {
+        max-width: 900px !important;
+        margin: 80px auto 60px auto !important; /* 👈 AUMENTA margen superior */
+        padding-top: 20px !important; /* 👈 ESTO LO ARREGLA VISUALMENTE */
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
+
+        line-height: 1.6 !important;
+        font-size: 16px !important;
+        letter-spacing: 0.2px !important;
+        color: #1f2937 !important;
+
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+    }
+
+    
+
+    h1, h2, h3, h4 {
+        font-weight: 600 !important;
+        letter-spacing: 0.2px !important;
+        color: #0f172a !important;
+    }
+
+    p {
+        margin: 10px 0 !important;
+        line-height: 1.65 !important;
+    }
+
+    ul, ol {
+        padding-left: 20px !important;
+    }
+
+    li {
+        margin-bottom: 6px !important;
+    }
+
+    strong {
+        font-weight: 600 !important;
+    }
+    a {
+    color: #1d4ed8 !important;
+    text-decoration: none !important;
+    font-weight: 500;
+    }
+    
+    a:hover {
+        text-decoration: underline !important;
+    }
+    
+    a[href^="#"] {
+        color: #0f172a !important;
+        font-weight: 600;
+    }
+    /* =========================
+   FIX HEADER PRIMERA PAGINA
+   ========================= */
+
+/* Empuja el encabezado superior (línea + texto) */
 
 body {
-    max-width: 900px !important;
-    margin: 60px auto !important;
-    padding: 20px 20px 40px !important;
-    font-family: "Segoe UI", Arial !important;
-    font-size: 15px !important;
-    line-height: 1.6 !important;
-    color: #1f2937 !important;
+    padding-top: 60px !important; /* empuja TODO sin romper el layout */
 }
 
-/* HEADER */
-body > div:first-child,
-body > p:first-child {
-    position: relative !important;
-    top: 0 !important;
-    left: 0 !important;
+/* Mejora título principal */
+h1 {
     text-align: center !important;
+    margin-top: 40px !important;
+    margin-bottom: 40px !important;
 }
 
+/* Control de línea horizontal del encabezado */
 hr {
-    margin: 20px auto !important;
-    width: 100% !important;
+     margin: 20px 0 !important;
+    margin-bottom: 30px !important;
+    position: static !important;
 }
 
-h1, h2 {
-    text-align: center !important;
-    margin: 30px 0 !important;
-}
-
-img {
-    max-height: 70px !important;
-    display: block !important;
-    margin: 0 auto 10px auto !important;
-}
-
-p {
-    margin: 10px 0 !important;
-}
-
-/* FIX PDF */
-[style*="position:absolute"] {
-    top: auto !important;
-    left: auto !important;
-}
-
-div {
-    max-width: 100% !important;
-}
-
-`;
-
-        // ✅ ESTA LINEA FALTABA (CRÍTICA)
+`;        
         docFrame.head.appendChild(style);
-
     } catch (e) {
         console.log("No se pudo modificar el iframe:", e);
     }
 };
-
-// ✅ ESTO VA FUERA
-if (doc) frame.src = doc;
+if(doc) frame.src = doc;
 
 
     
