@@ -222,11 +222,8 @@ style.innerHTML = `
 
 /* Empuja el encabezado superior (línea + texto) */
 
-body > *:first-child {
-    margin-top: 80px !important;
-    text-align: center !important;
-    font-size: 12px !important;
-    color: #334155 !important;
+body {
+    padding-top: 60px !important; /* empuja TODO sin romper el layout */
 }
 
 /* Mejora título principal */
@@ -238,8 +235,9 @@ h1 {
 
 /* Control de línea horizontal del encabezado */
 hr {
-    margin-top: 60px !important;
+     margin: 20px 0 !important;
     margin-bottom: 30px !important;
+    position: static !important;
 }
 
 `;        
