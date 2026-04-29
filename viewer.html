@@ -8,14 +8,19 @@
 
 
 body {
-    margin: 0;
-    background: #eef2f7;
+    max-width: 900px !important;
+    margin: 80px auto 60px auto !important;
+    padding-top: 60px !important;
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
 
-    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6 !important;
+    font-size: 16px !important;
+    letter-spacing: 0.2px !important;
+    color: #1f2937 !important;
 
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
 }
     
 .topbar {
@@ -165,21 +170,6 @@ style.innerHTML = `
    
     }
 
-    body {
-        max-width: 900px !important;
-        margin: 80px auto 60px auto !important; /* 👈 AUMENTA margen superior */
-        padding-top: 20px !important; /* 👈 ESTO LO ARREGLA VISUALMENTE */
-        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
-
-        line-height: 1.6 !important;
-        font-size: 16px !important;
-        letter-spacing: 0.2px !important;
-        color: #1f2937 !important;
-
-        -webkit-font-smoothing: antialiased !important;
-        -moz-osx-font-smoothing: grayscale !important;
-        text-rendering: optimizeLegibility !important;
-    }
 
                  /* =========================
            FIX UNIVERSAL HEADER SOP
@@ -261,9 +251,6 @@ style.innerHTML = `
 
 /* Empuja el encabezado superior (línea + texto) */
 
-body {
-    padding-top: 60px !important; /* empuja TODO sin romper el layout */
-}
 
 /* Mejora título principal */
 h1 {
@@ -272,12 +259,7 @@ h1 {
     margin-bottom: 40px !important;
 }
 
-/* Control de línea horizontal del encabezado */
-hr {
-     margin: 20px 0 !important;
-    margin-bottom: 30px !important;
-    position: static !important;
-}
+
 
 `;        
         docFrame.head.appendChild(style);
