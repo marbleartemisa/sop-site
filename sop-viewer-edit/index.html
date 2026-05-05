@@ -527,6 +527,7 @@ function capitalizar(texto){
 }
 
 // TABLA SOP
+
 async function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML = "";
@@ -538,8 +539,21 @@ async function renderTabla(){
     const res = await fetch(SHEET_API);
     const data = await res.json();
 
+    // 🔥 ELIMINAR DUPLICADOS POR ID_SOP
+    const unicosMap = new Map();
+
     data.forEach(row => {
-      if(!row.ID_SOP) return;
+      if (!row.ID_SOP) return;
+
+      if (!unicosMap.has(row.ID_SOP)) {
+        unicosMap.set(row.ID_SOP, row);
+      }
+    });
+
+    const dataLimpia = Array.from(unicosMap.values());
+
+    // 🔥 RENDER TABLA
+    dataLimpia.forEach(row => {
 
       const sop = {
         Timestamp: row.Timestamp || "",
