@@ -533,6 +533,8 @@ async function renderTabla(){
   tabla.innerHTML = "";
 
   const filtro = document.getElementById("filtroEstado").value;
+  const filtroDepto = document.getElementById("filtroDepartamento")?.value || "";
+  if (filtroDepto && sop.departamento.toLowerCase() !== filtroDepto.toLowerCase()) return;
   const buscar = document.getElementById("buscarSOP").value.toLowerCase();
 
   try{
@@ -540,15 +542,25 @@ async function renderTabla(){
     const data = await res.json();
 
     // 🔥 ELIMINAR DUPLICADOS POR ID_SOP
-    const unicosMap = new Map();
+const unicosMap = new Map();
 
-    data.forEach(row => {
-      if (!row.ID_SOP) return;
+data.forEach(row => {
+  if (!row.ID_SOP) return;
 
-      if (!unicosMap.has(row.ID_SOP)) {
-        unicosMap.set(row.ID_SOP, row);
-      }
-    });
+  const existente = unicosMap.get(row.ID_SOP);
+
+  if (!existente) {
+    unicosMap.set(row.ID_SOP, row);
+  } else {
+    const fechaNueva = new Date(row.Timestamp || 0);
+    const fechaVieja = new Date(existente.Timestamp || 0);
+
+    // 🔥 nos quedamos con el más reciente
+    if (fechaNueva > fechaVieja) {
+      unicosMap.set(row.ID_SOP, row);
+    }
+  }
+});
 
     const dataLimpia = Array.from(unicosMap.values());
 
@@ -569,11 +581,15 @@ async function renderTabla(){
       // 🔥 FILTROS
       if(filtro && sop.estado !== filtro) return;
 
-      if(buscar && !(
-        (sop.empleado + " " + sop.objetivo)
-        .toLowerCase()
-        .includes(buscar)
-      )) return;
+  // 🔥 BÚSQUEDA MEJORADA (más precisa)
+        const textoBusqueda = (
+          sop.objetivo + " " +
+          sop.departamento + " " +
+          sop.areas + " " +
+          sop.empleado
+        ).toLowerCase();
+
+if (buscar && !textoBusqueda.includes(buscar)) return;
 
       // 🔥 NORMALIZAR DEPARTAMENTO Y AREAS
       const depKey = (sop.departamento || "").toLowerCase();
