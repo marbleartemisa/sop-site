@@ -546,17 +546,22 @@ const unicosMap = new Map();
 data.forEach(row => {
   if (!row.ID_SOP) return;
 
-  const existente = unicosMap.get(row.ID_SOP);
+  const key = row.ID_SOP.trim();
 
-  if (!existente) {
-    unicosMap.set(row.ID_SOP, row);
-  } else {
-    const fechaNueva = new Date(row.Timestamp || 0).getTime();
-    const fechaVieja = new Date(existente.Timestamp || 0).getTime();
-    // 🔥 nos quedamos con el más reciente
-    if (fechaNueva > fechaVieja) {
-      unicosMap.set(row.ID_SOP, row);
-    }
+  // 🔥 si no existe, lo guardamos
+  if (!unicosMap.has(key)) {
+    unicosMap.set(key, row);
+    return;
+  }
+
+  const existente = unicosMap.get(key);
+
+  const fechaNueva = new Date(row.Timestamp).getTime() || 0;
+  const fechaVieja = new Date(existente.Timestamp).getTime() || 0;
+
+  // 🔥 SIEMPRE elegimos el más reciente (aunque haya basura)
+  if (fechaNueva >= fechaVieja) {
+    unicosMap.set(key, row);
   }
 });
 
