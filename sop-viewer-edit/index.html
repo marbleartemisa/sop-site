@@ -478,6 +478,9 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
+let cacheSOP = [];
+let renderToken = 0;
+let timeout = null;
 let currentUser = null;
 
   const usuarios = [
@@ -527,6 +530,12 @@ function capitalizar(texto){
 }
 
 // TABLA SOP
+async function cargarDatos(){
+  const res = await fetch(SHEET_API);
+  const data = await res.json();
+  cacheSOP = data;
+  renderTabla();
+}
 
 async function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
@@ -537,38 +546,42 @@ async function renderTabla(){
   const buscar = document.getElementById("buscarSOP").value.toLowerCase().trim();
 
   try{
-    const res = await fetch(SHEET_API);
-    const data = await res.json();
 
-    // 🔥 ELIMINAR DUPLICADOS POR ID_SOP
-const unicosMap = new Map();
+    const data = cacheSOP || [];
 
-data.forEach(row => {
-  if (!row.ID_SOP) return;
+    // 🔥 PROTECCIÓN: evita renders desordenados
+    const token = ++renderToken;
 
-  const key = row.ID_SOP.trim();
+    const unicosMap = new Map();
 
-  // 🔥 si no existe, lo guardamos
-  if (!unicosMap.has(key)) {
-    unicosMap.set(key, row);
-    return;
-  }
+    // 🔥 LIMPIEZA DE DUPLICADOS
+    for (const row of data) {
 
-  const existente = unicosMap.get(key);
+      if (!row || !row.ID_SOP) continue;
 
-  const fechaNueva = new Date(row.Timestamp).getTime() || 0;
-  const fechaVieja = new Date(existente.Timestamp).getTime() || 0;
+      const key = String(row.ID_SOP).trim();
+      if (!key) continue;
 
-  // 🔥 SIEMPRE elegimos el más reciente (aunque haya basura)
-  if (fechaNueva >= fechaVieja) {
-    unicosMap.set(key, row);
-  }
-});
+      const existente = unicosMap.get(key);
+
+      if (!existente) {
+        unicosMap.set(key, row);
+        continue;
+      }
+
+      const fechaNueva = new Date(row.Timestamp || 0).getTime();
+      const fechaVieja = new Date(existente.Timestamp || 0).getTime();
+
+      if (fechaNueva >= fechaVieja) {
+        unicosMap.set(key, row);
+      }
+    }
 
     const dataLimpia = Array.from(unicosMap.values());
 
-    // 🔥 RENDER TABLA
-    dataLimpia.forEach(row => {
+    for (const row of dataLimpia) {
+
+      if (token !== renderToken) return; // 🔥 cancela renders viejos
 
       const sop = {
         Timestamp: row.Timestamp || "",
@@ -580,34 +593,40 @@ data.forEach(row => {
         ID_SOP: row.ID_SOP,
         url_doc: row.url_doc || row.links || ""
       };
-      if (filtroDepto && sop.departamento.toLowerCase() !== filtroDepto.toLowerCase()) return;
-      // 🔥 FILTROS
-      if(filtro && sop.estado !== filtro) return;
 
-  // 🔥 BÚSQUEDA MEJORADA (más precisa)
-        const textoBusqueda = (
-          sop.objetivo + " " +
-          sop.departamento + " " +
-          sop.areas + " " +
-          sop.empleado
-        ).toLowerCase();
+      // 🔥 FILTRO DEPARTAMENTO
+      if (filtroDepto && sop.departamento.toLowerCase() !== filtroDepto.toLowerCase()) {
+        continue;
+      }
 
-if (buscar) {
-  const palabras = buscar.split(" ");
+      // 🔥 FILTRO ESTADO
+      if (filtro && sop.estado !== filtro) {
+        continue;
+      }
 
-  const coincide = palabras.every(p => textoBusqueda.includes(p));
+      // 🔥 TEXTO BUSQUEDA
+      const textoBusqueda = `
+        ${sop.objetivo} 
+        ${sop.departamento} 
+        ${sop.areas} 
+        ${sop.empleado}
+      `.toLowerCase();
 
-  if (!coincide) return;
-}
+        if (buscar) {
+          const query = buscar.trim().toLowerCase();
+          const palabras = query.split(/\s+/).filter(Boolean);
+          const texto = textoBusqueda.toLowerCase();
+        
+          const coincide = palabras.every(p => texto.includes(p));
+          if (!coincide) return;
+        }
 
-      // 🔥 NORMALIZAR DEPARTAMENTO Y AREAS
       const depKey = (sop.departamento || "").toLowerCase();
       const areaKey = (sop.areas || "").toLowerCase();
 
       const depLabel = deptMap[depKey] || sop.departamento;
       const areaLabel = deptMap[areaKey] || sop.areas;
 
-      // 🔥 CREAR FILA
       const fila = document.createElement("tr");
 
       fila.innerHTML = `
@@ -646,7 +665,7 @@ if (buscar) {
       `;
 
       tabla.appendChild(fila);
-    });
+    }
 
   }catch(e){
     console.error(e);
@@ -655,10 +674,13 @@ if (buscar) {
 }
 
 // 🔥 EVENTOS
-document.getElementById("buscarSOP").addEventListener("input", renderTabla);
-document.getElementById("filtroEstado").addEventListener("change", renderTabla);
+    document.getElementById("buscarSOP").addEventListener("input", () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(renderTabla, 300);
+    });
+    document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 
-renderTabla();
+cargarDatos();
 
 
 // ABRIR SOP
