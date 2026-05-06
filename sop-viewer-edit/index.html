@@ -534,8 +534,7 @@ async function renderTabla(){
 
   const filtro = document.getElementById("filtroEstado").value;
   const filtroDepto = document.getElementById("filtroDepartamento")?.value || "";
-  if (filtroDepto && sop.departamento.toLowerCase() !== filtroDepto.toLowerCase()) return;
-  const buscar = document.getElementById("buscarSOP").value.toLowerCase();
+  const buscar = document.getElementById("buscarSOP").value.toLowerCase().trim();
 
   try{
     const res = await fetch(SHEET_API);
@@ -552,9 +551,8 @@ data.forEach(row => {
   if (!existente) {
     unicosMap.set(row.ID_SOP, row);
   } else {
-    const fechaNueva = new Date(row.Timestamp || 0);
-    const fechaVieja = new Date(existente.Timestamp || 0);
-
+    const fechaNueva = new Date(row.Timestamp || 0).getTime();
+    const fechaVieja = new Date(existente.Timestamp || 0).getTime();
     // 🔥 nos quedamos con el más reciente
     if (fechaNueva > fechaVieja) {
       unicosMap.set(row.ID_SOP, row);
@@ -577,7 +575,7 @@ data.forEach(row => {
         ID_SOP: row.ID_SOP,
         url_doc: row.url_doc || row.links || ""
       };
-
+      if (filtroDepto && sop.departamento.toLowerCase() !== filtroDepto.toLowerCase()) return;
       // 🔥 FILTROS
       if(filtro && sop.estado !== filtro) return;
 
@@ -589,7 +587,13 @@ data.forEach(row => {
           sop.empleado
         ).toLowerCase();
 
-if (buscar && !textoBusqueda.includes(buscar)) return;
+if (buscar) {
+  const palabras = buscar.split(" ");
+
+  const coincide = palabras.every(p => textoBusqueda.includes(p));
+
+  if (!coincide) return;
+}
 
       // 🔥 NORMALIZAR DEPARTAMENTO Y AREAS
       const depKey = (sop.departamento || "").toLowerCase();
