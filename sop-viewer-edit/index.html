@@ -605,12 +605,12 @@ async function renderTabla(){
       }
 
       // 🔥 TEXTO BUSQUEDA
-      const textoBusqueda = `
-        ${sop.objetivo} 
-        ${sop.departamento} 
-        ${sop.areas} 
-        ${sop.empleado}
-      `.toLowerCase();
+      const textoBusqueda = [
+          sop.objetivo,
+          sop.departamento,
+          sop.areas,
+          sop.empleado
+        ].join(" ").toLowerCase();
 
         if (buscar) {
           const query = buscar.trim().toLowerCase();
@@ -618,7 +618,7 @@ async function renderTabla(){
           const texto = textoBusqueda.toLowerCase();
         
           const coincide = palabras.every(p => texto.includes(p));
-          if (!coincide) return;
+          if (!coincide) continue;
         }
 
       const depKey = (sop.departamento || "").toLowerCase();
