@@ -446,75 +446,69 @@ function selectSys(val){
 
   updateUI();
 }
+
+
+function getCompatibility(cab, sys){
+
+  const rules = {
+
+    trash: {
+      "12": "ideal",
+      "15": "ok",
+      "18": "best",
+      "24": "limited"
+    },
+
+    lazy: {
+      "24": "best",
+      "30": "ok",
+      "36": "ok",
+      "12": "no",
+      "15": "no",
+      "18": "no"
+    },
+
+    lemans: {
+      "36": "best",
+      "33": "best",
+      "24": "no",
+      "18": "no"
+    },
+
+    magic: {
+      "36": "best",
+      "33": "best",
+      "24": "no",
+      "18": "no"
+    }
+
+  };
+
+  return rules[sys]?.[cab] || "no";
+}  
+
+  
 function runIkea(){
 
-let cab = selectedCab;
-let sys = selectedSys;
+  let status = getCompatibility(selectedCab, selectedSys);
 
-if(!cab || !sys){
-  document.getElementById("result").innerHTML = `
-  <div class="warning">Selecciona gabinete y sistema para ver compatibilidad</div>
-  `;
-  return;
-}
-
-let out = "";
-
-/* TRASH */
-if(sys==="trash"){
-  if(cab==="12"){
-    out = `
-    <div class="success"><b>✔ Compatible</b></div>
-    🗑 Trash Can Single<br>
-    12” (305 mm)<br><br>
-    ✔ Ideal para espacios pequeños
-    `;
+  if(status === "best"){
+    result = "✔ RECOMENDADO (OPTIMO)";
   }
 
-  else if(cab==="15"){
-    out = `
-    <div class="success"><b>✔ Compatible</b></div>
-    🗑 Double Compact<br>
-    15” (381 mm)
-    `;
+  if(status === "ok"){
+    result = "✔ COMPATIBLE";
   }
 
-  else if(cab==="18"){
-    out = `
-    <div class="success"><b>✔ Mejor opción</b></div>
-    🗑 Double Standard<br>
-    18” (457 mm)
-    `;
+  if(status === "limited"){
+    result = "⚠ COMPATIBLE CON RESTRICCIONES";
   }
 
-  else{
-    out = `<div class="danger">❌ No recomendado</div>`;
+  if(status === "no"){
+    result = "❌ NO COMPATIBLE";
   }
-}
 
-/* LAZY */
-if(sys==="lazy"){
-  out = (cab==="24" || cab==="36")
-  ? `<div class="success"><b>✔ Compatible</b></div> Lazy Susan`
-  : `<div class="warning">⚠ Limitado</div>`;
-}
-
-/* LEMANS */
-if(sys==="lemans"){
-  out = (cab==="36")
-  ? `<div class="success"><b>✔ Premium Fit</b></div> LeMans Corner System`
-  : `<div class="danger">❌ Solo 36” corner</div>`;
-}
-
-/* MAGIC */
-if(sys==="magic"){
-  out = (cab==="36")
-  ? `<div class="success"><b>✔ Recommended</b></div> Magic Corner`
-  : `<div class="danger">❌ Solo 36” corner</div>`;
-}
-
-document.getElementById("result").innerHTML = out;
-
+  document.getElementById("result").innerHTML = result;
 }
 
   function updateUI(){
