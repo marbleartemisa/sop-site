@@ -161,7 +161,69 @@ h1{
   color:#cbd5e1;
   margin-bottom:20px;
 }
+.ux-card{
+  background: rgba(255,255,255,0.95);
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  line-height:1.6;
+  font-size:14px;
+}
 
+/* TITULOS */
+.ux-card b{
+  font-size:16px;
+  color:#0f172a;
+}
+
+/* LINKS DE MARCAS COMO BOTONES */
+.ux-card a{
+  display:inline-block;
+  margin-top:6px;
+  margin-right:6px;
+  padding:6px 10px;
+  border-radius:8px;
+  background:#0072C6;
+  color:white !important;
+  text-decoration:none;
+  font-size:12px;
+  transition:0.2s;
+}
+
+.ux-card a:hover{
+  background:#005a9e;
+  transform:scale(1.03);
+}
+
+/* SEPARADORES VISUALES */
+.ux-card br{
+  line-height:1.8;
+}
+
+/* ALERTAS UX */
+.warning{
+  background:#fff7ed;
+  border-left:4px solid #f97316;
+  padding:10px;
+  border-radius:8px;
+  margin-top:10px;
+}
+
+.danger{
+  background:#fef2f2;
+  border-left:4px solid #ef4444;
+  padding:10px;
+  border-radius:8px;
+  margin-top:10px;
+}
+
+.success{
+  background:#ecfdf5;
+  border-left:4px solid #10b981;
+  padding:10px;
+  border-radius:8px;
+  margin-top:10px;
+}
 </style>
 </head>
 
@@ -408,8 +470,11 @@ ${brandLinks("magic")}
   }
 }
 
-document.getElementById("result").innerHTML = out;
-
+document.getElementById("result").innerHTML = `
+<div class="ux-card">
+  ${out}
+</div>
+`;
 }
 
 </script>
