@@ -881,8 +881,7 @@ let data = lazySpecs[sys];
   if(!data){
     document.getElementById("result").innerHTML =
       `<div class="warning">
-        ⚠ Lazy Susan solo recomendado
-        para esquinas 36” o 39”
+        ⚠ Lazy Susan no compatible
       </div>`;
     return;
   }
@@ -904,9 +903,9 @@ let data = lazySpecs[sys];
     ],
     data
   );
+
+  return;
 }
-
-
 
 // =========================
 // 🍋 LEMANS II
@@ -944,11 +943,6 @@ if(sys === "lemans"){
       • 45
       • 50
       • 60
-
-      Bandejas tipo peanut/kidney.
-
-      Extracción independiente
-      hacia exterior completo.
     `,
 
     image: "/sop-site/images/lemans.png"
@@ -957,8 +951,7 @@ if(sys === "lemans"){
   if(cab !== "36"){
     document.getElementById("result").innerHTML =
       `<div class="danger">
-        ❌ Solo compatible con
-        esquinas 36”
+        ❌ Solo compatible con esquinas 36”
       </div>`;
     return;
   }
@@ -980,9 +973,9 @@ if(sys === "lemans"){
     ],
     data
   );
+
+  return;
 }
-
-
 
 // =========================
 // 🧩 MAGIC CORNER
@@ -999,22 +992,13 @@ if(sys === "magic"){
     type: "Mechanical Corner Extraction",
 
     capacity: `
-      Front baskets:
-      22 lbs each
-
-      Rear baskets:
-      17 lbs each
+      Front baskets: 22 lbs each
+      Rear baskets: 17 lbs each
     `,
 
     dimensions: `
       Cabinet width:
       38-3/8” – 44”
-
-      Minimum depth:
-      21-9/16”
-
-      Minimum height:
-      21-1/16” – 21-7/8”
     `,
 
     recommendation:
@@ -1026,9 +1010,6 @@ if(sys === "magic"){
 
       Magic Corner II:
       Extracción independiente.
-
-      Requiere apertura mínima
-      de 15-5/8” a 20-1/2”.
     `,
 
     image: "/sop-site/images/magiccorner.png"
@@ -1037,8 +1018,7 @@ if(sys === "magic"){
   if(cab !== "36"){
     document.getElementById("result").innerHTML =
       `<div class="danger">
-        ❌ Solo compatible con
-        esquina ciega 36”
+        ❌ Solo compatible con esquina ciega 36”
       </div>`;
     return;
   }
@@ -1060,9 +1040,12 @@ if(sys === "magic"){
     ],
     data
   );
+
+  return;
 }
 
-}
+} // ← ESTA LLAVE CIERRA runIkea()
+
   
   function updateUI(){
 
