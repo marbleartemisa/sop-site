@@ -16,8 +16,42 @@
 html,body{margin:0;overflow-x:hidden;font-family:'Inter',sans-serif;}
 
 body{
-  background:#0f172a;
+  margin:0;
+  font-family:'Inter',sans-serif;
+  position:relative;
+  min-height:100vh;
   color:#1f2937;
+}
+
+/* BACKGROUND OVERLAY */
+body::before{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+
+  background-image:url('/sop-site/wall0.png');
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:cover;
+
+  z-index:-2;
+}
+
+/* OSCURECIMIENTO IGUAL QUE SOP PRINCIPAL */
+body::after{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+
+  background:rgba(0,0,0,0.25);
+
+  z-index:-1;
 }
 
 /* ===== NAVBAR (COPIA EXACTA DE TU SISTEMA) ===== */
@@ -193,41 +227,188 @@ let sys = document.getElementById("system").value;
 
 let out = "";
 
+function brandLinks(type){
+  if(type==="trash"){
+    return `
+    <b>Marcas disponibles:</b><br>
+    🔗 <a href="https://www.rev-a-shelf.com/" target="_blank">Rev-A-Shelf</a><br>
+    🔗 <a href="https://www.hafele.com/us/en/" target="_blank">Häfele</a><br>
+    🔗 <a href="https://www.blum.com/" target="_blank">Blum (limitado a sistemas similares)</a>
+    `;
+  }
+
+  if(type==="lazy"){
+    return `
+    <b>Marcas disponibles:</b><br>
+    🔗 <a href="https://www.rev-a-shelf.com/" target="_blank">Rev-A-Shelf Lazy Susan</a><br>
+    🔗 <a href="https://www.hafele.com/us/en/" target="_blank">Häfele Corner Systems</a>
+    `;
+  }
+
+  if(type==="lemans"){
+    return `
+    <b>Marcas disponibles:</b><br>
+    🔗 <a href="https://www.hafele.com/us/en/" target="_blank">Häfele LeMans</a><br>
+    🔗 <a href="https://www.rev-a-shelf.com/" target="_blank">Rev-A-Shelf Corner Pull-Out</a>
+    `;
+  }
+
+  if(type==="magic"){
+    return `
+    <b>Marcas disponibles:</b><br>
+    🔗 <a href="https://www.hafele.com/us/en/" target="_blank">Häfele Magic Corner</a><br>
+    🔗 <a href="https://www.rev-a-shelf.com/" target="_blank">Rev-A-Shelf Magic Corner Systems</a>
+    `;
+  }
+
+  return "";
+}
+
+/* ===================== TRASH ===================== */
 if(sys==="trash"){
   if(cab==="12"){
-    out="Trash Can Single\n- 12 inch pull-out\n- 1 bin";
-  } else if(cab==="15"){
-    out="Trash Can Double Compact\n- 15 inch system\n- 2 bins";
-  } else if(cab==="18"){
-    out="Trash Can Double Standard\n- 18 inch heavy duty\n- 2 bins";
-  } else {
-    out="No compatible";
+    out = `
+🗑 <b>Trash Can SINGLE</b><br><br>
+
+<b>Especificaciones:</b><br>
+- Ancho mínimo: 12” (305 mm)<br>
+- 1 cubo (15–20L)<br>
+- Full extension slides obligatorios<br><br>
+
+<b>Limitaciones:</b><br>
+- No compatible con doble bin<br>
+- Requiere fondo limpio sin plumbing<br><br>
+
+<b>Recomendación:</b> Uso residencial / light commercial<br><br>
+
+${brandLinks("trash")}
+`;
+  }
+
+  else if(cab==="15"){
+    out = `
+🗑 <b>Trash Can DOUBLE Compact</b><br><br>
+
+<b>Especificaciones:</b><br>
+- Ancho mínimo: 15” (381 mm)<br>
+- 2 bins pequeños (10–15L)<br><br>
+
+<b>Limitaciones:</b><br>
+- No apto para bins grandes<br>
+- Requiere gabinete reforzado<br><br>
+
+<b>Recomendación:</b> Cocina estándar<br><br>
+
+${brandLinks("trash")}
+`;
+  }
+
+  else if(cab==="18"){
+    out = `
+🗑 <b>Trash Can DOUBLE Standard</b><br><br>
+
+<b>Especificaciones:</b><br>
+- Ancho mínimo: 18” (457 mm)<br>
+- 2 bins (15–20L)<br>
+- Heavy duty slides<br><br>
+
+<b>Limitaciones:</b><br>
+- Necesita profundidad mínima 21”<br><br>
+
+<b>Recomendación:</b> Uso profesional<br><br>
+
+${brandLinks("trash")}
+`;
+  }
+
+  else {
+    out="❌ No compatible con Trash Can";
   }
 }
 
+/* ===================== LAZY SUSAN ===================== */
 if(sys==="lazy"){
   if(cab==="24"){
-    out="Lazy Susan Compact\n- 24 inch system";
-  } else if(cab==="36"){
-    out="Lazy Susan Standard\n- 32–36 inch system";
-  } else {
-    out="No recomendado";
+    out = `
+🍃 <b>Lazy Susan Compact</b><br><br>
+
+<b>Especificaciones:</b><br>
+- 24” diámetro mínimo<br>
+- Sistema de 2 niveles<br><br>
+
+<b>Limitaciones:</b><br>
+- No carga pesada<br><br>
+
+${brandLinks("lazy")}
+`;
+  }
+
+  else if(cab==="36"){
+    out = `
+🍃 <b>Lazy Susan Standard</b><br><br>
+
+<b>Especificaciones:</b><br>
+- 32”–36” diámetro<br>
+- 2 o 3 niveles<br>
+- Base reforzada MDF 3/4”<br><br>
+
+<b>Limitaciones:</b><br>
+- Requiere nivelación perfecta<br><br>
+
+${brandLinks("lazy")}
+`;
+  }
+
+  else {
+    out="❌ No recomendado";
   }
 }
 
+/* ===================== LEMANS ===================== */
 if(sys==="lemans"){
-  out = (cab==="36")
-  ? "LeMans Standard\n- 18–21 inch system\n- 110° door required"
-  : "Solo recomendado en 36 inch corner";
+  if(cab==="36"){
+    out = `
+🍋 <b>LeMans Corner System</b><br><br>
+
+<b>Especificaciones:</b><br>
+- Gabinete: 36” corner (900x900 mm)<br>
+- Bandejas extraíbles 18”–21”<br>
+- Apertura puerta: 110° obligatorio<br><br>
+
+<b>Limitaciones:</b><br>
+- No funciona con 90° hinges<br>
+- Requiere espacio libre interno preciso<br><br>
+
+${brandLinks("lemans")}
+`;
+  } else {
+    out="⚠ Solo recomendado en 36 inch corner";
+  }
 }
 
+/* ===================== MAGIC CORNER ===================== */
 if(sys==="magic"){
-  out = (cab==="36")
-  ? "Magic Corner Standard\n- 18–20 inch system\n- Leveling critical"
-  : "Preferido en 36 inch corner";
+  if(cab==="36"){
+    out = `
+🧩 <b>Magic Corner System</b><br><br>
+
+<b>Especificaciones:</b><br>
+- Gabinete corner 36”<br>
+- Sistema doble extracción<br>
+- Rieles sincronizados<br><br>
+
+<b>Limitaciones:</b><br>
+- Sensible a desalineación<br>
+- Requiere instalación profesional<br><br>
+
+${brandLinks("magic")}
+`;
+  } else {
+    out="⚠ Preferido en 36 inch corner";
+  }
 }
 
-document.getElementById("result").innerText = out;
+document.getElementById("result").innerHTML = out;
 
 }
 
