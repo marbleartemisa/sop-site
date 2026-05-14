@@ -487,28 +487,130 @@ function getCompatibility(cab, sys){
   return rules[sys]?.[cab] || "no";
 }  
 
+function showResult(status, title, cab, sys, brands){
+
+  let html = "";
+
+  // estado
+  if(status === "best") html += `<div class="success">✔ RECOMENDADO</div>`;
+  if(status === "ok") html += `<div class="success">✔ COMPATIBLE</div>`;
+  if(status === "limited") html += `<div class="warning">⚠ LIMITADO</div>`;
+  if(status === "no") html += `<div class="danger">❌ NO COMPATIBLE</div>`;
+
+  // título
+  html += `<h3>${title}</h3>`;
+
+  // info técnica
+  html += `
+    <p><b>Gabinete:</b> ${cab}"</p>
+    <p><b>Sistema:</b> ${sys}</p>
+    <hr>
+  `;
+
+  // marcas
+  html += `<b>Marcas disponibles:</b><br>`;
+
+  brands.forEach(b=>{
+    html += `
+      <a href="${b.url}" target="_blank"
+         onclick="event.stopPropagation()">
+        ${b.name}
+      </a>
+    `;
+  });
+
+  // PDF
+  html += `
+    <br><br>
+    <button onclick="generatePDF('${sys}','${cab}')">
+      📄 Generar SOP de compra
+    </button>
+  `;
+
+  document.getElementById("result").innerHTML = html;
+}
   
 function runIkea(){
 
-  let status = getCompatibility(selectedCab, selectedSys);
+  let cab = selectedCab;
+  let sys = selectedSys;
 
-  if(status === "best"){
-    result = "✔ RECOMENDADO (OPTIMO)";
+  if(!cab || !sys){
+    document.getElementById("result").innerHTML =
+      `<div class="warning">Selecciona gabinete y sistema</div>`;
+    return;
   }
 
-  if(status === "ok"){
-    result = "✔ COMPATIBLE";
+  // 🗑 TRASH
+  if(sys === "trash"){
+
+    let status = (cab === "12") ? "best"
+                : (cab === "15") ? "ok"
+                : (cab === "18") ? "best"
+                : "limited";
+
+    showResult(
+      status,
+      "Trash Can System",
+      cab,
+      sys,
+      [
+        {name:"Rev-A-Shelf", url:"https://rev-a-shelf.com"},
+        {name:"Hafele", url:"https://www.hafele.com"}
+      ]
+    );
   }
 
-  if(status === "limited"){
-    result = "⚠ COMPATIBLE CON RESTRICCIONES";
+  // 🍃 LAZY
+  if(sys === "lazy"){
+
+    let status = (cab === "24" || cab === "36") ? "best" : "no";
+
+    showResult(
+      status,
+      "Lazy Susan System",
+      cab,
+      sys,
+      [
+        {name:"Hafele", url:"https://www.hafele.com"}
+      ]
+    );
   }
 
-  if(status === "no"){
-    result = "❌ NO COMPATIBLE";
+  // 🍋 LEMANS
+  if(sys === "lemans"){
+
+    let status = (cab === "36") ? "best" : "no";
+
+    showResult(
+      status,
+      "LeMans Corner System",
+      cab,
+      sys,
+      [
+        {name:"Blum", url:"https://www.blum.com"},
+        {name:"Hafele", url:"https://www.hafele.com"}
+      ]
+    );
   }
 
-  document.getElementById("result").innerHTML = result;
+  // 🧩 MAGIC
+  if(sys === "magic"){
+
+    let status = (cab === "36") ? "best" : "no";
+
+    showResult(
+      status,
+      "Magic Corner System",
+      cab,
+      sys,
+      [
+        {name:"Hafele", url:"https://www.hafele.com"},
+        {name:"Kesseböhmer", url:"https://www.kesseboehmer.com"}
+      ]
+    );
+  }
+
 }
 
   function updateUI(){
@@ -617,6 +719,23 @@ function runIkea(){
     </div>
   `;
 }
+
+function generatePDF(sys, cab){
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFontSize(14);
+  doc.text("SOP HARDWARE SELECTION", 10, 10);
+
+  doc.setFontSize(11);
+  doc.text("Sistema: " + sys, 10, 25);
+  doc.text("Gabinete: " + cab + '"', 10, 35);
+
+  doc.text("Estado: VALIDADO SOP", 10, 45);
+
+  doc.save("SOP_" + sys + "_" + cab + ".pdf");
+}  
 
 </script>
 
