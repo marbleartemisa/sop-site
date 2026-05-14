@@ -273,6 +273,13 @@ h1{
 .item a:hover{
   text-decoration:underline;
 }
+
+.item.active{
+  border-color:#0072C6;
+  background:#f0f9ff;
+  transform:translateY(-2px);
+}
+  
 </style>
 </head>
 
@@ -399,19 +406,30 @@ h1{
   
 <script>
 
-  let selectedCab = null;
+let selectedCab = null;
 let selectedSys = null;
 
 function selectCab(val){
   selectedCab = val;
-  runIkea();
+
+  document.querySelectorAll("#cabinetGrid .item")
+    .forEach(el => el.classList.remove("active"));
+
+  event.target.closest(".item").classList.add("active");
+
+  updateUI();
 }
 
 function selectSys(val){
   selectedSys = val;
-  runIkea();
-}
 
+  document.querySelectorAll(".grid:last-of-type .item")
+    .forEach(el => el.classList.remove("active"));
+
+  event.target.closest(".item").classList.add("active");
+
+  updateUI();
+}
 function runIkea(){
 
 let cab = selectedCab;
@@ -481,6 +499,113 @@ if(sys==="magic"){
 
 document.getElementById("result").innerHTML = out;
 
+}
+
+  function updateUI(){
+
+  const result = document.getElementById("result");
+
+  if(!selectedCab || !selectedSys){
+    result.innerHTML = `<div class="warning">Selecciona gabinete y hardware</div>`;
+    return;
+  }
+
+  let score = 0;
+  let text = "";
+  let blocked = false;
+
+  // ===================== TRASH =====================
+  if(selectedSys === "trash"){
+
+    if(selectedCab === "12"){
+      score = 90;
+      text = "Trash Can Single - Optimizado para espacios reducidos";
+    }
+
+    if(selectedCab === "15"){
+      score = 100;
+      text = "Trash Can Double Compact - MEJOR OPCIÓN";
+    }
+
+    if(selectedCab === "18"){
+      score = 95;
+      text = "Trash Can Double Standard - alta capacidad";
+    }
+
+    if(selectedCab === "24" || selectedCab === "36"){
+      score = 30;
+      blocked = true;
+    }
+  }
+
+  // ===================== LAZY =====================
+  if(selectedSys === "lazy"){
+
+    if(selectedCab === "24"){
+      score = 100;
+      text = "Lazy Susan optimizada";
+    }
+
+    if(selectedCab === "36"){
+      score = 95;
+      text = "Lazy Susan premium corner";
+    }
+
+    if(selectedCab === "12" || selectedCab === "15" || selectedCab === "18"){
+      score = 20;
+      blocked = true;
+    }
+  }
+
+  // ===================== LEMANS =====================
+  if(selectedSys === "lemans"){
+
+    if(selectedCab === "36"){
+      score = 100;
+      text = "LeMans Premium Corner System";
+    } else {
+      blocked = true;
+      score = 10;
+    }
+  }
+
+  // ===================== MAGIC =====================
+  if(selectedSys === "magic"){
+
+    if(selectedCab === "36"){
+      score = 95;
+      text = "Magic Corner Access System";
+    } else {
+      blocked = true;
+      score = 10;
+    }
+  }
+
+  // ===================== OUTPUT =====================
+
+  if(blocked){
+    result.innerHTML = `
+      <div class="danger">
+        ❌ NO COMPATIBLE<br><br>
+        Este hardware no es adecuado para este gabinete.
+      </div>
+    `;
+    return;
+  }
+
+  let quality = "";
+
+  if(score >= 95) quality = "🟢 BEST CHOICE";
+  else if(score >= 80) quality = "🟢 RECOMENDADO";
+  else quality = "🟡 OPCIONAL";
+
+  result.innerHTML = `
+    <div class="success">
+      <b>${quality}</b><br><br>
+      ${text}<br><br>
+      <b>Score de compatibilidad:</b> ${score}/100
+    </div>
+  `;
 }
 
 </script>
