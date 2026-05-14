@@ -586,32 +586,125 @@ function runIkea(){
   // =========================
   if(sys === "trash"){
 
-    const trashSpecs = {
-      "12": {
-        status: "best",
-        model: "Rev-A-Shelf 12” Single Pull-Out",
-        type: "Single Bin System",
-        capacity: "1 x 35–50L",
-        dimensions: "W 9–11” x D 20–22” x H 18–22”",
-        recommendation: "Ideal para espacios pequeños y baños secundarios"
-      },
-      "15": {
-        status: "ok",
-        model: "Rev-A-Shelf 15” Double Compact",
-        type: "Double Bin System",
-        capacity: "2 x 20–30L",
-        dimensions: "W 12–14” x D 22” x H 20–24”",
-        recommendation: "Uso estándar residencial compacto"
-      },
-      "18": {
-        status: "best",
-        model: "Rev-A-Shelf 18” Double Standard",
-        type: "Double Bin System",
-        capacity: "2 x 35–50L",
-        dimensions: "W 15–17” x D 22–24” x H 22–26”",
-        recommendation: "Mejor opción para cocina principal"
-      }
-    };
+
+const trashSpecs = {
+
+  "12": {
+    status: "best",
+
+    model: "Rev-A-Shelf 12” Single Pull-Out",
+
+    cabinet: '12"',
+    
+    type: "Single Bin System",
+
+    capacity: "1 x 27–35 Qt (25–33L)",
+
+    dimensions: `
+      Bote:
+      14” L x 9.5” W x 18” H
+
+      Espacio libre mínimo:
+      8.5” – 9” W
+      (21.6 – 22.8 cm)
+
+      Profundidad recomendada:
+      20” – 22”
+    `,
+
+    recommendation:
+      "Ideal para espacios pequeños, baños, kitchenette o cocinas compactas.",
+
+    technical: `
+      Configuración interna:
+      Aloja estrictamente un solo bote de 27–35 Qt.
+
+      Requiere guías laterales compactas
+      y apertura completa frontal.
+    `,
+
+    image: "/sop-site/images/trash12.png"
+  },
+
+  "15": {
+    status: "ok",
+
+    model: "Rev-A-Shelf 15” Double Compact",
+
+    cabinet: '15"',
+
+    type: "Double Compact Bin System",
+
+    capacity: "50 Qt total o 2 x 27–35 Qt",
+
+    dimensions: `
+      Bote individual:
+      14.7” L x 10.7” W x 22.5” H
+
+      Espacio libre mínimo:
+      11.5” – 12” W
+      (29.2 – 30.5 cm)
+
+      Profundidad requerida:
+      22”
+    `,
+
+    recommendation:
+      "Configuración estándar residencial compacta.",
+
+    technical: `
+      Compatible con:
+      • 1 bote grande 50 Qt
+      • 2 botes medianos en línea
+
+      Excelente balance entre capacidad
+      y espacio interno.
+    `,
+
+    image: "/sop-site/images/trash15.png"
+  },
+
+  "18": {
+    status: "best",
+
+    model: "Rev-A-Shelf 18” Double Standard",
+
+    cabinet: '18"',
+
+    type: "Double Large Bin System",
+
+    capacity: "2 x 35–50 Qt",
+
+    dimensions: `
+      Espacio libre mínimo:
+      14.5” – 15” W
+      (36.8 – 38.1 cm)
+
+      Profundidad mínima:
+      22”
+      (55.8 cm)
+
+      Sistema doble paralelo
+      reciclaje + basura
+    `,
+
+    recommendation:
+      "Mejor opción para cocina principal y alto tráfico.",
+
+    technical: `
+      Diseñado para:
+      • reciclaje + basura
+      • alta capacidad
+      • uso familiar intensivo
+
+      Permite sistemas premium
+      soft-close y extracción total.
+    `,
+
+    image: "/sop-site/images/trash18.png"
+  }
+
+};
 
     let data = trashSpecs[cab] || null;
 
@@ -634,20 +727,120 @@ function runIkea(){
     );
   }
 
-  // =========================
-  // 🍃 LAZY SUSAN
-  // =========================
-  if(sys === "lazy"){
 
-      const data = {
-        status: (cab === "24") ? "best" : "limited",
-        model: "Lazy Susan 2 Tier / 3 Tier System",
-        cabinet: "24",
-        type: "Rotating Corner System",
-        capacity: "Circular trays 270°–360°",
-        dimensions: "24” base circular (610 mm)",
-        recommendation: "Solo base 24” estándar"
-      };
+ // =========================
+// 🍃 LAZY SUSAN
+// =========================
+if(sys === "lazy"){
+
+  const lazySpecs = {
+
+    "36": {
+      status: "best",
+
+      model: "Lazy Susan Pie-Cut / Kidney Shape",
+
+      cabinet: '36" x 36" Corner',
+
+      type: "Corner Rotating System",
+
+      capacity: "2 Tier / 3 Tier",
+
+      dimensions: `
+        Bandeja recomendada:
+        28” diámetro
+        (71.1 cm)
+
+        Apertura libre requerida:
+        12” – 15”
+
+        Altura interna:
+        26” – 32”
+      `,
+
+      recommendation:
+        "Configuración estándar para esquinas 36x36.",
+
+      technical: `
+        Compatible con:
+        • Pie-Cut
+        • Kidney Shape
+
+        Requiere esquina simétrica
+        con apertura 90°.
+      `,
+
+      image: "/sop-site/images/lazy36.png"
+    },
+
+    "39": {
+      status: "best",
+
+      model: "Lazy Susan Large Diameter",
+
+      cabinet: '39" x 39" Corner',
+
+      type: "Corner Rotating System",
+
+      capacity: "Alta capacidad",
+
+      dimensions: `
+        Bandeja recomendada:
+        32” diámetro
+        (81.3 cm)
+
+        Apertura libre requerida:
+        15”
+
+        Altura interna:
+        26” – 32”
+      `,
+
+      recommendation:
+        "Mayor capacidad de almacenamiento.",
+
+      technical: `
+        Requiere gabinete esquina
+        simétrico grande.
+
+        Compatible con bandejas
+        premium soft-close.
+      `,
+
+      image: "/sop-site/images/lazy39.png"
+    }
+
+  };
+
+  let data = lazySpecs[cab];
+
+  if(!data){
+    document.getElementById("result").innerHTML =
+      `<div class="warning">
+        ⚠ Lazy Susan solo recomendado
+        para esquinas 36” o 39”
+      </div>`;
+    return;
+  }
+
+  showResult(
+    data.status,
+    data.model,
+    cab,
+    sys,
+    [
+      {
+        name:"Hafele",
+        url:"https://www.hafele.com"
+      },
+      {
+        name:"Rev-A-Shelf",
+        url:"https://rev-a-shelf.com"
+      }
+    ],
+    data
+  );
+}
     
     if(cab !== "24"){
       document.getElementById("result").innerHTML =
@@ -668,20 +861,80 @@ function runIkea(){
     );
   }
 
-  // =========================
-  // 🍋 LEMANS
-  // =========================
-  if(sys === "lemans"){
+
+// =========================
+// 🍋 LEMANS II
+// =========================
+if(sys === "lemans"){
 
   const data = {
-  status: (cab === "36") ? "best" : "no",
-  model: "LeMans Corner Pull-Out System",
-  cabinet: "36",
-  type: "Premium Corner Pull-Out",
-  capacity: "2–4 trays heavy duty",
-  dimensions: "36” corner cabinet (900x900 mm)",
-  recommendation: "Solo esquina 36” con apertura total"
-};
+    status: (cab === "36") ? "best" : "no",
+
+    model: "LeMans II Corner Pull-Out",
+
+    cabinet: '36" Blind Corner',
+
+    type: "Articulated Pull-Out Shelves",
+
+    capacity: "Hasta 1,057 sq.in",
+
+    dimensions: `
+      Profundidad mínima:
+      19-3/4” – 21-9/16”
+
+      Altura mínima:
+      21-1/2”
+
+      Apertura requerida:
+      85° – 90°
+    `,
+
+    recommendation:
+      "Sistema premium ergonómico para esquina ciega.",
+
+    technical: `
+      Modelos disponibles:
+      • 40
+      • 45
+      • 50
+      • 60
+
+      Bandejas tipo peanut/kidney.
+
+      Extracción independiente
+      hacia exterior completo.
+    `,
+
+    image: "/sop-site/images/lemans.png"
+  };
+
+  if(cab !== "36"){
+    document.getElementById("result").innerHTML =
+      `<div class="danger">
+        ❌ Solo compatible con
+        esquinas 36”
+      </div>`;
+    return;
+  }
+
+  showResult(
+    data.status,
+    data.model,
+    cab,
+    sys,
+    [
+      {
+        name:"Kesseböhmer",
+        url:"https://www.kesseboehmer.com"
+      },
+      {
+        name:"Hafele",
+        url:"https://www.hafele.com"
+      }
+    ],
+    data
+  );
+}
 
     if(cab !== "36"){
       document.getElementById("result").innerHTML =
@@ -702,20 +955,84 @@ function runIkea(){
     );
   }
 
-  // =========================
-  // 🧩 MAGIC CORNER
-  // =========================
-  if(sys === "magic"){
+
+// =========================
+// 🧩 MAGIC CORNER
+// =========================
+if(sys === "magic"){
 
   const data = {
-  status: (cab === "36") ? "best" : "no",
-  model: "Magic Corner System",
-  cabinet: "36",
-  type: "Full Access Corner System",
-  capacity: "Dual sliding baskets",
-  dimensions: "36” corner cabinet (900x900 mm)",
-  recommendation: "Acceso total esquina premium"
-};
+    status: (cab === "36") ? "best" : "no",
+
+    model: "Magic Corner I / II",
+
+    cabinet: '36" Blind Corner',
+
+    type: "Mechanical Corner Extraction",
+
+    capacity: `
+      Front baskets:
+      22 lbs each
+
+      Rear baskets:
+      17 lbs each
+    `,
+
+    dimensions: `
+      Cabinet width:
+      38-3/8” – 44”
+
+      Minimum depth:
+      21-9/16”
+
+      Minimum height:
+      21-1/16” – 21-7/8”
+    `,
+
+    recommendation:
+      "Máxima accesibilidad y capacidad para esquinas ciegas.",
+
+    technical: `
+      Magic Corner I:
+      Fijo a puerta.
+
+      Magic Corner II:
+      Extracción independiente.
+
+      Requiere apertura mínima
+      de 15-5/8” a 20-1/2”.
+    `,
+
+    image: "/sop-site/images/magiccorner.png"
+  };
+
+  if(cab !== "36"){
+    document.getElementById("result").innerHTML =
+      `<div class="danger">
+        ❌ Solo compatible con
+        esquina ciega 36”
+      </div>`;
+    return;
+  }
+
+  showResult(
+    data.status,
+    data.model,
+    cab,
+    sys,
+    [
+      {
+        name:"Hafele",
+        url:"https://www.hafele.com"
+      },
+      {
+        name:"Kesseböhmer",
+        url:"https://www.kesseboehmer.com"
+      }
+    ],
+    data
+  );
+}
 
     if(cab !== "36"){
       document.getElementById("result").innerHTML =
