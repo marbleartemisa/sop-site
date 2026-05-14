@@ -379,16 +379,23 @@ h1{
       </a>
     </div>
 
-    <div class="item" onclick="selectSys('lazy')">
-      <h3>🍃 Lazy Susan</h3>
-      <p>Rotación 270°–360°</p>
-      <small>Base 24”</small>
-
-      <a href="https://www.hafele.com" target="_blank"
-         onclick="event.stopPropagation()">
-        Blum / Hafele
-      </a>
-    </div>
+      <div class="item" onclick="selectSys('24FC')">
+        <h3>🍃 Full Circle</h3>
+        <p>Diagonal Corner</p>
+        <small>24” Circular</small>
+      </div>
+      
+      <div class="item" onclick="selectSys('24KS')">
+        <h3>🍃 Kidney Shape</h3>
+        <p>270° Rotation</p>
+        <small>30”–33” Corner</small>
+      </div>
+      
+      <div class="item" onclick="selectSys('24PC')">
+        <h3>🍃 Pie-Cut</h3>
+        <p>Door Mounted</p>
+        <small>Integrated Rotation</small>
+      </div>
 
     <div class="item" onclick="selectSys('lemans')">
       <h3>🍋 LeMans</h3>
@@ -731,86 +738,154 @@ const trashSpecs = {
  // =========================
 // 🍃 LAZY SUSAN
 // =========================
-if(sys === "lazy"){
+if(
+  sys === "24FC" ||
+  sys === "24KS" ||
+  sys === "24PC"
+){
 
-  const lazySpecs = {
+const lazySpecs = {
 
-    "36": {
-      status: "best",
+  // ====================================
+  // FULL CIRCLE
+  // ====================================
+  "24FC": {
 
-      model: "Lazy Susan Pie-Cut / Kidney Shape",
+    status: "best",
 
-      cabinet: '36" x 36" Corner',
+    model: "Lazy Susan Full Circle 24”",
 
-      type: "Corner Rotating System",
+    cabinet: '24" Diagonal Corner',
 
-      capacity: "2 Tier / 3 Tier",
+    type: "Full Circle Rotating System",
 
-      dimensions: `
-        Bandeja recomendada:
-        28” diámetro
-        (71.1 cm)
+    capacity: "20 lbs por bandeja",
 
-        Apertura libre requerida:
-        12” – 15”
+    dimensions: `
+      Diámetro bandeja:
+      24” (60.9 cm)
 
-        Altura interna:
-        26” – 32”
-      `,
+      Gabinete requerido:
+      24”x24” o 27”x27”
 
-      recommendation:
-        "Configuración estándar para esquinas 36x36.",
+      Apertura mínima:
+      12”
 
-      technical: `
-        Compatible con:
-        • Pie-Cut
-        • Kidney Shape
+      Altura ajustable:
+      24” – 31”
+    `,
 
-        Requiere esquina simétrica
-        con apertura 90°.
-      `,
+    recommendation:
+      "Ideal para gabinetes diagonales superiores o despensas compactas.",
 
-      image: "/sop-site/images/lazy36.png"
-    },
+    technical: `
+      Sistema circular completo.
 
-    "39": {
-      status: "best",
+      Las bandejas giran
+      independientemente
+      de la puerta.
 
-      model: "Lazy Susan Large Diameter",
+      Recomendado para:
+      • wall corners
+      • diagonal cabinets
+      • pantry corners
+    `,
 
-      cabinet: '39" x 39" Corner',
+    image: "/sop-site/images/lazy-fullcircle.png"
+  },
 
-      type: "Corner Rotating System",
+  // ====================================
+  // KIDNEY SHAPE
+  // ====================================
+  "24KS": {
 
-      capacity: "Alta capacidad",
+    status: "best",
 
-      dimensions: `
-        Bandeja recomendada:
-        32” diámetro
-        (81.3 cm)
+    model: "Lazy Susan Kidney Shape 270°",
 
-        Apertura libre requerida:
-        15”
+    cabinet: '30"x30" / 33"x33" Corner',
 
-        Altura interna:
-        26” – 32”
-      `,
+    type: "Kidney Shape Rotating System",
 
-      recommendation:
-        "Mayor capacidad de almacenamiento.",
+    capacity: "Compact Corner Storage",
 
-      technical: `
-        Requiere gabinete esquina
-        simétrico grande.
+    dimensions: `
+      Medida herraje:
+      24” W x 14.3” D
 
-        Compatible con bandejas
-        premium soft-close.
-      `,
+      Gabinete requerido:
+      30”x30” o 33”x33”
 
-      image: "/sop-site/images/lazy39.png"
-    }
+      Apertura mínima:
+      11” – 12”
 
-  };
+      Altura:
+      26” – 31”
+    `,
+
+    recommendation:
+      "Sistema clásico para esquinas tipo L.",
+
+    technical: `
+      Requiere puertas
+      con bisagras al gabinete.
+
+      Giro 270°.
+
+      Diseño kidney/riñón
+      con corte a 90°.
+    `,
+
+    image: "/sop-site/images/lazy-kidney.png"
+  },
+
+  // ====================================
+  // PIE CUT
+  // ====================================
+  "24PC": {
+
+    status: "best",
+
+    model: "Lazy Susan Pie-Cut 24”",
+
+    cabinet: 'Corner Cabinet Pie-Cut',
+
+    type: "Pie-Cut Door Mounted System",
+
+    capacity: "Door Integrated Rotation",
+
+    dimensions: `
+      Bandeja:
+      24” W x 24” D
+
+      Espesor:
+      2.5”
+
+      Holgura requerida:
+      2” libres perimetrales
+
+      Altura:
+      26” – 32”
+    `,
+
+    recommendation:
+      "Sistema premium integrado a la puerta.",
+
+    technical: `
+      Las puertas van
+      atornilladas directamente
+      a las bandejas.
+
+      La puerta rota
+      junto al sistema.
+
+      Requiere alineación precisa.
+    `,
+
+    image: "/sop-site/images/lazy-piecut.png"
+  }
+
+};
 
   let data = lazySpecs[cab];
 
