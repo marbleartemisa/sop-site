@@ -315,7 +315,7 @@ h1{
     <h2>Compatibilidad</h2>
 
     <!-- (RECOMENDADO: puedes eliminar este botón si ya es automático) -->
-    <button onclick="runIkea()">Ver compatibilidad</button>
+   
 
     <div id="result" class="result"></div>
 
@@ -328,7 +328,7 @@ h1{
 
     <div class="grid" id="cabinetGrid">
 
-      <div class="item" onclick="selectCab('12')">
+      <div class="item" onclick="selectCab('12', this)">     
         <h3>12” Base</h3>
         <p>305 mm</p>
         <small>Trash Can Single</small>
@@ -368,7 +368,7 @@ h1{
 
   <div class="grid">
 
-    <div class="item" onclick="selectSys('trash')">
+    <div class="item" onclick="selectSys('trash', this)">
       <h3>🗑 Trash Can</h3>
       <p>Single / Double Systems</p>
       <small>Base 12–18”</small>
@@ -432,28 +432,27 @@ h1{
 let selectedCab = null;
 let selectedSys = null;
 
-function selectCab(val){
+function selectCab(val, el){
   selectedCab = val;
 
   document.querySelectorAll("#cabinetGrid .item")
-    .forEach(el => el.classList.remove("active"));
+    .forEach(e => e.classList.remove("active"));
 
-  event.target.closest(".item").classList.add("active");
+  el.classList.add("active");
 
   updateUI();
 }
 
-function selectSys(val){
+function selectSys(val, el){
   selectedSys = val;
 
-  document.querySelectorAll(".grid:last-of-type .item")
-    .forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".card:nth-of-type(3) .item")
+    .forEach(e => e.classList.remove("active"));
 
-  event.target.closest(".item").classList.add("active");
+  el.classList.add("active");
 
   updateUI();
 }
-
 
 function getCompatibility(cab, sys){
 
@@ -1044,24 +1043,6 @@ if(sys === "lemans"){
   );
 }
 
-    if(cab !== "36"){
-      document.getElementById("result").innerHTML =
-        `<div class="danger">❌ Solo compatible con 36” corner</div>`;
-      return;
-    }
-
-    showResult(
-      data.status,
-      data.model,
-      cab,
-      sys,
-      [
-        {name:"Blum", url:"https://www.blum.com"},
-        {name:"Hafele", url:"https://www.hafele.com"}
-      ],
-      data
-    );
-  }
 
 
 // =========================
@@ -1142,26 +1123,8 @@ if(sys === "magic"){
   );
 }
 
-    if(cab !== "36"){
-      document.getElementById("result").innerHTML =
-        `<div class="danger">❌ Solo compatible con 36” corner</div>`;
-      return;
-    }
-
-    showResult(
-      data.status,
-      data.model,
-      cab,
-      sys,
-      [
-        {name:"Hafele", url:"https://www.hafele.com"},
-        {name:"Kesseböhmer", url:"https://www.kesseboehmer.com"}
-      ],
-      data
-    );
-  }
-
 }
+  
   function updateUI(){
 
   const result = document.getElementById("result");
@@ -1267,6 +1230,9 @@ if(sys === "magic"){
       <b>Score de compatibilidad:</b> ${score}/100
     </div>
   `;
+    if(selectedCab && selectedSys){
+  runIkea(); // activa detalle completo automático
+}
 }
 
 function generatePDF(sys, cab){
