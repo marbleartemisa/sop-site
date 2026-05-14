@@ -261,6 +261,18 @@ h1{
 .item small{
   color:#94a3b8;
 }
+
+  .item a{
+  display:inline-block;
+  margin-top:6px;
+  font-size:12px;
+  color:#0072C6;
+  text-decoration:none;
+}
+
+.item a:hover{
+  text-decoration:underline;
+}
 </style>
 </head>
 
@@ -295,12 +307,12 @@ h1{
 
     <h2>Compatibilidad</h2>
 
+    <!-- (RECOMENDADO: puedes eliminar este botón si ya es automático) -->
     <button onclick="runIkea()">Ver compatibilidad</button>
 
     <div id="result" class="result"></div>
 
   </div>
-
 
   <!-- SELECCIÓN DE GABINETE -->
   <div class="card">
@@ -343,38 +355,48 @@ h1{
 
   </div>
 
-  <!-- AQUÍ IRÍA SISTEMA (si lo tienes separado) -->
-  <div class="card">
-    <h2>Selecciona hardware</h2>
-
-    <div class="grid">
-      <div class="item" onclick="selectSys('trash')">🗑 Trash Can</div>
-      <div class="item" onclick="selectSys('lazy')">🍃 Lazy Susan</div>
-      <div class="item" onclick="selectSys('lemans')">🍋 LeMans</div>
-      <div class="item" onclick="selectSys('magic')">🧩 Magic Corner</div>
-    </div>
-
-  </div>
-
-</div>
-
+  <!-- SELECCIÓN DE HARDWARE -->
+<div class="card">
   <h2>Selecciona hardware</h2>
 
   <div class="grid">
 
-    <div class="item" onclick="selectSys('trash')">🗑 Trash Can</div>
-    <div class="item" onclick="selectSys('lazy')">🍃 Lazy Susan</div>
-    <div class="item" onclick="selectSys('lemans')">🍋 LeMans</div>
-    <div class="item" onclick="selectSys('magic')">🧩 Magic Corner</div>
+    <div class="item" onclick="selectSys('trash')">
+      <h3>🗑 Trash Can</h3>
+      <p>Single / Double Systems</p>
+      <small>Base 12–18”</small>
+      <a href="#" onclick="event.stopPropagation()">Ver marcas</a>
+    </div>
+
+    <div class="item" onclick="selectSys('lazy')">
+      <h3>🍃 Lazy Susan</h3>
+      <p>Rotación 270°–360°</p>
+      <small>Base 24”</small>
+      <a href="#" onclick="event.stopPropagation()">Blum / Hafele</a>
+    </div>
+
+    <div class="item" onclick="selectSys('lemans')">
+      <h3>🍋 LeMans</h3>
+      <p>Bandejas extraíbles premium</p>
+      <small>Solo esquina 36”</small>
+      <a href="#" onclick="event.stopPropagation()">Ver catálogo</a>
+    </div>
+
+    <div class="item" onclick="selectSys('magic')">
+      <h3>🧩 Magic Corner</h3>
+      <p>Acceso total esquina</p>
+      <small>36” corner only</small>
+      <a href="#" onclick="event.stopPropagation()">Hafele / Kesseböhmer</a>
+    </div>
 
   </div>
+</div>
 
 </div>
 
-<div id="result" class="card"></div>
 
-</div>
 
+  
 <script>
 
   let selectedCab = null;
