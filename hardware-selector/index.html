@@ -6,431 +6,209 @@
 
 <title>Selector de Hardware SOP | Artemisa</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-
-/* ===== BASE ===== */
 *{box-sizing:border-box;}
-html,body{margin:0;overflow-x:hidden;font-family:'Inter',sans-serif;}
+body{margin:0;font-family:Inter,sans-serif;background:#111;color:#fff;}
 
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  position:relative;
-  min-height:100vh;
-  color:#1f2937;
-}
-
-/* BACKGROUND OVERLAY */
-body::before{
-  content:"";
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-
-  background-image:url('/sop-site/wall0.png');
-  background-position:center;
-  background-repeat:no-repeat;
-  background-size:cover;
-
-  z-index:-2;
-}
-
-/* OSCURECIMIENTO IGUAL QUE SOP PRINCIPAL */
-body::after{
-  content:"";
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-
-  background:rgba(0,0,0,0.25);
-
-  z-index:-1;
-}
-
-/* ===== NAVBAR (COPIA EXACTA DE TU SISTEMA) ===== */
 .navbar{
-  position:sticky;
-  top:0;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(8px);
-  padding:10px 30px;
-  color:white;
-  font-weight:bold;
+  position:sticky;top:0;
+  background:rgba(0,0,0,0.7);
+  padding:12px 20px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  z-index:999;
+  z-index:10;
 }
 
-.logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+.container{max-width:1000px;margin:30px auto;padding:20px;}
 
-.logo img{
-  height:40px;
-}
-
-.menu{
-  display:flex;
-  gap:25px;
-  flex:1;
-  justify-content:center;
-}
-
-.menu a{
-  color:white;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-.menu a:hover{
-  color:#00aaff;
-}
-
-/* ===== CONTAINER ===== */
-.container{
-  max-width:1000px;
-  margin:40px auto;
-  padding:20px;
-}
-
-/* ===== CARD ===== */
 .card{
-  background:white;
-  border-radius:14px;
-  padding:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-  margin-bottom:20px;
-}
-
-/* ===== SELECTS ===== */
-select{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:10px;
-  border:1px solid #ddd;
-  font-size:14px;
-}
-
-/* ===== BOTÓN ===== */
-button{
-  width:100%;
-  margin-top:15px;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(135deg,#0072C6,#005a9e);
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-button:hover{
-  transform:scale(1.02);
-}
-
-/* ===== RESULTADO ===== */
-.result{
-  margin-top:15px;
+  background:#fff;
+  color:#111;
   padding:15px;
-  background:#f1f5f9;
-  border-left:5px solid #0072C6;
-  border-radius:10px;
-  white-space:pre-line;
+  border-radius:12px;
+  margin-bottom:15px;
 }
 
-/* ===== TITULO ===== */
-h1{
-  color:white;
-  text-align:center;
-  margin-top:30px;
-}
-
-.subtitle{
-  text-align:center;
-  color:#cbd5e1;
-  margin-bottom:20px;
-}
-.ux-card{
-  background: rgba(255,255,255,0.95);
-  border-radius:14px;
-  padding:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
-  line-height:1.6;
-  font-size:14px;
-}
-
-/* TITULOS */
-.ux-card b{
-  font-size:16px;
-  color:#0f172a;
-}
-
-/* LINKS DE MARCAS COMO BOTONES */
-.ux-card a{
-  display:inline-block;
-  margin-top:6px;
-  margin-right:6px;
-  padding:6px 10px;
-  border-radius:8px;
-  background:#0072C6;
-  color:white !important;
-  text-decoration:none;
-  font-size:12px;
-  transition:0.2s;
-}
-
-.ux-card a:hover{
-  background:#005a9e;
-  transform:scale(1.03);
-}
-
-/* SEPARADORES VISUALES */
-.ux-card br{
-  line-height:1.8;
-}
-
-/* ALERTAS UX */
-.warning{
-  background:#fff7ed;
-  border-left:4px solid #f97316;
-  padding:10px;
-  border-radius:8px;
-  margin-top:10px;
-}
-
-.danger{
-  background:#fef2f2;
-  border-left:4px solid #ef4444;
-  padding:10px;
-  border-radius:8px;
-  margin-top:10px;
-}
-
-.success{
-  background:#ecfdf5;
-  border-left:4px solid #10b981;
-  padding:10px;
-  border-radius:8px;
-  margin-top:10px;
-}
-
-  .grid{
+.grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:15px;
-  margin-top:15px;
+  gap:12px;
 }
 
 .item{
-  background:white;
-  border-radius:14px;
-  padding:15px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.12);
+  background:#f5f5f5;
+  padding:12px;
+  border-radius:10px;
   cursor:pointer;
-  transition:0.2s;
+  transition:.2s;
   border:2px solid transparent;
-}
-
-.item:hover{
-  transform:translateY(-3px);
-  border-color:#0072C6;
-}
-
-.item h3{
-  margin:0;
-  font-size:16px;
-  color:#0f172a;
-}
-
-.item p{
-  margin:5px 0;
-  color:#64748b;
-}
-
-.item small{
-  color:#94a3b8;
-}
-
-  .item a{
-  display:inline-block;
-  margin-top:6px;
-  font-size:12px;
-  color:#0072C6;
-  text-decoration:none;
-}
-
-.item a:hover{
-  text-decoration:underline;
 }
 
 .item.active{
   border-color:#0072C6;
-  background:#f0f9ff;
-  transform:translateY(-2px);
+  background:#eaf4ff;
 }
-  
+
+button{
+  width:100%;
+  padding:12px;
+  border:0;
+  border-radius:10px;
+  background:#0072C6;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.result{
+  margin-top:15px;
+  padding:15px;
+  background:#f1f1f1;
+  border-radius:10px;
+}
+.success{color:green;font-weight:bold;}
+.warning{color:orange;font-weight:bold;}
+.danger{color:red;font-weight:bold;}
 </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <div class="navbar">
-  <div class="logo">
-    <img src="/sop-site/logo.png">
-    <span>ARTEMISA MARBLE & CABINETS</span>
-  </div>
-
-  <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a>
-    <a href="/sop-site/analisis/">Análisis SOP</a>
-    <a href="/sop-site/hardware-selector/">Selector Hardware</a>
-    <a href="/sop-site/admin/">Admin</a>
-  </div>
+  <div>ARTEMISA SOP</div>
 </div>
 
-<!-- HEADER -->
-<h1>Selector de Hardware SOP</h1>
-<div class="subtitle">Sistema de compatibilidad de gabinetes y herrajes</div>
-
-<!-- CONTENIDO -->
 <div class="container">
 
-  <!-- RESULTADO + ACCIÓN -->
-  <div class="card">
-
-    <h2>Compatibilidad</h2>
-
-    <!-- (RECOMENDADO: puedes eliminar este botón si ya es automático) -->
-   
-
-    <div id="result" class="result"></div>
-
-  </div>
-
-  <!-- SELECCIÓN DE GABINETE -->
-  <div class="card">
-
-    <h2>Selecciona tu gabinete</h2>
-
-    <div class="grid" id="cabinetGrid">
-
-      <div class="item" onclick="selectCab('12', this)">     
-        <h3>12” Base</h3>
-        <p>305 mm</p>
-        <small>Trash Can Single</small>
-      </div>
-
-      <div class="item" onclick="selectCab('15')">
-        <h3>15” Base</h3>
-        <p>381 mm</p>
-        <small>Trash Can Double Compact</small>
-      </div>
-
-      <div class="item" onclick="selectCab('18')">
-        <h3>18” Base</h3>
-        <p>457 mm</p>
-        <small>Trash / Accessories</small>
-      </div>
-
-      <div class="item" onclick="selectCab('24')">
-        <h3>24” Base</h3>
-        <p>610 mm</p>
-        <small>Lazy Susan</small>
-      </div>
-
-      <div class="item" onclick="selectCab('36')">
-        <h3>36” Corner</h3>
-        <p>900x900 mm</p>
-        <small>LeMans / Magic Corner</small>
-      </div>
-
-    </div>
-
-  </div>
-
-<!-- SELECCIÓN DE HARDWARE -->
+<!-- RESULTADO -->
 <div class="card">
-  <h2>Selecciona hardware</h2>
+  <h3>Compatibilidad</h3>
+  <button onclick="runSOP()">Ver compatibilidad</button>
+  <div id="result" class="result">Selecciona opciones</div>
+</div>
 
-  <div class="grid">
+<!-- GABINETES -->
+<div class="card">
+<h3>Gabinete</h3>
+<div class="grid" id="cabinetGrid">
 
-    <div class="item" onclick="selectSys('trash', this)">
-      <h3>🗑 Trash Can</h3>
-      <p>Single / Double Systems</p>
-      <small>Base 12–18”</small>
+  <div class="item" onclick="selectCab('12', this)">12”</div>
+  <div class="item" onclick="selectCab('15', this)">15”</div>
+  <div class="item" onclick="selectCab('18', this)">18”</div>
+  <div class="item" onclick="selectCab('24', this)">24”</div>
+  <div class="item" onclick="selectCab('36', this)">36”</div>
 
-      <a href="https://www.rev-a-shelf.com" target="_blank"
-         onclick="event.stopPropagation()">
-        Ver marcas
-      </a>
-    </div>
+</div>
+</div>
 
-      <div class="item" onclick="selectSys('24FC')">
-        <h3>🍃 Full Circle</h3>
-        <p>Diagonal Corner</p>
-        <small>24” Circular</small>
-      </div>
-      
-      <div class="item" onclick="selectSys('24KS')">
-        <h3>🍃 Kidney Shape</h3>
-        <p>270° Rotation</p>
-        <small>30”–33” Corner</small>
-      </div>
-      
-      <div class="item" onclick="selectSys('24PC')">
-        <h3>🍃 Pie-Cut</h3>
-        <p>Door Mounted</p>
-        <small>Integrated Rotation</small>
-      </div>
+<!-- HARDWARE -->
+<div class="card">
+<h3>Hardware</h3>
+<div class="grid" id="sysGrid">
 
-    <div class="item" onclick="selectSys('lemans')">
-      <h3>🍋 LeMans</h3>
-      <p>Bandejas extraíbles premium</p>
-      <small>Solo esquina 36”</small>
+  <div class="item" onclick="selectSys('trash', this)">Trash</div>
+  <div class="item" onclick="selectSys('24FC', this)">Full Circle</div>
+  <div class="item" onclick="selectSys('24KS', this)">Kidney</div>
+  <div class="item" onclick="selectSys('24PC', this)">Pie Cut</div>
+  <div class="item" onclick="selectSys('lemans', this)">LeMans</div>
+  <div class="item" onclick="selectSys('magic', this)">Magic</div>
 
-      <a href="https://www.blum.com" target="_blank"
-         onclick="event.stopPropagation()">
-        Ver catálogo
-      </a>
-    </div>
-
-    <div class="item" onclick="selectSys('magic')">
-      <h3>🧩 Magic Corner</h3>
-      <p>Acceso total esquina</p>
-      <small>36” corner only</small>
-
-      <a href="https://www.kesseboehmer.com" target="_blank"
-         onclick="event.stopPropagation()">
-        Hafele / Kesseböhmer
-      </a>
-    </div>
-
-  </div>
+</div>
 </div>
 
 </div>
 
-
-
-  
 <script>
 
 let selectedCab = null;
 let selectedSys = null;
+  const SOP = {
+
+trash: {
+  "12": {
+    status: "best",
+    model: "Rev-A-Shelf 12” Single",
+    cabinet: "12",
+    type: "Single Bin System",
+    capacity: "1 x 27–35 Qt",
+    dimensions: `Bote: 14” L x 9.5” W x 18” H`,
+    technical: "Sistema compacto para espacios pequeños"
+  },
+
+  "15": {
+    status: "ok",
+    model: "Rev-A-Shelf 15” Double",
+    cabinet: "15",
+    type: "Double Bin System",
+    capacity: "50 Qt",
+    dimensions: `Bote: 14.7” L x 10.7” W x 22.5” H`,
+    technical: "Sistema estándar residencial"
+  }
+},
+
+lazy: {
+  "24FC": {
+    status: "best",
+    model: "Lazy Susan Full Circle",
+    cabinet: "24",
+    type: "Full Circle",
+    capacity: "20 lbs por bandeja",
+    dimensions: "24” diámetro",
+    technical: "Gira completamente dentro del gabinete"
+  },
+
+  "24KS": {
+    status: "best",
+    model: "Kidney Shape",
+    cabinet: "30–33",
+    type: "270° Rotation",
+    capacity: "Compact",
+    dimensions: "24 x 14.3",
+    technical: "Puertas fijas al gabinete"
+  },
+
+  "24PC": {
+    status: "best",
+    model: "Pie Cut",
+    cabinet: "24",
+    type: "Door Mounted",
+    capacity: "Integrado",
+    dimensions: "24 x 24",
+    technical: "Puerta gira con bandeja"
+  }
+},
+
+lemans: {
+  "36": {
+    status: "best",
+    model: "LeMans II",
+    cabinet: "36",
+    type: "Corner Pull-Out",
+    capacity: "Alta capacidad",
+    dimensions: "19-3/4” profundidad mínima",
+    technical: "Extracción articulada"
+  }
+},
+
+magic: {
+  "36": {
+    status: "best",
+    model: "Magic Corner",
+    cabinet: "36",
+    type: "Mechanical Corner",
+    capacity: "Alta carga",
+    dimensions: "38–44” ancho",
+    technical: "Sistema de extracción total"
+  }
+}
+
+};
+
+/* =========================
+   SELECTORES
+========================= */
 
 function selectCab(val, el){
   selectedCab = val;
@@ -438,820 +216,58 @@ function selectCab(val, el){
   document.querySelectorAll("#cabinetGrid .item")
     .forEach(e => e.classList.remove("active"));
 
-  el.classList.add("active");
-
-  updateUI();
+  if(el) el.classList.add("active");
 }
 
 function selectSys(val, el){
   selectedSys = val;
 
-  document.querySelectorAll(".card:nth-of-type(3) .item")
+  document.querySelectorAll("#sysGrid .item")
     .forEach(e => e.classList.remove("active"));
 
-  el.classList.add("active");
-
-  updateUI();
+  if(el) el.classList.add("active");
 }
 
-function getCompatibility(cab, sys){
+/* =========================
+   MOTOR SOP FINAL
+========================= */
 
-  const rules = {
+function runSOP(){
 
-    trash: {
-      "12": "ideal",
-      "15": "ok",
-      "18": "best",
-      "24": "limited"
-    },
-
-    lazy: {
-      "24": "best",
-      "30": "ok",
-      "36": "ok",
-      "12": "no",
-      "15": "no",
-      "18": "no"
-    },
-
-    lemans: {
-      "36": "best",
-      "33": "best",
-      "24": "no",
-      "18": "no"
-    },
-
-    magic: {
-      "36": "best",
-      "33": "best",
-      "24": "no",
-      "18": "no"
-    }
-
-  };
-
-  return rules[sys]?.[cab] || "no";
-}  
-
-function showResult(status, title, cab, sys, brands, spec = {}){
-
-  let html = "";
-
-  // =========================
-  // ESTADO VISUAL
-  // =========================
-  if(status === "best") html += `<div class="success">✔ RECOMENDADO</div>`;
-  if(status === "ok") html += `<div class="success">✔ COMPATIBLE</div>`;
-  if(status === "limited") html += `<div class="warning">⚠ LIMITADO</div>`;
-  if(status === "no") html += `<div class="danger">❌ NO COMPATIBLE</div>`;
-
-  // =========================
-  // TÍTULO
-  // =========================
-  html += `<h3>${title}</h3>`;
-
-  // =========================
-  // INFO BÁSICA
-  // =========================
-  html += `
-    <p><b>Gabinete:</b> ${cab}"</p>
-    <p><b>Sistema:</b> ${sys}</p>
-    <hr>
-  `;
-
-  // =========================
-  // MARCAS
-  // =========================
-  html += `<b>Marcas disponibles:</b><br>`;
-
-  if(brands && brands.length){
-    brands.forEach(b=>{
-      html += `
-        <a href="${b.url}" target="_blank" onclick="event.stopPropagation()">
-          ${b.name}
-        </a>
-      `;
-    });
-  }
-
-  // =========================
-  // ESPECIFICACIONES (SAFE)
-  // =========================
-  if(spec && Object.keys(spec).length > 0){
-
-    html += `
-      <hr>
-
-      <b>📦 Especificación recomendada:</b><br>
-
-      <div style="margin-top:8px">
-
-        <b>Modelo sugerido:</b> ${spec.model || "N/A"}<br>
-        <b>Ancho mínimo gabinete:</b> ${spec.cabinet ? spec.cabinet + '"' : "N/A"}<br>
-        <b>Tipo:</b> ${spec.type || "N/A"}<br>
-        <b>Capacidad:</b> ${spec.capacity || "N/A"}<br>
-
-      </div>
-
-      <hr>
-
-      <b>🧩 Dimensiones del hardware:</b><br>
-      ${spec.dimensions || "No disponible"}
-    `;
-  }
-
-  // =========================
-  // BOTÓN PDF
-  // =========================
-  html += `
-    <br><br>
-    <button onclick="generatePDF('${sys}','${cab}')">
-      📄 Generar SOP de compra
-    </button>
-  `;
-
-  // =========================
-  // OUTPUT FINAL
-  // =========================
-  document.getElementById("result").innerHTML = html;
-}
-  
-function runIkea(){
-
-  let cab = selectedCab;
-  let sys = selectedSys;
-
-  if(!cab || !sys){
+  if(!selectedCab || !selectedSys){
     document.getElementById("result").innerHTML =
-      `<div class="warning">Selecciona gabinete y sistema</div>`;
+      `<div class="warning">Selecciona gabinete y hardware</div>`;
     return;
   }
 
-  // =========================
-  // 🗑 TRASH SYSTEM
-  // =========================
-  if(sys === "trash"){
-
-
-const trashSpecs = {
-
-  "12": {
-    status: "best",
-
-    model: "Rev-A-Shelf 12” Single Pull-Out",
-
-    cabinet: '12"',
-    
-    type: "Single Bin System",
-
-    capacity: "1 x 27–35 Qt (25–33L)",
-
-    dimensions: `
-      Bote:
-      14” L x 9.5” W x 18” H
-
-      Espacio libre mínimo:
-      8.5” – 9” W
-      (21.6 – 22.8 cm)
-
-      Profundidad recomendada:
-      20” – 22”
-    `,
-
-    recommendation:
-      "Ideal para espacios pequeños, baños, kitchenette o cocinas compactas.",
-
-    technical: `
-      Configuración interna:
-      Aloja estrictamente un solo bote de 27–35 Qt.
-
-      Requiere guías laterales compactas
-      y apertura completa frontal.
-    `,
-
-    image: "/sop-site/images/trash12.png"
-  },
-
-  "15": {
-    status: "ok",
-
-    model: "Rev-A-Shelf 15” Double Compact",
-
-    cabinet: '15"',
-
-    type: "Double Compact Bin System",
-
-    capacity: "50 Qt total o 2 x 27–35 Qt",
-
-    dimensions: `
-      Bote individual:
-      14.7” L x 10.7” W x 22.5” H
-
-      Espacio libre mínimo:
-      11.5” – 12” W
-      (29.2 – 30.5 cm)
-
-      Profundidad requerida:
-      22”
-    `,
-
-    recommendation:
-      "Configuración estándar residencial compacta.",
-
-    technical: `
-      Compatible con:
-      • 1 bote grande 50 Qt
-      • 2 botes medianos en línea
-
-      Excelente balance entre capacidad
-      y espacio interno.
-    `,
-
-    image: "/sop-site/images/trash15.png"
-  },
-
-  "18": {
-    status: "best",
-
-    model: "Rev-A-Shelf 18” Double Standard",
-
-    cabinet: '18"',
-
-    type: "Double Large Bin System",
-
-    capacity: "2 x 35–50 Qt",
-
-    dimensions: `
-      Espacio libre mínimo:
-      14.5” – 15” W
-      (36.8 – 38.1 cm)
-
-      Profundidad mínima:
-      22”
-      (55.8 cm)
-
-      Sistema doble paralelo
-      reciclaje + basura
-    `,
-
-    recommendation:
-      "Mejor opción para cocina principal y alto tráfico.",
-
-    technical: `
-      Diseñado para:
-      • reciclaje + basura
-      • alta capacidad
-      • uso familiar intensivo
-
-      Permite sistemas premium
-      soft-close y extracción total.
-    `,
-
-    image: "/sop-site/images/trash18.png"
-  }
-
-};
-
-    let data = trashSpecs[cab] || null;
-
-    if(!data){
-      document.getElementById("result").innerHTML =
-        `<div class="danger">❌ No compatible con este gabinete</div>`;
-      return;
-    }
-
-    showResult(
-      data.status,
-      data.model,
-      cab,
-      sys,
-      [
-        {name:"Rev-A-Shelf", url:"https://rev-a-shelf.com"},
-        {name:"Hafele", url:"https://www.hafele.com"}
-      ],
-      data
-    );
-  }
-
-
- // =========================
-// 🍃 LAZY SUSAN
-// =========================
-if(
-  sys === "24FC" ||
-  sys === "24KS" ||
-  sys === "24PC"
-){
-
-const lazySpecs = {
-
-  // ====================================
-  // FULL CIRCLE
-  // ====================================
-  "24FC": {
-
-    status: "best",
-
-    model: "Lazy Susan Full Circle 24”",
-
-    cabinet: '24" Diagonal Corner',
-
-    type: "Full Circle Rotating System",
-
-    capacity: "20 lbs por bandeja",
-
-    dimensions: `
-      Diámetro bandeja:
-      24” (60.9 cm)
-
-      Gabinete requerido:
-      24”x24” o 27”x27”
-
-      Apertura mínima:
-      12”
-
-      Altura ajustable:
-      24” – 31”
-    `,
-
-    recommendation:
-      "Ideal para gabinetes diagonales superiores o despensas compactas.",
-
-   technical: `
-  <b>Full Circle Lazy Susan</b><br><br>
-
-  <b>Puertas:</b>
-  Usualmente utilizado
-  en gabinetes diagonales
-  con una sola puerta.<br><br>
-
-  <b>Funcionamiento:</b>
-  Las bandejas giran
-  completamente dentro
-  del gabinete.<br><br>
-
-  <b>Forma:</b>
-  Bandejas completamente
-  circulares sin recortes.<br><br>
-
-  <b>Ventaja:</b>
-  Máxima capacidad de almacenamiento
-  en esquinas diagonales.
-`,
-
-    image: "/sop-site/images/lazy-fullcircle.png"
-  },
-
-  // ====================================
-  // KIDNEY SHAPE
-  // ====================================
-  "24KS": {
-
-    status: "best",
-
-    model: "Lazy Susan Kidney Shape 270°",
-
-    cabinet: '30"x30" / 33"x33" Corner',
-
-    type: "Kidney Shape Rotating System",
-
-    capacity: "Compact Corner Storage",
-
-    dimensions: `
-      Medida herraje:
-      24” W x 14.3” D
-
-      Gabinete requerido:
-      30”x30” o 33”x33”
-
-      Apertura mínima:
-      11” – 12”
-
-      Altura:
-      26” – 31”
-    `,
-
-    recommendation:
-      "Sistema clásico para esquinas tipo L.",
-
- technical: `
-  <b>Kidney Shape Lazy Susan</b><br><br>
-
-  <b>Puertas:</b>
-  Las puertas están unidas
-  al gabinete, NO a la bandeja.<br><br>
-
-  <b>Funcionamiento:</b>
-  Primero se abren las puertas
-  y luego la bandeja gira
-  independientemente.<br><br>
-
-  <b>Forma:</b>
-  Tiene una muesca curva
-  tipo riñón que permite
-  pasar el marco del gabinete.<br><br>
-
-  <b>Ventaja:</b>
-  Mejor acceso interior
-  y menor interferencia
-  con el marco frontal.
-`,
-
-  // ====================================
-  // PIE CUT
-  // ====================================
-  "24PC": {
-
-    status: "best",
-
-    model: "Lazy Susan Pie-Cut 24”",
-
-    cabinet: 'Corner Cabinet Pie-Cut',
-
-    type: "Pie-Cut Door Mounted System",
-
-    capacity: "Door Integrated Rotation",
-
-    dimensions: `
-      Bandeja:
-      24” W x 24” D
-
-      Espesor:
-      2.5”
-
-      Holgura requerida:
-      2” libres perimetrales
-
-      Altura:
-      26” – 32”
-    `,
-
-    recommendation:
-      "Sistema premium integrado a la puerta.",
-
- technical: `
-  <b>Pie Cut Lazy Susan</b><br><br>
-
-  <b>Puertas:</b>
-  La puerta del gabinete
-  está unida directamente
-  a la bandeja giratoria.<br><br>
-
-  <b>Funcionamiento:</b>
-  Al girar la bandeja,
-  las puertas giran hacia
-  el interior del gabinete.<br><br>
-
-  <b>Forma:</b>
-  La muesca forma un ángulo
-  exacto de 90° para alinearse
-  con la puerta.<br><br>
-
-  <b>Uso recomendado:</b>
-  Ideal para gabinetes
-  de esquina tipo L,
-  puertas inset
-  o puertas plegables.
-`,
-
-    image: "/sop-site/images/lazy-piecut.png"
-  }
-
-};
-
-  let data = lazySpecs[cab];
+  const data = SOP[selectedSys]?.[selectedCab];
 
   if(!data){
     document.getElementById("result").innerHTML =
-      `<div class="warning">
-        ⚠ Lazy Susan solo recomendado
-        para esquinas 36” o 39”
-      </div>`;
+      `<div class="danger">❌ No compatible</div>`;
     return;
   }
 
-  showResult(
-    data.status,
-    data.model,
-    cab,
-    sys,
-    [
-      {
-        name:"Hafele",
-        url:"https://www.hafele.com"
-      },
-      {
-        name:"Rev-A-Shelf",
-        url:"https://rev-a-shelf.com"
-      }
-    ],
-    data
-  );
-}
-    
-    if(cab !== "24"){
-      document.getElementById("result").innerHTML =
-        `<div class="warning">⚠ Recomendado solo para 24” base</div>`;
-      return;
-    }
-
-    showResult(
-      data.status,
-      data.model,
-      cab,
-      sys,
-      [
-        {name:"Hafele", url:"https://www.hafele.com"},
-        {name:"Rev-A-Shelf", url:"https://rev-a-shelf.com"}
-      ],
-      data
-    );
-  }
-
-
-// =========================
-// 🍋 LEMANS II
-// =========================
-if(sys === "lemans"){
-
-  const data = {
-    status: (cab === "36") ? "best" : "no",
-
-    model: "LeMans II Corner Pull-Out",
-
-    cabinet: '36" Blind Corner',
-
-    type: "Articulated Pull-Out Shelves",
-
-    capacity: "Hasta 1,057 sq.in",
-
-    dimensions: `
-      Profundidad mínima:
-      19-3/4” – 21-9/16”
-
-      Altura mínima:
-      21-1/2”
-
-      Apertura requerida:
-      85° – 90°
-    `,
-
-    recommendation:
-      "Sistema premium ergonómico para esquina ciega.",
-
-    technical: `
-      Modelos disponibles:
-      • 40
-      • 45
-      • 50
-      • 60
-
-      Bandejas tipo peanut/kidney.
-
-      Extracción independiente
-      hacia exterior completo.
-    `,
-
-    image: "/sop-site/images/lemans.png"
-  };
-
-  if(cab !== "36"){
-    document.getElementById("result").innerHTML =
-      `<div class="danger">
-        ❌ Solo compatible con
-        esquinas 36”
-      </div>`;
-    return;
-  }
-
-  showResult(
-    data.status,
-    data.model,
-    cab,
-    sys,
-    [
-      {
-        name:"Kesseböhmer",
-        url:"https://www.kesseboehmer.com"
-      },
-      {
-        name:"Hafele",
-        url:"https://www.hafele.com"
-      }
-    ],
-    data
-  );
+  showResult(data);
 }
 
+function showResult(data){
 
+let html = "";
 
-// =========================
-// 🧩 MAGIC CORNER
-// =========================
-if(sys === "magic"){
+if(data.status === "best") html += `<div class="success">✔ RECOMENDADO</div>`;
+else if(data.status === "ok") html += `<div class="warning">⚠ COMPATIBLE</div>`;
+else html += `<div class="danger">❌ NO COMPATIBLE</div>`;
 
-  const data = {
-    status: (cab === "36") ? "best" : "no",
+html += `<br><b>${data.model}</b><br>`;
+html += `Gabinete: ${data.cabinet}"<br>`;
+html += `Tipo: ${data.type}<br>`;
+html += `Capacidad: ${data.capacity}<br>`;
+html += `Dimensiones: ${data.dimensions}<br>`;
+html += `Tech: ${data.technical}<br>`;
 
-    model: "Magic Corner I / II",
-
-    cabinet: '36" Blind Corner',
-
-    type: "Mechanical Corner Extraction",
-
-    capacity: `
-      Front baskets:
-      22 lbs each
-
-      Rear baskets:
-      17 lbs each
-    `,
-
-    dimensions: `
-      Cabinet width:
-      38-3/8” – 44”
-
-      Minimum depth:
-      21-9/16”
-
-      Minimum height:
-      21-1/16” – 21-7/8”
-    `,
-
-    recommendation:
-      "Máxima accesibilidad y capacidad para esquinas ciegas.",
-
-    technical: `
-      Magic Corner I:
-      Fijo a puerta.
-
-      Magic Corner II:
-      Extracción independiente.
-
-      Requiere apertura mínima
-      de 15-5/8” a 20-1/2”.
-    `,
-
-    image: "/sop-site/images/magiccorner.png"
-  };
-
-  if(cab !== "36"){
-    document.getElementById("result").innerHTML =
-      `<div class="danger">
-        ❌ Solo compatible con
-        esquina ciega 36”
-      </div>`;
-    return;
-  }
-
-  showResult(
-    data.status,
-    data.model,
-    cab,
-    sys,
-    [
-      {
-        name:"Hafele",
-        url:"https://www.hafele.com"
-      },
-      {
-        name:"Kesseböhmer",
-        url:"https://www.kesseboehmer.com"
-      }
-    ],
-    data
-  );
+document.getElementById("result").innerHTML = html;
 }
-
-}
-  
-  function updateUI(){
-
-  const result = document.getElementById("result");
-
-  if(!selectedCab || !selectedSys){
-    result.innerHTML = `<div class="warning">Selecciona gabinete y hardware</div>`;
-    return;
-  }
-
-  let score = 0;
-  let text = "";
-  let blocked = false;
-
-  // ===================== TRASH =====================
-  if(selectedSys === "trash"){
-
-    if(selectedCab === "12"){
-      score = 90;
-      text = "Trash Can Single - Optimizado para espacios reducidos";
-    }
-
-    if(selectedCab === "15"){
-      score = 100;
-      text = "Trash Can Double Compact - MEJOR OPCIÓN";
-    }
-
-    if(selectedCab === "18"){
-      score = 95;
-      text = "Trash Can Double Standard - alta capacidad";
-    }
-
-    if(selectedCab === "24" || selectedCab === "36"){
-      score = 30;
-      blocked = true;
-    }
-  }
-
-  // ===================== LAZY =====================
-  if(selectedSys === "lazy"){
-
-    if(selectedCab === "24"){
-      score = 100;
-      text = "Lazy Susan optimizada";
-    }
-
-    if(selectedCab === "36"){
-      score = 95;
-      text = "Lazy Susan premium corner";
-    }
-
-    if(selectedCab === "12" || selectedCab === "15" || selectedCab === "18"){
-      score = 20;
-      blocked = true;
-    }
-  }
-
-  // ===================== LEMANS =====================
-  if(selectedSys === "lemans"){
-
-    if(selectedCab === "36"){
-      score = 100;
-      text = "LeMans Premium Corner System";
-    } else {
-      blocked = true;
-      score = 10;
-    }
-  }
-
-  // ===================== MAGIC =====================
-  if(selectedSys === "magic"){
-
-    if(selectedCab === "36"){
-      score = 95;
-      text = "Magic Corner Access System";
-    } else {
-      blocked = true;
-      score = 10;
-    }
-  }
-
-  // ===================== OUTPUT =====================
-
-  if(blocked){
-    result.innerHTML = `
-      <div class="danger">
-        ❌ NO COMPATIBLE<br><br>
-        Este hardware no es adecuado para este gabinete.
-      </div>
-    `;
-    return;
-  }
-
-  let quality = "";
-
-  if(score >= 95) quality = "🟢 BEST CHOICE";
-  else if(score >= 80) quality = "🟢 RECOMENDADO";
-  else quality = "🟡 OPCIONAL";
-
-  result.innerHTML = `
-    <div class="success">
-      <b>${quality}</b><br><br>
-      ${text}<br><br>
-      <b>Score de compatibilidad:</b> ${score}/100
-    </div>
-  `;
-    if(selectedCab && selectedSys){
-  runIkea(); // activa detalle completo automático
-}
-}
-
-function generatePDF(sys, cab){
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  doc.setFontSize(14);
-  doc.text("SOP HARDWARE SELECTION", 10, 10);
-
-  doc.setFontSize(11);
-  doc.text("Sistema: " + sys, 10, 25);
-  doc.text("Gabinete: " + cab + '"', 10, 35);
-
-  doc.text("Estado: VALIDADO SOP", 10, 45);
-
-  doc.save("SOP_" + sys + "_" + cab + ".pdf");
-}  
-
 </script>
 
 </body>
