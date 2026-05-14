@@ -224,6 +224,43 @@ h1{
   border-radius:8px;
   margin-top:10px;
 }
+
+  .grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
+  margin-top:15px;
+}
+
+.item{
+  background:white;
+  border-radius:14px;
+  padding:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.12);
+  cursor:pointer;
+  transition:0.2s;
+  border:2px solid transparent;
+}
+
+.item:hover{
+  transform:translateY(-3px);
+  border-color:#0072C6;
+}
+
+.item h3{
+  margin:0;
+  font-size:16px;
+  color:#0f172a;
+}
+
+.item p{
+  margin:5px 0;
+  color:#64748b;
+}
+
+.item small{
+  color:#94a3b8;
+}
 </style>
 </head>
 
@@ -253,228 +290,175 @@ h1{
 <!-- CONTENIDO -->
 <div class="container">
 
+  <!-- RESULTADO + ACCIÓN -->
   <div class="card">
-    <label>Tipo de gabinete</label>
-    <select id="cabinet">
-      <option value="">Seleccionar</option>
-      <option value="12">12” Base</option>
-      <option value="15">15” Base</option>
-      <option value="18">18” Base</option>
-      <option value="24">24” Base</option>
-      <option value="36">36” Corner</option>
-    </select>
 
-    <label>Sistema</label>
-    <select id="system">
-      <option value="">Seleccionar</option>
-      <option value="trash">Trash Can</option>
-      <option value="lazy">Lazy Susan</option>
-      <option value="lemans">LeMans</option>
-      <option value="magic">Magic Corner</option>
-    </select>
+    <h2>Compatibilidad</h2>
 
-    <button onclick="calc()">Generar recomendación</button>
+    <button onclick="runIkea()">Ver compatibilidad</button>
 
     <div id="result" class="result"></div>
+
   </div>
+
+
+  <!-- SELECCIÓN DE GABINETE -->
+  <div class="card">
+
+    <h2>Selecciona tu gabinete</h2>
+
+    <div class="grid" id="cabinetGrid">
+
+      <div class="item" onclick="selectCab('12')">
+        <h3>12” Base</h3>
+        <p>305 mm</p>
+        <small>Trash Can Single</small>
+      </div>
+
+      <div class="item" onclick="selectCab('15')">
+        <h3>15” Base</h3>
+        <p>381 mm</p>
+        <small>Trash Can Double Compact</small>
+      </div>
+
+      <div class="item" onclick="selectCab('18')">
+        <h3>18” Base</h3>
+        <p>457 mm</p>
+        <small>Trash / Accessories</small>
+      </div>
+
+      <div class="item" onclick="selectCab('24')">
+        <h3>24” Base</h3>
+        <p>610 mm</p>
+        <small>Lazy Susan</small>
+      </div>
+
+      <div class="item" onclick="selectCab('36')">
+        <h3>36” Corner</h3>
+        <p>900x900 mm</p>
+        <small>LeMans / Magic Corner</small>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- AQUÍ IRÍA SISTEMA (si lo tienes separado) -->
+  <div class="card">
+    <h2>Selecciona hardware</h2>
+
+    <div class="grid">
+      <div class="item" onclick="selectSys('trash')">🗑 Trash Can</div>
+      <div class="item" onclick="selectSys('lazy')">🍃 Lazy Susan</div>
+      <div class="item" onclick="selectSys('lemans')">🍋 LeMans</div>
+      <div class="item" onclick="selectSys('magic')">🧩 Magic Corner</div>
+    </div>
+
+  </div>
+
+</div>
+
+  <h2>Selecciona hardware</h2>
+
+  <div class="grid">
+
+    <div class="item" onclick="selectSys('trash')">🗑 Trash Can</div>
+    <div class="item" onclick="selectSys('lazy')">🍃 Lazy Susan</div>
+    <div class="item" onclick="selectSys('lemans')">🍋 LeMans</div>
+    <div class="item" onclick="selectSys('magic')">🧩 Magic Corner</div>
+
+  </div>
+
+</div>
+
+<div id="result" class="card"></div>
 
 </div>
 
 <script>
 
-function calc(){
+  let selectedCab = null;
+let selectedSys = null;
 
-let cab = document.getElementById("cabinet").value;
-let sys = document.getElementById("system").value;
+function selectCab(val){
+  selectedCab = val;
+  runIkea();
+}
+
+function selectSys(val){
+  selectedSys = val;
+  runIkea();
+}
+
+function runIkea(){
+
+let cab = selectedCab;
+let sys = selectedSys;
+
+if(!cab || !sys){
+  document.getElementById("result").innerHTML = `
+  <div class="warning">Selecciona gabinete y sistema para ver compatibilidad</div>
+  `;
+  return;
+}
 
 let out = "";
 
-function brandLinks(type){
-  if(type==="trash"){
-    return `
-    <b>Marcas disponibles:</b><br>
-    🔗 <a href="https://www.rev-a-shelf.com/" target="_blank">Rev-A-Shelf</a><br>
-    🔗 <a href="https://www.hafele.com/us/en/" target="_blank">Häfele</a><br>
-    🔗 <a href="https://www.blum.com/" target="_blank">Blum (limitado a sistemas similares)</a>
-    `;
-  }
-
-  if(type==="lazy"){
-    return `
-    <b>Marcas disponibles:</b><br>
-    🔗 <a href="https://www.rev-a-shelf.com/" target="_blank">Rev-A-Shelf Lazy Susan</a><br>
-    🔗 <a href="https://www.hafele.com/us/en/" target="_blank">Häfele Corner Systems</a>
-    `;
-  }
-
-  if(type==="lemans"){
-    return `
-    <b>Marcas disponibles:</b><br>
-    🔗 <a href="https://www.hafele.com/us/en/" target="_blank">Häfele LeMans</a><br>
-    🔗 <a href="https://www.rev-a-shelf.com/" target="_blank">Rev-A-Shelf Corner Pull-Out</a>
-    `;
-  }
-
-  if(type==="magic"){
-    return `
-    <b>Marcas disponibles:</b><br>
-    🔗 <a href="https://www.hafele.com/us/en/" target="_blank">Häfele Magic Corner</a><br>
-    🔗 <a href="https://www.rev-a-shelf.com/" target="_blank">Rev-A-Shelf Magic Corner Systems</a>
-    `;
-  }
-
-  return "";
-}
-
-/* ===================== TRASH ===================== */
+/* TRASH */
 if(sys==="trash"){
   if(cab==="12"){
     out = `
-🗑 <b>Trash Can SINGLE</b><br><br>
-
-<b>Especificaciones:</b><br>
-- Ancho mínimo: 12” (305 mm)<br>
-- 1 cubo (15–20L)<br>
-- Full extension slides obligatorios<br><br>
-
-<b>Limitaciones:</b><br>
-- No compatible con doble bin<br>
-- Requiere fondo limpio sin plumbing<br><br>
-
-<b>Recomendación:</b> Uso residencial / light commercial<br><br>
-
-${brandLinks("trash")}
-`;
+    <div class="success"><b>✔ Compatible</b></div>
+    🗑 Trash Can Single<br>
+    12” (305 mm)<br><br>
+    ✔ Ideal para espacios pequeños
+    `;
   }
 
   else if(cab==="15"){
     out = `
-🗑 <b>Trash Can DOUBLE Compact</b><br><br>
-
-<b>Especificaciones:</b><br>
-- Ancho mínimo: 15” (381 mm)<br>
-- 2 bins pequeños (10–15L)<br><br>
-
-<b>Limitaciones:</b><br>
-- No apto para bins grandes<br>
-- Requiere gabinete reforzado<br><br>
-
-<b>Recomendación:</b> Cocina estándar<br><br>
-
-${brandLinks("trash")}
-`;
+    <div class="success"><b>✔ Compatible</b></div>
+    🗑 Double Compact<br>
+    15” (381 mm)
+    `;
   }
 
   else if(cab==="18"){
     out = `
-🗑 <b>Trash Can DOUBLE Standard</b><br><br>
-
-<b>Especificaciones:</b><br>
-- Ancho mínimo: 18” (457 mm)<br>
-- 2 bins (15–20L)<br>
-- Heavy duty slides<br><br>
-
-<b>Limitaciones:</b><br>
-- Necesita profundidad mínima 21”<br><br>
-
-<b>Recomendación:</b> Uso profesional<br><br>
-
-${brandLinks("trash")}
-`;
+    <div class="success"><b>✔ Mejor opción</b></div>
+    🗑 Double Standard<br>
+    18” (457 mm)
+    `;
   }
 
-  else {
-    out="❌ No compatible con Trash Can";
+  else{
+    out = `<div class="danger">❌ No recomendado</div>`;
   }
 }
 
-/* ===================== LAZY SUSAN ===================== */
+/* LAZY */
 if(sys==="lazy"){
-  if(cab==="24"){
-    out = `
-🍃 <b>Lazy Susan Compact</b><br><br>
-
-<b>Especificaciones:</b><br>
-- 24” diámetro mínimo<br>
-- Sistema de 2 niveles<br><br>
-
-<b>Limitaciones:</b><br>
-- No carga pesada<br><br>
-
-${brandLinks("lazy")}
-`;
-  }
-
-  else if(cab==="36"){
-    out = `
-🍃 <b>Lazy Susan Standard</b><br><br>
-
-<b>Especificaciones:</b><br>
-- 32”–36” diámetro<br>
-- 2 o 3 niveles<br>
-- Base reforzada MDF 3/4”<br><br>
-
-<b>Limitaciones:</b><br>
-- Requiere nivelación perfecta<br><br>
-
-${brandLinks("lazy")}
-`;
-  }
-
-  else {
-    out="❌ No recomendado";
-  }
+  out = (cab==="24" || cab==="36")
+  ? `<div class="success"><b>✔ Compatible</b></div> Lazy Susan`
+  : `<div class="warning">⚠ Limitado</div>`;
 }
 
-/* ===================== LEMANS ===================== */
+/* LEMANS */
 if(sys==="lemans"){
-  if(cab==="36"){
-    out = `
-🍋 <b>LeMans Corner System</b><br><br>
-
-<b>Especificaciones:</b><br>
-- Gabinete: 36” corner (900x900 mm)<br>
-- Bandejas extraíbles 18”–21”<br>
-- Apertura puerta: 110° obligatorio<br><br>
-
-<b>Limitaciones:</b><br>
-- No funciona con 90° hinges<br>
-- Requiere espacio libre interno preciso<br><br>
-
-${brandLinks("lemans")}
-`;
-  } else {
-    out="⚠ Solo recomendado en 36 inch corner";
-  }
+  out = (cab==="36")
+  ? `<div class="success"><b>✔ Premium Fit</b></div> LeMans Corner System`
+  : `<div class="danger">❌ Solo 36” corner</div>`;
 }
 
-/* ===================== MAGIC CORNER ===================== */
+/* MAGIC */
 if(sys==="magic"){
-  if(cab==="36"){
-    out = `
-🧩 <b>Magic Corner System</b><br><br>
-
-<b>Especificaciones:</b><br>
-- Gabinete corner 36”<br>
-- Sistema doble extracción<br>
-- Rieles sincronizados<br><br>
-
-<b>Limitaciones:</b><br>
-- Sensible a desalineación<br>
-- Requiere instalación profesional<br><br>
-
-${brandLinks("magic")}
-`;
-  } else {
-    out="⚠ Preferido en 36 inch corner";
-  }
+  out = (cab==="36")
+  ? `<div class="success"><b>✔ Recommended</b></div> Magic Corner`
+  : `<div class="danger">❌ Solo 36” corner</div>`;
 }
 
-document.getElementById("result").innerHTML = `
-<div class="ux-card">
-  ${out}
-</div>
-`;
+document.getElementById("result").innerHTML = out;
+
 }
 
 </script>
