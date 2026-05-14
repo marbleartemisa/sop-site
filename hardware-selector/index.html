@@ -487,39 +487,76 @@ function getCompatibility(cab, sys){
   return rules[sys]?.[cab] || "no";
 }  
 
-function showResult(status, title, cab, sys, brands){
+function showResult(status, title, cab, sys, brands, spec = {}){
 
   let html = "";
 
-  // estado
+  // =========================
+  // ESTADO VISUAL
+  // =========================
   if(status === "best") html += `<div class="success">✔ RECOMENDADO</div>`;
   if(status === "ok") html += `<div class="success">✔ COMPATIBLE</div>`;
   if(status === "limited") html += `<div class="warning">⚠ LIMITADO</div>`;
   if(status === "no") html += `<div class="danger">❌ NO COMPATIBLE</div>`;
 
-  // título
+  // =========================
+  // TÍTULO
+  // =========================
   html += `<h3>${title}</h3>`;
 
-  // info técnica
+  // =========================
+  // INFO BÁSICA
+  // =========================
   html += `
     <p><b>Gabinete:</b> ${cab}"</p>
     <p><b>Sistema:</b> ${sys}</p>
     <hr>
   `;
 
-  // marcas
+  // =========================
+  // MARCAS
+  // =========================
   html += `<b>Marcas disponibles:</b><br>`;
 
-  brands.forEach(b=>{
-    html += `
-      <a href="${b.url}" target="_blank"
-         onclick="event.stopPropagation()">
-        ${b.name}
-      </a>
-    `;
-  });
+  if(brands && brands.length){
+    brands.forEach(b=>{
+      html += `
+        <a href="${b.url}" target="_blank" onclick="event.stopPropagation()">
+          ${b.name}
+        </a>
+      `;
+    });
+  }
 
-  // PDF
+  // =========================
+  // ESPECIFICACIONES (SAFE)
+  // =========================
+  if(spec && Object.keys(spec).length > 0){
+
+    html += `
+      <hr>
+
+      <b>📦 Especificación recomendada:</b><br>
+
+      <div style="margin-top:8px">
+
+        <b>Modelo sugerido:</b> ${spec.model || "N/A"}<br>
+        <b>Ancho mínimo gabinete:</b> ${spec.cabinet ? spec.cabinet + '"' : "N/A"}<br>
+        <b>Tipo:</b> ${spec.type || "N/A"}<br>
+        <b>Capacidad:</b> ${spec.capacity || "N/A"}<br>
+
+      </div>
+
+      <hr>
+
+      <b>🧩 Dimensiones del hardware:</b><br>
+      ${spec.dimensions || "No disponible"}
+    `;
+  }
+
+  // =========================
+  // BOTÓN PDF
+  // =========================
   html += `
     <br><br>
     <button onclick="generatePDF('${sys}','${cab}')">
@@ -527,6 +564,9 @@ function showResult(status, title, cab, sys, brands){
     </button>
   `;
 
+  // =========================
+  // OUTPUT FINAL
+  // =========================
   document.getElementById("result").innerHTML = html;
 }
   
@@ -541,78 +581,162 @@ function runIkea(){
     return;
   }
 
-  // 🗑 TRASH
+  // =========================
+  // 🗑 TRASH SYSTEM
+  // =========================
   if(sys === "trash"){
 
-    let status = (cab === "12") ? "best"
-                : (cab === "15") ? "ok"
-                : (cab === "18") ? "best"
-                : "limited";
+    const trashSpecs = {
+      "12": {
+        status: "best",
+        model: "Rev-A-Shelf 12” Single Pull-Out",
+        type: "Single Bin System",
+        capacity: "1 x 35–50L",
+        dimensions: "W 9–11” x D 20–22” x H 18–22”",
+        recommendation: "Ideal para espacios pequeños y baños secundarios"
+      },
+      "15": {
+        status: "ok",
+        model: "Rev-A-Shelf 15” Double Compact",
+        type: "Double Bin System",
+        capacity: "2 x 20–30L",
+        dimensions: "W 12–14” x D 22” x H 20–24”",
+        recommendation: "Uso estándar residencial compacto"
+      },
+      "18": {
+        status: "best",
+        model: "Rev-A-Shelf 18” Double Standard",
+        type: "Double Bin System",
+        capacity: "2 x 35–50L",
+        dimensions: "W 15–17” x D 22–24” x H 22–26”",
+        recommendation: "Mejor opción para cocina principal"
+      }
+    };
+
+    let data = trashSpecs[cab] || null;
+
+    if(!data){
+      document.getElementById("result").innerHTML =
+        `<div class="danger">❌ No compatible con este gabinete</div>`;
+      return;
+    }
 
     showResult(
-      status,
-      "Trash Can System",
+      data.status,
+      data.model,
       cab,
       sys,
       [
         {name:"Rev-A-Shelf", url:"https://rev-a-shelf.com"},
         {name:"Hafele", url:"https://www.hafele.com"}
-      ]
+      ],
+      data
     );
   }
 
-  // 🍃 LAZY
+  // =========================
+  // 🍃 LAZY SUSAN
+  // =========================
   if(sys === "lazy"){
 
-    let status = (cab === "24" || cab === "36") ? "best" : "no";
+      const data = {
+        status: (cab === "24") ? "best" : "limited",
+        model: "Lazy Susan 2 Tier / 3 Tier System",
+        cabinet: "24",
+        type: "Rotating Corner System",
+        capacity: "Circular trays 270°–360°",
+        dimensions: "24” base circular (610 mm)",
+        recommendation: "Solo base 24” estándar"
+      };
+    
+    if(cab !== "24"){
+      document.getElementById("result").innerHTML =
+        `<div class="warning">⚠ Recomendado solo para 24” base</div>`;
+      return;
+    }
 
     showResult(
-      status,
-      "Lazy Susan System",
+      data.status,
+      data.model,
       cab,
       sys,
       [
-        {name:"Hafele", url:"https://www.hafele.com"}
-      ]
+        {name:"Hafele", url:"https://www.hafele.com"},
+        {name:"Rev-A-Shelf", url:"https://rev-a-shelf.com"}
+      ],
+      data
     );
   }
 
+  // =========================
   // 🍋 LEMANS
+  // =========================
   if(sys === "lemans"){
 
-    let status = (cab === "36") ? "best" : "no";
+  const data = {
+  status: (cab === "36") ? "best" : "no",
+  model: "LeMans Corner Pull-Out System",
+  cabinet: "36",
+  type: "Premium Corner Pull-Out",
+  capacity: "2–4 trays heavy duty",
+  dimensions: "36” corner cabinet (900x900 mm)",
+  recommendation: "Solo esquina 36” con apertura total"
+};
+
+    if(cab !== "36"){
+      document.getElementById("result").innerHTML =
+        `<div class="danger">❌ Solo compatible con 36” corner</div>`;
+      return;
+    }
 
     showResult(
-      status,
-      "LeMans Corner System",
+      data.status,
+      data.model,
       cab,
       sys,
       [
         {name:"Blum", url:"https://www.blum.com"},
         {name:"Hafele", url:"https://www.hafele.com"}
-      ]
+      ],
+      data
     );
   }
 
-  // 🧩 MAGIC
+  // =========================
+  // 🧩 MAGIC CORNER
+  // =========================
   if(sys === "magic"){
 
-    let status = (cab === "36") ? "best" : "no";
+  const data = {
+  status: (cab === "36") ? "best" : "no",
+  model: "Magic Corner System",
+  cabinet: "36",
+  type: "Full Access Corner System",
+  capacity: "Dual sliding baskets",
+  dimensions: "36” corner cabinet (900x900 mm)",
+  recommendation: "Acceso total esquina premium"
+};
+
+    if(cab !== "36"){
+      document.getElementById("result").innerHTML =
+        `<div class="danger">❌ Solo compatible con 36” corner</div>`;
+      return;
+    }
 
     showResult(
-      status,
-      "Magic Corner System",
+      data.status,
+      data.model,
       cab,
       sys,
       [
         {name:"Hafele", url:"https://www.hafele.com"},
         {name:"Kesseböhmer", url:"https://www.kesseboehmer.com"}
-      ]
+      ],
+      data
     );
   }
 
 }
-
   function updateUI(){
 
   const result = document.getElementById("result");
