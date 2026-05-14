@@ -334,25 +334,25 @@ h1{
         <small>Trash Can Single</small>
       </div>
 
-      <div class="item" onclick="selectCab('15')">
+      <div class="item" onclick="selectCab('15', this)">
         <h3>15” Base</h3>
         <p>381 mm</p>
         <small>Trash Can Double Compact</small>
       </div>
 
-      <div class="item" onclick="selectCab('18')">
+      <div class="item" onclick="selectCab('18', this)">
         <h3>18” Base</h3>
         <p>457 mm</p>
         <small>Trash / Accessories</small>
       </div>
 
-      <div class="item" onclick="selectCab('24')">
+      <div class="item" onclick="selectCab('24', this)">
         <h3>24” Base</h3>
         <p>610 mm</p>
         <small>Lazy Susan</small>
       </div>
 
-      <div class="item" onclick="selectCab('36')">
+      <div class="item" onclick="selectCab('36', this)">
         <h3>36” Corner</h3>
         <p>900x900 mm</p>
         <small>LeMans / Magic Corner</small>
@@ -905,25 +905,7 @@ let data = lazySpecs[sys];
     data
   );
 }
-    
-    if(cab !== "24"){
-      document.getElementById("result").innerHTML =
-        `<div class="warning">⚠ Recomendado solo para 24” base</div>`;
-      return;
-    }
-
-    showResult(
-      data.status,
-      data.model,
-      cab,
-      sys,
-      [
-        {name:"Hafele", url:"https://www.hafele.com"},
-        {name:"Rev-A-Shelf", url:"https://rev-a-shelf.com"}
-      ],
-      data
-    );
-  }
+}
 
 
 // =========================
