@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SOP Hardware Selector</title>
 
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+    text-align: center;
+}
+
+select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    background: #e9f5ff;
+    border-left: 5px solid #007BFF;
+    white-space: pre-line;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>SOP Hardware Purchase Selector</h2>
+
+    <label>Selecciona tipo de gabinete:</label>
+    <select id="cabinet">
+        <option value="">-- Seleccionar --</option>
+        <option value="12">Base 12” (305 mm)</option>
+        <option value="15">Base 15” (381 mm)</option>
+        <option value="18">Base 18” (457 mm)</option>
+        <option value="24">Base 24” (610 mm)</option>
+        <option value="36">Corner 36” (900 mm)</option>
+    </select>
+
+    <label>Selecciona sistema:</label>
+    <select id="system">
+        <option value="">-- Seleccionar --</option>
+        <option value="trash">Trash Can Pull-Out</option>
+        <option value="lazy">Lazy Susan</option>
+        <option value="lemans">LeMans</option>
+        <option value="magic">Magic Corner</option>
+    </select>
+
+    <button onclick="calculate()">Generar recomendación SOP</button>
+
+    <div id="output" class="result"></div>
+</div>
+
+<script>
+function calculate() {
+    let cab = document.getElementById("cabinet").value;
+    let sys = document.getElementById("system").value;
+    let out = "";
+
+    if (!cab || !sys) {
+        out = "⚠ Selecciona gabinete y sistema.";
+        document.getElementById("output").innerText = out;
+        return;
+    }
+
+    if (sys === "trash") {
+        if (cab == "12") {
+            out = "🗑 Trash Can SINGLE\n- Hardware: 12\" pull-out\n- 1 cubo (15–20L)\n- Requiere riel full extension\n- Revisar plumbing inferior";
+        } 
+        else if (cab == "15") {
+            out = "🗑 Trash Can DOBLE compacto\n- Hardware: 15\" system\n- 2 cubos pequeños\n- Requiere base rígida";
+        } 
+        else if (cab == "18") {
+            out = "🗑 Trash Can DOBLE estándar\n- Hardware: 18\" heavy duty\n- 2 cubos (15–20L)\n- Uso profesional recomendado";
+        } 
+        else {
+            out = "❌ No compatible con Trash Can";
+        }
+    }
+
+    if (sys === "lazy") {
+        if (cab == "24") {
+            out = "🍃 Lazy Susan compacto\n- 24\" diameter system\n- Uso liviano";
+        } 
+        else if (cab == "36") {
+            out = "🍃 Lazy Susan estándar\n- 32–36\" system\n- Requiere eje centrado\n- Base reforzada 3/4\" MDF";
+        } 
+        else {
+            out = "❌ No recomendado para Lazy Susan";
+        }
+    }
+
+    if (sys === "lemans") {
+        if (cab == "36") {
+            out = "🍋 LeMans estándar\n- 18\"–21\" system\n- Apertura puerta 110° obligatorio\n- Holgura 1/8\"";
+        } 
+        else {
+            out = "⚠ LeMans solo recomendado en 36\" corner (33\" posible según marca)";
+        }
+    }
+
+    if (sys === "magic") {
+        if (cab == "36") {
+            out = "🧩 Magic Corner estándar\n- 18\"–20\" system\n- Nivelación crítica\n- Rieles paralelos obligatorios";
+        } 
+        else {
+            out = "⚠ Magic Corner preferido en 36\" corner (33–35\" depende del fabricante)";
+        }
+    }
+
+    document.getElementById("output").innerText = out;
+}
+</script>
+
+</body>
+</html>
