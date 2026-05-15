@@ -346,17 +346,43 @@ h1{
         <small>Trash / Accessories</small>
       </div>
 
-      <div class="item" onclick="selectCab('24', this)">
-        <h3>24” Base</h3>
-        <p>610 mm</p>
-        <small>Lazy Susan</small>
+      <div class="item" onclick="selectCab('21', this)">
+        <h3>21” Base</h3>
+        <p>533 mm</p>
+        <small>Large Trash / Premium Storage</small>
+      </div>
+      
+     <div class="item" onclick="selectCab('24diag', this)">
+        <h3>24” Diagonal Corner</h3>
+        <p>610 x 610 mm</p>
+        <small>Compact Lazy Susan</small>
       </div>
 
-      <div class="item" onclick="selectCab('36', this)">
-        <h3>36” Corner</h3>
-        <p>900x900 mm</p>
+        <div class="item" onclick="selectCab('33diag', this)">
+        <h3>33” Diagonal Corner</h3>
+        <p>838 x 838 mm</p>
+        <small>Compact Lazy Susan</small>
+      </div>
+
+        <div class="item" onclick="selectCab('33blind', this)">
+        <h3>33” Blind Corner</h3>
+        <p>838 mm Blind</p>
+        <small>Compact LeMans / Magic Corner</small>
+      </div>
+      
+      <div class="item" onclick="selectCab('36diag', this)">
+        <h3>36” Diagonal Corner</h3>
+        <p>900 x 900 mm</p>
+        <small>Premium Lazy Susan</small>
+      </div>
+      
+      <div class="item" onclick="selectCab('36blind', this)">
+        <h3>36” Blind Corner</h3>
+        <p>900 mm Blind</p>
         <small>LeMans / Magic Corner</small>
       </div>
+
+  
 
     </div>
 
@@ -454,44 +480,7 @@ function selectSys(val, el){
   updateUI();
 }
 
-function getCompatibility(cab, sys){
 
-  const rules = {
-
-    trash: {
-      "12": "ideal",
-      "15": "ok",
-      "18": "best",
-      "24": "limited"
-    },
-
-    lazy: {
-      "24": "best",
-      "30": "ok",
-      "36": "ok",
-      "12": "no",
-      "15": "no",
-      "18": "no"
-    },
-
-    lemans: {
-      "36": "best",
-      "33": "best",
-      "24": "no",
-      "18": "no"
-    },
-
-    magic: {
-      "36": "best",
-      "33": "best",
-      "24": "no",
-      "18": "no"
-    }
-
-  };
-
-  return rules[sys]?.[cab] || "no";
-}  
 
 function showResult(status, title, cab, sys, brands, spec = {}){
 
@@ -552,6 +541,11 @@ function showResult(status, title, cab, sys, brands, spec = {}){
         <b>Capacidad:</b> ${spec.capacity || "N/A"}<br>
 
       </div>
+
+      <b>Uso recomendado:</b> ${spec.recommendation || "N/A"}<br><br>
+
+        <b>Notas técnicas:</b><br>
+        ${spec.technical || "N/A"}
 
       <hr>
 
@@ -670,45 +664,81 @@ const trashSpecs = {
     image: "/sop-site/images/trash15.png"
   },
 
-  "18": {
-    status: "best",
+ "18": {
+  status: "best",
 
-    model: "Rev-A-Shelf 18” Double Standard",
+  model: "Rev-A-Shelf 18” Double Standard",
 
-    cabinet: '18"',
+  cabinet: '18"',
 
-    type: "Double Large Bin System",
+  type: "Double Large Bin System",
 
-    capacity: "2 x 35–50 Qt",
+  capacity: "2 x 35–50 Qt",
 
-    dimensions: `
-      Espacio libre mínimo:
-      14.5” – 15” W
-      (36.8 – 38.1 cm)
+  dimensions: `
+    Espacio libre mínimo:
+    14.5” – 15” W
+    (36.8 – 38.1 cm)
 
-      Profundidad mínima:
-      22”
-      (55.8 cm)
+    Profundidad mínima:
+    22”
+    (55.8 cm)
 
-      Sistema doble paralelo
-      reciclaje + basura
-    `,
+    Sistema doble paralelo
+    reciclaje + basura
+  `,
 
-    recommendation:
-      "Mejor opción para cocina principal y alto tráfico.",
+  recommendation:
+    "Mejor opción para cocina principal y alto tráfico.",
 
-    technical: `
-      Diseñado para:
-      • reciclaje + basura
-      • alta capacidad
-      • uso familiar intensivo
+  technical: `
+    Diseñado para:
+    • reciclaje + basura
+    • alta capacidad
+    • uso familiar intensivo
 
-      Permite sistemas premium
-      soft-close y extracción total.
-    `,
+    Permite sistemas premium soft-close y extracción total.
+  `,
 
-    image: "/sop-site/images/trash18.png"
-  }
+  image: "/sop-site/images/trash18.png"
+},
+
+"21": {
+  status: "best",
+
+  model: "Rev-A-Shelf 21” Double Premium",
+
+  cabinet: '21"',
+
+  type: "Double Large Premium Bin System",
+
+  capacity: "2 x 50 Qt",
+
+  dimensions: `
+    Espacio libre mínimo:
+    17.5” – 18” W
+    (44.4 – 45.7 cm)
+
+    Profundidad mínima:
+    22” – 24”
+
+    Sistema premium de alta capacidad
+  `,
+
+  recommendation:
+    "Ideal para cocinas premium con alto volumen de basura y reciclaje.",
+
+  technical: `
+    Diseñado para:
+    • basura + reciclaje
+    • familias grandes
+    • sistemas premium soft-close
+
+    Compatible con cubos extra grandes.
+  `,
+
+  image: "/sop-site/images/trash21.png"
+},
 
 };
 
@@ -913,7 +943,7 @@ let data = lazySpecs[sys];
 if(sys === "lemans"){
 
   const data = {
-    status: (cab === "36") ? "best" : "no",
+   status: (cab === "36blind") ? "best" : "no",
 
     model: "LeMans II Corner Pull-Out",
 
@@ -948,7 +978,7 @@ if(sys === "lemans"){
     image: "/sop-site/images/lemans.png"
   };
 
-  if(cab !== "36"){
+  if(cab !== "36blind"){
     document.getElementById("result").innerHTML =
       `<div class="danger">
         ❌ Solo compatible con esquinas 36”
@@ -983,7 +1013,7 @@ if(sys === "lemans"){
 if(sys === "magic"){
 
   const data = {
-    status: (cab === "36") ? "best" : "no",
+    status: (cab === "36blind") ? "best" : "no",
 
     model: "Magic Corner I / II",
 
@@ -1015,7 +1045,7 @@ if(sys === "magic"){
     image: "/sop-site/images/magiccorner.png"
   };
 
-  if(cab !== "36"){
+  if(cab !== "36blind"){
     document.getElementById("result").innerHTML =
       `<div class="danger">
         ❌ Solo compatible con esquina ciega 36”
@@ -1061,28 +1091,38 @@ if(sys === "magic"){
   let blocked = false;
 
   // ===================== TRASH =====================
-  if(selectedSys === "trash"){
+if(selectedSys === "trash"){
 
-    if(selectedCab === "12"){
-      score = 90;
-      text = "Trash Can Single - Optimizado para espacios reducidos";
-    }
-
-    if(selectedCab === "15"){
-      score = 100;
-      text = "Trash Can Double Compact - MEJOR OPCIÓN";
-    }
-
-    if(selectedCab === "18"){
-      score = 95;
-      text = "Trash Can Double Standard - alta capacidad";
-    }
-
-    if(selectedCab === "24" || selectedCab === "36"){
-      score = 30;
-      blocked = true;
-    }
+  if(selectedCab === "12"){
+    score = 75;
+    text = "Trash Single Compact - espacios reducidos";
   }
+
+  if(selectedCab === "15"){
+    score = 90;
+    text = "Trash Double Compact - estándar residencial";
+  }
+
+  if(selectedCab === "18"){
+    score = 98;
+    text = "Trash Double Standard - mejor balance capacidad/espacio";
+  }
+
+  if(selectedCab === "21"){
+    score = 100;
+    text = "Trash Premium XL - máxima capacidad y ergonomía";
+  }
+
+if(
+  selectedCab === "24diag" ||
+  selectedCab === "33diag" ||
+  selectedCab === "36diag" ||
+  selectedCab === "36blind"
+){
+  score = 20;
+  blocked = true;
+}
+}
 
   // ===================== LAZY =====================
      if(
@@ -1091,17 +1131,31 @@ if(sys === "magic"){
       selectedSys === "24PC"
     ){
 
-    if(selectedCab === "24"){
+         if(selectedCab === "24diag"){
+        score = 90;
+        text = "Compact Lazy Susan diagonal corner";
+      }
+       if(selectedCab === "33diag"){
+      score = 90;
+      text = "Lazy Susan compact diagonal corner";
+    }
+
+       
+    if(selectedCab === "36blind"){
+      blocked = true;
+      score = 10;
+    }
+    if(selectedCab === "36diag"){
       score = 100;
-      text = "Lazy Susan optimizada";
+      text = "Lazy Susan premium diagonal corner";
     }
 
-    if(selectedCab === "36"){
-      score = 95;
-      text = "Lazy Susan premium corner";
-    }
-
-    if(selectedCab === "12" || selectedCab === "15" || selectedCab === "18"){
+   if(
+  selectedCab === "12" ||
+  selectedCab === "15" ||
+  selectedCab === "18" ||
+  selectedCab === "21"
+){
       score = 20;
       blocked = true;
     }
@@ -1110,27 +1164,36 @@ if(sys === "magic"){
   // ===================== LEMANS =====================
   if(selectedSys === "lemans"){
 
-    if(selectedCab === "36"){
-      score = 100;
-      text = "LeMans Premium Corner System";
-    } else {
-      blocked = true;
-      score = 10;
+      if(selectedCab === "36blind"){
+        score = 100;
+        text = "LeMans Premium Blind Corner";
+      }
+      else if(selectedCab === "33blind"){
+        score = 80;
+        text = "LeMans Compact Blind Corner";
+      }
+      else{
+        blocked = true;
+        score = 10;
+      }
     }
-  }
 
   // ===================== MAGIC =====================
   if(selectedSys === "magic"){
 
-    if(selectedCab === "36"){
-      score = 95;
-      text = "Magic Corner Access System";
-    } else {
-      blocked = true;
-      score = 10;
-    }
-  }
-
+       if(selectedCab === "36blind"){
+        score = 95;
+        text = "Magic Corner Premium";
+      }
+      else if(selectedCab === "33blind"){
+        score = 75;
+        text = "Magic Corner Compact";
+      }
+      else{
+        blocked = true;
+        score = 10;
+      }
+ }
   // ===================== OUTPUT =====================
 
   if(blocked){
@@ -1143,24 +1206,29 @@ if(sys === "magic"){
     return;
   }
 
-  let quality = "";
 
-  if(score >= 95) quality = "🟢 BEST CHOICE";
-  else if(score >= 80) quality = "🟢 RECOMENDADO";
-  else quality = "🟡 OPCIONAL";
-
-  result.innerHTML = `
-    <div class="success">
-      <b>${quality}</b><br><br>
-      ${text}<br><br>
-      <b>Score de compatibilidad:</b> ${score}/100
-    </div>
-  `;
-    if(selectedCab && selectedSys){
-  runIkea(); // activa detalle completo automático
+if(selectedCab && selectedSys){
+  const result = getCompatibility(selectedCab, selectedSys);
+  runIkea();
 }
 }
+function getCabLabel(cab){
 
+  const labels = {
+    "12":"12 Base",
+    "15":"15 Base",
+    "18":"18 Base",
+    "21":"21 Base",
+    "24diag":"24 Diagonal Corner",
+    "33diag":"33 Diagonal Corner",
+    "33blind":"33 Blind Corner",
+    "36diag":"36 Diagonal Corner",
+    "36blind":"36 Blind Corner"
+  };
+
+  return labels[cab] || cab;
+}
+  
 function generatePDF(sys, cab){
 
   const { jsPDF } = window.jspdf;
@@ -1171,7 +1239,7 @@ function generatePDF(sys, cab){
 
   doc.setFontSize(11);
   doc.text("Sistema: " + sys, 10, 25);
-  doc.text("Gabinete: " + cab + '"', 10, 35);
+  doc.text("Gabinete: " + getCabLabel(cab), 10, 35);
 
   doc.text("Estado: VALIDADO SOP", 10, 45);
 
