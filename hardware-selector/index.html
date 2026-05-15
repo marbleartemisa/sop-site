@@ -490,22 +490,48 @@ function showResult(status, title, cab, sys, brands, spec = {}){
   // =========================
   // ESTADO VISUAL
   // =========================
-  if(status === "best") html += `<div class="success">✔ RECOMENDADO</div>`;
-  if(status === "ok") html += `<div class="success">✔ COMPATIBLE</div>`;
-  if(status === "limited") html += `<div class="warning">⚠ LIMITADO</div>`;
-  if(status === "no") html += `<div class="danger">❌ NO COMPATIBLE</div>`;
+  const statusMap = {
+    best: `<div class="success">✔ RECOMENDADO</div>`,
+    ok: `<div class="success">✔ COMPATIBLE</div>`,
+    limited: `<div class="warning">⚠ LIMITADO</div>`,
+    no: `<div class="danger">❌ NO COMPATIBLE</div>`
+  };
+
+  html += statusMap[status] || `<div class="warning">⚠ SIN ESTADO</div>`;
 
   // =========================
   // TÍTULO
   // =========================
-  html += `<h3>${title}</h3>`;
+  html += `<h3>${title || "Sin título"}</h3>`;
+
+  // =========================
+  // IMAGEN (NUEVO - SAFE)
+  // =========================
+  if(spec && spec.image){
+    html += `
+      <div style="margin:12px 0;">
+        <img 
+          src="${spec.image}" 
+          alt="${title || "hardware"}"
+          style="
+            width:100%;
+            max-width:320px;
+            border-radius:12px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.15);
+            display:block;
+          "
+          onerror="this.style.display='none'"
+        >
+      </div>
+    `;
+  }
 
   // =========================
   // INFO BÁSICA
   // =========================
   html += `
-    <p><b>Gabinete:</b> ${cab}"</p>
-    <p><b>Sistema:</b> ${sys}</p>
+    <p><b>Gabinete:</b> ${cab || "N/A"}"</p>
+    <p><b>Sistema:</b> ${sys || "N/A"}</p>
     <hr>
   `;
 
@@ -514,24 +540,27 @@ function showResult(status, title, cab, sys, brands, spec = {}){
   // =========================
   html += `<b>Marcas disponibles:</b><br>`;
 
-  if(brands && brands.length){
+  if(Array.isArray(brands) && brands.length > 0){
     brands.forEach(b=>{
+      if(!b) return;
+
       html += `
-        <a href="${b.url}" target="_blank" onclick="event.stopPropagation()">
-          ${b.name}
+        <a href="${b.url || "#"}" target="_blank" onclick="event.stopPropagation()">
+          ${b.name || "Marca"}
         </a>
       `;
     });
+  } else {
+    html += `<span style="color:#94a3b8">No disponibles</span>`;
   }
 
   // =========================
-  // ESPECIFICACIONES (SAFE)
+  // ESPECIFICACIONES
   // =========================
   if(spec && Object.keys(spec).length > 0){
 
     html += `
       <hr>
-
       <b>📦 Especificación recomendada:</b><br>
 
       <div style="margin-top:8px">
@@ -545,13 +574,17 @@ function showResult(status, title, cab, sys, brands, spec = {}){
 
       <b>Uso recomendado:</b> ${spec.recommendation || "N/A"}<br><br>
 
-        <b>Notas técnicas:</b><br>
-        ${spec.technical || "N/A"}
+      <b>Notas técnicas:</b><br>
+      <pre style="white-space:pre-wrap;margin:0">
+${spec.technical || "N/A"}
+      </pre>
 
       <hr>
 
       <b>🧩 Dimensiones del hardware:</b><br>
-      ${spec.dimensions || "No disponible"}
+      <pre style="white-space:pre-wrap;margin:0">
+${spec.dimensions || "No disponible"}
+      </pre>
     `;
   }
 
@@ -560,7 +593,7 @@ function showResult(status, title, cab, sys, brands, spec = {}){
   // =========================
   html += `
     <br><br>
-    <button onclick="generatePDF('${sys}','${cab}')">
+    <button onclick="generatePDF('${sys || ""}','${cab || ""}')">
       📄 Generar SOP de compra
     </button>
   `;
