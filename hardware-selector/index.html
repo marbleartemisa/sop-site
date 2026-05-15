@@ -472,7 +472,9 @@ function selectCab(val, el){
 function selectSys(val, el){
   selectedSys = val;
 
-  document.querySelectorAll(".card:nth-of-type(3) .item")
+  const hardwareCard = document.querySelectorAll(".card")[2];
+
+  hardwareCard.querySelectorAll(".item")
     .forEach(e => e.classList.remove("active"));
 
   el.classList.add("active");
