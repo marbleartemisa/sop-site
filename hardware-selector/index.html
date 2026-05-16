@@ -626,197 +626,32 @@ ${spec.dimensions || "No disponible"}
   document.getElementById("result").innerHTML = html;
 }
   
-function runIkea(){
+function runIkea() {
 
   let cab = selectedCab;
   let sys = selectedSys;
 
-  if(!cab || !sys){
+  if (!cab || !sys) {
     document.getElementById("result").innerHTML =
       `<div class="warning">Selecciona gabinete y sistema</div>`;
     return;
   }
 
-  // =========================
+  // =====================================================
   // 🗑 TRASH SYSTEM
-  // =========================
-  if(sys === "trash"){
+  // =====================================================
+  if (sys === "trash") {
 
+    const trashSpecs = {
+      "12": { status: "best", model: "Rev-A-Shelf 12” Single Pull-Out", cabinet: '12"', type: "Single Bin System", capacity: "1 x 27–35 Qt (25–33L)", image: "/sop-site/images/trash12.png" },
+      "15": { status: "ok", model: "Rev-A-Shelf 15” Double Compact", cabinet: '15"', type: "Double Compact Bin System", capacity: "50 Qt total", image: "/sop-site/images/trash15.png" },
+      "18": { status: "best", model: "Rev-A-Shelf 18” Double Standard", cabinet: '18"', type: "Double Large Bin System", capacity: "2 x 35–50 Qt", image: "/sop-site/images/trash18.png" },
+      "21": { status: "best", model: "Rev-A-Shelf 21” Double Premium", cabinet: '21"', type: "Premium System", capacity: "2 x 50 Qt", image: "/sop-site/images/trash21.png" }
+    };
 
-const trashSpecs = {
+    let data = trashSpecs[cab];
 
-  "12": {
-    status: "best",
-
-    model: "Rev-A-Shelf 12” Single Pull-Out",
-
-    cabinet: '12"',
-    
-    type: "Single Bin System",
-
-    capacity: "1 x 27–35 Qt (25–33L)",
-
-    dimensions: `
-      Bote:
-      14” L x 9.5” W x 18” H
-
-      Espacio libre mínimo:
-      8.5” – 9” W
-      (21.6 – 22.8 cm)
-
-      Profundidad recomendada:
-      20” – 22”
-    `,
-
-    recommendation:
-      "Ideal para espacios pequeños, baños, kitchenette o cocinas compactas.",
-
-    technical: `
-      Configuración interna:
-      Aloja estrictamente un solo bote de 27–35 Qt.
-
-      Requiere guías laterales compactas
-      y apertura completa frontal.
-    `,
-
-    image: "/sop-site/images/trash12.png"
-  },
-
-  "15": {
-    status: "ok",
-
-    model: "Rev-A-Shelf 15” Double Compact",
-
-    cabinet: '15"',
-
-    type: "Double Compact Bin System",
-
-    capacity: "50 Qt total o 2 x 27–35 Qt",
-
-    dimensions: `
-      Bote individual:
-      14.7” L x 10.7” W x 22.5” H
-
-      Espacio libre mínimo:
-      11.5” – 12” W
-      (29.2 – 30.5 cm)
-
-      Profundidad requerida:
-      22”
-    `,
-
-    recommendation:
-      "Configuración estándar residencial compacta.",
-
-    technical: `
-      Compatible con:
-      • 1 bote grande 50 Qt
-      • 2 botes medianos en línea
-
-      Excelente balance entre capacidad
-      y espacio interno.
-    `,
-
-    image: "/sop-site/images/trash15.png"
-  },
-
- "18": {
-  status: "best",
-
-  model: "Rev-A-Shelf 18” Double Standard",
-
-  cabinet: '18"',
-
-  type: "Double Large Bin System",
-
-  capacity: "2 x 35–50 Qt",
-
-  dimensions: `
-    Espacio libre mínimo:
-    14.5” – 15” W
-    (36.8 – 38.1 cm)
-
-    Profundidad mínima:
-    22”
-    (55.8 cm)
-
-    Sistema doble paralelo
-    reciclaje + basura
-  `,
-
-  recommendation:
-    "Mejor opción para cocina principal y alto tráfico.",
-
-  technical: `
-    Diseñado para:
-    • reciclaje + basura
-    • alta capacidad
-    • uso familiar intensivo
-
-    Permite sistemas premium soft-close y extracción total.
-  `,
-
-  image: "/sop-site/images/trash18.png",
-   warnings: [
-  "Verify plumbing clearance under sink",
-  "Check full extension rail space",
-  "Confirm interior usable width (not exterior)"
-],
-
-compatibility: {
-  physical: "ok",
-  commercial: "standard",
-  technical: "ok",
-  brand: {
-    revAShelf: true,
-    hafele: true,
-    blum: true
-  }
-}
-},
-
-"21": {
-  status: "best",
-
-  model: "Rev-A-Shelf 21” Double Premium",
-
-  cabinet: '21"',
-
-  type: "Double Large Premium Bin System",
-
-  capacity: "2 x 50 Qt",
-
-  dimensions: `
-    Espacio libre mínimo:
-    17.5” – 18” W
-    (44.4 – 45.7 cm)
-
-    Profundidad mínima:
-    22” – 24”
-
-    Sistema premium de alta capacidad
-  `,
-
-  recommendation:
-    "Ideal para cocinas premium con alto volumen de basura y reciclaje.",
-
-  technical: `
-    Diseñado para:
-    • basura + reciclaje
-    • familias grandes
-    • sistemas premium soft-close
-
-    Compatible con cubos extra grandes.
-  `,
-
-  image: "/sop-site/images/trash21.png"
-},
-
-};
-
-    let data = trashSpecs[cab] || null;
-
-    if(!data){
+    if (!data) {
       document.getElementById("result").innerHTML =
         `<div class="danger">❌ No compatible con este gabinete</div>`;
       return;
@@ -828,592 +663,181 @@ compatibility: {
       cab,
       sys,
       [
-        {name:"Rev-A-Shelf", url:"https://rev-a-shelf.com"},
-        {name:"Hafele", url:"https://www.hafele.com"}
+        { name: "Rev-A-Shelf", url: "https://rev-a-shelf.com" },
+        { name: "Hafele", url: "https://www.hafele.com" }
       ],
       data
     );
+
+    return;
   }
 
+  // =====================================================
+  // 🍃 LAZY SUSAN (FIX REAL)
+  // =====================================================
+  if (sys === "24FC" || sys === "24KS" || sys === "24PC") {
 
-// =========================
-// 🍃 LAZY SUSAN
-// =========================
-if (
-  sys === "24FC" ||
-  sys === "24KS" ||
-  sys === "24PC"
-) {
-
-  const lazySpecs = {
-
-    // =================================================
-    // 24 DIAGONAL CORNER
-    // =================================================
-    "24diag": {
-
-      "FC": {
-        status: "ok",
-
-        model: '24" Full Circle Lazy Susan',
-
-        cabinet: '24" Diagonal Corner',
-
-        type: "Full Circle Rotating System",
-
-        efficiency: "medium",
-        risk: "low",
-
-        capacity: "Light duty",
-
-        recommendation:
-          "Solución compacta para cocinas pequeñas. Funciona bien pero con capacidad limitada.",
-
-        technical: `
-• Recomendado únicamente para esquinas pequeñas
-• Máximo aprovechamiento en gabinete 24”
-• Requiere eje perfectamente centrado
-        `,
-
-        dimensions: `
-Diámetro recomendado:
-24” (610 mm)
-
-Gabinete:
-24” x 24”
-
-Apertura mínima:
-12”
-        `,
-
-        image: "/sop-site/images/lazy-fullcircle.png",
-
-        constraints: {
-          minCabinet: 24,
-          maxCabinet: 24,
-          cornerType: "diagonal"
-        }
-      }
-    },
-
-    // =================================================
-    // 33 DIAGONAL CORNER
-    // =================================================
-    "33diag": {
-
-      "FC": {
-        status: "ok",
-
-        model: '28" Full Circle Lazy Susan',
-
-        cabinet: '33" Diagonal Corner',
-
-        type: "Full Circle Medium Duty",
-
-        efficiency: "medium",
-        risk: "low",
-
-        capacity: "Medium storage",
-
-        recommendation:
-          "Funciona correctamente, pero no es la opción más eficiente para este gabinete.",
-
-        technical: `
-• 28” es estándar funcional
-• 24” desperdicia espacio interno
-• Compatible con Rev-A-Shelf y Häfele
-        `,
-
-        dimensions: `
-Diámetro recomendado:
-28” (710 mm)
-
-Gabinete:
-33” diagonal
-        `,
-
-        image: "/sop-site/images/lazy-fullcircle.png",
-
-        constraints: {
-          minCabinet: 30,
-          maxCabinet: 33,
-          cornerType: "diagonal"
+    const lazySpecs = {
+      "24diag": {
+        FC: {
+          status: "ok",
+          model: '24" Full Circle Lazy Susan',
+          cabinet: '24" Diagonal Corner',
+          image: "/sop-site/images/lazy-fullcircle.png"
         }
       },
 
-      "KS": {
-        status: "best",
-
-        model: '28" Kidney Lazy Susan',
-
-        cabinet: '33" Diagonal Corner',
-
-        type: "Kidney Shape 270° System",
-
-        efficiency: "high",
-        risk: "low",
-
-        capacity: "Optimized corner access",
-
-        recommendation:
-          "Mejor aprovechamiento del espacio y mejor ergonomía que Full Circle.",
-
-        technical: `
-• Mejor acceso que Full Circle
-• Mayor aprovechamiento de esquina
-• Compatible con Blum y Häfele
-        `,
-
-        dimensions: `
-Diámetro:
-28”
-
-Apertura mínima:
-12”
-        `,
-
-        image: "/sop-site/images/lazy-kidney.png",
-
-        constraints: {
-          minCabinet: 30,
-          maxCabinet: 33,
-          cornerType: "diagonal"
-        }
-      }
-    },
-
-    // =================================================
-    // 36 DIAGONAL CORNER
-    // =================================================
-    "36diag": {
-
-      "FC": {
-        status: "best",
-
-        model: '32"–36" Heavy Duty Full Circle',
-
-        cabinet: '36" Diagonal Corner',
-
-        type: "Heavy Duty Full Circle System",
-
-        efficiency: "high",
-        risk: "low",
-
-        capacity: "Maximum storage",
-
-        recommendation:
-          "Máximo aprovechamiento del gabinete. Ideal para cocinas grandes.",
-
-        technical: `
-• 32”–36” recomendado
-• 24” genera desperdicio de espacio
-• Base reforzada obligatoria
-• Eje centrado crítico
-        `,
-
-        dimensions: `
-Diámetro:
-32”–36”
-
-Gabinete:
-36” x 36”
-
-Base:
-3/4” reforzada
-        `,
-
-        image: "/sop-site/images/lazy-fullcircle.png",
-
-        constraints: {
-          minCabinet: 33,
-          maxCabinet: 36,
-          cornerType: "diagonal"
+      "33diag": {
+        FC: {
+          status: "ok",
+          model: '28" Full Circle Lazy Susan',
+          cabinet: '33" Diagonal Corner',
+          image: "/sop-site/images/lazy-fullcircle.png"
+        },
+        KS: {
+          status: "best",
+          model: '28" Kidney Lazy Susan',
+          cabinet: '33" Diagonal Corner',
+          image: "/sop-site/images/lazy-kidney.png"
         }
       },
 
-      "KS": {
-        status: "best",
-
-        model: '32" Kidney Heavy Duty',
-
-        cabinet: '36" Diagonal Corner',
-
-        type: "Kidney Shape Premium System",
-
-        efficiency: "high",
-        risk: "low",
-
-        capacity: "Premium corner storage",
-
-        recommendation:
-          "Excelente ergonomía y acceso en cocinas premium.",
-
-        technical: `
-• Acceso superior
-• Muy buen aprovechamiento
-• Compatible con Blum premium systems
-        `,
-
-        dimensions: `
-Diámetro:
-32”
-
-Apertura mínima:
-12”
-        `,
-
-        image: "/sop-site/images/lazy-kidney.png",
-
-        constraints: {
-          minCabinet: 33,
-          maxCabinet: 36,
-          cornerType: "diagonal"
-        }
-      },
-
-      "PC": {
-        status: "ok",
-
-        model: '32"–36" Pie Cut Premium',
-
-        cabinet: '36" Diagonal Corner',
-
-        type: "Door Mounted Rotation System",
-
-        efficiency: "medium",
-        risk: "medium",
-
-        capacity: "Integrated rotation system",
-
-        recommendation:
-          "Sistema elegante, pero requiere alineación precisa de puerta.",
-
-        technical: `
-• Requiere alineación perfecta
-• Dependiente de bisagras
-• Sensible a desajustes
-        `,
-
-        dimensions: `
-Sistema:
-32”–36”
-
-Holgura:
-2” mínima
-        `,
-
-        image: "/sop-site/images/lazy-piecut.png",
-
-        constraints: {
-          minCabinet: 33,
-          maxCabinet: 36,
-          cornerType: "diagonal"
+      "36diag": {
+        FC: {
+          status: "best",
+          model: '36" Full Circle Heavy Duty',
+          cabinet: '36" Diagonal Corner',
+          image: "/sop-site/images/lazy-fullcircle.png"
+        },
+        KS: {
+          status: "best",
+          model: '32" Kidney Heavy Duty',
+          cabinet: '36" Diagonal Corner',
+          image: "/sop-site/images/lazy-kidney.png"
+        },
+        PC: {
+          status: "ok",
+          model: 'Pie-Cut Premium',
+          cabinet: '36" Diagonal Corner',
+          image: "/sop-site/images/lazy-piecut.png"
         }
       }
+    };
+
+    // 🔥 FIX CLAVE: elimina número automáticamente
+    let sysKey = sys.replace(/[0-9]+/, "");
+
+    let data = lazySpecs[cab]?.[sysKey];
+
+    if (!data) {
+      document.getElementById("result").innerHTML =
+        `<div class="warning">⚠ Lazy Susan no compatible</div>`;
+      return;
     }
-  };
 
-  let data = lazySpecs[cab]?.[sys];
+    showResult(
+      data.status,
+      data.model,
+      cab,
+      sys,
+      [
+        { name: "Hafele", url: "https://www.hafele.com" },
+        { name: "Rev-A-Shelf", url: "https://rev-a-shelf.com" }
+      ],
+      data
+    );
 
-  if (!data) {
-    document.getElementById("result").innerHTML =
-      `<div class="warning">
-        ⚠ Lazy Susan no compatible
-      </div>`;
     return;
   }
 
-  showResult(
-    data.status,
-    data.model,
-    cab,
-    sys,
-    [
-      { name: "Hafele", url: "https://www.hafele.com" },
-      { name: "Rev-A-Shelf", url: "https://rev-a-shelf.com" }
-    ],
-    data
-  );
+  // =====================================================
+  // 🍋 LEMANS
+  // =====================================================
+  if (sys === "lemans") {
 
-  return;
-}
+    let data = null;
 
-// =========================
-// 🍋 LEMANS II
-// =========================
-if(sys === "lemans"){
+    if (cab === "36blind") {
+      data = {
+        status: "best",
+        model: "LeMans II Premium 36\"",
+        cabinet: '36" Blind Corner',
+        image: "/sop-site/images/lemans.png"
+      };
+    } else if (cab === "33blind") {
+      data = {
+        status: "ok",
+        model: "LeMans Compact 33–35\"",
+        cabinet: '33–35" Blind Corner',
+        image: "/sop-site/images/lemans.png"
+      };
+    }
 
-  let data = null;
+    if (!data) {
+      document.getElementById("result").innerHTML =
+        `<div class="danger">❌ LeMans no compatible</div>`;
+      return;
+    }
 
-  // =========================
-  // 36" BLIND CORNER (BEST)
-  // =========================
-  if(cab === "36blind"){
+    showResult(
+      data.status,
+      data.model,
+      cab,
+      sys,
+      [
+        { name: "Blum", url: "https://www.blum.com" },
+        { name: "Hafele", url: "https://www.hafele.com" }
+      ],
+      data
+    );
 
-    data = {
-      status: "best",
-
-      model: "LeMans II Premium 36\"",
-
-      cabinet: '36" Blind Corner',
-
-      type: "Articulated Pull-Out Shelves",
-
-      efficiency: "high",
-      risk: "low",
-
-      capacity: "High load corner storage",
-
-      dimensions: `
-Profundidad mínima:
-19-3/4” – 21-9/16”
-
-Altura mínima:
-21-1/2”
-
-Apertura requerida:
-110°–165°
-      `,
-
-      recommendation:
-        "Sistema premium óptimo para cocinas de alto tráfico y máxima ergonomía.",
-
-      technical: `
-• Requiere bisagras 110° o 165°
-• Gabinete perfectamente nivelado
-• Profundidad interna ≥ 20”
-• Máxima estabilidad estructural
-      `,
-
-      image: "/sop-site/images/lemans.png"
-    };
-  }
-
-  // =========================
-  // 33–35" BLIND CORNER (OK)
-  // =========================
-  else if(cab === "33blind"){
-
-    data = {
-      status: "ok",
-
-      model: "LeMans Compact 33–35\"",
-
-      cabinet: '33–35" Blind Corner',
-
-      type: "Compact Articulated System",
-
-      efficiency: "medium",
-      risk: "medium",
-
-      capacity: "Reduced corner access",
-
-      dimensions: `
-Profundidad mínima:
-19” – 21”
-
-Apertura:
-110° mínimo
-      `,
-
-      recommendation:
-        "Funciona correctamente pero con menor recorrido y capacidad.",
-
-      technical: `
-• Menor extensión de brazo
-• Puede perder volumen útil
-• Requiere alineación precisa
-      `,
-
-      image: "/sop-site/images/lemans.png"
-    };
-  }
-
-  // =========================
-  // NO COMPATIBLE
-  // =========================
-  else {
-    document.getElementById("result").innerHTML =
-      `<div class="danger">
-        ❌ LeMans no compatible con este gabinete
-      </div>`;
     return;
   }
 
-  // =========================
-  // OUTPUT
-  // =========================
-  showResult(
-    data.status,
-    data.model,
-    cab,
-    sys,
-    [
-      {
-        name:"Kesseböhmer",
-        url:"https://www.kesseboehmer.com"
-      },
-      {
-        name:"Häfele",
-        url:"https://www.hafele.com"
-      },
-      {
-        name:"Blum",
-        url:"https://www.blum.com"
-      }
-    ],
-    data
-  );
+  // =====================================================
+  // 🧩 MAGIC CORNER
+  // =====================================================
+  if (sys === "magic") {
 
-  return;
-}
+    let data = null;
 
-// =========================
-// 🧩 MAGIC CORNER
-// =========================
-if(sys === "magic"){
+    if (cab === "36blind") {
+      data = {
+        status: "best",
+        model: "Magic Corner Premium 36\"",
+        cabinet: '36" Blind Corner',
+        image: "/sop-site/images/magiccorner.png"
+      };
+    } else if (cab === "33blind") {
+      data = {
+        status: "ok",
+        model: "Magic Corner Compact 33–35\"",
+        cabinet: '33–35" Blind Corner',
+        image: "/sop-site/images/magiccorner.png"
+      };
+    }
 
-  let data = null;
+    if (!data) {
+      document.getElementById("result").innerHTML =
+        `<div class="danger">❌ Magic Corner no compatible</div>`;
+      return;
+    }
 
-  // =========================
-  // 36" BLIND CORNER (BEST)
-  // =========================
-  if(cab === "36blind"){
+    showResult(
+      data.status,
+      data.model,
+      cab,
+      sys,
+      [
+        { name: "Hafele", url: "https://www.hafele.com" },
+        { name: "Blum", url: "https://www.blum.com" }
+      ],
+      data
+    );
 
-    data = {
-      status: "best",
-
-      model: "Magic Corner Premium 36\"",
-
-      cabinet: '36" Blind Corner',
-
-      type: "Dual Tray Mechanical Extraction",
-
-      efficiency: "high",
-      risk: "medium",
-
-      capacity: `
-Front baskets: 22 lbs each
-Rear baskets: 17 lbs each
-      `,
-
-      dimensions: `
-Cabinet width:
-38-3/8” – 44”
-
-Door opening:
-110° minimum
-      `,
-
-      recommendation:
-        "Sistema premium con máxima accesibilidad en esquinas ciegas.",
-
-      technical: `
-• Requiere gabinete perfectamente nivelado
-• Rieles deben estar paralelos
-• Bisagras 110° o 165°
-• Alta sensibilidad a instalación
-      `,
-
-      compatibility: {
-        hafele: "excellent",
-        blum: "excellent",
-        kessebohmer: "excellent"
-      },
-
-      image: "/sop-site/images/magiccorner.png"
-    };
-  }
-
-  // =========================
-  // 33–35" BLIND CORNER (OK / LIMITADO)
-  // =========================
-  else if(cab === "33blind"){
-
-    data = {
-      status: "ok",
-
-      model: "Magic Corner Compact 33–35\"",
-
-      cabinet: '33–35" Blind Corner',
-
-      type: "Compact Dual Tray System",
-
-      efficiency: "medium",
-      risk: "high",
-
-      capacity: `
-Reduced load capacity vs standard system
-      `,
-
-      dimensions: `
-Cabinet width:
-33”–35”
-
-Door opening:
-110° minimum
-      `,
-
-      recommendation:
-        "Funciona, pero con menor capacidad y mayor sensibilidad a errores de instalación.",
-
-      technical: `
-• Menor recorrido de bandejas
-• Mayor fricción en rieles
-• Sensible a desalineación del gabinete
-• No recomendado para cargas pesadas
-      `,
-
-      compatibility: {
-        hafele: "good",
-        blum: "good",
-        kessebohmer: "good"
-      },
-
-      image: "/sop-site/images/magiccorner.png"
-    };
-  }
-
-  // =========================
-  // NO COMPATIBLE
-  // =========================
-  else {
-    document.getElementById("result").innerHTML =
-      `<div class="danger">
-        ❌ Magic Corner no compatible con este gabinete
-      </div>`;
     return;
   }
-
-  // =========================
-  // OUTPUT
-  // =========================
-  showResult(
-    data.status,
-    data.model,
-    cab,
-    sys,
-    [
-      {
-        name:"Häfele",
-        url:"https://www.hafele.com"
-      },
-      {
-        name:"Blum",
-        url:"https://www.blum.com"
-      },
-      {
-        name:"Kesseböhmer",
-        url:"https://www.kesseboehmer.com"
-      }
-    ],
-    data
-  );
-
-  return;
 }
-
-} // ← ESTA LLAVE CIERRA runIkea()
 
   
   function updateUI(){
