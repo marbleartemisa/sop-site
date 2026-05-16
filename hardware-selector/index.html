@@ -795,92 +795,90 @@ Diseñado para familias grandes y uso intensivo.
   // =========================
   // 🍃 LAZY SUSAN
   // =========================
-  if (
-    sys === "24FC" ||
-    sys === "24KS" ||
-    sys === "24PC"
-  ) {
 
-    const lazySpecs = {
+if (
+  sys === "24FC" || sys === "24KS" || sys === "24PC" ||
+  sys === "33FC" || sys === "33KS" || sys === "33PC" ||
+  sys === "36FC" || sys === "36KS" || sys === "36PC"
+) {
 
-      "24diag": {
-        "FC": {
-          status: "ok",
-          model: '24" Full Circle Lazy Susan',
-          cabinet: '24" Diagonal Corner',
-          image: "/sop-site/images/lazy-fullcircle.png"
-        }
-      },
-
-      "33diag": {
-        "FC": {
-          status: "ok",
-          model: '28" Full Circle Lazy Susan',
-          cabinet: '33" Diagonal Corner',
-          image: "/sop-site/images/lazy-fullcircle.png"
-        },
-
-        "KS": {
-          status: "best",
-          model: '28" Kidney Lazy Susan',
-          cabinet: '33" Diagonal Corner',
-          image: "/sop-site/images/lazy-kidney.png"
-        }
-      },
-
-      "36diag": {
-        "FC": {
-          status: "best",
-          model: '32–36" Full Circle',
-          cabinet: '36" Diagonal Corner',
-          image: "/sop-site/images/lazy-fullcircle.png"
-        },
-
-        "KS": {
-          status: "best",
-          model: '32" Kidney Heavy Duty',
-          cabinet: '36" Diagonal Corner',
-          image: "/sop-site/images/lazy-kidney.png"
-        },
-
-        "PC": {
-          status: "ok",
-          model: 'Pie-Cut Premium',
-          cabinet: '36" Diagonal Corner',
-          image: "/sop-site/images/lazy-piecut.png"
-        }
+  const lazySpecs = {
+    "24diag": {
+      "FC": {
+        status: "ok",
+        model: '24" Full Circle Lazy Susan',
+        cabinet: '24" Diagonal Corner',
+        image: "/sop-site/images/lazy-fullcircle.png"
       }
-    };
+    },
 
-    let sysKey = sys.replace(/[0-9]+/, "");
-    let data = lazySpecs[cab]?.[sysKey];
+    "33diag": {
+      "FC": {
+        status: "ok",
+        model: '28" Full Circle Lazy Susan',
+        cabinet: '33" Diagonal Corner',
+        image: "/sop-site/images/lazy-fullcircle.png"
+      },
 
-    if (!data) {
-      document.getElementById("result").innerHTML =
-        `<div class="warning">⚠ Lazy Susan no compatible</div>`;
-      return;
+      "KS": {
+        status: "best",
+        model: '28" Kidney Lazy Susan',
+        cabinet: '33" Diagonal Corner',
+        image: "/sop-site/images/lazy-kidney.png"
+      }
+    },
+
+    "36diag": {
+      "FC": {
+        status: "best",
+        model: '32–36" Full Circle',
+        cabinet: '36" Diagonal Corner',
+        image: "/sop-site/images/lazy-fullcircle.png"
+      },
+
+      "KS": {
+        status: "best",
+        model: '32" Kidney Heavy Duty',
+        cabinet: '36" Diagonal Corner',
+        image: "/sop-site/images/lazy-kidney.png"
+      },
+
+      "PC": {
+        status: "ok",
+        model: 'Pie-Cut Premium',
+        cabinet: '36" Diagonal Corner',
+        image: "/sop-site/images/lazy-piecut.png"
+      }
     }
+  };
 
-    showResult(
-      data.status,
-      data.model,
-      cab,
-      sys,
-      [
-        {
-          name: "Hafele",
-          url: "https://www.hafele.com"
-        },
-        {
-          name: "Rev-A-Shelf",
-          url: "https://rev-a-shelf.com"
-        }
-      ],
-      data
-    );
+  // ✔ FIX IMPORTANTE (más limpio y seguro)
+  let sysKey = sys.slice(-2); // "FC", "KS", "PC"
 
+  let diagKey = cab + "diag";
+
+  let data = lazySpecs[diagKey]?.[sysKey];
+
+  if (!data) {
+    document.getElementById("result").innerHTML =
+      `<div class="warning">⚠ Lazy Susan no compatible</div>`;
     return;
   }
+
+  showResult(
+    data.status,
+    data.model,
+    cab,
+    sys,
+    [
+      { name: "Hafele", url: "https://www.hafele.com" },
+      { name: "Rev-A-Shelf", url: "https://rev-a-shelf.com" }
+    ],
+    data
+  );
+
+  return;
+}
 }
 
   
