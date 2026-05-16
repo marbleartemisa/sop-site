@@ -842,45 +842,46 @@ compatibility: {
   }
 
 
- // =========================
+// =========================
 // 🍃 LAZY SUSAN
 // =========================
-if(
+if (
   sys === "24FC" ||
   sys === "24KS" ||
   sys === "24PC"
-){
-const lazySpecs = {
+) {
 
-  // =================================================
-  // 24 DIAGONAL CORNER
-  // =================================================
-  "24diag": {
+  const lazySpecs = {
 
-    "FC": {
-      status: "ok",
+    // =================================================
+    // 24 DIAGONAL CORNER
+    // =================================================
+    "24diag": {
 
-      model: '24" Full Circle Lazy Susan',
+      "FC": {
+        status: "ok",
 
-      cabinet: '24" Diagonal Corner',
+        model: '24" Full Circle Lazy Susan',
 
-      type: "Full Circle Rotating System",
+        cabinet: '24" Diagonal Corner',
 
-      efficiency: "medium",
-      risk: "low",
+        type: "Full Circle Rotating System",
 
-      capacity: "Light duty",
+        efficiency: "medium",
+        risk: "low",
 
-      recommendation:
-        "Solución compacta para cocinas pequeñas. Funciona bien pero con capacidad limitada.",
+        capacity: "Light duty",
 
-      technical: `
+        recommendation:
+          "Solución compacta para cocinas pequeñas. Funciona bien pero con capacidad limitada.",
+
+        technical: `
 • Recomendado únicamente para esquinas pequeñas
 • Máximo aprovechamiento en gabinete 24”
 • Requiere eje perfectamente centrado
-      `,
+        `,
 
-      dimensions: `
+        dimensions: `
 Diámetro recomendado:
 24” (610 mm)
 
@@ -889,134 +890,134 @@ Gabinete:
 
 Apertura mínima:
 12”
-      `,
+        `,
 
-      image: "/sop-site/images/lazy-fullcircle.png",
+        image: "/sop-site/images/lazy-fullcircle.png",
 
-      constraints: {
-        minCabinet: 24,
-        maxCabinet: 24,
-        cornerType: "diagonal"
+        constraints: {
+          minCabinet: 24,
+          maxCabinet: 24,
+          cornerType: "diagonal"
+        }
       }
-    }
-  },
+    },
 
-  // =================================================
-  // 33 DIAGONAL CORNER
-  // =================================================
-  "33diag": {
+    // =================================================
+    // 33 DIAGONAL CORNER
+    // =================================================
+    "33diag": {
 
-    "FC": {
-      status: "ok",
+      "FC": {
+        status: "ok",
 
-      model: '28" Full Circle Lazy Susan',
+        model: '28" Full Circle Lazy Susan',
 
-      cabinet: '33" Diagonal Corner',
+        cabinet: '33" Diagonal Corner',
 
-      type: "Full Circle Medium Duty",
+        type: "Full Circle Medium Duty",
 
-      efficiency: "medium",
-      risk: "low",
+        efficiency: "medium",
+        risk: "low",
 
-      capacity: "Medium storage",
+        capacity: "Medium storage",
 
-      recommendation:
-        "Funciona correctamente, pero no es la opción más eficiente para este gabinete.",
+        recommendation:
+          "Funciona correctamente, pero no es la opción más eficiente para este gabinete.",
 
-      technical: `
+        technical: `
 • 28” es estándar funcional
 • 24” desperdicia espacio interno
 • Compatible con Rev-A-Shelf y Häfele
-      `,
+        `,
 
-      dimensions: `
+        dimensions: `
 Diámetro recomendado:
 28” (710 mm)
 
 Gabinete:
 33” diagonal
-      `,
+        `,
 
-      image: "/sop-site/images/lazy-fullcircle.png",
+        image: "/sop-site/images/lazy-fullcircle.png",
 
-      constraints: {
-        minCabinet: 30,
-        maxCabinet: 33,
-        cornerType: "diagonal"
-      }
-    },
+        constraints: {
+          minCabinet: 30,
+          maxCabinet: 33,
+          cornerType: "diagonal"
+        }
+      },
 
-    "KS": {
-      status: "best",
+      "KS": {
+        status: "best",
 
-      model: '28" Kidney Lazy Susan',
+        model: '28" Kidney Lazy Susan',
 
-      cabinet: '33" Diagonal Corner',
+        cabinet: '33" Diagonal Corner',
 
-      type: "Kidney Shape 270° System",
+        type: "Kidney Shape 270° System",
 
-      efficiency: "high",
-      risk: "low",
+        efficiency: "high",
+        risk: "low",
 
-      capacity: "Optimized corner access",
+        capacity: "Optimized corner access",
 
-      recommendation:
-        "Mejor aprovechamiento del espacio y mejor ergonomía que Full Circle.",
+        recommendation:
+          "Mejor aprovechamiento del espacio y mejor ergonomía que Full Circle.",
 
-      technical: `
+        technical: `
 • Mejor acceso que Full Circle
 • Mayor aprovechamiento de esquina
 • Compatible con Blum y Häfele
-      `,
+        `,
 
-      dimensions: `
+        dimensions: `
 Diámetro:
 28”
 
 Apertura mínima:
 12”
-      `,
+        `,
 
-      image: "/sop-site/images/lazy-kidney.png",
+        image: "/sop-site/images/lazy-kidney.png",
 
-      constraints: {
-        minCabinet: 30,
-        maxCabinet: 33,
-        cornerType: "diagonal"
+        constraints: {
+          minCabinet: 30,
+          maxCabinet: 33,
+          cornerType: "diagonal"
+        }
       }
-    }
-  },
+    },
 
-  // =================================================
-  // 36 DIAGONAL CORNER
-  // =================================================
-  "36diag": {
+    // =================================================
+    // 36 DIAGONAL CORNER
+    // =================================================
+    "36diag": {
 
-    "FC": {
-      status: "best",
+      "FC": {
+        status: "best",
 
-      model: '32"–36" Heavy Duty Full Circle',
+        model: '32"–36" Heavy Duty Full Circle',
 
-      cabinet: '36" Diagonal Corner',
+        cabinet: '36" Diagonal Corner',
 
-      type: "Heavy Duty Full Circle System",
+        type: "Heavy Duty Full Circle System",
 
-      efficiency: "high",
-      risk: "low",
+        efficiency: "high",
+        risk: "low",
 
-      capacity: "Maximum storage",
+        capacity: "Maximum storage",
 
-      recommendation:
-        "Máximo aprovechamiento del gabinete. Ideal para cocinas grandes.",
+        recommendation:
+          "Máximo aprovechamiento del gabinete. Ideal para cocinas grandes.",
 
-      technical: `
+        technical: `
 • 32”–36” recomendado
 • 24” genera desperdicio de espacio
 • Base reforzada obligatoria
 • Eje centrado crítico
-      `,
+        `,
 
-      dimensions: `
+        dimensions: `
 Diámetro:
 32”–36”
 
@@ -1025,102 +1026,102 @@ Gabinete:
 
 Base:
 3/4” reforzada
-      `,
+        `,
 
-      image: "/sop-site/images/lazy-fullcircle.png",
+        image: "/sop-site/images/lazy-fullcircle.png",
 
-      constraints: {
-        minCabinet: 33,
-        maxCabinet: 36,
-        cornerType: "diagonal"
-      }
-    },
+        constraints: {
+          minCabinet: 33,
+          maxCabinet: 36,
+          cornerType: "diagonal"
+        }
+      },
 
-    "KS": {
-      status: "best",
+      "KS": {
+        status: "best",
 
-      model: '32" Kidney Heavy Duty',
+        model: '32" Kidney Heavy Duty',
 
-      cabinet: '36" Diagonal Corner',
+        cabinet: '36" Diagonal Corner',
 
-      type: "Kidney Shape Premium System",
+        type: "Kidney Shape Premium System",
 
-      efficiency: "high",
-      risk: "low",
+        efficiency: "high",
+        risk: "low",
 
-      capacity: "Premium corner storage",
+        capacity: "Premium corner storage",
 
-      recommendation:
-        "Excelente ergonomía y acceso en cocinas premium.",
+        recommendation:
+          "Excelente ergonomía y acceso en cocinas premium.",
 
-      technical: `
+        technical: `
 • Acceso superior
 • Muy buen aprovechamiento
 • Compatible con Blum premium systems
-      `,
+        `,
 
-      dimensions: `
+        dimensions: `
 Diámetro:
 32”
 
 Apertura mínima:
 12”
-      `,
+        `,
 
-      image: "/sop-site/images/lazy-kidney.png",
+        image: "/sop-site/images/lazy-kidney.png",
 
-      constraints: {
-        minCabinet: 33,
-        maxCabinet: 36,
-        cornerType: "diagonal"
-      }
-    },
+        constraints: {
+          minCabinet: 33,
+          maxCabinet: 36,
+          cornerType: "diagonal"
+        }
+      },
 
-    "PC": {
-      status: "ok",
+      "PC": {
+        status: "ok",
 
-      model: '32"–36" Pie Cut Premium',
+        model: '32"–36" Pie Cut Premium',
 
-      cabinet: '36" Diagonal Corner',
+        cabinet: '36" Diagonal Corner',
 
-      type: "Door Mounted Rotation System",
+        type: "Door Mounted Rotation System",
 
-      efficiency: "medium",
-      risk: "medium",
+        efficiency: "medium",
+        risk: "medium",
 
-      capacity: "Integrated rotation system",
+        capacity: "Integrated rotation system",
 
-      recommendation:
-        "Sistema elegante, pero requiere alineación precisa de puerta.",
+        recommendation:
+          "Sistema elegante, pero requiere alineación precisa de puerta.",
 
-      technical: `
+        technical: `
 • Requiere alineación perfecta
 • Dependiente de bisagras
 • Sensible a desajustes
-      `,
+        `,
 
-      dimensions: `
+        dimensions: `
 Sistema:
 32”–36”
 
 Holgura:
 2” mínima
-      `,
+        `,
 
-      image: "/sop-site/images/lazy-piecut.png",
+        image: "/sop-site/images/lazy-piecut.png",
 
-      constraints: {
-        minCabinet: 33,
-        maxCabinet: 36,
-        cornerType: "diagonal"
+        constraints: {
+          minCabinet: 33,
+          maxCabinet: 36,
+          cornerType: "diagonal"
+        }
       }
     }
-  }
-};
+  };
 
-let data = lazySpecs[cab]?.[sys];
+  let data = lazySpecs[cab]?.[sys];
 
-  if(!data){
+  if (!data) {
     document.getElementById("result").innerHTML =
       `<div class="warning">
         ⚠ Lazy Susan no compatible
@@ -1134,14 +1135,8 @@ let data = lazySpecs[cab]?.[sys];
     cab,
     sys,
     [
-      {
-        name:"Hafele",
-        url:"https://www.hafele.com"
-      },
-      {
-        name:"Rev-A-Shelf",
-        url:"https://rev-a-shelf.com"
-      }
+      { name: "Hafele", url: "https://www.hafele.com" },
+      { name: "Rev-A-Shelf", url: "https://rev-a-shelf.com" }
     ],
     data
   );
