@@ -529,11 +529,27 @@ function showResult(status, title, cab, sys, brands, spec = {}){
   // =========================
   // INFO BÁSICA
   // =========================
-  html += `
-    <p><b>Gabinete:</b> ${cab || "N/A"}"</p>
-    <p><b>Sistema:</b> ${sys || "N/A"}</p>
-    <hr>
-  `;
+      const systemLabels = {
+      
+        trash: "Trash Pull-Out",
+      
+        "24FC": "Full Circle Lazy Susan",
+      
+        "24KS": "Kidney Shape Lazy Susan",
+      
+        "24PC": "Pie-Cut Lazy Susan",
+      
+        lemans: "LeMans Pull-Out",
+      
+        magic: "Magic Corner"
+      
+      };
+      
+      html += `
+        <p><b>Gabinete:</b> ${getCabLabel(cab)}</p>
+        <p><b>Sistema:</b> ${systemLabels[sys] || sys}</p>
+        <hr>
+      `;
 
   // =========================
   // MARCAS
