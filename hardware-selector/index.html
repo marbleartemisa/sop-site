@@ -792,15 +792,18 @@ Diseñado para familias grandes y uso intensivo.
     return;
   }
 
-  // =========================
-  // 🍃 LAZY SUSAN
-  // =========================
+// =========================
+// 🍃 LAZY SUSAN
+// =========================
 
 if (
-  sys.includes("FC") || sys.includes("KS") || sys.includes("PC")
+  sys === "24FC" ||
+  sys === "24KS" ||
+  sys === "24PC"
 ) {
 
   const lazySpecs = {
+
     "24diag": {
       "FC": {
         status: "ok",
@@ -817,6 +820,7 @@ if (
         cabinet: '33" Diagonal Corner',
         image: "/sop-site/images/lazy-fullcircle.png"
       },
+
       "KS": {
         status: "best",
         model: '28" Kidney Lazy Susan',
@@ -832,12 +836,14 @@ if (
         cabinet: '36" Diagonal Corner',
         image: "/sop-site/images/lazy-fullcircle.png"
       },
+
       "KS": {
         status: "best",
         model: '32" Kidney Heavy Duty',
         cabinet: '36" Diagonal Corner',
         image: "/sop-site/images/lazy-kidney.png"
       },
+
       "PC": {
         status: "ok",
         model: 'Pie-Cut Premium',
@@ -847,12 +853,18 @@ if (
     }
   };
 
-  let sysKey = sys.replace(/[0-9]/g, ""); // FC KS PC limpio
-  let diagKey = cab + "diag";
+  // LIMPIA EL NÚMERO
+  let sysKey = sys.replace(/[0-9]/g, "");
 
-  let data = lazySpecs[diagKey]?.[sysKey];
+  // EL CAB YA ES 24diag / 33diag / 36diag
+  let data = lazySpecs[cab]?.[sysKey];
 
-  console.log("LAZY DEBUG:", { cab, sys, sysKey, diagKey, data });
+  console.log("LAZY DEBUG:", {
+    cab,
+    sys,
+    sysKey,
+    data
+  });
 
   if (!data) {
     document.getElementById("result").innerHTML =
@@ -866,8 +878,173 @@ if (
     cab,
     sys,
     [
-      { name: "Hafele", url: "https://www.hafele.com" },
-      { name: "Rev-A-Shelf", url: "https://rev-a-shelf.com" }
+      {
+        name: "Hafele",
+        url: "https://www.hafele.com"
+      },
+      {
+        name: "Rev-A-Shelf",
+        url: "https://rev-a-shelf.com"
+      }
+    ],
+    data
+  );
+
+  return;
+}
+  // =========================
+// 🍋 LEMANS II
+// =========================
+
+if(sys === "lemans"){
+
+  if(
+    cab !== "36blind" &&
+    cab !== "33blind"
+  ){
+    document.getElementById("result").innerHTML =
+      `<div class="danger">
+        ❌ Solo compatible con blind corners
+      </div>`;
+    return;
+  }
+
+  const data = {
+
+    status:
+      (cab === "36blind") ? "best" : "ok",
+
+    model:
+      (cab === "36blind")
+        ? "LeMans Premium"
+        : "LeMans Compact",
+
+    cabinet:
+      (cab === "36blind")
+        ? '36" Blind Corner'
+        : '33" Blind Corner',
+
+    type: "Articulated Pull-Out Shelves",
+
+    capacity: "Hasta 1,057 sq.in",
+
+    dimensions: `
+      Profundidad mínima:
+      19-3/4” – 21-9/16”
+
+      Altura mínima:
+      21-1/2”
+
+      Apertura requerida:
+      85° – 90°
+    `,
+
+    recommendation:
+      "Sistema premium ergonómico para esquina ciega.",
+
+    technical: `
+      Modelos disponibles:
+      • 40
+      • 45
+      • 50
+      • 60
+    `,
+
+    image: "/sop-site/images/lemans.png"
+  };
+
+  showResult(
+    data.status,
+    data.model,
+    cab,
+    sys,
+    [
+      {
+        name:"Kesseböhmer",
+        url:"https://www.kesseboehmer.com"
+      },
+      {
+        name:"Hafele",
+        url:"https://www.hafele.com"
+      }
+    ],
+    data
+  );
+
+  return;
+}
+  // =========================
+// 🧩 MAGIC CORNER
+// =========================
+
+if(sys === "magic"){
+
+  if(
+    cab !== "36blind" &&
+    cab !== "33blind"
+  ){
+    document.getElementById("result").innerHTML =
+      `<div class="danger">
+        ❌ Solo compatible con blind corners
+      </div>`;
+    return;
+  }
+
+  const data = {
+
+    status:
+      (cab === "36blind") ? "best" : "ok",
+
+    model:
+      (cab === "36blind")
+        ? "Magic Corner Premium"
+        : "Magic Corner Compact",
+
+    cabinet:
+      (cab === "36blind")
+        ? '36" Blind Corner'
+        : '33" Blind Corner',
+
+    type: "Mechanical Corner Extraction",
+
+    capacity: `
+      Front baskets: 22 lbs each
+      Rear baskets: 17 lbs each
+    `,
+
+    dimensions: `
+      Cabinet width:
+      38-3/8” – 44”
+    `,
+
+    recommendation:
+      "Máxima accesibilidad y capacidad para esquinas ciegas.",
+
+    technical: `
+      Magic Corner I:
+      Fijo a puerta.
+
+      Magic Corner II:
+      Extracción independiente.
+    `,
+
+    image: "/sop-site/images/magiccorner.png"
+  };
+
+  showResult(
+    data.status,
+    data.model,
+    cab,
+    sys,
+    [
+      {
+        name:"Hafele",
+        url:"https://www.hafele.com"
+      },
+      {
+        name:"Kesseböhmer",
+        url:"https://www.kesseboehmer.com"
+      }
     ],
     data
   );
