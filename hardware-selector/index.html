@@ -628,8 +628,8 @@ ${spec.dimensions || "No disponible"}
   
 function runIkea() {
 
-  let cab = selectedCab;
-  let sys = selectedSys;
+  let cab = String(selectedCab).trim();
+  let sys = String(selectedSys).trim();
 
   if (!cab || !sys) {
     document.getElementById("result").innerHTML =
@@ -797,9 +797,7 @@ Diseñado para familias grandes y uso intensivo.
   // =========================
 
 if (
-  sys === "24FC" || sys === "24KS" || sys === "24PC" ||
-  sys === "33FC" || sys === "33KS" || sys === "33PC" ||
-  sys === "36FC" || sys === "36KS" || sys === "36PC"
+  sys.includes("FC") || sys.includes("KS") || sys.includes("PC")
 ) {
 
   const lazySpecs = {
@@ -819,7 +817,6 @@ if (
         cabinet: '33" Diagonal Corner',
         image: "/sop-site/images/lazy-fullcircle.png"
       },
-
       "KS": {
         status: "best",
         model: '28" Kidney Lazy Susan',
@@ -835,14 +832,12 @@ if (
         cabinet: '36" Diagonal Corner',
         image: "/sop-site/images/lazy-fullcircle.png"
       },
-
       "KS": {
         status: "best",
         model: '32" Kidney Heavy Duty',
         cabinet: '36" Diagonal Corner',
         image: "/sop-site/images/lazy-kidney.png"
       },
-
       "PC": {
         status: "ok",
         model: 'Pie-Cut Premium',
@@ -852,12 +847,12 @@ if (
     }
   };
 
-  // ✔ FIX IMPORTANTE (más limpio y seguro)
-  let sysKey = sys.slice(-2); // "FC", "KS", "PC"
-
+  let sysKey = sys.replace(/[0-9]/g, ""); // FC KS PC limpio
   let diagKey = cab + "diag";
 
   let data = lazySpecs[diagKey]?.[sysKey];
+
+  console.log("LAZY DEBUG:", { cab, sys, sysKey, diagKey, data });
 
   if (!data) {
     document.getElementById("result").innerHTML =
