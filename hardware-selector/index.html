@@ -637,16 +637,130 @@ function runIkea() {
     return;
   }
 
-  // =====================================================
+  // =========================
   // 🗑 TRASH SYSTEM
-  // =====================================================
+  // =========================
   if (sys === "trash") {
 
     const trashSpecs = {
-      "12": { status: "best", model: "Rev-A-Shelf 12” Single Pull-Out", cabinet: '12"', type: "Single Bin System", capacity: "1 x 27–35 Qt (25–33L)", image: "/sop-site/images/trash12.png" },
-      "15": { status: "ok", model: "Rev-A-Shelf 15” Double Compact", cabinet: '15"', type: "Double Compact Bin System", capacity: "50 Qt total", image: "/sop-site/images/trash15.png" },
-      "18": { status: "best", model: "Rev-A-Shelf 18” Double Standard", cabinet: '18"', type: "Double Large Bin System", capacity: "2 x 35–50 Qt", image: "/sop-site/images/trash18.png" },
-      "21": { status: "best", model: "Rev-A-Shelf 21” Double Premium", cabinet: '21"', type: "Premium System", capacity: "2 x 50 Qt", image: "/sop-site/images/trash21.png" }
+
+      "12": {
+        status: "best",
+        model: "Rev-A-Shelf 12” Single Pull-Out",
+        cabinet: '12"',
+        type: "Single Bin System",
+        capacity: "1 x 27–35 Qt (25–33L)",
+
+        dimensions: `
+Bote:
+14” L x 9.5” W x 18” H
+
+Espacio libre mínimo:
+8.5” – 9” W (21.6 – 22.8 cm)
+
+Profundidad recomendada:
+20” – 22”
+        `,
+
+        recommendation:
+          "Ideal para espacios pequeños, baños, kitchenette o cocinas compactas.",
+
+        technical: `
+Configuración interna:
+Aloja estrictamente un solo bote de 27–35 Qt.
+Requiere guías laterales compactas y apertura completa frontal.
+        `,
+
+        image: "/sop-site/images/trash12.png"
+      },
+
+      "15": {
+        status: "ok",
+        model: "Rev-A-Shelf 15” Double Compact",
+        cabinet: '15"',
+        type: "Double Compact Bin System",
+        capacity: "50 Qt total o 2 x 27–35 Qt",
+
+        dimensions: `
+Bote individual:
+14.7” L x 10.7” W x 22.5” H
+
+Espacio libre mínimo:
+11.5” – 12” W (29.2 – 30.5 cm)
+
+Profundidad requerida:
+22”
+        `,
+
+        recommendation:
+          "Configuración estándar residencial compacta.",
+
+        technical: `
+Compatible con:
+• 1 bote grande 50 Qt
+• 2 botes medianos en línea
+        `,
+
+        image: "/sop-site/images/trash15.png"
+      },
+
+      "18": {
+        status: "best",
+        model: "Rev-A-Shelf 18” Double Standard",
+        cabinet: '18"',
+        type: "Double Large Bin System",
+        capacity: "2 x 35–50 Qt",
+
+        dimensions: `
+Espacio libre mínimo:
+14.5” – 15” W (36.8 – 38.1 cm)
+
+Profundidad mínima:
+22” (55.8 cm)
+        `,
+
+        recommendation:
+          "Mejor opción para cocina principal y alto tráfico.",
+
+        technical: `
+Diseñado para reciclaje + basura
+Alta capacidad
+Uso familiar intensivo
+        `,
+
+        image: "/sop-site/images/trash18.png",
+
+        warnings: [
+          "Verify plumbing clearance under sink",
+          "Check full extension rail space",
+          "Confirm interior usable width"
+        ]
+      },
+
+      "21": {
+        status: "best",
+        model: "Rev-A-Shelf 21” Double Premium",
+        cabinet: '21"',
+        type: "Double Large Premium Bin System",
+        capacity: "2 x 50 Qt",
+
+        dimensions: `
+Espacio libre mínimo:
+17.5” – 18” W (44.4 – 45.7 cm)
+
+Profundidad mínima:
+22” – 24”
+        `,
+
+        recommendation:
+          "Ideal para cocinas premium con alto volumen de basura y reciclaje.",
+
+        technical: `
+Diseñado para familias grandes y uso intensivo.
+        `,
+
+        image: "/sop-site/images/trash21.png"
+      }
     };
 
     let data = trashSpecs[cab];
@@ -663,8 +777,14 @@ function runIkea() {
       cab,
       sys,
       [
-        { name: "Rev-A-Shelf", url: "https://rev-a-shelf.com" },
-        { name: "Hafele", url: "https://www.hafele.com" }
+        {
+          name: "Rev-A-Shelf",
+          url: "https://rev-a-shelf.com"
+        },
+        {
+          name: "Hafele",
+          url: "https://www.hafele.com"
+        }
       ],
       data
     );
@@ -672,14 +792,19 @@ function runIkea() {
     return;
   }
 
-  // =====================================================
-  // 🍃 LAZY SUSAN (FIX REAL)
-  // =====================================================
-  if (sys === "24FC" || sys === "24KS" || sys === "24PC") {
+  // =========================
+  // 🍃 LAZY SUSAN
+  // =========================
+  if (
+    sys === "24FC" ||
+    sys === "24KS" ||
+    sys === "24PC"
+  ) {
 
     const lazySpecs = {
+
       "24diag": {
-        FC: {
+        "FC": {
           status: "ok",
           model: '24" Full Circle Lazy Susan',
           cabinet: '24" Diagonal Corner',
@@ -688,13 +813,14 @@ function runIkea() {
       },
 
       "33diag": {
-        FC: {
+        "FC": {
           status: "ok",
           model: '28" Full Circle Lazy Susan',
           cabinet: '33" Diagonal Corner',
           image: "/sop-site/images/lazy-fullcircle.png"
         },
-        KS: {
+
+        "KS": {
           status: "best",
           model: '28" Kidney Lazy Susan',
           cabinet: '33" Diagonal Corner',
@@ -703,19 +829,21 @@ function runIkea() {
       },
 
       "36diag": {
-        FC: {
+        "FC": {
           status: "best",
-          model: '36" Full Circle Heavy Duty',
+          model: '32–36" Full Circle',
           cabinet: '36" Diagonal Corner',
           image: "/sop-site/images/lazy-fullcircle.png"
         },
-        KS: {
+
+        "KS": {
           status: "best",
           model: '32" Kidney Heavy Duty',
           cabinet: '36" Diagonal Corner',
           image: "/sop-site/images/lazy-kidney.png"
         },
-        PC: {
+
+        "PC": {
           status: "ok",
           model: 'Pie-Cut Premium',
           cabinet: '36" Diagonal Corner',
@@ -724,9 +852,7 @@ function runIkea() {
       }
     };
 
-    // 🔥 FIX CLAVE: elimina número automáticamente
     let sysKey = sys.replace(/[0-9]+/, "");
-
     let data = lazySpecs[cab]?.[sysKey];
 
     if (!data) {
@@ -741,96 +867,14 @@ function runIkea() {
       cab,
       sys,
       [
-        { name: "Hafele", url: "https://www.hafele.com" },
-        { name: "Rev-A-Shelf", url: "https://rev-a-shelf.com" }
-      ],
-      data
-    );
-
-    return;
-  }
-
-  // =====================================================
-  // 🍋 LEMANS
-  // =====================================================
-  if (sys === "lemans") {
-
-    let data = null;
-
-    if (cab === "36blind") {
-      data = {
-        status: "best",
-        model: "LeMans II Premium 36\"",
-        cabinet: '36" Blind Corner',
-        image: "/sop-site/images/lemans.png"
-      };
-    } else if (cab === "33blind") {
-      data = {
-        status: "ok",
-        model: "LeMans Compact 33–35\"",
-        cabinet: '33–35" Blind Corner',
-        image: "/sop-site/images/lemans.png"
-      };
-    }
-
-    if (!data) {
-      document.getElementById("result").innerHTML =
-        `<div class="danger">❌ LeMans no compatible</div>`;
-      return;
-    }
-
-    showResult(
-      data.status,
-      data.model,
-      cab,
-      sys,
-      [
-        { name: "Blum", url: "https://www.blum.com" },
-        { name: "Hafele", url: "https://www.hafele.com" }
-      ],
-      data
-    );
-
-    return;
-  }
-
-  // =====================================================
-  // 🧩 MAGIC CORNER
-  // =====================================================
-  if (sys === "magic") {
-
-    let data = null;
-
-    if (cab === "36blind") {
-      data = {
-        status: "best",
-        model: "Magic Corner Premium 36\"",
-        cabinet: '36" Blind Corner',
-        image: "/sop-site/images/magiccorner.png"
-      };
-    } else if (cab === "33blind") {
-      data = {
-        status: "ok",
-        model: "Magic Corner Compact 33–35\"",
-        cabinet: '33–35" Blind Corner',
-        image: "/sop-site/images/magiccorner.png"
-      };
-    }
-
-    if (!data) {
-      document.getElementById("result").innerHTML =
-        `<div class="danger">❌ Magic Corner no compatible</div>`;
-      return;
-    }
-
-    showResult(
-      data.status,
-      data.model,
-      cab,
-      sys,
-      [
-        { name: "Hafele", url: "https://www.hafele.com" },
-        { name: "Blum", url: "https://www.blum.com" }
+        {
+          name: "Hafele",
+          url: "https://www.hafele.com"
+        },
+        {
+          name: "Rev-A-Shelf",
+          url: "https://rev-a-shelf.com"
+        }
       ],
       data
     );
