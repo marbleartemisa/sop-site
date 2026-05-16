@@ -483,13 +483,14 @@ function selectSys(val, el){
 }
 
 
-function showResult(status, title, cab, sys, brands, spec = {}){
+function showResult(status, title, cab, sys, brands, spec = {}) {
 
   let html = "";
 
-  if(spec?.compatibility?.technical === "critical"){
-  status = "limited";
-    }
+  if (spec?.compatibility?.technical === "critical") {
+    status = "limited";
+  }
+
   // =========================
   // ESTADO VISUAL
   // =========================
@@ -508,9 +509,9 @@ function showResult(status, title, cab, sys, brands, spec = {}){
   html += `<h3>${title || "Sin título"}</h3>`;
 
   // =========================
-  // IMAGEN (NUEVO - SAFE)
+  // IMAGEN
   // =========================
-  if(spec && spec.image){
+  if (spec?.image) {
     html += `
       <div style="margin:12px 0;">
         <img 
@@ -532,36 +533,29 @@ function showResult(status, title, cab, sys, brands, spec = {}){
   // =========================
   // INFO BÁSICA
   // =========================
-      const systemLabels = {
-      
-        trash: "Trash Pull-Out",
-      
-        "24FC": "Full Circle Lazy Susan",
-      
-        "24KS": "Kidney Shape Lazy Susan",
-      
-        "24PC": "Pie-Cut Lazy Susan",
-      
-        lemans: "LeMans Pull-Out",
-      
-        magic: "Magic Corner"
-      
-      };
-      
-      html += `
-        <p><b>Gabinete:</b> ${getCabLabel(cab)}</p>
-        <p><b>Sistema:</b> ${systemLabels[sys] || sys}</p>
-        <hr>
-      `;
+  const systemLabels = {
+    trash: "Trash Pull-Out",
+    "24FC": "Full Circle Lazy Susan",
+    "24KS": "Kidney Shape Lazy Susan",
+    "24PC": "Pie-Cut Lazy Susan",
+    lemans: "LeMans Pull-Out",
+    magic: "Magic Corner"
+  };
+
+  html += `
+    <p><b>Gabinete:</b> ${getCabLabel(cab)}</p>
+    <p><b>Sistema:</b> ${systemLabels[sys] || sys}</p>
+    <hr>
+  `;
 
   // =========================
   // MARCAS
   // =========================
   html += `<b>Marcas disponibles:</b><br>`;
 
-  if(Array.isArray(brands) && brands.length > 0){
-    brands.forEach(b=>{
-      if(!b) return;
+  if (Array.isArray(brands) && brands.length > 0) {
+    brands.forEach(b => {
+      if (!b) return;
 
       html += `
         <a href="${b.url || "#"}" target="_blank" onclick="event.stopPropagation()">
@@ -576,45 +570,45 @@ function showResult(status, title, cab, sys, brands, spec = {}){
   // =========================
   // ESPECIFICACIONES
   // =========================
-  if(spec && Object.keys(spec).length > 0){
+  if (spec && Object.keys(spec).length > 0) {
 
     html += `
       <hr>
       <b>📦 Especificación recomendada:</b><br>
 
       <div style="margin-top:8px">
-
         <b>Modelo sugerido:</b> ${spec.model || "N/A"}<br>
         <b>Ancho mínimo gabinete:</b> ${spec.cabinet ? spec.cabinet + '"' : "N/A"}<br>
         <b>Tipo:</b> ${spec.type || "N/A"}<br>
         <b>Capacidad:</b> ${spec.capacity || "N/A"}<br>
-
       </div>
 
       <b>Uso recomendado:</b> ${spec.recommendation || "N/A"}<br><br>
+    `;
 
-     html += `<b>Notas técnicas:</b><br>`;
+    // ⚠ FIX: esto estaba rompiendo el código
+    html += `<b>Notas técnicas:</b><br>`;
 
-      if (spec && spec.warnings && Array.isArray(spec.warnings)) {
-        html += `<hr><b>⚠ Consideraciones técnicas:</b><br>`;
-        spec.warnings.forEach(w => {
-          html += `• ${w}<br>`;
-        });
-      }
-      
-      html += `
+    if (Array.isArray(spec.warnings)) {
+      html += `<hr><b>⚠ Consideraciones técnicas:</b><br>`;
+      spec.warnings.forEach(w => {
+        html += `• ${w}<br>`;
+      });
+    }
+
+    html += `
       <pre style="white-space:pre-wrap;margin:0">
-      ${spec.technical || "N/A"}
+${spec.technical || "N/A"}
       </pre>
-      
+
       <hr>
-      
+
       <b>🧩 Dimensiones del hardware:</b><br>
       <pre style="white-space:pre-wrap;margin:0">
-      ${spec.dimensions || "No disponible"}
+${spec.dimensions || "No disponible"}
       </pre>
-      `;
-        }
+    `;
+  }
 
   // =========================
   // BOTÓN PDF
