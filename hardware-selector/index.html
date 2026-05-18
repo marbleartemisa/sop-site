@@ -326,6 +326,25 @@ h1{
 
     <h2>Selecciona tu gabinete</h2>
 
+    <div class="grid" id="typeGrid">
+
+          <div class="item" onclick="selectType('base', this)">
+            <h3>🟦 Base Cabinet</h3>
+            <p>Gabinete recto estándar</p>
+          </div>
+        
+          <div class="item" onclick="selectType('diag', this)">
+            <h3>🟨 Diagonal Corner</h3>
+            <p>Frente diagonal 45°</p>
+          </div>
+        
+          <div class="item" onclick="selectType('blind', this)">
+            <h3>🟥 Blind Corner</h3>
+            <p>Esquina ciega tipo L</p>
+          </div>
+
+    </div>
+
     <div class="grid" id="cabinetGrid">
 
       <div class="item" onclick="selectCab('12', this)">     
@@ -455,9 +474,118 @@ h1{
   
 <script>
 
+let selectedType = null;
 let selectedCab = null;
 let selectedSys = null;
 
+function selectType(type, el){
+
+  selectedType = type;
+
+  document.querySelectorAll("#typeGrid .item")
+    .forEach(e => e.classList.remove("active"));
+
+  el.classList.add("active");
+
+  filterCabinets();
+}  
+
+  function filterCabinets(){
+
+  const items = document.querySelectorAll("#cabinetGrid .item");
+
+  items.forEach(item => {
+
+    item.style.display = "none";
+
+    const txt = item.innerText.toLowerCase();
+
+    if(selectedType === "base"){
+
+      if(
+        txt.includes('12') ||
+        txt.includes('15') ||
+        txt.includes('18') ||
+        txt.includes('21')
+      ){
+        item.style.display = "block";
+      }
+    }
+
+    if(selectedType === "diag"){
+
+      if(
+        txt.includes('24') ||
+        txt.includes('33” diagonal') ||
+        txt.includes('36” diagonal')
+      ){
+        item.style.display = "block";
+      }
+    }
+
+    if(selectedType === "blind"){
+
+      if(
+        txt.includes('33” blind') ||
+        txt.includes('36” blind')
+      ){
+        item.style.display = "block";
+      }
+    }
+
+  });
+
+}
+
+  function filterHardware(){
+
+  const items = document.querySelectorAll(".card")[2]
+    .querySelectorAll(".item");
+
+  items.forEach(item => {
+
+    item.style.display = "none";
+
+    const txt = item.innerText.toLowerCase();
+
+    // BASE
+    if(selectedCab === "12" ||
+       selectedCab === "15" ||
+       selectedCab === "18" ||
+       selectedCab === "21"){
+
+      if(txt.includes("trash")){
+        item.style.display = "block";
+      }
+    }
+
+    // DIAGONAL
+    if(selectedCab?.includes("diag")){
+
+      if(
+        txt.includes("full circle") ||
+        txt.includes("kidney") ||
+        txt.includes("pie")
+      ){
+        item.style.display = "block";
+      }
+    }
+
+    // BLIND
+    if(selectedCab?.includes("blind")){
+
+      if(
+        txt.includes("lemans") ||
+        txt.includes("magic")
+      ){
+        item.style.display = "block";
+      }
+    }
+
+  });
+
+}
+  
 function selectCab(val, el){
   selectedCab = val;
 
@@ -466,8 +594,11 @@ function selectCab(val, el){
 
   el.classList.add("active");
 
+  filterHardware();
   updateUI();
 }
+
+  
 
 function selectSys(val, el){
   selectedSys = val;
