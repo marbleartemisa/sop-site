@@ -3,13 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP</title>
+<title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP Rev 4.0</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 
       /* ===== BODY ===== */
+      *{
+        box-sizing:border-box;
+      }
+      html, body{
+        overflow-x:hidden;
+      }
+
+    
       body{
         margin:0;
         font-family:'Inter',sans-serif;
@@ -51,10 +59,14 @@
         height:40px;
       }
       
+
       .menu{
         display:flex;
         gap:25px;
+        flex:1;                /* 🔥 ocupa espacio disponible */
+        justify-content:center; /* 🔥 lo centra */
       }
+      
       
       .menu a{
         color:white;
@@ -66,12 +78,93 @@
       .menu a:hover{
         color:#00aaff;
       }
-      
-      .menu-toggle{
-        display:none;
-        font-size:1.6rem;
-        cursor:pointer;
-      }
+
+      .menu a.active {
+              background: #003366;   /* color de fondo destacado */
+              color: #fff;           /* texto blanco */
+              border-radius: 6px;
+              padding: 5px 10px;
+            }
+
+            .menu-toggle{
+              display:none;
+              font-size:1.6rem;
+              cursor:pointer;
+            }
+            
+            /* ✅ MOBILE */
+            @media (max-width: 900px){
+            
+              /* ===== HAMBURGER ===== */
+              .menu-toggle{
+                display:block !important;
+                font-size:1.6rem;
+                cursor:pointer;
+                z-index:1001;
+              }
+            
+              /* ===== NAVBAR ===== */
+              .navbar{
+                padding:10px 15px;
+              }
+            
+              .logo span{
+                font-size:0.9rem;
+              }
+            
+              /* ===== MENU MOBILE ===== */
+              .menu{
+                display:none;
+                position:absolute;
+                top:60px;
+                left:0;
+                width:100%;
+                background:rgba(0,0,0,0.95);
+                flex-direction:column;
+                align-items:center;
+                gap:15px;
+                padding:20px 0;
+              }
+            
+              .menu.show{
+                display:flex;
+              }
+            
+              /* ===== USER INFO ===== */
+                .user-info{
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    white-space:nowrap;
+                    flex-shrink:0;   /* 🔥 NO se encoge */
+                  }
+            }
+
+
+
+            @media (max-width: 900px){
+            
+              .logo span{
+                display:none; /* 🔥 oculta texto largo */
+              }
+            
+              .logo img{
+                height:35px;
+              }
+            
+              .user-info span{
+                font-size:0.75rem;
+              }
+            
+            }
+
+            @media (max-width: 900px){
+              .sop-table th,
+              .sop-table td{
+                font-size:0.75rem;
+                padding:10px 8px;
+              }
+            }
       
       /* ===== BANNER ===== */
       .banner{
@@ -202,10 +295,15 @@
         max-height:550px;
         overflow-y:auto;
       }
-      
+
       .sop-table{
-        width:100%;
-        border-collapse:collapse;
+              width:100%;
+              border-collapse:collapse;
+            }
+
+      
+      .sop-table tbody tr{
+      cursor:pointer;
       }
       
       .sop-table thead th{
@@ -222,21 +320,49 @@
         padding:16px 18px;
         border-bottom:1px solid #f1f5f9;
       }
+      .sop-table td:last-child{
+        text-align:right;
+        white-space:nowrap;
+      }
+
+      .sop-table td:nth-child(2){
+        word-break:break-word;
+      }
+
+      .sop-table tbody tr {
+          background: rgba(255, 255, 255, 0.6); /* blanco translúcido */
+      }
+      
+      .sop-table tbody tr:nth-child(even) {
+          background: rgba(255, 255, 255, 0.5);
+      }
+      
+      .sop-table tbody tr:hover {
+          background: rgba(255, 255, 255, 0.8); /* más visible al pasar el mouse */
+      }
+
       
 
-.sop-table tbody tr {
-    background: rgba(255, 255, 255, 0.6); /* blanco translúcido */
+      /* ===== NOMBRE SOP (COLUMNA PROCEDIMIENTO) ===== */
+.sop-nombre {
+  font-weight: 600;              /* más negrita pero elegante */
+  font-size: 15px;               /* un poco más grande */
+  color: #1f2d3d;                /* color profesional */
+  letter-spacing: 0.3px;         /* mejora lectura */
+  transition: all 0.2s ease;     /* animación suave */
 }
 
-.sop-table tbody tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.5);
+/* Efecto al pasar el mouse */
+.sop-nombre:hover {
+  color: #007bff;                /* azul moderno */
+  cursor: pointer;
+  transform: translateX(3px);    /* pequeño movimiento */
 }
 
-.sop-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.8); /* más visible al pasar el mouse */
+/* Opcional: que toda la fila reaccione */
+tr:hover .sop-nombre {
+  color: #007bff;
 }
-
-      
       /* ===== BOTON ===== */
       .sop-btn{
         display:inline-flex;
@@ -318,10 +444,34 @@
         cursor:pointer;
       }
 
+      .video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* queda detrás de todo */
+}
+
+.video-background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* mantiene proporción y recorta si es necesario */
+}
+
 </style>
 </head>
 <body>
 <div class="overlay">
+
+<div class="video-background">
+  <video autoplay muted loop playsinline>
+    <source src="/sop-site/wall-video.mp4" type="video/mp4">
+    Tu navegador no soporta videos de fondo.
+  </video>
+</div>
+      
 
 <!-- NAVBAR -->
 <div class="navbar">
@@ -334,18 +484,26 @@
     <i class="fa-solid fa-bars"></i>
   </div>
 
-  <div class="menu">
+<div class="menu">
     <a href="/sop-site/">Inicio</a>
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a>     
+    <a href="/sop-site/Aportes/">Aportes SOP</a> 
+    <a href="/sop-site/analisis/">Análisis SOP</a> 
     <a href="#" onclick="editSOP()">Editar SOP</a>
-    <a href="#" onclick="openLogin()">
-      <i class="fa-solid fa-user-shield"></i> Login
-    </a>
-    <a href="https://marbleartemisa.github.io/artemisamarbleandcabinet/#">Portal-Web</a> 
+    <a href="/sop-site/admin/">Admin</a> 
+    <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a> 
   </div>
-</div>
 
+  <!-- ✅ Mover user-info fuera de menu -->
+  <div class="user-info" id="userInfo" style="display:none;">
+    <span id="userName"></span>
+    <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+  </div>
+
+</div>
+      
 <!-- MENSAJE BIENVENIDA -->
 <div id="welcome-msg"></div>
 
@@ -363,14 +521,14 @@
   <select id="deptFilter">
     <option value="">Todos los departamentos</option>
     <option value="comercial">Comercial</option>
-    <option value="produccion">Producción</option>
-    <option value="instalacion">Instalación</option>
+    <option value="produccion">Carpintería</option>
+    <option value="instalacion">Stone</option>
     <option value="administracion">Administración</option>
     <option value="maquinarias">Maquinarias</option>
     <option value="vehiculos">Vehículos</option>
     <option value="houzz-pro">Houzz Pro</option>
     <option value="ecopower">Ecopowertech</option>
-    <option value="medidas">Medidas</option>
+    <option value="medidas">Diseño-Medidas</option>
     <option value="taller">Taller</option>
   </select>
 
@@ -383,7 +541,7 @@
     <button onclick="filterDept('maquinarias')" class="dept-filter">Maquinarias</button>
     <button onclick="filterDept('vehiculos')" class="dept-filter">Vehículos</button>
     <button onclick="filterDept('houzz-pro')" class="dept-filter">Houzz-Pro</button>
-    <button onclick="filterDept('medidas')" class="dept-filter">Medidas</button>
+    <button onclick="filterDept('medidas')" class="dept-filter">Diseño-Medidas</button>
     <button onclick="filterDept('taller')" class="dept-filter">Taller</button>
   </div>
 </div>
@@ -392,17 +550,7 @@
 <div class="sop-container" id="sopContainer"></div>
 
 <!-- VIDEOS -->
-<div class="video-section">
-  <video autoplay muted loop playsinline>
-    <source src="/sop-site/seleccion video 5.MP4" type="video/mp4">
-  </video>
 
-  <iframe src="https://www.youtube.com/embed/ZaGJEKPt-A0" allowfullscreen></iframe>
-
-  <video autoplay muted loop playsinline>
-    <source src="/sop-site/seleccion video super 1.mp4" type="video/mp4">
-  </video>
-</div>
 
 <!-- FOOTER -->
 <div class="footer" style="text-align:center;color:white;margin:30px 0;">
@@ -437,7 +585,12 @@ const usuarios = [
   {usuario:"Wendy Romanach", clave:"Wen1975", rol:"editor", depto:"Administración", correo:"accounting@artemisamarble.com"},
   {usuario:"Carlos Herrera", clave:"Art2026", rol:"admin", depto:"Control", correo:"control@artemisamarble.com"},
   {usuario:"Jenny Perez", clave:"Jen1975", rol:"editor", depto:"Comercial", correo:"jenny@artemisamarble.com"},
+  {usuario:"Eliana Pineda", clave:"Eli1975", rol:"editor", depto:"Comercial", correo:"jenny@artemisamarble.com"},
+  {usuario:"Yoandry Perez", clave:"Yoa1975", rol:"editor", depto:"Comercial", correo:"yoandry@artemisamarble.com"},
+  {usuario:"Krishna Rojas", clave:"Kri1975", rol:"editor", depto:"Diseño", correo:"jobs@artemisamarble.com"},
+  {usuario:"Juan Pablo", clave:"Jua1975", rol:"editor", depto:"Diseño", correo:"sales3@artemisamarble.com"},
   {usuario:"Yozusi Urdaneta", clave:"Yoz1975", rol:"editor", depto:"Gerencia", correo:"wood@artemisamarble.com"}
+      
 ];
 
 let currentUser = null;
@@ -468,7 +621,8 @@ function populateUsers(){
   });
 }
 
-document.getElementById("loginBtn").addEventListener("click", ()=>{
+
+document.getElementById("loginBtn").addEventListener("click", ()=> {
   const userName = document.getElementById("loginUser").value;
   const pass = document.getElementById("loginPass").value;
 
@@ -479,11 +633,21 @@ document.getElementById("loginBtn").addEventListener("click", ()=>{
     localStorage.setItem("usuario", user.usuario);
     closeLogin();
     mostrarBienvenida(user.usuario);
+    // 👉 Aquí es donde debes agregar:
+    mostrarUsuario(user); 
   }else{
     document.getElementById("loginError").style.display = "block";
   }
 });
+      
+function mostrarUsuario(user){
+  const userDiv = document.getElementById("userInfo");
+  const userNameSpan = document.getElementById("userName");
 
+  userNameSpan.textContent = user.usuario; // mostrar nombre
+  userDiv.style.display = "flex";          // mostrar bloque
+}
+      
 function mostrarBienvenida(nombre){
   const msg = document.getElementById("welcome-msg");
   msg.textContent = `Bienvenido, ${nombre}`;
@@ -491,6 +655,15 @@ function mostrarBienvenida(nombre){
   setTimeout(()=> msg.classList.remove("show"),3000);
 }
 
+function logout(){
+  currentUser = null;
+  localStorage.removeItem("usuario");
+  document.getElementById("userInfo").style.display = "none";
+window.location.href = "https://marbleartemisa.github.io/sop-site/";
+}
+
+
+      
 /* ===== SOP DATA ===== */
 fetch('SOP_INDEX.json?v=' + Date.now())
 .then(res=>res.json())
@@ -507,6 +680,8 @@ function sortByDepartment(){
     return (a.title||"").localeCompare(b.title||"");
   });
 }
+
+      
 
 function renderSOP(filtered){
   const container = document.getElementById("sopContainer");
@@ -530,18 +705,21 @@ function renderSOP(filtered){
 
   list.forEach(sop=>{
     html += `
-    <tr>
-      <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
-      <td data-label="Procedimiento">${sop.title}</td>
-      <td>
-        <a class="sop-btn" href="/sop-site/viewer.html?doc=${sop.url}">
-        Ver
-        </a>
-      </td>
-    </tr>
+            <tr onclick="openSOP('${sop.url}')" style="cursor:pointer;">
+              <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
+              <td data-label="Procedimiento" class="sop-nombre">${sop.title}</td>
+              <td>
+                <a class="sop-btn" 
+                   href="/sop-site/viewer.html?doc=${sop.url}"
+                   onclick="event.stopPropagation()">
+                Ver
+                </a>
+              </td>
+            </tr>
     `;
   });
 
+      
   html += `</tbody></table>`;
   container.innerHTML = html;
 }
@@ -561,7 +739,7 @@ function getDepartmentBadge(dep){
     vehiculos:"Vehículos",
     ecopower:"Ecopowertech",
     taller:"Taller",
-    medidas:"Medidas",
+    medidas:"Diseño-Medidas",
     "houzz-pro":"Houzz Pro"
   };
 
@@ -589,6 +767,23 @@ function filterDept(dep){
   filterSOP();
 }
 
+// 🔹 Destacar opción de menú según URL
+function destacarMenu() {
+  const links = document.querySelectorAll(".menu a");
+  const path = window.location.pathname; // ruta actual
+  links.forEach(link => {
+    if (link.getAttribute("href") === path) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  destacarMenu();
+});
+
 /* ===== SORT ===== */
 function sortTable(field){
   SOP_INDEX.sort((a,b)=>{
@@ -613,6 +808,10 @@ function editSOP(){
   }
 }
 
+function openSOP(url){
+  window.location.href = "/sop-site/viewer.html?doc=" + url;
+}
+
 /* ===== INIT ===== */
 window.addEventListener("DOMContentLoaded", ()=>{
 
@@ -621,12 +820,15 @@ window.addEventListener("DOMContentLoaded", ()=>{
   const savedUser = localStorage.getItem("usuario");
   if(savedUser){
     currentUser = usuarios.find(u=>u.usuario===savedUser);
-    if(currentUser) mostrarBienvenida(currentUser.usuario);
+    if(currentUser) {
+      mostrarBienvenida(currentUser.usuario);
+      mostrarUsuario(currentUser);
+    }
   }else{
     openLogin();
   }
 
-  // 🔥 ENTER PARA LOGIN
+  // ENTER para login
   document.getElementById("loginPass").addEventListener("keypress", function(e){
     if(e.key === "Enter"){
       e.preventDefault();
@@ -634,8 +836,15 @@ window.addEventListener("DOMContentLoaded", ()=>{
     }
   });
 
-});
+  // ✅ 👇 AQUÍ MISMO
+  document.querySelectorAll('.menu a').forEach(link=>{
+    link.addEventListener('click', ()=>{
+      document.querySelector('.menu').classList.remove('show');
+    });
+  });
 
+});
+      
 </script>  
 </body>
 </html>
