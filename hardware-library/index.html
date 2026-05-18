@@ -1,1 +1,841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP Rev 4.0</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
+<style>
+
+      /* ===== BODY ===== */
+      *{
+        box-sizing:border-box;
+      }
+      html, body{
+        overflow-x:hidden;
+      }
+
+    
+      body{
+        margin:0;
+        font-family:'Inter',sans-serif;
+        background-image:url('/sop-site/wall0.png');
+        background-position:center;
+        background-repeat:no-repeat;
+        background-size:cover;
+        background-attachment:fixed;
+        color:#1f2937;
+      }
+      
+      .overlay{
+        background:rgba(0,0,0,0.25);
+        min-height:100vh;
+      }
+      
+      /* ===== NAVBAR ===== */
+      .navbar{
+        position:sticky;
+        top:0;
+        background:rgba(0,0,0,0.65);
+        backdrop-filter:blur(8px);
+        padding:10px 30px;
+        color:white;
+        font-weight:bold;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        z-index:999;
+      }
+      
+      .logo{
+        display:flex;
+        align-items:center;
+        gap:10px;
+      }
+      
+      .logo img{
+        height:40px;
+      }
+      
+
+      .menu{
+        display:flex;
+        gap:25px;
+        flex:1;                /* 🔥 ocupa espacio disponible */
+        justify-content:center; /* 🔥 lo centra */
+      }
+      
+      
+      .menu a{
+        color:white;
+        text-decoration:none;
+        font-weight:bold;
+        transition:.3s;
+      }
+      
+      .menu a:hover{
+        color:#00aaff;
+      }
+
+      .menu a.active {
+              background: #003366;   /* color de fondo destacado */
+              color: #fff;           /* texto blanco */
+              border-radius: 6px;
+              padding: 5px 10px;
+            }
+
+            .menu-toggle{
+              display:none;
+              font-size:1.6rem;
+              cursor:pointer;
+            }
+            
+            /* ✅ MOBILE */
+            @media (max-width: 900px){
+            
+              /* ===== HAMBURGER ===== */
+              .menu-toggle{
+                display:block !important;
+                font-size:1.6rem;
+                cursor:pointer;
+                z-index:1001;
+              }
+            
+              /* ===== NAVBAR ===== */
+              .navbar{
+                padding:10px 15px;
+              }
+            
+              .logo span{
+                font-size:0.9rem;
+              }
+            
+              /* ===== MENU MOBILE ===== */
+              .menu{
+                display:none;
+                position:absolute;
+                top:60px;
+                left:0;
+                width:100%;
+                background:rgba(0,0,0,0.95);
+                flex-direction:column;
+                align-items:center;
+                gap:15px;
+                padding:20px 0;
+              }
+            
+              .menu.show{
+                display:flex;
+              }
+            
+              /* ===== USER INFO ===== */
+                .user-info{
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    white-space:nowrap;
+                    flex-shrink:0;   /* 🔥 NO se encoge */
+                  }
+            }
+
+
+
+            @media (max-width: 900px){
+            
+              .logo span{
+                display:none; /* 🔥 oculta texto largo */
+              }
+            
+              .logo img{
+                height:35px;
+              }
+            
+              .user-info span{
+                font-size:0.75rem;
+              }
+            
+            }
+
+
+      
+      /* ===== BANNER ===== */
+      .banner{
+        text-align:center;
+        padding:40px 20px 20px;
+        color:white;
+      }
+      
+      .banner h1{
+        margin:0;
+        font-size:2.2rem;
+      }
+      
+      .banner p{
+        margin:4px 0;
+        opacity:0.9;
+      }
+      
+      .cta-btn{
+        display:inline-block;
+        margin-top:15px;
+        padding:10px 25px;
+        border-radius:30px;
+        background:linear-gradient(135deg,#0072C6,#005a9e);
+        color:white;
+        text-decoration:none;
+        font-weight:bold;
+        transition:.3s;
+      }
+      
+      .cta-btn:hover{
+        transform:scale(1.05);
+      }
+      
+      /* ===== WELCOME ===== */
+      #welcome-msg{
+        position: fixed;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #00d1ff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        font-weight: bold;
+        z-index: 3000;
+        opacity: 0;
+        transition: all 0.5s ease;
+      }
+      
+      #welcome-msg.show{
+        opacity: 1;
+        top: 80px;
+      }
+      
+      
+    
+
+      /* ===== LOGIN MODAL ===== */
+      #loginModal{
+        display:none;
+        position:fixed;
+        top:0; left:0;
+        width:100%; height:100%;
+        background:rgba(0,0,0,0.5);
+        justify-content:center;
+        align-items:center;
+        z-index:9999;
+      }
+      
+      #loginModal .modal-content{
+        background:#1e1e2f;
+        padding:30px 25px;
+        border-radius:12px;
+        width:95%;
+        max-width:380px;
+        text-align:center;
+        color:#fff;
+      }
+      
+
+      #loginModal select,
+      #loginModal input{
+        width:100%;
+        padding:12px;
+        margin-bottom:15px;
+        border-radius:8px;
+        border:1px solid #ccc;
+        font-size:14px;
+        box-sizing:border-box;
+        height:42px; /* 🔥 clave para igualar altura */
+      }
+            
+      #loginModal button{
+        width:100%;
+        padding:10px;
+        background:#ffcc00;
+        border:none;
+        border-radius:8px;
+        font-weight:bold;
+        cursor:pointer;
+      }
+
+      .video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* queda detrás de todo */
+}
+
+.video-background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* mantiene proporción y recorta si es necesario */
+}
+/* ===== DROPDOWN SIMPLE Y ESTABLE ===== */
+
+.dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.drop-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(15,23,42,0.98);
+  min-width: 200px;
+  border-radius: 10px;
+  padding: 8px 0;
+  z-index: 9999;
+  flex-direction: column;
+}
+
+.dropdown-content a {
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  font-size: 0.9rem;
+}
+
+.dropdown-content a:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.dropdown.open .dropdown-content {
+  display: flex;
+}
+
+/* ICON ROTATION */
+.dropdown.open i {
+  transform: rotate(180deg);
+  transition: 0.3s;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+
+  .dropdown {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dropdown-content {
+    position: static;
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .drop-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+  }
+}
+
+  /* HERO */
+.hero{
+  text-align:center;
+  padding:50px 20px 20px;
+  color:white;
+}
+
+.hero h1{
+  font-size:42px;
+  margin-bottom:10px;
+}
+
+.hero p{
+  color:#cbd5e1;
+  font-size:16px;
+}
+
+/* FILTERS */
+.filters{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin:20px;
+}
+
+.filter-btn{
+  border:none;
+  padding:10px 18px;
+  border-radius:30px;
+  cursor:pointer;
+  background:white;
+  font-weight:600;
+  transition:.2s;
+}
+
+.filter-btn:hover{
+  transform:translateY(-2px);
+}
+
+.filter-btn.active{
+  background:#0072C6;
+  color:white;
+}
+
+/* GRID */
+.library-grid{
+  width:min(1400px,95%);
+  margin:auto;
+
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(320px,1fr));
+
+  gap:25px;
+
+  padding-bottom:60px;
+}
+
+/* CARD */
+.hardware-card{
+
+  background:rgba(255,255,255,.96);
+
+  border-radius:18px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.18);
+
+  transition:.25s;
+
+  display:flex;
+  flex-direction:column;
+}
+
+.hardware-card:hover{
+  transform:translateY(-5px);
+}
+
+/* IMAGE */
+.hardware-image{
+  height:240px;
+  background:#f8fafc;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.hardware-image img{
+  max-width:90%;
+  max-height:210px;
+  object-fit:contain;
+}
+
+/* BODY */
+.hardware-body{
+  padding:20px;
+}
+
+/* TITLE */
+.hardware-title{
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+/* SUBTITLE */
+.hardware-subtitle{
+  color:#64748b;
+  margin-bottom:15px;
+}
+
+/* BADGES */
+.badges{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
+
+.badge{
+  background:#eff6ff;
+  color:#1d4ed8;
+  padding:6px 10px;
+  border-radius:30px;
+  font-size:12px;
+  font-weight:600;
+}
+
+/* SPECS */
+.specs{
+  margin-top:15px;
+  font-size:14px;
+  line-height:1.7;
+}
+
+.specs b{
+  color:#0f172a;
+}
+
+/* BUTTON */
+.view-btn{
+  margin-top:20px;
+  width:100%;
+  border:none;
+  padding:12px;
+  border-radius:10px;
+
+  background:
+    linear-gradient(135deg,#0072C6,#005a9e);
+
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+</style>
+
+
+</head>
+<body>
+<div class="overlay">
+
+<div class="video-background">
+  <video autoplay muted loop playsinline>
+    <source src="/sop-site/wall-video.mp4" type="video/mp4">
+    Tu navegador no soporta videos de fondo.
+  </video>
+</div>
+      
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <img src="/sop-site/logo.png">
+    <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+
+<div class="menu">
+
+  <a href="/sop-site/">Inicio</a>
+
+  <!-- SOP DROPDOWN -->
+  <div class="dropdown">
+    <button class="drop-btn" onclick="toggleDropdown(this)">
+      SOP <i class="fa-solid fa-chevron-down"></i>
+    </button>
+
+    <div class="dropdown-content">
+      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+      <a href="/sop-site/Aportes/">Aportes SOP</a>
+      <a href="/sop-site/analisis/">Análisis SOP</a>
+      <a href="#" onclick="editSOP()">Editar SOP</a>
+      <a href="/sop-site/admin/">Admin</a>
+    </div>
+  </div>
+
+  <!-- HELPERS DROPDOWN -->
+  <div class="dropdown">
+    <button class="drop-btn" onclick="toggleDropdown(this)">
+      Helpers <i class="fa-solid fa-chevron-down"></i>
+    </button>
+
+    <div class="dropdown-content">
+      <a href="/sop-site/list/">Items y Hardware</a>
+      <a href="/sop-site/hardware-selector/">Selector de Hardware</a>
+    </div>
+  </div>
+
+  <a href="https://marbleartemisa.github.io/artemisa/index.html">
+    Portal Web
+  </a>
+
+</div>
+
+  <!-- ✅ Mover user-info fuera de menu -->
+  <div class="user-info" id="userInfo" style="display:none;">
+    <span id="userName"></span>
+    <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+  </div>
+
+</div>
+      
+<!-- MENSAJE BIENVENIDA -->
+<div id="welcome-msg"></div>
+
+<!-- BANNER -->
+<div class="banner">
+  <h1>Biblioteca de Procedimientos Operativos Estándar</h1>
+  <p>ARTEMISA MARBLE & CABINETS</p>
+  <a href="#sopContainer" class="cta-btn">Ver SOP</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+
+  <h1>Hardware Visual Library</h1>
+
+  <p>
+    Guía visual para selección de herrajes y compatibilidad
+  </p>
+
+</section>
+
+<!-- FILTERS -->
+<section class="filters">
+
+  <button class="filter-btn active" data-filter="all">
+    ALL
+  </button>
+
+  <button class="filter-btn" data-filter="lazy">
+    LAZY SUSAN
+  </button>
+
+  <button class="filter-btn" data-filter="trash">
+    TRASH CAN
+  </button>
+
+  <button class="filter-btn" data-filter="lemans">
+    LEMANS
+  </button>
+
+  <button class="filter-btn" data-filter="magic">
+    MAGIC CORNER
+  </button>
+
+</section>
+
+<!-- GRID -->
+<section class="library-grid" id="libraryGrid">
+
+</section>
+  
+
+<script>
+
+const hardwareData = [
+
+{
+  type:"lazy",
+
+  title:"Lazy Susan - Full Circle",
+
+  subtitle:"Sistema rotativo clásico para diagonal corner.",
+
+  image:"/sop-site/images/lazy-fullcircle.png",
+
+  badges:[
+    "DIAGONAL",
+    "ROTATING",
+    "BEST SELLER"
+  ],
+
+  specs:{
+    cabinets:"24diag / 33diag / 36diag",
+    sizes:'18" / 28" / 32" / 36"',
+    materials:"Polymer / Wood / Metal",
+    recommended:"36diag preferred"
+  }
+},
+
+{
+  type:"trash",
+
+  title:"Trash Can Pull-Out",
+
+  subtitle:"Extracción frontal para basura y reciclaje.",
+
+  image:"/sop-site/images/trash18.png",
+
+  badges:[
+    "BASE CABINET",
+    "FULL EXTENSION",
+    "POPULAR"
+  ],
+
+  specs:{
+    cabinets:'12" / 15" / 18" / 21"',
+    sizes:'Single / Double / XL',
+    materials:"Metal frame + plastic bins",
+    recommended:'18" best balance'
+  }
+},
+
+{
+  type:"lemans",
+
+  title:"LeMans Pull-Out",
+
+  subtitle:"Sistema premium articulado para blind corner.",
+
+  image:"/sop-site/images/lemans.png",
+
+  badges:[
+    "BLIND CORNER",
+    "PREMIUM",
+    "ERGONOMIC"
+  ],
+
+  specs:{
+    cabinets:'33blind / 36blind',
+    sizes:'15" / 18" / 21"',
+    materials:"Metal + anti-slip trays",
+    recommended:'36blind optimal'
+  }
+},
+
+{
+  type:"magic",
+
+  title:"Magic Corner",
+
+  subtitle:"Máxima accesibilidad para esquina ciega.",
+
+  image:"/sop-site/images/magiccorner.png",
+
+  badges:[
+    "BLIND CORNER",
+    "HEAVY DUTY",
+    "PREMIUM"
+  ],
+
+  specs:{
+    cabinets:'33blind / 36blind',
+    sizes:'Compact / Standard',
+    materials:"Steel baskets",
+    recommended:'36blind universal'
+  }
+}
+
+];
+
+  const grid =
+  document.getElementById("libraryGrid");
+
+function renderCards(filter="all"){
+
+  grid.innerHTML = "";
+
+  const filtered =
+    hardwareData.filter(item => {
+
+      if(filter === "all") return true;
+
+      return item.type === filter;
+    });
+
+  filtered.forEach(item => {
+
+    const card = document.createElement("div");
+
+    card.className = "hardware-card";
+
+    card.innerHTML = `
+
+      <div class="hardware-image">
+
+        <img src="${item.image}">
+
+      </div>
+
+      <div class="hardware-body">
+
+        <div class="hardware-title">
+          ${item.title}
+        </div>
+
+        <div class="hardware-subtitle">
+          ${item.subtitle}
+        </div>
+
+        <div class="badges">
+
+          ${item.badges.map(b =>
+            `<div class="badge">${b}</div>`
+          ).join("")}
+
+        </div>
+
+        <div class="specs">
+
+          <b>Compatible cabinets:</b><br>
+          ${item.specs.cabinets}<br><br>
+
+          <b>Sizes:</b><br>
+          ${item.specs.sizes}<br><br>
+
+          <b>Materials:</b><br>
+          ${item.specs.materials}<br><br>
+
+          <b>Recommended:</b><br>
+          ${item.specs.recommended}
+
+        </div>
+
+        <button class="view-btn">
+          View Details
+        </button>
+
+      </div>
+    `;
+
+    grid.appendChild(card);
+
+  });
+}
+
+renderCards();
+
+
+  document
+.querySelectorAll(".filter-btn")
+.forEach(btn => {
+
+  btn.addEventListener("click",()=>{
+
+    document
+    .querySelectorAll(".filter-btn")
+    .forEach(b=>b.classList.remove("active"));
+
+    btn.classList.add("active");
+
+    renderCards(
+      btn.dataset.filter
+    );
+
+  });
+
+});
+
+
+
+  </script>  
+</body>
+</html>
+  
