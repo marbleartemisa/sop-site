@@ -705,10 +705,6 @@ tr:hover .sop-nombre {
     white-space: normal;
     word-break: break-word;
   }
-      .dropdown{
-  width:100%;
-  text-align:center;
-}
 
 .drop-btn{
   width:100%;
@@ -722,10 +718,35 @@ tr:hover .sop-nombre {
     display: none;
   }
 
-  .dropdown.open .dropdown-content{
-    display: flex;
-  }
 }
+
+@media (max-width: 900px){
+
+  .dropdown{
+    width:100%;
+  }
+
+  .drop-btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .dropdown-content{
+    position: relative !important;
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    background: rgba(15,23,42,0.96);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .dropdown.open .dropdown-content{
+    display: flex !important;
+  }
+
+}      
 
  @media (max-width:1200px){
   .menu{
@@ -737,6 +758,13 @@ tr:hover .sop-nombre {
     font-size:0.85rem;
   }
 
+}
+ .drop-btn i{
+  transition: transform .3s ease;
+}
+
+.dropdown.open .drop-btn i{
+  transform: rotate(180deg);
 }
 </style>
 </head>
@@ -770,7 +798,7 @@ tr:hover .sop-nombre {
   <!-- SOP DROPDOWN -->
   <div class="dropdown">
 
-    <button class="drop-btn" onclick="toggleDropdown(this)">
+    <button class="drop-btn" onclick="toggleDropdown(this, event)">
       SOP <i class="fa-solid fa-chevron-down"></i>
     </button>
 
@@ -787,7 +815,7 @@ tr:hover .sop-nombre {
   <!-- AYUDA DROPDOWN -->
   <div class="dropdown">
 
-    <button class="drop-btn" onclick="toggleDropdown(this)">
+   <button class="drop-btn" onclick="toggleDropdown(this, event)">
       Helpers <i class="fa-solid fa-chevron-down"></i>
     </button>
 
@@ -905,13 +933,11 @@ function toggleMenu(){
   document.querySelector('.menu').classList.toggle('show');
 }
 
-function toggleDropdown(button){
+function toggleDropdown(button, event){
+  if(event) event.preventDefault();
 
   const dropdown = button.closest(".dropdown");
 
-  if(!dropdown) return;
-
-  // cerrar otros dropdowns (opcional pero recomendado)
   document.querySelectorAll(".dropdown").forEach(d=>{
     if(d !== dropdown) d.classList.remove("open");
   });
