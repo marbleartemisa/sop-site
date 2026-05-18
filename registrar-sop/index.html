@@ -18,9 +18,30 @@ body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/
   min-height:100vh;
 }
 
- 
-.navbar{position:sticky;top:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:10px 30px;color:white;font-weight:bold;display:flex;justify-content:space-between;align-items:center;z-index:999;font-family:'Nuevo','Segoe UI',Arial;}
-.logo{display:flex;align-items:center;gap:10px;}
+
+
+  .navbar{
+  position:sticky;
+  top:0;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(8px);
+  padding:10px 30px;
+  color:white;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:999;
+  flex-wrap:nowrap;
+  font-family:'Nuevo','Segoe UI',Arial;
+}
+  
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}  
 .logo img{height:40px;}
 .menu{display:flex;gap:25px;}
 .menu a{color:white;text-decoration:none;font-weight:bold;transition:.3s;}
@@ -155,7 +176,93 @@ label{
 ::placeholder{
     color:#6b7280;
 }
- 
+/* ===== MENU MEJORADO ===== */
+
+.menu{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  flex:1;
+  flex-wrap:nowrap; /* 🔥 evita 2 filas */
+}
+
+/* LINKS */
+.menu a,
+.drop-btn{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:0.95rem;
+  transition:.3s;
+}
+
+/* HOVER */
+.menu a:hover,
+.drop-btn:hover{
+  color:#00aaff;
+}
+
+/* DROPDOWN */
+.dropdown{
+  position:relative;
+}
+
+/* BOTON */
+.drop-btn{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* CONTENIDO */
+.dropdown-content{
+  position:absolute;
+  top:120%;
+  left:0;
+  min-width:220px;
+  background:rgba(15,23,42,0.96);
+  border-radius:12px;
+  padding:10px 0;
+  display:none;
+  flex-direction:column;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+  backdrop-filter:blur(10px);
+}
+
+/* LINKS INTERNOS */
+.dropdown-content a{
+  padding:12px 18px;
+  white-space:nowrap;
+  font-size:0.92rem;
+}
+
+/* HOVER ITEM */
+.dropdown-content a:hover{
+  background:rgba(255,255,255,0.08);
+}
+
+/* MOSTRAR */
+.dropdown:hover .dropdown-content{
+  display:flex;
+}
+
+  @media (max-width:1200px){
+
+  .menu{
+    gap:12px;
+  }
+
+  .menu a,
+  .drop-btn{
+    font-size:0.85rem;
+  }
+
+}
+  
 </style>
 </head>
 <body>
@@ -175,14 +282,43 @@ label{
   </div>
 
   <!-- MENU CENTRADO -->
-  <div class="menu">
-    <a href="/sop-site/">Inicio</a>
+<div class="menu">
+
+  <a href="/sop-site/">Inicio</a>
+
+  <!-- SOP DROPDOWN -->
+
+
+<div class="dropdown">
+  <button class="drop-btn" onclick="toggleDropdown(this)">
+    SOP <i class="fa-solid fa-chevron-down"></i>
+  </button>
+
+  <div class="dropdown-content">
     <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a> 
-    <a href="/sop-site/analisis/">Análisis SOP</a> 
+    <a href="/sop-site/Aportes/">Aportes SOP</a>
+    <a href="/sop-site/analisis/">Análisis SOP</a>
     <a href="#" onclick="editSOP()">Editar SOP</a>
-     <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a>  
+    <a href="/sop-site/admin/">Admin</a>
   </div>
+</div>
+  
+  <!-- AYUDA DROPDOWN -->
+  <div class="dropdown">
+    <button class="drop-btn">
+      Ayuda <i class="fa-solid fa-chevron-down"></i>
+    </button>
+
+    <div class="dropdown-content">
+      <a href="/sop-site/hardware-selector/">Selector de Hardware</a>
+    </div>
+  </div>
+
+  <a href="https://marbleartemisa.github.io/artemisa/index.html">
+    Portal Web
+  </a>
+
+</div>
 
   <!-- USUARIO A LA DERECHA -->
   <div class="user-info" id="userInfo" style="display:none;">
@@ -277,6 +413,18 @@ const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fH
 
 // Toggle menu
 function toggleMenu(){document.querySelector('.menu').classList.toggle('show');}
+
+function toggleDropdown(button){
+
+  // 🔥 SOLO EN MOBILE
+  if(window.innerWidth > 900) return;
+
+  const dropdown = button.parentElement;
+
+  dropdown.classList.toggle("open");
+
+}
+  
 document.getElementById("employee").addEventListener("change",function(){
   let datos=this.value.split("|");
   document.getElementById("departamento").value=datos[3] || ""
