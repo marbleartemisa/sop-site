@@ -711,15 +711,9 @@ tr:hover .sop-nombre {
   justify-content:center;
   padding:10px 0;
 }
-
-.dropdown-content{
-    position: static;
-    width: 100%;
-    display: none;
-  }
-
 }
 
+      
 @media (max-width: 900px){
 
   .dropdown{
@@ -732,9 +726,9 @@ tr:hover .sop-nombre {
   }
 
   .dropdown-content{
-    position: relative !important;
-    display: none;
+    position: relative;
     width: 100%;
+    display: none;
     flex-direction: column;
     background: rgba(15,23,42,0.96);
     border-radius: 0;
@@ -746,7 +740,7 @@ tr:hover .sop-nombre {
     display: flex !important;
   }
 
-}      
+}
 
  @media (max-width:1200px){
   .menu{
@@ -1010,11 +1004,19 @@ window.location.href = "https://marbleartemisa.github.io/sop-site/";
       
 /* ===== SOP DATA ===== */
 fetch('SOP_INDEX.json?v=' + Date.now())
-.then(res=>res.json())
+.then(res=>{
+  if(!res.ok) throw new Error("No se pudo cargar JSON");
+  return res.json();
+})
 .then(data=>{
   SOP_INDEX = data;
   sortByDepartment();
   renderSOP();
+})
+.catch(err=>{
+  console.error("ERROR SOP:", err);
+  document.getElementById("sopContainer").innerHTML =
+    "<div style='color:white;padding:20px'>Error cargando SOP_INDEX.json</div>";
 });
 
 function sortByDepartment(){
