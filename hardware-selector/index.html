@@ -537,42 +537,70 @@ function selectType(type, el){
 
 }
 
-  function filterHardware(){
+function filterHardware(){
 
-  const items = document.querySelectorAll(".card")[2]
-    .querySelectorAll(".item");
+  const hardwareCard =
+    document.querySelectorAll(".card")[2];
 
-  items.forEach(item => {
+  const items =
+    hardwareCard.querySelectorAll(".item");
 
+  // OCULTAR TODO PRIMERO
+  items.forEach(item=>{
     item.style.display = "none";
+  });
 
-    const txt = item.innerText.toLowerCase();
+  // =========================
+  // BASE CABINETS
+  // =========================
+  if(
+    selectedCab === "12" ||
+    selectedCab === "15" ||
+    selectedCab === "18" ||
+    selectedCab === "21"
+  ){
 
-    // BASE
-    if(selectedCab === "12" ||
-       selectedCab === "15" ||
-       selectedCab === "18" ||
-       selectedCab === "21"){
+    items.forEach(item=>{
+
+      const txt = item.innerText.toLowerCase();
 
       if(txt.includes("trash")){
         item.style.display = "block";
       }
-    }
 
-    // DIAGONAL
-    if(selectedCab?.includes("diag")){
+    });
+
+  }
+
+  // =========================
+  // DIAGONAL CORNER
+  // =========================
+  if(selectedCab?.includes("diag")){
+
+    items.forEach(item=>{
+
+      const txt = item.innerText.toLowerCase();
 
       if(
         txt.includes("full circle") ||
         txt.includes("kidney") ||
-        txt.includes("pie")
+        txt.includes("pie-cut")
       ){
         item.style.display = "block";
       }
-    }
 
-    // BLIND
-    if(selectedCab?.includes("blind")){
+    });
+
+  }
+
+  // =========================
+  // BLIND CORNER
+  // =========================
+  if(selectedCab?.includes("blind")){
+
+    items.forEach(item=>{
+
+      const txt = item.innerText.toLowerCase();
 
       if(
         txt.includes("lemans") ||
@@ -580,9 +608,10 @@ function selectType(type, el){
       ){
         item.style.display = "block";
       }
-    }
 
-  });
+    });
+
+  }
 
 }
   
