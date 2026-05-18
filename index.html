@@ -35,6 +35,7 @@
       }
       
       /* ===== NAVBAR ===== */
+
       .navbar{
         position:sticky;
         top:0;
@@ -47,12 +48,15 @@
         justify-content:space-between;
         align-items:center;
         z-index:999;
-      }
+        flex-wrap:nowrap;
+            }
       
+  
       .logo{
         display:flex;
         align-items:center;
         gap:10px;
+        flex-shrink:0;
       }
       
       .logo img{
@@ -79,6 +83,83 @@
         color:#00aaff;
       }
 
+      /* ===== MENU MEJORADO ===== */
+
+.menu{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  flex:1;
+  flex-wrap:nowrap; /* 🔥 evita 2 filas */
+}
+
+/* LINKS */
+.menu a,
+.drop-btn{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:0.95rem;
+  transition:.3s;
+}
+
+/* HOVER */
+.menu a:hover,
+.drop-btn:hover{
+  color:#00aaff;
+}
+
+/* DROPDOWN */
+.dropdown{
+  position:relative;
+}
+
+/* BOTON */
+.drop-btn{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* CONTENIDO */
+.dropdown-content{
+  position:absolute;
+  top:120%;
+  left:0;
+  min-width:220px;
+  background:rgba(15,23,42,0.96);
+  border-radius:12px;
+  padding:10px 0;
+  display:none;
+  flex-direction:column;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+  backdrop-filter:blur(10px);
+}
+
+/* LINKS INTERNOS */
+.dropdown-content a{
+  padding:12px 18px;
+  white-space:nowrap;
+  font-size:0.92rem;
+}
+
+/* HOVER ITEM */
+.dropdown-content a:hover{
+  background:rgba(255,255,255,0.08);
+}
+
+/* MOSTRAR */
+.dropdown:hover .dropdown-content{
+  display:flex;
+}
+/* MOBILE DROPDOWN */
+.dropdown.open .dropdown-content{
+  display:flex;
+}
       .menu a.active {
               background: #003366;   /* color de fondo destacado */
               color: #fff;           /* texto blanco */
@@ -630,6 +711,36 @@ tr:hover .sop-nombre {
     white-space: normal;
     word-break: break-word;
   }
+      .dropdown{
+  width:100%;
+  text-align:center;
+}
+
+.drop-btn{
+  width:100%;
+  justify-content:center;
+  padding:10px 0;
+}
+
+.dropdown-content{
+  position:static;
+  width:100%;
+  background:rgba(255,255,255,0.04);
+  margin-top:8px;
+  border-radius:10px;
+  box-shadow:none;
+}
+}
+
+ @media (max-width:1200px){
+  .menu{
+    gap:12px;
+  }
+
+  .menu a,
+  .drop-btn{
+    font-size:0.85rem;
+  }
 
 }
 </style>
@@ -658,26 +769,42 @@ tr:hover .sop-nombre {
 
       
 <div class="menu">
-    <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-    <a href="/sop-site/Aportes/">Aportes SOP</a> 
-    <a href="/sop-site/analisis/">Análisis SOP</a> 
 
-    <!-- 🔥 NUEVO -->
-    <a href="hardware-selector/">Selector de Hardware</a>
+  <a href="/sop-site/">Inicio</a>
 
-    <a href="#" onclick="editSOP()">Editar SOP</a>
-    <a href="/sop-site/admin/">Admin</a> 
-    <a href="https://marbleartemisa.github.io/artemisa/index.html">Portal-Web</a> 
-</div>
+  <!-- SOP DROPDOWN -->
+  <div class="dropdown">
 
-  <!-- ✅ Mover user-info fuera de menu -->
-  <div class="user-info" id="userInfo" style="display:none;">
-    <span id="userName"></span>
-    <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
-      <i class="fa-solid fa-right-from-bracket"></i>
+    <button class="drop-btn" onclick="toggleDropdown(this)">
+      SOP <i class="fa-solid fa-chevron-down"></i>
     </button>
+
+    <div class="dropdown-content">
+      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+      <a href="/sop-site/Aportes/">Aportes SOP</a>
+      <a href="/sop-site/analisis/">Análisis SOP</a>
+      <a href="#" onclick="editSOP()">Editar SOP</a>
+      <a href="/sop-site/admin/">Admin</a>
+    </div>
+
   </div>
+
+  <!-- AYUDA DROPDOWN -->
+  <div class="dropdown">
+
+    <button class="drop-btn" onclick="toggleDropdown(this)">
+      Ayuda <i class="fa-solid fa-chevron-down"></i>
+    </button>
+
+    <div class="dropdown-content">
+      <a href="/sop-site/hardware-selector/">Selector de Hardware</a>
+    </div>
+
+  </div>
+
+  <a href="https://marbleartemisa.github.io/artemisa/index.html">
+    Portal Web
+  </a>
 
 </div>
       
@@ -779,6 +906,17 @@ let SOP_INDEX = [];
 /* ===== MENU ===== */
 function toggleMenu(){
   document.querySelector('.menu').classList.toggle('show');
+}
+
+function toggleDropdown(button){
+
+  // 🔥 SOLO EN MOBILE
+  if(window.innerWidth > 900) return;
+
+  const dropdown = button.parentElement;
+
+  dropdown.classList.toggle("open");
+
 }
 
 /* ===== LOGIN ===== */
@@ -997,6 +1135,7 @@ function openSOP(url){
 }
 
 /* ===== INIT ===== */
+
 window.addEventListener("DOMContentLoaded", ()=>{
 
   populateUsers();
@@ -1020,10 +1159,23 @@ window.addEventListener("DOMContentLoaded", ()=>{
     }
   });
 
-  // ✅ 👇 AQUÍ MISMO
+  // ✅ CERRAR MENU MOBILE
   document.querySelectorAll('.menu a').forEach(link=>{
     link.addEventListener('click', ()=>{
       document.querySelector('.menu').classList.remove('show');
+    });
+  });
+
+  // ✅ NUEVO → CERRAR DROPDOWNS MOBILE
+  document.querySelectorAll('.dropdown-content a').forEach(link=>{
+    link.addEventListener('click', ()=>{
+
+      document.querySelector('.menu').classList.remove('show');
+
+      document.querySelectorAll('.dropdown').forEach(d=>{
+        d.classList.remove('open');
+      });
+
     });
   });
 
