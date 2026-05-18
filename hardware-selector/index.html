@@ -480,15 +480,66 @@ let selectedSys = null;
 
 function selectType(type, el){
 
+  // =========================
+  // GUARDAR NUEVO TIPO
+  // =========================
   selectedType = type;
 
+  // =========================
+  // RESET CABINET
+  // =========================
+  selectedCab = null;
+
+  // =========================
+  // RESET HARDWARE
+  // =========================
+  selectedSys = null;
+
+  // =========================
+  // LIMPIAR ACTIVO TYPE
+  // =========================
   document.querySelectorAll("#typeGrid .item")
     .forEach(e => e.classList.remove("active"));
 
   el.classList.add("active");
 
+  // =========================
+  // LIMPIAR CABINETS ACTIVOS
+  // =========================
+  document.querySelectorAll("#cabinetGrid .item")
+    .forEach(e => e.classList.remove("active"));
+
+  // =========================
+  // LIMPIAR HARDWARE ACTIVO
+  // =========================
+  const hardwareCard =
+    document.querySelectorAll(".card")[2];
+
+  hardwareCard.querySelectorAll(".item")
+    .forEach(e => {
+
+      e.classList.remove("active");
+
+      // OPCIONAL:
+      // ocultar mientras no haya cabinet
+      e.style.display = "none";
+    });
+
+  // =========================
+  // FILTRAR NUEVOS CABINETS
+  // =========================
   filterCabinets();
-}  
+
+  // =========================
+  // RESET RESULTADO
+  // =========================
+  document.getElementById("result").innerHTML = `
+    <div class="warning">
+      Selecciona un gabinete
+    </div>
+  `;
+
+}
 
   function filterCabinets(){
 
