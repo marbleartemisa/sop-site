@@ -118,7 +118,9 @@
 }
 
 /* CONTENIDO */
+
 .dropdown-content{
+  display:none;
   position:absolute;
   top:120%;
   left:0;
@@ -126,12 +128,12 @@
   background:rgba(15,23,42,0.96);
   border-radius:12px;
   padding:10px 0;
-  display:none;
   flex-direction:column;
   box-shadow:0 10px 25px rgba(0,0,0,0.3);
   backdrop-filter:blur(10px);
+  z-index:9999;
 }
-
+      
 /* LINKS INTERNOS */
 .dropdown-content a{
   padding:12px 18px;
@@ -147,9 +149,11 @@
 /* MOSTRAR */
 
 /* MOBILE DROPDOWN */
+
 .dropdown.open .dropdown-content{
   display:flex;
 }
+      
       .menu a.active {
               background: #003366;   /* color de fondo destacado */
               color: #fff;           /* texto blanco */
@@ -713,13 +717,14 @@ tr:hover .sop-nombre {
 }
 
 .dropdown-content{
-  position:static;
-  width:100%;
-  background:rgba(255,255,255,0.04);
-  margin-top:8px;
-  border-radius:10px;
-  box-shadow:none;
-}
+    position: static;
+    width: 100%;
+    display: none;
+  }
+
+  .dropdown.open .dropdown-content{
+    display: flex;
+  }
 }
 
  @media (max-width:1200px){
@@ -901,13 +906,16 @@ function toggleMenu(){
 
 function toggleDropdown(button){
 
-  // 🔥 SOLO EN MOBILE
-  if(window.innerWidth > 900) return;
+  const dropdown = button.closest(".dropdown");
 
-  const dropdown = button.parentElement;
+  if(!dropdown) return;
+
+  // cerrar otros dropdowns (opcional pero recomendado)
+  document.querySelectorAll(".dropdown").forEach(d=>{
+    if(d !== dropdown) d.classList.remove("open");
+  });
 
   dropdown.classList.toggle("open");
-
 }
 
 /* ===== LOGIN ===== */
@@ -1158,22 +1166,22 @@ window.addEventListener("DOMContentLoaded", ()=>{
   });
 
   // ✅ NUEVO → CERRAR DROPDOWNS MOBILE
-  document.querySelectorAll('.dropdown-content a').forEach(link=>{
-    link.addEventListener('click', ()=>{
+document.querySelectorAll('.dropdown-content a').forEach(link=>{
+  link.addEventListener('click', ()=>{
 
-      document.querySelector('.menu').classList.remove('show');
+    // cerrar solo el menú principal mobile
+    document.querySelector('.menu').classList.remove('show');
 
+    // cerrar dropdowns con delay mínimo para evitar corte visual
+    setTimeout(()=>{
       document.querySelectorAll('.dropdown').forEach(d=>{
         d.classList.remove('open');
       });
+    }, 150);
 
-    });
   });
-
 });
       
 </script>  
 </body>
 </html>
-
-  
