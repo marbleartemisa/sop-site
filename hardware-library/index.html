@@ -512,6 +512,258 @@
   font-weight:bold;
   cursor:pointer;
 }
+
+/* =========================================
+   HARDWARE LAYOUT
+========================================= */
+
+.hardware-layout{
+
+  width:min(1500px,95%);
+  margin:auto;
+
+  display:grid;
+
+  grid-template-columns:
+    320px 1fr;
+
+  gap:25px;
+
+  padding-bottom:60px;
+}
+
+/* SIDEBAR */
+
+.hardware-sidebar{
+
+  background:rgba(255,255,255,.95);
+
+  border-radius:18px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.2);
+
+  height:fit-content;
+}
+
+/* GROUP */
+
+.sidebar-group{
+
+  border-bottom:
+    1px solid #e5e7eb;
+}
+
+.group-title{
+
+  padding:16px 20px;
+
+  font-size:14px;
+
+  font-weight:700;
+
+  background:#0f172a;
+
+  color:white;
+
+  letter-spacing:.5px;
+}
+
+/* ITEM */
+
+.sidebar-item{
+
+  padding:14px 20px;
+
+  cursor:pointer;
+
+  border-bottom:
+    1px solid #f1f5f9;
+
+  transition:.2s;
+}
+
+.sidebar-item:hover{
+
+  background:#eff6ff;
+}
+
+.sidebar-item.active{
+
+  background:#dbeafe;
+
+  border-left:
+    5px solid #0072C6;
+}
+
+.sidebar-item-title{
+
+  font-weight:600;
+}
+
+.sidebar-item-sub{
+
+  font-size:12px;
+
+  color:#64748b;
+
+  margin-top:4px;
+}
+
+/* DETAIL PANEL */
+
+.hardware-detail{
+
+  background:rgba(255,255,255,.96);
+
+  border-radius:18px;
+
+  padding:30px;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.18);
+
+  min-height:700px;
+}
+
+/* EMPTY STATE */
+
+.empty-state{
+
+  height:100%;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+
+  align-items:center;
+
+  color:#94a3b8;
+
+  text-align:center;
+}
+
+.empty-state i{
+
+  font-size:50px;
+
+  margin-bottom:20px;
+}
+
+/* DETAIL CONTENT */
+
+.detail-header{
+
+  display:grid;
+
+  grid-template-columns:
+    320px 1fr;
+
+  gap:30px;
+
+  margin-bottom:30px;
+}
+
+.detail-image{
+
+  background:#f8fafc;
+
+  border-radius:14px;
+
+  padding:20px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.detail-image img{
+
+  max-width:100%;
+  max-height:280px;
+  object-fit:contain;
+}
+
+.detail-title{
+
+  font-size:34px;
+
+  font-weight:800;
+
+  margin-bottom:10px;
+}
+
+.detail-subtitle{
+
+  color:#64748b;
+
+  line-height:1.7;
+}
+
+/* SECTION */
+
+.detail-section{
+
+  margin-top:30px;
+}
+
+.detail-section h3{
+
+  margin-bottom:15px;
+
+  color:#0f172a;
+}
+
+/* TAGS */
+
+.tags{
+
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.tag{
+
+  background:#eff6ff;
+  color:#1d4ed8;
+
+  padding:8px 12px;
+
+  border-radius:30px;
+
+  font-size:13px;
+  font-weight:600;
+}
+
+/* LIST */
+
+.detail-list{
+
+  padding-left:20px;
+
+  line-height:1.9;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+  .hardware-layout{
+
+    grid-template-columns:1fr;
+  }
+
+  .detail-header{
+
+    grid-template-columns:1fr;
+  }
+}      
+      
 </style>
 
 
@@ -632,210 +884,390 @@
 </section>
 
 <!-- GRID -->
-<section class="library-grid" id="libraryGrid">
+<!-- HARDWARE LAYOUT -->
+<section class="hardware-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="hardware-sidebar" id="hardwareSidebar">
+
+  </aside>
+
+  <!-- DETAIL PANEL -->
+  <main class="hardware-detail" id="hardwareDetail">
+
+    <div class="empty-state">
+
+      <i class="fa-solid fa-arrow-left"></i>
+
+      <h2>Select Hardware</h2>
+
+      <p>
+        Choose a system from the left panel
+      </p>
+
+    </div>
+
+  </main>
 
 </section>
   
 
 <script>
 
-const hardwareData = [
+const hardwareDB = [
 
 {
-  type:"lazy",
+  category:"LAZY SUSAN",
 
-  title:"Lazy Susan - Full Circle",
+  items:[
 
-  subtitle:"Sistema rotativo clásico para diagonal corner.",
+    {
+      id:"lazy-full",
 
-  image:"/sop-site/images/lazy-fullcircle.png",
+      name:"Full Circle Lazy Susan",
 
-  badges:[
-    "DIAGONAL",
-    "ROTATING",
-    "BEST SELLER"
-  ],
+      subtitle:"Rotating diagonal corner system",
 
-  specs:{
-    cabinets:"24diag / 33diag / 36diag",
-    sizes:'18" / 28" / 32" / 36"',
-    materials:"Polymer / Wood / Metal",
-    recommended:"36diag preferred"
-  }
+      image:"/sop-site/images/lazy-fullcircle.png",
+
+      description:
+      "Classic rotating corner solution for diagonal cabinets. Direct access with rotating trays.",
+
+      compatible:[
+        "24diag",
+        "33diag",
+        "36diag"
+      ],
+
+      best:
+        "36diag",
+
+      materials:[
+        "Polymer",
+        "Wood",
+        "Chrome",
+        "Steel"
+      ],
+
+      sizes:[
+        '24"',
+        '28"',
+        '32"',
+        '36"'
+      ],
+
+      warnings:[
+
+        "Requires centered shaft alignment",
+
+        "24diag is compact and limited",
+
+        "Not recommended for blind corners"
+      ],
+
+      requirements:[
+
+        '90° corner only',
+
+        'Minimum 3/4" reinforced base',
+
+        'No plumbing interference'
+      ]
+    },
+
+    {
+      id:"lazy-kidney",
+
+      name:"Kidney Lazy Susan",
+
+      subtitle:"270° rotating corner trays",
+
+      image:"/sop-site/images/lazy-kidney.png",
+
+      description:
+      "Kidney-shaped trays optimized for better door clearance.",
+
+      compatible:[
+        "33diag",
+        "36diag"
+      ],
+
+      best:"36diag",
+
+      materials:[
+        "Wood",
+        "Polymer",
+        "Steel"
+      ],
+
+      sizes:[
+        '28"',
+        '32"'
+      ],
+
+      warnings:[
+        "Door alignment critical"
+      ],
+
+      requirements:[
+        "Proper hinge clearance required"
+      ]
+    }
+
+  ]
 },
 
 {
-  type:"trash",
+  category:"TRASH CAN",
 
-  title:"Trash Can Pull-Out",
+  items:[
 
-  subtitle:"Extracción frontal para basura y reciclaje.",
+    {
+      id:"trash-double",
 
-  image:"/sop-site/images/trash18.png",
+      name:"Double Trash Pull-Out",
 
-  badges:[
-    "BASE CABINET",
-    "FULL EXTENSION",
-    "POPULAR"
-  ],
+      subtitle:"Full extension waste system",
 
-  specs:{
-    cabinets:'12" / 15" / 18" / 21"',
-    sizes:'Single / Double / XL',
-    materials:"Metal frame + plastic bins",
-    recommended:'18" best balance'
-  }
-},
+      image:"/sop-site/images/trash18.png",
 
-{
-  type:"lemans",
+      description:
+      "Pull-out waste solution for kitchen base cabinets.",
 
-  title:"LeMans Pull-Out",
+      compatible:[
+        '12"',
+        '15"',
+        '18"',
+        '21"'
+      ],
 
-  subtitle:"Sistema premium articulado para blind corner.",
+      best:'18"',
 
-  image:"/sop-site/images/lemans.png",
+      materials:[
+        "Metal frame",
+        "Plastic bins"
+      ],
 
-  badges:[
-    "BLIND CORNER",
-    "PREMIUM",
-    "ERGONOMIC"
-  ],
+      sizes:[
+        "Single",
+        "Double",
+        "XL"
+      ],
 
-  specs:{
-    cabinets:'33blind / 36blind',
-    sizes:'15" / 18" / 21"',
-    materials:"Metal + anti-slip trays",
-    recommended:'36blind optimal'
-  }
-},
+      warnings:[
 
-{
-  type:"magic",
+        "21in cabinet may require fillers",
 
-  title:"Magic Corner",
+        "Check plumbing interference"
+      ],
 
-  subtitle:"Máxima accesibilidad para esquina ciega.",
+      requirements:[
 
-  image:"/sop-site/images/magiccorner.png",
+        "Full extension slides mandatory",
 
-  badges:[
-    "BLIND CORNER",
-    "HEAVY DUTY",
-    "PREMIUM"
-  ],
+        '3/8" top clearance required'
+      ]
+    }
 
-  specs:{
-    cabinets:'33blind / 36blind',
-    sizes:'Compact / Standard',
-    materials:"Steel baskets",
-    recommended:'36blind universal'
-  }
+  ]
 }
 
 ];
 
-  const grid =
-  document.getElementById("libraryGrid");
+const sidebar =
+document.getElementById("hardwareSidebar");
 
-function renderCards(filter="all"){
+const detail =
+document.getElementById("hardwareDetail");
 
-  grid.innerHTML = "";
+function renderSidebar(){
 
-  const filtered =
-    hardwareData.filter(item => {
+  sidebar.innerHTML = "";
 
-      if(filter === "all") return true;
+  hardwareDB.forEach(group=>{
 
-      return item.type === filter;
+    const wrapper =
+    document.createElement("div");
+
+    wrapper.className =
+    "sidebar-group";
+
+    wrapper.innerHTML = `
+
+      <div class="group-title">
+        ${group.category}
+      </div>
+
+    `;
+
+    group.items.forEach(item=>{
+
+      const div =
+      document.createElement("div");
+
+      div.className =
+      "sidebar-item";
+
+      div.innerHTML = `
+
+        <div class="sidebar-item-title">
+          ${item.name}
+        </div>
+
+        <div class="sidebar-item-sub">
+          ${item.subtitle}
+        </div>
+
+      `;
+
+      div.addEventListener("click",()=>{
+
+        document
+        .querySelectorAll(".sidebar-item")
+        .forEach(i=>i.classList.remove("active"));
+
+        div.classList.add("active");
+
+        renderDetail(item);
+      });
+
+      wrapper.appendChild(div);
+
     });
 
-  filtered.forEach(item => {
+    sidebar.appendChild(wrapper);
 
-    const card = document.createElement("div");
+  });
+}
 
-    card.className = "hardware-card";
+function renderDetail(item){
 
-    card.innerHTML = `
+  detail.innerHTML = `
 
-      <div class="hardware-image">
+    <div class="detail-header">
+
+      <div class="detail-image">
 
         <img src="${item.image}">
 
       </div>
 
-      <div class="hardware-body">
+      <div>
 
-        <div class="hardware-title">
-          ${item.title}
+        <div class="detail-title">
+          ${item.name}
         </div>
 
-        <div class="hardware-subtitle">
-          ${item.subtitle}
+        <div class="detail-subtitle">
+          ${item.description}
         </div>
 
-        <div class="badges">
+        <div class="detail-section">
 
-          ${item.badges.map(b =>
-            `<div class="badge">${b}</div>`
-          ).join("")}
+          <h3>
+            Best Cabinet
+          </h3>
 
-        </div>
+          <div class="tags">
 
-        <div class="specs">
+            <div class="tag">
+              ${item.best}
+            </div>
 
-          <b>Compatible cabinets:</b><br>
-          ${item.specs.cabinets}<br><br>
-
-          <b>Sizes:</b><br>
-          ${item.specs.sizes}<br><br>
-
-          <b>Materials:</b><br>
-          ${item.specs.materials}<br><br>
-
-          <b>Recommended:</b><br>
-          ${item.specs.recommended}
+          </div>
 
         </div>
-
-        <button class="view-btn">
-          View Details
-        </button>
 
       </div>
-    `;
 
-    grid.appendChild(card);
+    </div>
 
-  });
+    <div class="detail-section">
+
+      <h3>
+        Compatible Cabinets
+      </h3>
+
+      <div class="tags">
+
+        ${item.compatible.map(c=>
+          `<div class="tag">${c}</div>`
+        ).join("")}
+
+      </div>
+
+    </div>
+
+    <div class="detail-section">
+
+      <h3>
+        Available Sizes
+      </h3>
+
+      <div class="tags">
+
+        ${item.sizes.map(s=>
+          `<div class="tag">${s}</div>`
+        ).join("")}
+
+      </div>
+
+    </div>
+
+    <div class="detail-section">
+
+      <h3>
+        Materials
+      </h3>
+
+      <div class="tags">
+
+        ${item.materials.map(m=>
+          `<div class="tag">${m}</div>`
+        ).join("")}
+
+      </div>
+
+    </div>
+
+    <div class="detail-section">
+
+      <h3>
+        Critical Requirements
+      </h3>
+
+      <ul class="detail-list">
+
+        ${item.requirements.map(r=>
+          `<li>${r}</li>`
+        ).join("")}
+
+      </ul>
+
+    </div>
+
+    <div class="detail-section">
+
+      <h3>
+        Warnings
+      </h3>
+
+      <ul class="detail-list">
+
+        ${item.warnings.map(w=>
+          `<li>${w}</li>`
+        ).join("")}
+
+      </ul>
+
+    </div>
+
+  `;
 }
 
-renderCards();
+renderSidebar();
 
-
-  document
-.querySelectorAll(".filter-btn")
-.forEach(btn => {
-
-  btn.addEventListener("click",()=>{
-
-    document
-    .querySelectorAll(".filter-btn")
-    .forEach(b=>b.classList.remove("active"));
-
-    btn.classList.add("active");
-
-    renderCards(
-      btn.dataset.filter
-    );
-
-  });
-
-});
-
-
-
-  </script>  
+</script>
 </body>
 </html>
   
