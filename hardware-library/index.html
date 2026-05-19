@@ -1006,200 +1006,215 @@
 const hardwareDB = [
 
 {
-  category:"LAZY SUSAN",
+  category: "LAZY SUSAN",
+  items: [
 
-  items:[
-
+    /* =========================
+       FULL CIRCLE
+    ========================= */
     {
-      id:"lazy-full",
-      name:"Full Circle Lazy Susan",
-      subtitle:"Rotating diagonal corner system",
-      image:"/sop-site/images/lazy-fullcircle.png",
-      description:
-      "Classic rotating corner solution for diagonal cabinets. Direct access with rotating trays.",
+      id: "lazy-full",
+      name: "Full Circle Lazy Susan",
+      subtitle: "Rotating corner trays system",
+      image: "/sop-site/images/lazy-fullcircle.png",
 
-      compatible:[
-        "24diag",
-        "33diag",
-        "36diag"
+      description: "Standard full rotation trays for corner base cabinets.",
+
+      compatible: ["24corner", "28corner", "33corner", "36corner"],
+      best: "36corner",
+
+      materials: ["Polymer", "Wood", "Chrome", "Steel"],
+
+      warnings: [
+        "Requires centered pivot alignment",
+        "Not ideal for blind corners"
       ],
 
-      best:"36diag",
-
-      materials:[
-        "Polymer",
-        "Wood",
-        "Chrome",
-        "Steel"
+      requirements: [
+        "90° corner cabinet",
+        "Minimum 3/4'' reinforced base"
       ],
 
-      sizes:[
-        '24"',
-        '28"',
-        '32"',
-        '36"'
-      ],
-
-      warnings:[
-        "Requires centered shaft alignment",
-        "24diag is compact and limited",
-        "Not recommended for blind corners"
-      ],
-
-      requirements:[
-        '90° corner only',
-        'Minimum 3/4" reinforced base',
-        'No plumbing interference'
-      ],
-
-      specs:{
-        vendor:"",
-        cost:"",
-        memo:""
+      specs: {
+        vendor: "Rev-A-Shelf",
+        cost: "$90 - $220",
+        memo: "Best balance cost vs durability"
       },
 
-      links:{
-        supplier:"",
-        diagram:"",
-        images:""
-      },
-
-      installation:{
-        plumbing:[],
-        electrical:[],
-        notes:[]
+      links: {
+        supplier: "https://www.rev-a-shelf.com",
+        diagram: "",
+        images: ""
       }
     },
 
+    /* =========================
+       KIDNEY
+    ========================= */
     {
-      id:"lazy-kidney",
-      name:"Kidney Lazy Susan",
-      subtitle:"270° rotating corner trays",
-      image:"/sop-site/images/lazy-kidney.png",
-      description:
-      "Kidney-shaped trays optimized for better door clearance.",
+      id: "lazy-kidney",
+      name: "Kidney Lazy Susan",
+      subtitle: "270° diagonal rotation trays",
+      image: "/sop-site/images/lazy-kidney.png",
 
-      compatible:[
-        "33diag",
-        "36diag"
-      ],
+      compatible: ["33diag", "36diag", "39diag"],
+      best: "36diag",
 
-      best:"36diag",
+      materials: ["Polymer", "Wood", "Steel"],
 
-      materials:[
-        "Wood",
-        "Polymer",
-        "Steel"
-      ],
+      warnings: ["Door clearance critical"],
+      requirements: ["Diagonal cabinet only"],
 
-      sizes:[
-        '28"',
-        '32"'
-      ],
-
-      warnings:[
-        "Door alignment critical"
-      ],
-
-      requirements:[
-        "Proper hinge clearance required"
-      ],
-
-      specs:{
-        vendor:"",
-        cost:"",
-        memo:""
+      specs: {
+        vendor: "Rev-A-Shelf",
+        cost: "$60 - $180",
+        memo: "Better moisture resistance in polymer (Miami)"
       },
 
-      links:{
-        supplier:"",
-        diagram:"",
-        images:""
+      links: {
+        supplier: "https://www.rev-a-shelf.com",
+        diagram: "",
+        images: ""
+      }
+    },
+
+    /* =========================
+       PIE CUT (🔴 NUEVO)
+    ========================= */
+    {
+      id: "lazy-piecut",
+      name: "Pie-Cut Lazy Susan",
+      subtitle: "Door-mounted rotating corner system",
+      image: "/sop-site/images/lazy-piecut.png",
+
+      compatible: ["33corner", "36corner", "39corner"],
+      best: "36corner",
+
+      materials: ["Polymer", "Wood", "Steel frame"],
+
+      warnings: [
+        "Door must be attached to shelves",
+        "Requires precise alignment",
+        "Higher installation complexity"
+      ],
+
+      requirements: [
+        "Corner cabinet ONLY",
+        "Inset or face-frame compatible",
+        "1–2'' clearance required for rotation"
+      ],
+
+      specs: {
+        vendor: "Rev-A-Shelf",
+        cost: "$110 - $260",
+        memo: "Best for mid/high-end kitchens"
       },
 
-      installation:{
-        plumbing:[],
-        electrical:[],
-        notes:[]
+      links: {
+        supplier: "https://www.rev-a-shelf.com",
+        diagram: "",
+        images: ""
+      },
+
+      dimensions: [
+        {
+          size: "24\"",
+          cabinet: "33 corner",
+          tech: "24\" W x 18\" D x 26\"–32\" H",
+          note: "Upper corner use"
+        },
+        {
+          size: "28\"",
+          cabinet: "36 corner",
+          tech: "28\" W x 20\" D x 26\"–32\" H",
+          note: "Standard residential"
+        },
+        {
+          size: "32\"",
+          cabinet: "39 corner",
+          tech: "32\" W x 22\" D x 26\"–32\" H",
+          note: "Large kitchens"
+        }
+      ]
+    }
+
+  ]
+},
+
+/* =========================
+   TRASH CAN
+========================= */
+{
+  category: "TRASH CAN",
+  items: [
+
+    {
+      id: "trash-double",
+      name: "Double Trash Pull-Out",
+      subtitle: "Full extension waste system",
+      image: "/sop-site/images/trash18.png",
+
+      compatible: ['12"', '15"', '18"', '21"'],
+      best: '18"',
+      materials: ["Metal frame", "Plastic bins"],
+      sizes: ["Single", "Double", "XL"],
+
+      warnings: ["Check plumbing interference"],
+      requirements: ["Full extension slides mandatory"],
+
+      specs: {
+        vendor: "Rev-A-Shelf",
+        cost: "$70 - $220",
+        memo: "Best seller Miami"
+      },
+
+      links: {
+        supplier: "https://www.rev-a-shelf.com",
+        diagram: "",
+        images: ""
       }
     }
 
   ]
 },
 
+/* =========================
+   MAGIC CORNER
+========================= */
 {
-  category:"TRASH CAN",
-
-  items:[
+  category: "MAGIC CORNER",
+  items: [
 
     {
-      id:"trash-double",
-      name:"Double Trash Pull-Out",
-      subtitle:"Full extension waste system",
-      image:"/sop-site/images/trash18.png",
-      description:
-      "Pull-out waste solution for kitchen base cabinets.",
+      id: "magic-premium",
+      name: "Magic Corner Premium",
+      subtitle: "Blind corner pull-out system",
+      image: "/sop-site/images/magic-corner.png",
 
-      compatible:[
-        '12"',
-        '15"',
-        '18"',
-        '21"'
-      ],
+      compatible: ["45blind"],
+      best: "45blind",
+      materials: ["Steel", "Anti-slip trays"],
 
-      best:'18"',
+      sizes: ["Compact", "Standard", "Premium"],
 
-      materials:[
-        "Metal frame",
-        "Plastic bins"
-      ],
+      warnings: ["Requires blind corner cabinet"],
 
-      sizes:[
-        "Single",
-        "Double",
-        "XL"
-      ],
+      requirements: ["Precise installation required"],
 
-      warnings:[
-        "21in cabinet may require fillers",
-        "Check plumbing interference"
-      ],
-
-      requirements:[
-        "Full extension slides mandatory",
-        '3/8" top clearance required'
-      ],
-
-      specs:{
-        vendor:"",
-        cost:"",
-        memo:""
+      specs: {
+        vendor: "Häfele",
+        cost: "$350 - $900",
+        memo: "Premium German system"
       },
 
-      links:{
-        supplier:"",
-        diagram:"",
-        images:""
-      },
-
-      installation:{
-        plumbing:[],
-        electrical:[],
-        notes:[]
+      links: {
+        supplier: "https://www.hafele.com",
+        diagram: "",
+        images: ""
       }
     }
 
   ]
-},
-
-{
-  category:"LE MANS",
-  items:[]
-},
-
-{
-  category:"MAGIC CORNER",
-  items:[]
 }
 
 ];
