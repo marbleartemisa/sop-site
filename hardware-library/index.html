@@ -791,20 +791,18 @@
 /* IMAGE */
 
 .sop-banner-img{
-
   width:100%;
+  max-width:1800px;
+  margin:auto;
+  display:block;
 
   height:auto;
 
-  display:block;
-
-  border-radius:14px;
-
-  cursor:zoom-in;
-
-  transition:.25s;
+  object-fit:contain;
 
   image-rendering:auto;
+  -webkit-backface-visibility:hidden;
+  transform:translateZ(0);
 }
 
 /* HOVER */
@@ -1064,6 +1062,23 @@ const hardwareDB = [
 
         'No plumbing interference'
       ]
+          specs:{
+        vendor:"",
+        cost:"",
+        memo:""
+      },
+      
+      links:{
+        supplier:"",
+        diagram:"",
+        images:""
+      },
+      
+      installation:{
+        plumbing:[],
+        electrical:[],
+        notes:[]
+      }
     },
 
     {
@@ -1103,6 +1118,23 @@ const hardwareDB = [
       requirements:[
         "Proper hinge clearance required"
       ]
+          specs:{
+              vendor:"",
+              cost:"",
+              memo:""
+            },
+            
+            links:{
+              supplier:"",
+              diagram:"",
+              images:""
+            },
+            
+            installation:{
+              plumbing:[],
+              electrical:[],
+              notes:[]
+            }
     }
 
   ]
@@ -1158,9 +1190,36 @@ const hardwareDB = [
 
         '3/8" top clearance required'
       ]
+
+          specs:{
+              vendor:"",
+              cost:"",
+              memo:""
+            },
+            
+            links:{
+              supplier:"",
+              diagram:"",
+              images:""
+            },
+            
+            installation:{
+              plumbing:[],
+              electrical:[],
+              notes:[]
+            }
     }
 
   ]
+{
+  category:"LE MANS",
+  items:[ ... ]
+},
+{
+  category:"MAGIC CORNER",
+  items:[ ... ]
+}
+      
 }
 
 ];
@@ -1238,9 +1297,7 @@ function renderDetail(item){
     <div class="detail-header">
 
       <div class="detail-image">
-
         <img src="${item.image}">
-
       </div>
 
       <div>
@@ -1253,104 +1310,105 @@ function renderDetail(item){
           ${item.description}
         </div>
 
+        <!-- SUPPLIER & COST -->
         <div class="detail-section">
+          <h3>Supplier & Cost</h3>
+          <p>
+            <b>Vendor:</b> ${item.specs?.vendor || "N/A"} <br>
+            <b>Cost:</b> ${item.specs?.cost || "N/A"} <br>
+            <b>Memo:</b> ${item.specs?.memo || "N/A"}
+          </p>
+        </div>
 
-          <h3>
-            Best Cabinet
-          </h3>
+        <!-- RESOURCES -->
+        <div class="detail-section">
+          <h3>Resources</h3>
+          <p>
+            <b>Supplier:</b> ${item.links?.supplier || "N/A"} <br>
+            <b>Diagram:</b> ${item.links?.diagram || "N/A"} <br>
+            <b>Images:</b> ${item.links?.images || "N/A"}
+          </p>
+        </div>
 
+        <!-- BEST CABINET -->
+        <div class="detail-section">
+          <h3>Best Cabinet</h3>
           <div class="tags">
-
-            <div class="tag">
-              ${item.best}
-            </div>
-
+            <div class="tag">${item.best || "N/A"}</div>
           </div>
-
         </div>
 
       </div>
 
     </div>
 
+    <!-- COMPATIBLE -->
     <div class="detail-section">
-
-      <h3>
-        Compatible Cabinets
-      </h3>
-
+      <h3>Compatible Cabinets</h3>
       <div class="tags">
-
-        ${item.compatible.map(c=>
+        ${(item.compatible || []).map(c =>
           `<div class="tag">${c}</div>`
         ).join("")}
-
       </div>
-
     </div>
 
+    <!-- SIZES -->
     <div class="detail-section">
-
-      <h3>
-        Available Sizes
-      </h3>
-
+      <h3>Available Sizes</h3>
       <div class="tags">
-
-        ${item.sizes.map(s=>
+        ${(item.sizes || []).map(s =>
           `<div class="tag">${s}</div>`
         ).join("")}
-
       </div>
-
     </div>
 
+    <!-- MATERIALS -->
     <div class="detail-section">
-
-      <h3>
-        Materials
-      </h3>
-
+      <h3>Materials</h3>
       <div class="tags">
-
-        ${item.materials.map(m=>
+        ${(item.materials || []).map(m =>
           `<div class="tag">${m}</div>`
         ).join("")}
-
       </div>
-
     </div>
 
+    <!-- REQUIREMENTS -->
     <div class="detail-section">
-
-      <h3>
-        Critical Requirements
-      </h3>
-
+      <h3>Critical Requirements</h3>
       <ul class="detail-list">
-
-        ${item.requirements.map(r=>
+        ${(item.requirements || []).map(r =>
           `<li>${r}</li>`
         ).join("")}
-
       </ul>
-
     </div>
 
+    <!-- WARNINGS -->
     <div class="detail-section">
-
-      <h3>
-        Warnings
-      </h3>
-
+      <h3>Warnings</h3>
       <ul class="detail-list">
-
-        ${item.warnings.map(w=>
+        ${(item.warnings || []).map(w =>
           `<li>${w}</li>`
         ).join("")}
-
       </ul>
+    </div>
 
+    <!-- INSTALLATION (NUEVO SOP LAYER) -->
+    <div class="detail-section">
+      <h3>Installation Considerations</h3>
+
+      <ul class="detail-list">
+        ${(item.installation?.plumbing || []).map(p =>
+          `<li>🚿 ${p}</li>`
+        ).join("")}
+
+        ${(item.installation?.electrical || []).map(e =>
+          `<li>⚡ ${e}</li>`
+        ).join("")}
+
+        ${(item.installation?.notes || []).map(n =>
+          `<li>📌 ${n}</li>`
+        ).join("")}
+      </ul>
     </div>
 
   `;
