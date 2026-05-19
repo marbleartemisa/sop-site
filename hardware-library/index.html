@@ -762,7 +762,82 @@
 
     grid-template-columns:1fr;
   }
-}      
+} 
+
+/* =========================================
+   SOP BANNER HD
+========================================= */
+
+.sop-banner-section{
+
+  width:min(1800px,98%);
+  margin:20px auto 40px;
+}
+
+.sop-banner-container{
+
+  background:rgba(255,255,255,.96);
+
+  border-radius:20px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 12px 40px rgba(0,0,0,.22);
+
+  padding:10px;
+}
+
+/* IMAGE */
+
+.sop-banner-img{
+
+  width:100%;
+
+  height:auto;
+
+  display:block;
+
+  border-radius:14px;
+
+  cursor:zoom-in;
+
+  transition:.25s;
+
+  image-rendering:auto;
+}
+
+/* HOVER */
+
+.sop-banner-img:hover{
+
+  transform:scale(1.01);
+}
+
+/* FULLSCREEN */
+
+.sop-banner-img.fullscreen{
+
+  position:fixed;
+
+  inset:0;
+
+  width:100vw;
+
+  height:100vh;
+
+  object-fit:contain;
+
+  background:rgba(0,0,0,.95);
+
+  z-index:99999;
+
+  padding:30px;
+
+  cursor:zoom-out;
+
+  border-radius:0;
+}
       
 </style>
 
@@ -857,6 +932,22 @@
   </p>
 
 </section>
+
+<!-- SOP BANNER -->
+<section class="sop-banner-section">
+
+  <div class="sop-banner-container">
+
+    <img
+      src="/sop-site/images/sop-hardware-guide-hd.png"
+      alt="SOP Hardware Guide"
+      class="sop-banner-img"
+      id="sopBanner"
+    >
+
+  </div>
+
+</section>      
 
 <!-- FILTERS -->
 <section class="filters">
@@ -1267,6 +1358,19 @@ function renderDetail(item){
 
 renderSidebar();
 
+/* =========================================
+   SOP BANNER ZOOM
+========================================= */
+
+const sopBanner =
+document.getElementById("sopBanner");
+
+sopBanner.addEventListener("click",()=>{
+
+  sopBanner.classList.toggle("fullscreen");
+
+});
+      
 </script>
 </body>
 </html>
