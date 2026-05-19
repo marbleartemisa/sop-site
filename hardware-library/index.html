@@ -1368,24 +1368,30 @@ function renderSidebar(){
   });
 }
 
-function renderDetail(item){
+function renderDetail(item) {
+
+  const safeArray = (arr) =>
+    Array.isArray(arr) ? arr : [];
+
+  const safeText = (text) =>
+    text ? text : "N/A";
 
   detail.innerHTML = `
 
     <div class="detail-header">
 
       <div class="detail-image">
-        <img src="${item.image}">
+        <img src="${item.image || ""}" alt="${item.name || ""}">
       </div>
 
       <div>
 
         <div class="detail-title">
-          ${item.name}
+          ${safeText(item.name)}
         </div>
 
         <div class="detail-subtitle">
-          ${item.description}
+          ${safeText(item.description)}
         </div>
 
         <!-- SUPPLIER & COST -->
@@ -1420,13 +1426,73 @@ function renderDetail(item){
 
     </div>
 
+    <!-- SYSTEM EXPLANATION -->
+    <div class="detail-section">
+      <h3>How This System Works</h3>
+      <p>${item.systemExplanation || "N/A"}</p>
+    </div>
+
+    <!-- IDEAL USE -->
+    <div class="detail-section">
+      <h3>Ideal Applications</h3>
+      <ul class="detail-list">
+        ${safeArray(item.idealUse).map(i => `<li>${i}</li>`).join("")}
+      </ul>
+    </div>
+
+    <!-- PROS -->
+    <div class="detail-section">
+      <h3>Advantages</h3>
+      <ul class="detail-list">
+        ${safeArray(item.pros).map(p => `<li>✅ ${p}</li>`).join("")}
+      </ul>
+    </div>
+
+    <!-- CONS -->
+    <div class="detail-section">
+      <h3>Limitations</h3>
+      <ul class="detail-list">
+        ${safeArray(item.cons).map(c => `<li>⚠️ ${c}</li>`).join("")}
+      </ul>
+    </div>
+
+    <!-- RECOMMENDED BRANDS -->
+    <div class="detail-section">
+      <h3>Recommended Brands</h3>
+      <div class="tags">
+        ${safeArray(item.recommendedBrands)
+          .map(b => `<div class="tag">${b}</div>`)
+          .join("")}
+      </div>
+    </div>
+
+    <!-- INSTALLATION DIFFICULTY -->
+    <div class="detail-section">
+      <h3>Installation Difficulty</h3>
+      <div class="tags">
+        <div class="tag">
+          ${item.installationDifficulty || "N/A"}
+        </div>
+      </div>
+    </div>
+
+    <!-- PREMIUM LEVEL -->
+    <div class="detail-section">
+      <h3>Category Level</h3>
+      <div class="tags">
+        <div class="tag">
+          ${item.premiumLevel || "Standard"}
+        </div>
+      </div>
+    </div>
+
     <!-- COMPATIBLE -->
     <div class="detail-section">
       <h3>Compatible Cabinets</h3>
       <div class="tags">
-        ${(item.compatible || []).map(c =>
-          `<div class="tag">${c}</div>`
-        ).join("")}
+        ${safeArray(item.compatible)
+          .map(c => `<div class="tag">${c}</div>`)
+          .join("")}
       </div>
     </div>
 
@@ -1434,9 +1500,9 @@ function renderDetail(item){
     <div class="detail-section">
       <h3>Available Sizes</h3>
       <div class="tags">
-        ${(item.sizes || []).map(s =>
-          `<div class="tag">${s}</div>`
-        ).join("")}
+        ${safeArray(item.sizes)
+          .map(s => `<div class="tag">${s}</div>`)
+          .join("")}
       </div>
     </div>
 
@@ -1444,9 +1510,9 @@ function renderDetail(item){
     <div class="detail-section">
       <h3>Materials</h3>
       <div class="tags">
-        ${(item.materials || []).map(m =>
-          `<div class="tag">${m}</div>`
-        ).join("")}
+        ${safeArray(item.materials)
+          .map(m => `<div class="tag">${m}</div>`)
+          .join("")}
       </div>
     </div>
 
@@ -1454,9 +1520,9 @@ function renderDetail(item){
     <div class="detail-section">
       <h3>Critical Requirements</h3>
       <ul class="detail-list">
-        ${(item.requirements || []).map(r =>
-          `<li>${r}</li>`
-        ).join("")}
+        ${safeArray(item.requirements)
+          .map(r => `<li>${r}</li>`)
+          .join("")}
       </ul>
     </div>
 
@@ -1464,29 +1530,32 @@ function renderDetail(item){
     <div class="detail-section">
       <h3>Warnings</h3>
       <ul class="detail-list">
-        ${(item.warnings || []).map(w =>
-          `<li>${w}</li>`
-        ).join("")}
+        ${safeArray(item.warnings)
+          .map(w => `<li>${w}</li>`)
+          .join("")}
       </ul>
     </div>
 
-    <!-- INSTALLATION (NUEVO SOP LAYER) -->
+    <!-- INSTALLATION CONSIDERATIONS -->
     <div class="detail-section">
       <h3>Installation Considerations</h3>
 
       <ul class="detail-list">
-        ${(item.installation?.plumbing || []).map(p =>
-          `<li>🚿 ${p}</li>`
-        ).join("")}
 
-        ${(item.installation?.electrical || []).map(e =>
-          `<li>⚡ ${e}</li>`
-        ).join("")}
+        ${safeArray(item.installation?.plumbing)
+          .map(p => `<li>🚿 ${p}</li>`)
+          .join("")}
 
-        ${(item.installation?.notes || []).map(n =>
-          `<li>📌 ${n}</li>`
-        ).join("")}
+        ${safeArray(item.installation?.electrical)
+          .map(e => `<li>⚡ ${e}</li>`)
+          .join("")}
+
+        ${safeArray(item.installation?.notes)
+          .map(n => `<li>📌 ${n}</li>`)
+          .join("")}
+
       </ul>
+
     </div>
 
   `;
