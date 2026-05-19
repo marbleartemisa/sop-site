@@ -89,8 +89,9 @@ body {
 
 iframe {
     width: 100%;
-    height: 95vh; /* <- altura casi completa de la pantalla */
+    height: 95vh;
     border: none;
+    background: white;
 }
 
 #prevDocBtn, #nextDocBtn {
@@ -130,15 +131,34 @@ iframe {
 
 <div class="doc-header">
   <div id="title">Documento SOP</div>
-  <div>
+<div>
+
+    <button class="tool" onclick="zoomOut()">−</button>
+
+    <button class="tool" id="zoomIndicator">
+        100%
+    </button>
+
+    <button class="tool" onclick="zoomIn()">+</button>
+
+    <button class="tool" onclick="resetZoom()">Reset</button>
+
     <button class="tool" onclick="openNew()">Abrir</button>
+
     <button class="tool" onclick="downloadDoc()">Descargar</button>
+
     <button class="tool" onclick="printDoc()">Imprimir</button>
+
     <button class="tool" id="prevDoc" onclick="prevSOP()">← Anterior</button>
+
     <button class="tool" id="nextDoc" onclick="nextSOP()">Siguiente →</button>
-  </div>
+
+</div>
 </div>
 
+
+
+    
 <div class="doc-area">
   <div class="doc-frame">
     <iframe id="frame"></iframe>
@@ -151,7 +171,13 @@ iframe {
 let params = new URLSearchParams(window.location.search);
 let doc = params.get("doc");
 let idSOP = params.get("id");
+let zoomLevel = 1;
+const ZOOM_STEP = 0.1;
+const MAX_ZOOM = 2.5;
+const MIN_ZOOM = 0.5;
 const frame = document.getElementById("frame");
+
+    
 frame.onload = function () {
     try {
         const docFrame = frame.contentDocument || frame.contentWindow.document;
@@ -244,13 +270,65 @@ hr {
 
 `;        
         docFrame.head.appendChild(style);
+        applyZoom();
     } catch (e) {
         console.log("No se pudo modificar el iframe:", e);
     }
 };
 if(doc) frame.src = doc;
 
+// ======================
+// ZOOM
+// ======================
 
+function applyZoom(){
+
+    try{
+
+        const docFrame =
+            frame.contentDocument ||
+            frame.contentWindow.document;
+
+        docFrame.body.style.zoom = zoomLevel;
+
+        document.getElementById("zoomIndicator")
+            .innerText = Math.round(zoomLevel * 100) + "%";
+
+    }catch(e){
+
+        console.log("Zoom error:", e);
+
+    }
+}
+
+function zoomIn(){
+
+    zoomLevel += ZOOM_STEP;
+
+    if(zoomLevel > MAX_ZOOM){
+        zoomLevel = MAX_ZOOM;
+    }
+
+    applyZoom();
+}
+
+function zoomOut(){
+
+    zoomLevel -= ZOOM_STEP;
+
+    if(zoomLevel < MIN_ZOOM){
+        zoomLevel = MIN_ZOOM;
+    }
+
+    applyZoom();
+}
+
+function resetZoom(){
+
+    zoomLevel = 1;
+
+    applyZoom();
+}
     
 function openNew() {
     if(doc) window.open(doc, "_blank");
