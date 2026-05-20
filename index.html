@@ -6,7 +6,6 @@
 <title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP Rev 4.0</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/sop-site/components/navbar.css">
 
 <style>
 
@@ -35,7 +34,129 @@
         min-height:100vh;
       }
       
+      /* ===== NAVBAR ===== */
+      .navbar{
+        position:sticky;
+        top:0;
+        background:rgba(0,0,0,0.65);
+        backdrop-filter:blur(8px);
+        padding:10px 30px;
+        color:white;
+        font-weight:bold;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        z-index:999;
+      }
+      
+      .logo{
+        display:flex;
+        align-items:center;
+        gap:10px;
+      }
+      
+      .logo img{
+        height:40px;
+      }
+      
 
+      .menu{
+        display:flex;
+        gap:25px;
+        flex:1;                /* 🔥 ocupa espacio disponible */
+        justify-content:center; /* 🔥 lo centra */
+      }
+      
+      
+      .menu a{
+        color:white;
+        text-decoration:none;
+        font-weight:bold;
+        transition:.3s;
+      }
+      
+      .menu a:hover{
+        color:#00aaff;
+      }
+
+      .menu a.active {
+              background: #003366;   /* color de fondo destacado */
+              color: #fff;           /* texto blanco */
+              border-radius: 6px;
+              padding: 5px 10px;
+            }
+
+            .menu-toggle{
+              display:none;
+              font-size:1.6rem;
+              cursor:pointer;
+            }
+            
+            /* ✅ MOBILE */
+            @media (max-width: 900px){
+            
+              /* ===== HAMBURGER ===== */
+              .menu-toggle{
+                display:block !important;
+                font-size:1.6rem;
+                cursor:pointer;
+                z-index:1001;
+              }
+            
+              /* ===== NAVBAR ===== */
+              .navbar{
+                padding:10px 15px;
+              }
+            
+              .logo span{
+                font-size:0.9rem;
+              }
+            
+              /* ===== MENU MOBILE ===== */
+              .menu{
+                display:none;
+                position:absolute;
+                top:60px;
+                left:0;
+                width:100%;
+                background:rgba(0,0,0,0.95);
+                flex-direction:column;
+                align-items:center;
+                gap:15px;
+                padding:20px 0;
+              }
+            
+              .menu.show{
+                display:flex;
+              }
+            
+              /* ===== USER INFO ===== */
+                .user-info{
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    white-space:nowrap;
+                    flex-shrink:0;   /* 🔥 NO se encoge */
+                  }
+            }
+
+
+
+            @media (max-width: 900px){
+            
+              .logo span{
+                display:none; /* 🔥 oculta texto largo */
+              }
+            
+              .logo img{
+                height:35px;
+              }
+            
+              .user-info span{
+                font-size:0.75rem;
+              }
+            
+            }
 
             @media (max-width: 900px){
               .sop-table th,
@@ -416,8 +537,6 @@ tr:hover .sop-nombre {
 </style>
 </head>
 <body>
-<div id="navbar-container"></div>
-      
 <div class="overlay">
 
 <div class="video-background">
@@ -428,6 +547,63 @@ tr:hover .sop-nombre {
 </div>
       
 
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <img src="/sop-site/logo.png">
+    <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+
+<div class="menu">
+
+  <a href="/sop-site/">Inicio</a>
+
+  <!-- SOP DROPDOWN -->
+  <div class="dropdown">
+    <button class="drop-btn" onclick="toggleDropdown(this)">
+      SOP <i class="fa-solid fa-chevron-down"></i>
+    </button>
+
+    <div class="dropdown-content">
+      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+      <a href="/sop-site/Aportes/">Aportes SOP</a>
+      <a href="/sop-site/analisis/">Análisis SOP</a>
+      <a href="#" onclick="editSOP()">Editar SOP</a>
+      <a href="/sop-site/admin/">Admin</a>
+    </div>
+  </div>
+
+  <!-- HELPERS DROPDOWN -->
+  <div class="dropdown">
+    <button class="drop-btn" onclick="toggleDropdown(this)">
+      Helpers <i class="fa-solid fa-chevron-down"></i>
+    </button>
+
+    <div class="dropdown-content">
+      <a href="/sop-site/hardware-library/">Hardware Library</a>
+      <a href="/sop-site/hardware-selector/">Selector de Hardware</a>
+    </div>
+  </div>
+
+  <a href="https://marbleartemisa.github.io/artemisa/index.html">
+    Portal Web
+  </a>
+
+</div>
+
+  <!-- ✅ Mover user-info fuera de menu -->
+  <div class="user-info" id="userInfo" style="display:none;">
+    <span id="userName"></span>
+    <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+  </div>
+
+</div>
       
 <!-- MENSAJE BIENVENIDA -->
 <div id="welcome-msg"></div>
@@ -575,7 +751,7 @@ document.getElementById("loginBtn").addEventListener("click", ()=> {
 
   if(user){
     currentUser = user;
-   localStorage.setItem("usuario", JSON.stringify(user));
+    localStorage.setItem("usuario", user.usuario);
     closeLogin();
     mostrarBienvenida(user.usuario);
     // 👉 Aquí es donde debes agregar:
@@ -586,19 +762,11 @@ document.getElementById("loginBtn").addEventListener("click", ()=> {
 });
       
 function mostrarUsuario(user){
+  const userDiv = document.getElementById("userInfo");
+  const userNameSpan = document.getElementById("userName");
 
-  setTimeout(() => {
-
-    const userDiv = document.getElementById("userInfo");
-    const userNameSpan = document.getElementById("userName");
-
-    if(!userDiv || !userNameSpan) return;
-
-    userNameSpan.textContent = user.usuario;
-    userDiv.style.display = "flex";
-
-  }, 300);
-
+  userNameSpan.textContent = user.usuario; // mostrar nombre
+  userDiv.style.display = "flex";          // mostrar bloque
 }
       
 function mostrarBienvenida(nombre){
@@ -747,20 +915,13 @@ function sortTable(field){
 
 /* ===== EDITAR SOP ===== */
 function editSOP(){
-
   if(!currentUser){
+    alert("Debe iniciar sesión");
     openLogin();
     return;
   }
 
-  // 🔒 SOLO ADMIN
-  if(currentUser.rol !== "admin"){
-    alert("No autorizado");
-    return;
-  }
-
   const pass = prompt("Ingrese su clave");
-
   if(pass === currentUser.clave){
     window.location.href="/sop-site/sop-viewer-edit/";
   }else{
@@ -778,14 +939,14 @@ window.addEventListener("DOMContentLoaded", ()=>{
   populateUsers();
 
   const savedUser = localStorage.getItem("usuario");
-
   if(savedUser){
-    try{
-      currentUser = JSON.parse(savedUser);
+    currentUser = usuarios.find(u=>u.usuario===savedUser);
+    if(currentUser) {
+      mostrarBienvenida(currentUser.usuario);
       mostrarUsuario(currentUser);
-    }catch(e){
-      localStorage.removeItem("usuario");
     }
+  }else{
+    openLogin();
   }
 
   // ENTER para login
@@ -796,7 +957,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
     }
   });
 
-  // cerrar menú móvil
+  // ✅ 👇 AQUÍ MISMO
   document.querySelectorAll('.menu a').forEach(link=>{
     link.addEventListener('click', ()=>{
       document.querySelector('.menu').classList.remove('show');
@@ -805,7 +966,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
 
 });
       
-</script> 
-      <script src="/sop-site/components/navbar.js"></script>
+</script>  
 </body>
 </html>
+
