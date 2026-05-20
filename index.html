@@ -442,7 +442,6 @@ const usuarios = [
       
 ];
 
-let currentUser = null;
 let SOP_INDEX = [];
 
 /* ===== MENU ===== */
@@ -486,19 +485,7 @@ document.getElementById("loginBtn").addEventListener("click", ()=> {
   }
 });
       
-function mostrarUsuario(user){
 
-  const check = setInterval(() => {
-    const userDiv = document.getElementById("userInfo");
-    const userNameSpan = document.getElementById("userName");
-
-    if(userDiv && userNameSpan){
-      userNameSpan.textContent = user.usuario;
-      userDiv.style.display = "flex";
-      clearInterval(check);
-    }
-  }, 100);
-}
       
 function mostrarBienvenida(nombre){
   const msg = document.getElementById("welcome-msg");
@@ -506,15 +493,6 @@ function mostrarBienvenida(nombre){
   msg.classList.add("show");
   setTimeout(()=> msg.classList.remove("show"),3000);
 }
-
-function logout(){
-  currentUser = null;
-  localStorage.removeItem("usuario");
-  document.getElementById("userInfo").style.display = "none";
-window.location.href = "https://marbleartemisa.github.io/sop-site/";
-}
-
-
       
 /* ===== SOP DATA ===== */
 fetch('SOP_INDEX.json?v=' + Date.now())
