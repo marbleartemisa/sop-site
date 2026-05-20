@@ -236,7 +236,7 @@ label{
       
 ];
 
-let currentUser = null;
+
  
 emailjs.init("iR8ieJnOkI4_sr8TH"); // tu user ID EmailJS
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxLLA3xgTVKaLAlyDOy8fHwFm5mWzqY4PkfIqd8p_ELB49q4m2He3NxGBW3Op2WWLmnYw/exec";
@@ -400,14 +400,6 @@ function populateUsers(){
 }
 
 
-// Mostrar usuario en navbar
-function mostrarUsuario(user){
-  const userDiv = document.getElementById("userInfo");
-  const userNameSpan = document.getElementById("userName");
-
-  userNameSpan.textContent = user.usuario; // mostrar nombre
-  userDiv.style.display = "flex";          // mostrar bloque
-}
       
 function mostrarBienvenida(nombre){
   const msg = document.getElementById("welcome-msg");
@@ -416,14 +408,6 @@ function mostrarBienvenida(nombre){
   setTimeout(()=> msg.classList.remove("show"),3000);
 }
 
-
-// Cerrar sesión
-function logout(){
-  currentUser = null;
-  localStorage.removeItem("usuario");
-  document.getElementById("userInfo").style.display = "none";
-window.location.href = "https://marbleartemisa.github.io/sop-site/";
-}
 
 function mostrarNotificacion(msg,tipo){
   const notif=document.createElement("div");
