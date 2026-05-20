@@ -1,5 +1,5 @@
 /* =========================
-   NAVBAR SYSTEM (FIXED)
+   NAVBAR SYSTEM (PRODUCTION READY)
 ========================= */
 
 const Navbar = {
@@ -20,6 +20,7 @@ const Navbar = {
 
       this.setup();
       this.initUser();
+
     } catch (err) {
       console.error('Error cargando navbar:', err);
     }
@@ -31,10 +32,11 @@ const Navbar = {
   setup() {
     this.highlightMenu();
     this.setupMobileClose();
+    this.initOutsideClick();
   },
 
   /* =========================
-     MOBILE TOGGLE
+     MOBILE MENU TOGGLE
   ========================= */
   toggleMenu() {
     const container = document.getElementById('navbar-container');
@@ -45,13 +47,13 @@ const Navbar = {
   },
 
   /* =========================
-     DROPDOWN
+     DROPDOWN TOGGLE
   ========================= */
   toggleDropdown(btn) {
-    const dropdown = btn.closest('.dropdown');
-    if (!dropdown) return;
-
     const container = document.getElementById('navbar-container');
+    const dropdown = btn.closest('.dropdown');
+
+    if (!container || !dropdown) return;
 
     container.querySelectorAll('.dropdown').forEach(d => {
       if (d !== dropdown) d.classList.remove('open');
@@ -61,13 +63,16 @@ const Navbar = {
   },
 
   /* =========================
-     CLOSE OUTSIDE CLICK
+     CLICK OUTSIDE CLOSE
   ========================= */
   initOutsideClick() {
     document.addEventListener('click', (e) => {
       const container = document.getElementById('navbar-container');
+      if (!container) return;
 
-      if (!container.contains(e.target)) return;
+      const clickedInside = container.contains(e.target);
+
+      if (!clickedInside) return;
 
       if (!e.target.closest('.dropdown')) {
         container.querySelectorAll('.dropdown.open').forEach(d => {
@@ -82,6 +87,8 @@ const Navbar = {
   ========================= */
   highlightMenu() {
     const container = document.getElementById('navbar-container');
+    if (!container) return;
+
     const path = window.location.pathname;
 
     container.querySelectorAll('.menu a').forEach(link => {
@@ -91,10 +98,11 @@ const Navbar = {
   },
 
   /* =========================
-     MOBILE CLOSE
+     MOBILE CLOSE ON CLICK
   ========================= */
   setupMobileClose() {
     const container = document.getElementById('navbar-container');
+    if (!container) return;
 
     container.querySelectorAll('.menu a').forEach(link => {
       link.addEventListener('click', () => {
@@ -104,7 +112,7 @@ const Navbar = {
   },
 
   /* =========================
-     USER SYSTEM (FIX)
+     USER SYSTEM
   ========================= */
   initUser() {
     const saved = localStorage.getItem('usuario');
@@ -113,14 +121,22 @@ const Navbar = {
 
     try {
       const user = JSON.parse(saved);
+      this.user = user;
       this.showUser(user);
     } catch (e) {
       localStorage.removeItem('usuario');
     }
   },
 
+  setUser(user) {
+    this.user = user;
+    localStorage.setItem('usuario', JSON.stringify(user));
+    this.showUser(user);
+  },
+
   showUser(user) {
     const container = document.getElementById('navbar-container');
+    if (!container) return;
 
     const userDiv = container.querySelector('#userInfo');
     const userName = container.querySelector('#userName');
@@ -129,18 +145,28 @@ const Navbar = {
 
     userName.textContent = user.usuario;
     userDiv.style.display = 'flex';
+  },
 
-    this.user = user;
+  hideUser() {
+    const container = document.getElementById('navbar-container');
+    if (!container) return;
+
+    const userDiv = container.querySelector('#userInfo');
+
+    if (userDiv) userDiv.style.display = 'none';
+
+    this.user = null;
   },
 
   logout() {
     localStorage.removeItem('usuario');
+    this.user = null;
     window.location.href = '/sop-site/';
   }
 };
 
 /* =========================
-   GLOBAL BRIDGE (HTML calls)
+   GLOBAL BRIDGE (HTML ACCESS)
 ========================= */
 
 function toggleMenu() {
@@ -162,3 +188,8 @@ function logout() {
 document.addEventListener('DOMContentLoaded', () => {
   Navbar.load();
 });
+
+/* =========================
+   GLOBAL ACCESS
+========================= */
+window.Navbar = Navbar;
