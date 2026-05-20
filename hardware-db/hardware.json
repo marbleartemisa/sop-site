@@ -1,1 +1,337 @@
+[
+  {
+    "category": "LAZY SUSAN",
+    "type": "FULL CIRCLE",
 
+    "items": [
+      {
+        "id": "lazy-full-01",
+
+        "name": "Rev-A-Shelf Full Circle Lazy Susan",
+
+        "subtitle": "360° rotating trays system",
+
+        "vendor": "Rev-A-Shelf",
+
+        "image": "/sop-site/images/lazy-fullcircle.png",
+
+        "diagram": "/sop-site/images/diagrams/lazy-fullcircle-diagram.png",
+
+        "description": "Standard full rotation trays for corner base cabinets.",
+
+        "commonSizes": [
+          "18\"",
+          "20\"",
+          "24\"",
+          "28\"",
+          "32\""
+        ],
+
+        "compatibleCabinets": [
+          "24corner",
+          "28corner",
+          "33corner",
+          "36corner"
+        ],
+
+        "bestCabinet": "36corner",
+
+        "application": [
+          "Base corner cabinets",
+          "Residential kitchens"
+        ],
+
+        "materials": [
+          "Polymer",
+          "Wood",
+          "Chrome",
+          "Steel"
+        ],
+
+        "warnings": [
+          "Requires centered pivot alignment",
+          "Not ideal for blind corners"
+        ],
+
+        "requirements": [
+          "90° corner cabinet",
+          "Minimum 3/4 reinforced base"
+        ],
+
+        "compatibility": {
+          "24corner": "optimal",
+          "28corner": "optimal",
+          "33corner": "optimal",
+          "36corner": "recommended"
+        },
+
+        "specs": {
+          "costWholesale": "$90 - $220",
+          "memo": "Best balance cost vs durability"
+        },
+
+        "links": {
+          "vendor": "https://www.rev-a-shelf.com",
+          "product": "https://www.rev-a-shelf.com/lazy-susan-organizers/full-circle-lazy-susans",
+          "images": "",
+          "diagram": ""
+        }
+      }
+    ]
+  },
+
+  {
+    "category": "LAZY SUSAN",
+    "type": "KIDNEY",
+
+    "items": [
+      {
+        "id": "lazy-kidney-01",
+
+        "name": "Rev-A-Shelf Kidney Lazy Susan",
+
+        "subtitle": "Kidney shape rotating shelf",
+
+        "vendor": "Rev-A-Shelf",
+
+        "image": "/sop-site/images/lazy-kidney.png",
+
+        "description": "Diagonal corner rotating tray system.",
+
+        "commonSizes": [
+          "18\"",
+          "24\"",
+          "28\"",
+          "32\""
+        ],
+
+        "compatibleCabinets": [
+          "33diag",
+          "36diag",
+          "39diag"
+        ],
+
+        "bestCabinet": "36diag",
+
+        "materials": [
+          "Polymer",
+          "Wood",
+          "Steel"
+        ],
+
+        "warnings": [
+          "Door clearance critical"
+        ],
+
+        "requirements": [
+          "Diagonal cabinet only"
+        ],
+
+        "compatibility": {
+          "33diag": "acceptable",
+          "36diag": "optimal",
+          "39diag": "optimal"
+        },
+
+        "specs": {
+          "costWholesale": "$60 - $180",
+          "memo": "Better moisture resistance in polymer"
+        },
+
+        "links": {
+          "vendor": "https://www.rev-a-shelf.com",
+          "product": "https://www.rev-a-shelf.com/lazy-susan-organizers/kidney-lazy-susans"
+        }
+      }
+    ]
+  },
+
+  {
+    "category": "TRASH CAN",
+    "type": "PULL OUT",
+
+    "items": [
+      {
+        "id": "trash-double-01",
+
+        "name": "Double Trash Pull-Out",
+
+        "subtitle": "Full extension waste system",
+
+        "vendor": "Rev-A-Shelf",
+
+        "image": "/sop-site/images/trash18.png",
+
+        "description": "Pull-out double trash system with soft close slides.",
+
+        "commonSizes": [
+          "12\"",
+          "15\"",
+          "18\"",
+          "21\"",
+          "24\""
+        ],
+
+        "compatibleCabinets": [
+          "12base",
+          "15base",
+          "18base",
+          "21base",
+          "24base"
+        ],
+
+        "bestCabinet": "18base",
+
+        "materials": [
+          "Metal frame",
+          "Plastic bins"
+        ],
+
+        "warnings": [
+          "Check plumbing interference"
+        ],
+
+        "requirements": [
+          "Full extension slides mandatory"
+        ],
+
+        "compatibility": {
+          "12base": "optimal",
+          "15base": "optimal",
+          "18base": "optimal",
+          "21base": "recommended",
+          "24base": "recommended"
+        },
+
+        "specs": {
+          "costWholesale": "$70 - $220",
+          "memo": "Best seller Miami"
+        },
+
+        "links": {
+          "vendor": "https://www.rev-a-shelf.com",
+          "product": "https://www.rev-a-shelf.com"
+        }
+      }
+    ]
+  },
+
+  {
+    "category": "MAGIC CORNER",
+    "type": "PREMIUM",
+
+    "items": [
+      {
+        "id": "magic-corner-01",
+
+        "name": "Hafele Magic Corner",
+
+        "subtitle": "Blind corner pull-out system",
+
+        "vendor": "Häfele",
+
+        "image": "/sop-site/images/magic-corner.png",
+
+        "description": "Premium blind corner articulated tray system.",
+
+        "commonSizes": [
+          "45blind"
+        ],
+
+        "compatibleCabinets": [
+          "45blind"
+        ],
+
+        "bestCabinet": "45blind",
+
+        "materials": [
+          "Steel",
+          "Anti-slip trays"
+        ],
+
+        "warnings": [
+          "Requires blind corner cabinet"
+        ],
+
+        "requirements": [
+          "Precise installation required"
+        ],
+
+        "compatibility": {
+          "45blind": "optimal"
+        },
+
+        "specs": {
+          "costWholesale": "$350 - $900",
+          "memo": "Premium German system"
+        },
+
+        "links": {
+          "vendor": "https://www.hafele.com",
+          "product": "https://www.hafele.com/us/en/products/kitchen-storage-organizers/corner-storage-systems/"
+        }
+      }
+    ]
+  },
+
+  {
+    "category": "LEMANS",
+    "type": "PREMIUM",
+
+    "items": [
+      {
+        "id": "lemans-01",
+
+        "name": "Kesseböhmer LeMans II",
+
+        "subtitle": "Independent articulated trays system",
+
+        "vendor": "Kesseböhmer",
+
+        "image": "/sop-site/images/lemans.png",
+
+        "description": "Premium swing-out blind corner system.",
+
+        "commonSizes": [
+          "15\"",
+          "18\"",
+          "45blind"
+        ],
+
+        "compatibleCabinets": [
+          "45blind"
+        ],
+
+        "bestCabinet": "45blind",
+
+        "materials": [
+          "Steel",
+          "Chrome",
+          "Wood"
+        ],
+
+        "warnings": [
+          "Requires installation precision"
+        ],
+
+        "requirements": [
+          "Blind corner cabinet only"
+        ],
+
+        "compatibility": {
+          "45blind": "optimal"
+        },
+
+        "specs": {
+          "costWholesale": "$450 - $1200",
+          "memo": "Most premium blind corner solution"
+        },
+
+        "links": {
+          "vendor": "https://www.kesseboehmer.com",
+          "product": "https://shop.kesseboehmer.com/en/lemans/"
+        }
+      }
+    ]
+  }
+]
