@@ -13,21 +13,7 @@
 /* ===== BODY ===== */
 body { margin:0; font-family:'Inter',sans-serif; color:#1f2937; }
 
-/* ===== NAVBAR ===== */
-.navbar {
-  position: sticky;
-  top:0;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(8px);
-  padding:10px 30px;
-  color:white;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:999;
-}
-.logo { display:flex; align-items:center; gap:10px; }
-.logo img { height:40px; }
+
 .menu { display:flex; gap:25px; }
 .menu a { color:white; text-decoration:none; font-weight:bold; transition:.3s; }
 .menu a:hover { color:#00aaff; }
