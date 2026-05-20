@@ -125,7 +125,8 @@ body{
   justify-content:center;
 }
 
-.filters input,
+
+  .filters input,
 .filters select{
   padding:14px 18px;
   border:none;
@@ -134,12 +135,39 @@ body{
   color:white;
   min-width:240px;
   backdrop-filter:blur(8px);
+  font-size:0.95rem;
 }
+
+/* PLACEHOLDER */
 
 .filters input::placeholder{
-  color:#ddd;
+  color:#e5e7eb;
 }
 
+/* DROPDOWN FIX */
+
+.filters select{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+}
+
+/* OPCIONES DEL SELECT */
+
+.filters select option{
+  background:#1e293b;
+  color:white;
+}
+  .filters select{
+  font-weight:600;
+}
+.filters select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  background-size:14px;
+  padding-right:40px;
+}
 /* GRID */
 
 .library-grid{
