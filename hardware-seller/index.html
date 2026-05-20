@@ -441,13 +441,13 @@ body{
 <div class="filters">
 
   <input
-  type="text"
-  id="search"
-  placeholder="Buscar hardware..."
-  oninput="renderHardware()">
+    type="text"
+    id="search"
+    placeholder="Buscar hardware..."
+    oninput="renderHardware()"
+  >
 
   <select id="categoryFilter" onchange="renderHardware()">
-
     <option value="">Todas las categorías</option>
 
     <option value="LAZY SUSAN">
@@ -473,7 +473,6 @@ body{
 <!-- GRID -->
 
 <div class="library-grid" id="libraryGrid"></div>
-
 <!-- FOOTER -->
 
 <div class="footer">
@@ -488,17 +487,35 @@ let hardwareDB = [];
 
 /* LOAD JSON */
 
+let hardwareDB = [];
+
 fetch('/sop-site/hardware-db/hardware-db.json?v=' + Date.now())
+  .then(res => res.json())
+  .then(data => {
 
-.then(res => res.json())
+    // 🔥 si el JSON viene agrupado por category
+    // convierte todo en un solo array plano
 
-.then(data => {
+    hardwareDB = data.flatMap(category => {
 
-  hardwareDB = data;
+      return category.items.map(item => ({
 
-  renderHardware();
+        ...item,
 
-});
+        category: category.category
+
+      }));
+
+    });
+
+    renderHardware();
+
+  })
+  .catch(err => {
+
+    console.error("Error cargando hardware DB:", err);
+
+  });
 
 /* RENDER */
 
