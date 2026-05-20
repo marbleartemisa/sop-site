@@ -28,19 +28,12 @@
         background-attachment:fixed;
         color:#1f2937;
       }
+              .overlay{
+              position: relative;
+              min-height:100vh;
+              background:rgba(0,0,0,0.25);
+            }
       
-      .overlay{
-        background:rgba(0,0,0,0.25);
-        min-height:100vh;
-      }
-      
-    
-      
-     
-
-
-
-
 
             @media (max-width: 900px){
               .sop-table th,
@@ -357,10 +350,6 @@ tr:hover .sop-nombre {
     Tu navegador no soporta videos de fondo.
   </video>
 </div>     
-
-</div>
-
-</div>
       
 <!-- MENSAJE BIENVENIDA -->
 <div id="welcome-msg"></div>
@@ -456,29 +445,7 @@ let currentUser = null;
 let SOP_INDEX = [];
 
 /* ===== MENU ===== */
-function toggleMenu(){
-  document.querySelector('.menu').classList.toggle('show');
-}
-      
-function toggleDropdown(btn) {
-  const dropdown = btn.parentElement;
 
-  // cerrar otros dropdowns
-  document.querySelectorAll(".dropdown").forEach(d => {
-    if (d !== dropdown) d.classList.remove("open");
-  });
-
-  dropdown.classList.toggle("open");
-}
-
-// cerrar si clic fuera
-document.addEventListener("click", function(e) {
-  if (!e.target.closest(".dropdown")) {
-    document.querySelectorAll(".dropdown").forEach(d => {
-      d.classList.remove("open");
-    });
-  }
-});
 /* ===== LOGIN ===== */
 function openLogin(){
   document.getElementById("loginModal").style.display = "flex";
@@ -645,18 +612,6 @@ function filterDept(dep){
   filterSOP();
 }
 
-// 🔹 Destacar opción de menú según URL
-function destacarMenu() {
-  const links = document.querySelectorAll(".menu a");
-  const path = window.location.pathname; // ruta actual
-  links.forEach(link => {
-    if (link.getAttribute("href") === path) {
-      link.classList.add("active");
-    } else {
-      link.classList.remove("active");
-    }
-  });
-}
 
 window.addEventListener("DOMContentLoaded", () => {
   destacarMenu();
@@ -668,6 +623,19 @@ function sortTable(field){
     return (a[field]||"").localeCompare(b[field]||"");
   });
   renderSOP();
+}
+
+function destacarMenu() {
+  const links = document.querySelectorAll(".menu a");
+  const path = window.location.pathname;
+
+  links.forEach(link => {
+    if (link.getAttribute("href") === path) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
 }
 
 /* ===== EDITAR SOP ===== */
@@ -714,15 +682,11 @@ window.addEventListener("DOMContentLoaded", ()=>{
     }
   });
 
-  // ✅ 👇 AQUÍ MISMO
-  document.querySelectorAll('.menu a').forEach(link=>{
-    link.addEventListener('click', ()=>{
-      document.querySelector('.menu').classList.remove('show');
-    });
-  });
+
 
 });
- <script src="/sop-site/components/navbar.js"></script>     
+ 
 </script>  
+       <script src="/sop-site/components/navbar.js"></script>    
 </body>
 </html>
