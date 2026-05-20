@@ -1,8 +1,20 @@
 <div class="navbar">
 
+  <!-- LOGO -->
   <div class="logo">
-    <img src="/sop-site/logo.png">
+    <img src="/sop-site/logo.png" alt="Logo">
     <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+
+  <!-- USER INFO -->
+  <div class="user-info" id="userInfo" style="display:none;">
+    <span id="userName"></span>
+
+    <button onclick="logout()"
+            title="Cerrar sesión"
+            style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
   </div>
 
   <!-- HAMBURGER -->
@@ -17,95 +29,50 @@
 
     <!-- SOP -->
     <div class="dropdown">
-
       <button class="drop-btn" onclick="toggleDropdown(this)">
         SOP
         <i class="fa-solid fa-chevron-down"></i>
       </button>
 
       <div class="dropdown-content">
-
-        <a href="/sop-site/registrar-sop/">
-          Registrar SOP
-        </a>
-
-        <a href="/sop-site/Aportes/">
-          Aportes SOP
-        </a>
-
-        <a href="/sop-site/analisis/">
-          Análisis SOP
-        </a>
-
-        <a href="/sop-site/sop-viewer-edit/">
-          Editar SOP
-        </a>
-
+        <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+        <a href="/sop-site/Aportes/">Aportes SOP</a>
+        <a href="/sop-site/analisis/">Análisis SOP</a>
+        <a href="/sop-site/sop-viewer-edit/">Editar SOP</a>
       </div>
-
     </div>
 
     <!-- HELPERS -->
     <div class="dropdown">
-
       <button class="drop-btn" onclick="toggleDropdown(this)">
         Helpers
         <i class="fa-solid fa-chevron-down"></i>
       </button>
 
       <div class="dropdown-content">
-
-        <a href="/sop-site/hardware-library/">
-          Hardware Library
-        </a>
-
-        <a href="/sop-site/hardware-selector/">
-          Selector de Hardware
-        </a>
-
+        <a href="/sop-site/hardware-library/">Hardware Library</a>
+        <a href="/sop-site/hardware-selector/">Selector de Hardware</a>
       </div>
-
     </div>
 
     <!-- ADMIN -->
     <div class="dropdown">
-
       <button class="drop-btn" onclick="toggleDropdown(this)">
         Admin
         <i class="fa-solid fa-chevron-down"></i>
       </button>
 
       <div class="dropdown-content">
-
-        <a href="/sop-site/admin/">
-          Dashboard
-        </a>
-
-        <a href="/sop-site/json-editor/">
-          JSON Editor
-        </a>
-
-        <a href="/sop-site/db-tools/">
-          Database Tools
-        </a>
-
+        <a href="/sop-site/admin/">Dashboard</a>
+        <a href="/sop-site/json-editor/">JSON Editor</a>
+        <a href="/sop-site/db-tools/">Database Tools</a>
       </div>
-
     </div>
 
     <a href="https://marbleartemisa.github.io/artemisa/index.html">
       Portal Web
     </a>
 
-  </div>
-
-  <!-- USER -->
-  <div class="user-info" id="userInfo" style="display:none;">
-    <span id="userName"></span>
-
-    <button onclick="logout()" class="logout-btn">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </button>
   </div>
 
 </div>
