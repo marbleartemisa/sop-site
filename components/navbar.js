@@ -181,6 +181,22 @@ function logout() {
   Navbar.logout();
 }
 
+function mostrarUsuario(user){
+
+  setTimeout(() => {
+
+    const userDiv = document.getElementById("userInfo");
+    const userNameSpan = document.getElementById("userName");
+
+    if(!userDiv || !userNameSpan) return;
+
+    userNameSpan.textContent = user.usuario;
+    userDiv.style.display = "flex";
+
+  }, 300);
+
+}
+
 /* =========================
    INIT
 ========================= */
