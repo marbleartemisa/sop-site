@@ -483,148 +483,135 @@ body{
 
 <script>
 
+function normalizeText(text){
 
+  return text
+    .toLowerCase()
+    .trim();
+
+}
 /* LOAD JSON */
 
 let hardwareDB = [];
 
 fetch('/sop-site/hardware-db/hardware-db.json?v=' + Date.now())
-  .then(res => res.json())
-  .then(data => {
 
-    // 🔥 si el JSON viene agrupado por category
-    // convierte todo en un solo array plano
+.then(res => res.json())
 
-    hardwareDB = data.flatMap(category => {
+.then(data => {
 
-      return category.items.map(item => ({
+  console.log("JSON LOADED:", data);
 
-        ...item,
+  hardwareDB = data.flatMap(category => {
 
-        category: category.category
+    return category.items.map(item => ({
 
-      }));
+      ...item,
 
-    });
+      category: category.category
 
-    renderHardware();
-
-  })
-  .catch(err => {
-
-    console.error("Error cargando hardware DB:", err);
+    }));
 
   });
+
+  console.log("FLAT DB:", hardwareDB);
+
+  renderHardware();
+
+})
+
+.catch(err => {
+
+  console.error("ERROR LOADING JSON:", err);
+
+});
 
 /* RENDER */
 
 function renderHardware(){
 
-  const grid = document.getElementById('libraryGrid');
+  const grid = document.getElementById("libraryGrid");
 
-  const search = document
-  .getElementById('search')
-  .value
-  .toLowerCase();
+  const search = normalizeText(
+    document.getElementById("search").value
+  );
 
-  const category = document
-  .getElementById('categoryFilter')
-  .value;
+  const category = normalizeText(
+    document.getElementById("categoryFilter").value
+  );
 
-  grid.innerHTML = '';
+  const filtered = hardwareDB.filter(item => {
 
-  hardwareDB.forEach(group => {
+    const itemName = normalizeText(item.name || "");
 
-    if(category && group.category !== category) return;
+    const itemCategory = normalizeText(item.category || "");
 
-    group.items.forEach(item => {
+    const itemVendor = normalizeText(item.specs?.vendor || "");
 
-      const match =
-      item.name.toLowerCase().includes(search) ||
-      item.vendor.toLowerCase().includes(search);
+    const itemSubtitle = normalizeText(item.subtitle || "");
 
-      if(!match) return;
+    const matchesSearch =
 
-      grid.innerHTML += `
+      itemName.includes(search) ||
+
+      itemCategory.includes(search) ||
+
+      itemVendor.includes(search) ||
+
+      itemSubtitle.includes(search);
+
+    const matchesCategory =
+
+      !category ||
+
+      itemCategory === category;
+
+    return matchesSearch && matchesCategory;
+
+  });
+
+  console.log(filtered);
+
+  grid.innerHTML = "";
+
+  if(filtered.length === 0){
+
+    grid.innerHTML = `
+      <div class="empty-state">
+        No se encontraron resultados
+      </div>
+    `;
+
+    return;
+  }
+
+  filtered.forEach(item => {
+
+    grid.innerHTML += `
 
       <div class="hardware-card">
 
-        <div class="card-image">
+        <img src="${item.image}" class="hardware-img">
 
-          <img src="${item.image}">
+        <div class="hardware-body">
 
-          <div class="category-badge">
-            ${group.category}
+          <div class="hardware-category">
+            ${item.category}
           </div>
 
-          <div class="vendor-badge">
-            ${item.vendor}
-          </div>
+          <h3>${item.name}</h3>
 
-        </div>
+          <p>${item.subtitle || ""}</p>
 
-        <div class="card-body">
+          <div class="hardware-meta">
 
-          <div class="card-title">
-            ${item.name}
-          </div>
+            <span>
+              ${item.specs?.vendor || "-"}
+            </span>
 
-          <div class="card-subtitle">
-            ${item.subtitle || ''}
-          </div>
-
-          <div class="info-row">
-            <div class="info-label">Best Cabinet</div>
-            <div>${item.bestCabinet || '-'}</div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-label">Wholesale</div>
-            <div>${item.specs?.costWholesale || '-'}</div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-label">Materials</div>
-            <div>${item.materials?.length || 0}</div>
-          </div>
-
-          <div class="compatibility">
-
-            <h4>Compatibility</h4>
-
-            <div class="compatibility-grid">
-
-              ${renderCompatibility(item.compatibility)}
-
-            </div>
-
-          </div>
-
-          <div class="materials">
-
-            ${(item.materials || []).map(mat => `
-              <div class="material">${mat}</div>
-            `).join('')}
-
-          </div>
-
-          <div class="card-actions">
-
-            <a href="${item.links?.vendor || '#'}"
-            target="_blank"
-            class="action-btn primary-btn">
-
-              Vendor
-
-            </a>
-
-            <a href="${item.links?.product || '#'}"
-            target="_blank"
-            class="action-btn secondary-btn">
-
-              Specs
-
-            </a>
+            <span>
+              ${item.specs?.cost || "-"}
+            </span>
 
           </div>
 
@@ -632,9 +619,7 @@ function renderHardware(){
 
       </div>
 
-      `;
-
-    });
+    `;
 
   });
 
