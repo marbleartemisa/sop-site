@@ -11,15 +11,27 @@
 <link rel="stylesheet" href="/sop-site/components/navbar.css">
 
 <style>
-body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:url('/sop-site/wall5.png') no-repeat center top;background-size:cover;}
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;
+     background:url('/sop-site/wall5.png') no-repeat center top;
+     background-size:cover;
+      padding-top:70px;
+    }
 
+body::before{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.25);
+  z-index:-1;
+}
 .overlay{
-  background:rgba(0,0,0,0.45);
+  background:transparent;
   backdrop-filter: blur(4px);
   min-height:100vh;
 }
-
-
 .container{
     max-width:900px;
     margin:60px auto;
@@ -458,23 +470,23 @@ function editSOP(){
 
 window.addEventListener("DOMContentLoaded", () => {
 
-  populateUsers(); // 🔥 IMPORTANTE
+  populateUsers();
 
   const savedUser = localStorage.getItem("usuario");
 
   if(savedUser){
-    currentUser = usuarios.find(u => u.usuario === savedUser);
-    if(currentUser){
-      mostrarUsuario(currentUser);
+    try {
+      const user = JSON.parse(savedUser);
+      currentUser = user;
+      mostrarUsuario(user);
+    } catch(e){
+      localStorage.removeItem("usuario");
     }
-  }else{
-    openLogin(); // opcional
   }
 
 });
-
  
 </script>
-<script src="/sop-site/components/navbar.js"></script>
+
 </body>
 </html>
