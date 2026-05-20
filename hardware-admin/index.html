@@ -1,1 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hardware DB Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:#0f172a;
+  color:white;
+}
+
+.container{
+  width:min(1200px,95%);
+  margin:auto;
+  padding:40px 0;
+}
+
+.header{
+  margin-bottom:30px;
+}
+
+.header h1{
+  margin:0;
+  font-size:42px;
+}
+
+.header p{
+  color:#94a3b8;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:420px 1fr;
+  gap:25px;
+}
+
+.card{
+  background:#111827;
+  border-radius:18px;
+  padding:25px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.card h2{
+  margin-top:0;
+}
+
+.form-group{
+  margin-bottom:18px;
+}
+
+label{
+  display:block;
+  margin-bottom:8px;
+  font-size:14px;
+  font-weight:600;
+}
+
+input,
+textarea,
+select{
+  width:100%;
+  border:none;
+  border-radius:10px;
+  padding:12px;
+  background:#1f2937;
+  color:white;
+  font-size:14px;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+button{
+  border:none;
+  padding:14px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.primary-btn{
+  background:#0072C6;
+  color:white;
+  width:100%;
+}
+
+.secondary-btn{
+  background:#1e293b;
+  color:white;
+  width:100%;
+  margin-top:10px;
+}
+
+.json-preview{
+  background:#020617;
+  border-radius:14px;
+  padding:20px;
+  overflow:auto;
+  max-height:700px;
+  white-space:pre-wrap;
+  font-size:13px;
+  line-height:1.7;
+}
+
+.tags-container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:10px;
+}
+
+.tag{
+  background:#1d4ed8;
+  padding:6px 10px;
+  border-radius:30px;
+  font-size:12px;
+}
+
+.helper{
+  color:#94a3b8;
+  font-size:12px;
+  margin-top:6px;
+}
+
+.success{
+  margin-top:15px;
+  background:#14532d;
+  padding:12px;
+  border-radius:10px;
+  display:none;
+}
+
+@media(max-width:1000px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>Hardware DB Admin</h1>
+    <p>
+      Artemisa Marble & Cabinets — JSON Data Generator
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- FORM -->
+    <div class="card">
+
+      <h2>Add New Item</h2>
+
+      <div class="form-group">
+        <label>Category</label>
+
+        <select id="category">
+          <option value="LAZY_SUSAN">LAZY_SUSAN</option>
+          <option value="TRASH_PULL_OUT">TRASH_PULL_OUT</option>
+          <option value="MAGIC_CORNER">MAGIC_CORNER</option>
+          <option value="LEMANS">LEMANS</option>
+          <option value="SINK">SINK</option>
+          <option value="POCKET_DOOR">POCKET_DOOR</option>
+          <option value="DRAWER_SLIDES">DRAWER_SLIDES</option>
+          <option value="HINGES">HINGES</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Item Name</label>
+        <input type="text" id="name" placeholder="LeMans II Premium">
+      </div>
+
+      <div class="form-group">
+        <label>Subtitle</label>
+        <input type="text" id="subtitle" placeholder="Luxury blind corner system">
+      </div>
+
+      <div class="form-group">
+        <label>Vendor</label>
+        <input type="text" id="vendor" placeholder="Kesseböhmer">
+      </div>
+
+      <div class="form-group">
+        <label>Cost Range</label>
+        <input type="text" id="cost" placeholder="$450 - $1200">
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="description"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Image Path</label>
+        <input type="text" id="image" placeholder="/sop-site/images/lemans.png">
+      </div>
+
+      <div class="form-group">
+        <label>Compatible Cabinets</label>
+        <input type="text" id="compatible" placeholder="45blind,48blind,51blind">
+        <div class="helper">
+          Separate with commas
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Materials</label>
+        <input type="text" id="materials" placeholder="Steel,Wood,Anti-slip trays">
+      </div>
+
+      <div class="form-group">
+        <label>Requirements</label>
+        <textarea id="requirements" placeholder="Blind cabinet required&#10;Soft close compatible"></textarea>
+        <div class="helper">
+          One requirement per line
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Warnings</label>
+        <textarea id="warnings" placeholder="Requires precise leveling"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Supplier Link</label>
+        <input type="text" id="supplierLink" placeholder="https://www.hafele.com">
+      </div>
+
+      <button class="primary-btn" onclick="generateJSON()">
+        Generate JSON Item
+      </button>
+
+      <button class="secondary-btn" onclick="downloadJSON()">
+        Download JSON
+      </button>
+
+      <div class="success" id="successBox">
+        JSON generated successfully.
+      </div>
+
+    </div>
+
+    <!-- JSON PREVIEW -->
+    <div class="card">
+
+      <h2>JSON Preview</h2>
+
+      <div class="json-preview" id="jsonPreview">
+Waiting for data...
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+let currentJSON = null;
+
+function slugify(text){
+
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g,'-')
+    .replace(/[^a-z0-9\-]/g,'');
+}
+
+function parseCommaArray(value){
+
+  return value
+    .split(',')
+    .map(v=>v.trim())
+    .filter(Boolean);
+}
+
+function parseLines(value){
+
+  return value
+    .split('\n')
+    .map(v=>v.trim())
+    .filter(Boolean);
+}
+
+function generateJSON(){
+
+  const category =
+    document.getElementById('category').value;
+
+  const name =
+    document.getElementById('name').value;
+
+  const subtitle =
+    document.getElementById('subtitle').value;
+
+  const vendor =
+    document.getElementById('vendor').value;
+
+  const cost =
+    document.getElementById('cost').value;
+
+  const description =
+    document.getElementById('description').value;
+
+  const image =
+    document.getElementById('image').value;
+
+  const compatible =
+    parseCommaArray(
+      document.getElementById('compatible').value
+    );
+
+  const materials =
+    parseCommaArray(
+      document.getElementById('materials').value
+    );
+
+  const requirements =
+    parseLines(
+      document.getElementById('requirements').value
+    );
+
+  const warnings =
+    parseLines(
+      document.getElementById('warnings').value
+    );
+
+  const supplierLink =
+    document.getElementById('supplierLink').value;
+
+  currentJSON = {
+
+    id:
+      slugify(name),
+
+    category,
+
+    name,
+
+    subtitle,
+
+    image,
+
+    description,
+
+    vendor,
+
+    cost,
+
+    compatible,
+
+    materials,
+
+    requirements,
+
+    warnings,
+
+    links:{
+      supplier:supplierLink
+    }
+  };
+
+  document.getElementById('jsonPreview').textContent =
+    JSON.stringify(currentJSON,null,2);
+
+  document.getElementById('successBox').style.display =
+    'block';
+}
+
+function downloadJSON(){
+
+  if(!currentJSON){
+
+    alert('Generate JSON first');
+
+    return;
+  }
+
+  const blob =
+    new Blob(
+      [JSON.stringify(currentJSON,null,2)],
+      {type:'application/json'}
+    );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const a =
+    document.createElement('a');
+
+  a.href = url;
+
+  a.download = `${currentJSON.id}.json`;
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+</script>
+
+</body>
+</html>
 
