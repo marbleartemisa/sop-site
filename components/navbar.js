@@ -1,5 +1,11 @@
 /* =========================
-   NAVBAR LOADER
+   NAVBAR SYSTEM + AUTH
+========================= */
+
+let currentUser = null;
+
+/* =========================
+   LOAD NAVBAR HTML
 ========================= */
 
 async function loadNavbar() {
@@ -13,6 +19,8 @@ async function loadNavbar() {
     container.innerHTML = html;
 
     setupNavbar();
+    initUserSession(); // 🔥 control de usuario al cargar navbar
+
   } catch (err) {
     console.error('Error cargando navbar:', err);
   }
@@ -28,7 +36,7 @@ function setupNavbar() {
 }
 
 /* =========================
-   MOBILE MENU TOGGLE
+   MOBILE MENU
 ========================= */
 
 function toggleMenu() {
@@ -39,14 +47,13 @@ function toggleMenu() {
 }
 
 /* =========================
-   DROPDOWN TOGGLE
+   DROPDOWN
 ========================= */
 
 function toggleDropdown(btn) {
   const dropdown = btn.closest('.dropdown');
   if (!dropdown) return;
 
-  // Cerrar otros dropdowns
   document.querySelectorAll('.dropdown').forEach(d => {
     if (d !== dropdown) d.classList.remove('open');
   });
@@ -55,7 +62,7 @@ function toggleDropdown(btn) {
 }
 
 /* =========================
-   CLOSE DROPDOWNS OUTSIDE CLICK
+   CLOSE OUTSIDE CLICK
 ========================= */
 
 document.addEventListener('click', (e) => {
@@ -67,7 +74,7 @@ document.addEventListener('click', (e) => {
 });
 
 /* =========================
-   HIGHLIGHT ACTIVE LINK
+   ACTIVE MENU
 ========================= */
 
 function highlightMenu() {
@@ -85,7 +92,7 @@ function highlightMenu() {
 }
 
 /* =========================
-   CLOSE MENU (MOBILE)
+   CLOSE MOBILE MENU
 ========================= */
 
 function setupMobileClose() {
@@ -95,6 +102,61 @@ function setupMobileClose() {
       if (menu) menu.classList.remove('show');
     });
   });
+}
+
+/* =========================
+   USER CONTROL SYSTEM
+========================= */
+
+/* Mostrar usuario en navbar */
+function showUser(user) {
+  const userDiv = document.getElementById('userInfo');
+  const userName = document.getElementById('userName');
+
+  if (!userDiv || !userName) return;
+
+  userName.textContent = user.usuario;
+  userDiv.style.display = 'flex';
+
+  currentUser = user;
+}
+
+/* Ocultar usuario */
+function hideUser() {
+  const userDiv = document.getElementById('userInfo');
+  if (userDiv) userDiv.style.display = 'none';
+
+  currentUser = null;
+}
+
+/* Guardar sesión */
+function setUser(user) {
+  currentUser = user;
+  localStorage.setItem('usuario', JSON.stringify(user));
+  showUser(user);
+}
+
+/* Cerrar sesión */
+function logout() {
+  localStorage.removeItem('usuario');
+  hideUser();
+
+  window.location.href = '/sop-site/';
+}
+
+/* Inicializar sesión desde localStorage */
+function initUserSession() {
+  const saved = localStorage.getItem('usuario');
+
+  if (saved) {
+    try {
+      const user = JSON.parse(saved);
+      showUser(user);
+    } catch (e) {
+      console.warn('Error leyendo usuario guardado');
+      localStorage.removeItem('usuario');
+    }
+  }
 }
 
 /* =========================
