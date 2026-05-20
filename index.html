@@ -586,11 +586,19 @@ document.getElementById("loginBtn").addEventListener("click", ()=> {
 });
       
 function mostrarUsuario(user){
-  const userDiv = document.getElementById("userInfo");
-  const userNameSpan = document.getElementById("userName");
 
-  userNameSpan.textContent = user.usuario; // mostrar nombre
-  userDiv.style.display = "flex";          // mostrar bloque
+  setTimeout(() => {
+
+    const userDiv = document.getElementById("userInfo");
+    const userNameSpan = document.getElementById("userName");
+
+    if(!userDiv || !userNameSpan) return;
+
+    userNameSpan.textContent = user.usuario;
+    userDiv.style.display = "flex";
+
+  }, 300);
+
 }
       
 function mostrarBienvenida(nombre){
