@@ -17,6 +17,7 @@
         overflow-x:hidden;
       }
 
+      
     
       body{
         margin:0;
@@ -486,11 +487,17 @@ document.getElementById("loginBtn").addEventListener("click", ()=> {
 });
       
 function mostrarUsuario(user){
-  const userDiv = document.getElementById("userInfo");
-  const userNameSpan = document.getElementById("userName");
 
-  userNameSpan.textContent = user.usuario; // mostrar nombre
-  userDiv.style.display = "flex";          // mostrar bloque
+  const check = setInterval(() => {
+    const userDiv = document.getElementById("userInfo");
+    const userNameSpan = document.getElementById("userName");
+
+    if(userDiv && userNameSpan){
+      userNameSpan.textContent = user.usuario;
+      userDiv.style.display = "flex";
+      clearInterval(check);
+    }
+  }, 100);
 }
       
 function mostrarBienvenida(nombre){
@@ -613,7 +620,7 @@ function filterDept(dep){
 }
 
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
   destacarMenu();
 });
 
@@ -626,7 +633,10 @@ function sortTable(field){
 }
 
 function destacarMenu() {
-  const links = document.querySelectorAll(".menu a");
+  const menu = document.querySelector(".menu");
+  if (!menu) return;
+
+  const links = menu.querySelectorAll("a");
   const path = window.location.pathname;
 
   links.forEach(link => {
@@ -675,12 +685,16 @@ window.addEventListener("DOMContentLoaded", ()=>{
   }
 
   // ENTER para login
-  document.getElementById("loginPass").addEventListener("keypress", function(e){
+const loginPass = document.getElementById("loginPass");
+
+if (loginPass) {
+  loginPass.addEventListener("keypress", function(e){
     if(e.key === "Enter"){
       e.preventDefault();
       document.getElementById("loginBtn").click();
     }
   });
+}
 
 
 
