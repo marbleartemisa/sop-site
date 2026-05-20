@@ -6,6 +6,7 @@
 <title>ARTEMISA MARBLE & CABINETS - Biblioteca SOP Rev 4.0</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/sop-site/components/navbar.css">
 
 <style>
 
@@ -34,7 +35,7 @@
         min-height:100vh;
       }
       
-<link rel="stylesheet" href="/sop-site/components/navbar.css">
+
 
             @media (max-width: 900px){
               .sop-table th,
@@ -574,7 +575,7 @@ document.getElementById("loginBtn").addEventListener("click", ()=> {
 
   if(user){
     currentUser = user;
-    localStorage.setItem("usuario", user.usuario);
+   localStorage.setItem("usuario", JSON.stringify(user));
     closeLogin();
     mostrarBienvenida(user.usuario);
     // 👉 Aquí es donde debes agregar:
@@ -768,18 +769,17 @@ window.addEventListener("DOMContentLoaded", ()=>{
 
   populateUsers();
 
-const savedUser = localStorage.getItem("usuario");
+  const savedUser = localStorage.getItem("usuario");
 
-if(savedUser){
-  currentUser = usuarios.find(u => u.usuario === savedUser);
-}
+  if(savedUser){
+    try{
+      currentUser = JSON.parse(savedUser);
+      mostrarUsuario(currentUser);
+    }catch(e){
+      localStorage.removeItem("usuario");
+    }
+  }
 
-if(currentUser){
-  mostrarUsuario(currentUser);
-}else{
-  openLogin();
-}
-      
   // ENTER para login
   document.getElementById("loginPass").addEventListener("keypress", function(e){
     if(e.key === "Enter"){
@@ -788,7 +788,7 @@ if(currentUser){
     }
   });
 
-  // ✅ 👇 AQUÍ MISMO
+  // cerrar menú móvil
   document.querySelectorAll('.menu a').forEach(link=>{
     link.addEventListener('click', ()=>{
       document.querySelector('.menu').classList.remove('show');
