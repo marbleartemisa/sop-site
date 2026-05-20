@@ -1,1 +1,174 @@
+/* ===== NAVBAR ===== */
 
+.navbar{
+  position:sticky;
+  top:0;
+  background:rgba(0,0,0,0.70);
+  backdrop-filter:blur(10px);
+  padding:10px 25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  z-index:9999;
+}
+
+/* LOGO */
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo img{
+  height:40px;
+}
+
+.logo span{
+  color:white;
+  font-weight:700;
+  font-size:0.95rem;
+}
+
+/* MENU */
+
+.menu{
+  display:flex;
+  align-items:center;
+  gap:25px;
+}
+
+.menu a{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  transition:0.25s;
+}
+
+.menu a:hover{
+  color:#00aaff;
+}
+
+/* ACTIVE */
+
+.menu a.active{
+  background:#003366;
+  padding:8px 14px;
+  border-radius:8px;
+}
+
+/* DROPDOWN */
+
+.dropdown{
+  position:relative;
+}
+
+.drop-btn{
+  background:none;
+  border:none;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:0.95rem;
+}
+
+.dropdown-content{
+  display:none;
+  position:absolute;
+  top:100%;
+  left:0;
+  min-width:220px;
+  background:#0f172a;
+  border-radius:12px;
+  overflow:hidden;
+  padding:8px 0;
+  box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+.dropdown-content a{
+  display:block;
+  padding:12px 16px;
+}
+
+.dropdown-content a:hover{
+  background:rgba(255,255,255,0.08);
+}
+
+.dropdown.open .dropdown-content{
+  display:block;
+}
+
+/* HAMBURGER */
+
+.menu-toggle{
+  display:none;
+  color:white;
+  font-size:1.6rem;
+  cursor:pointer;
+}
+
+/* USER */
+
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:white;
+}
+
+.logout-btn{
+  background:none;
+  border:none;
+  color:white;
+  cursor:pointer;
+}
+
+/* MOBILE */
+
+@media (max-width:900px){
+
+  .menu-toggle{
+    display:block;
+  }
+
+  .logo span{
+    display:none;
+  }
+
+  .menu{
+    display:none;
+    position:absolute;
+    top:60px;
+    left:0;
+    width:100%;
+    background:#0f172a;
+    flex-direction:column;
+    padding:20px;
+    gap:10px;
+  }
+
+  .menu.show{
+    display:flex;
+  }
+
+  .dropdown{
+    width:100%;
+  }
+
+  .drop-btn{
+    width:100%;
+    justify-content:center;
+    padding:12px;
+  }
+
+  .dropdown-content{
+    position:static;
+    width:100%;
+    background:#111827;
+    margin-top:5px;
+  }
+
+}
