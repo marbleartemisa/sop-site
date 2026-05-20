@@ -1,59 +1,274 @@
-/* ===== VIDEO BACKGROUND ===== */
+/* =========================
+   VIDEO BACKGROUND
+========================= */
+
 #bgVideo {
   position: fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  z-index:-1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
 }
-.overlay { background: rgba(0,0,0,0.4); min-height:100vh; }
 
-/* ===== BODY ===== */
-body { margin:0; font-family:'Inter',sans-serif; color:#1f2937; }
+.overlay {
+  position: relative;
+  min-height: 100vh;
+  background: rgba(0,0,0,0.4);
+  z-index: 1;
+}
 
+/* =========================
+   BASE
+========================= */
 
-.menu { display:flex; gap:25px; }
-.menu a { color:white; text-decoration:none; font-weight:bold; transition:.3s; }
-.menu a:hover { color:#00aaff; }
-.menu-toggle { display:none; font-size:1.6rem; cursor:pointer; }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+  -webkit-font-smoothing: antialiased;
+}
 
-/* ===== BANNER ===== */
-.banner { text-align:center; padding:80px 20px 40px 20px; color:white; }
-.banner h1 { margin:0; font-size:2.5rem; }
-.banner p { margin:4px 0; opacity:0.9; }
+/* =========================
+   NAV MENU
+========================= */
+
+.menu {
+  display: flex;
+  gap: 25px;
+  z-index: 2000;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.menu a:hover {
+  color: #00aaff;
+}
+
+.menu-toggle {
+  display: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+/* =========================
+   BANNER
+========================= */
+
+.banner {
+  text-align: center;
+  padding: 80px 20px 40px;
+  color: white;
+}
+
+.banner h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.banner p {
+  margin: 4px 0;
+  opacity: 0.9;
+}
+
 .cta-btn {
-  display:inline-block; margin-top:15px; padding:10px 25px; border-radius:30px;
-  background:linear-gradient(135deg,#0072C6,#005a9e); color:white; text-decoration:none; font-weight:bold; transition:.3s;
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 25px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #0072C6, #005a9e);
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
 }
-.cta-btn:hover{ transform:scale(1.05); }
 
-/* ===== SOP TABLE ===== */
-.sop-container { max-width:1050px; margin:40px auto 80px auto; padding:0 20px; }
-.sop-info { background:white; padding:12px 18px; border-radius:12px; margin-bottom:10px; box-shadow:0 6px 20px rgba(0,0,0,0.15); font-size:.9rem; }
-.sop-table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 8px 25px rgba(0,0,0,0.15); }
-.sop-table th, .sop-table td { padding:16px; text-align:left; font-size:.9rem; }
-.sop-table thead th { background:#0f172a; color:white; font-weight:600; position:sticky; top:0; }
-.sop-table tbody tr:nth-child(even){ background:#f8fafc; }
-.sop-table tbody tr:hover{ background:#eef2f7; transform:translateX(2px); }
-.sop-btn { padding:8px 16px; border-radius:8px; background:#0072C6; color:white; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
-.sop-btn:hover{ background:#005a9e; transform:scale(1.05); }
+.cta-btn:hover {
+  transform: scale(1.05);
+}
 
-/* ===== CAROUSEL ===== */
-.carousel-container-premium{ max-width:1000px; margin:60px auto; overflow:hidden; border-radius:16px; position:relative; }
-.carousel-track-premium{ display:flex; gap:18px; width:max-content; animation:carouselMove 60s linear infinite; }
-.carousel-slide-premium img{ width:100%; height:200px; object-fit:cover; border-radius:12px; transition:transform .4s; }
-.carousel-slide-premium img:hover{ transform:scale(1.06); }
-@keyframes carouselMove { from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+/* =========================
+   SOP TABLE
+========================= */
 
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-  .menu{ display:none; flex-direction:column; background:rgba(0,0,0,0.9); position:absolute; top:60px; right:0; width:200px; padding:20px; }
-  .menu.show{ display:flex; }
-  .menu-toggle{ display:block; }
-  .sop-table, .sop-table thead, .sop-table tbody, .sop-table th, .sop-table td, .sop-table tr { display:block; }
-  .sop-table thead tr { display:none; }
-  .sop-table tbody td { display:flex; justify-content:space-between; padding:8px 12px; border-bottom:none; }
-  .sop-table tbody td:before { content: attr(data-label); font-weight:600; flex:0 0 40%; color:#555; }
+.sop-container {
+  max-width: 1050px;
+  margin: 40px auto 80px;
+  padding: 0 20px;
+}
+
+.sop-info {
+  background: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  font-size: 0.9rem;
+}
+
+.sop-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.sop-table th,
+.sop-table td {
+  padding: 16px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.sop-table thead th {
+  background: #0f172a;
+  color: white;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.sop-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.sop-table tbody tr:hover {
+  background: #eef2f7;
+}
+
+/* =========================
+   SOP NAME STYLE
+========================= */
+
+.sop-nombre {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1f2d3d;
+  letter-spacing: 0.3px;
+  transition: 0.2s ease;
+}
+
+.sop-nombre:hover {
+  color: #007bff;
+  cursor: pointer;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.sop-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #0072C6;
+  color: white;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.3s;
+}
+
+.sop-btn:hover {
+  background: #005a9e;
+}
+
+/* =========================
+   CAROUSEL
+========================= */
+
+.carousel-container-premium {
+  max-width: 1000px;
+  margin: 60px auto;
+  overflow: hidden;
+  border-radius: 16px;
+  position: relative;
+}
+
+.carousel-track-premium {
+  display: flex;
+  gap: 18px;
+  width: max-content;
+  animation: carouselMove 60s linear infinite;
+}
+
+.carousel-slide-premium img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: 0.4s;
+}
+
+.carousel-slide-premium img:hover {
+  transform: scale(1.06);
+}
+
+@keyframes carouselMove {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+  .menu {
+    display: none;
+    flex-direction: column;
+    background: rgba(0,0,0,0.9);
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 220px;
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .menu.show {
+    display: flex;
+    z-index: 2000;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .sop-table,
+  .sop-table thead,
+  .sop-table tbody,
+  .sop-table th,
+  .sop-table td,
+  .sop-table tr {
+    display: block;
+  }
+
+  .sop-table thead {
+    display: none;
+  }
+
+  .sop-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: none;
+  }
+
+  .sop-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+  }
 }
