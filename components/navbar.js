@@ -193,3 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
    GLOBAL ACCESS
 ========================= */
 window.Navbar = Navbar;
+
+if(typeof currentUser !== "undefined" && currentUser){
+  mostrarUsuario(currentUser);
+}
