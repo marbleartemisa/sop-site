@@ -70,114 +70,63 @@ function renderSidebar() {
 /* =========================
    DETAIL PANEL (NEW STRUCTURE)
 ========================= */
-function renderDetail(item) {
+function renderDetail(item){
+
   const detail = document.getElementById("detail");
 
-  // IMAGEN (media array o fallback)
-  const image =
-    (item.media && item.media[0]?.url) ||
-    item.image_url ||
-    "/sop-site/images/no-image.png";
+  const variant = item.variants?.[0] || {};
 
   detail.innerHTML = `
     <div class="card">
 
-      <!-- HERO -->
-      <div class="card-hero">
+      <h1>${item.name}</h1>
 
-        <div class="card-image">
-          <img src="${image}" alt="${item.name}">
-        </div>
+      <p>
+        ${item.system || ""} - ${item.size || ""}
+      </p>
 
-        <div class="card-info">
+      <p>
+        Cabinet: ${item.cabinet_required || ""}
+      </p>
 
-          <h1>${item.name || "Unnamed Hardware"}</h1>
+      <!-- VARIANTS -->
+      <h3>Brands</h3>
 
-          <p class="card-desc">
-            ${item.description || "No description available"}
-          </p>
-
-          <div class="tags">
-            ${(item.compatible || [])
-              .map((c) => `<div class="tag">${c}</div>`)
-              .join("")}
+      <div class="variants">
+        ${(item.variants || []).map(v => `
+          <div class="variant-card">
+            <strong>${v.brand}</strong><br>
+            SKU: ${v.sku}<br>
+            Finish: ${v.finish}<br>
+            Price: $${v.price_min} - $${v.price_max}
           </div>
-
-        </div>
-
+        `).join("")}
       </div>
 
-      <!-- SYSTEM INFO -->
-      <div class="section">
-        <h3>System</h3>
+      <!-- DETAILS -->
+      <h3>Requirements</h3>
+      <ul>
+        ${(item.details?.requirements || [])
+          .map(r => `<li>${r}</li>`).join("")}
+      </ul>
 
-        <div class="spec-list">
-          <div class="spec-item">
-            Type: ${item.system?.type || "-"}
-          </div>
+      <h3>Recommendations</h3>
+      <ul>
+        ${(item.details?.recommendations || [])
+          .map(r => `<li>${r}</li>`).join("")}
+      </ul>
 
-          <div class="spec-item">
-            Corner: ${item.system?.corner || "-"}
-          </div>
+      <h3>Warnings</h3>
+      <ul>
+        ${(item.details?.warnings || [])
+          .map(w => `<li>${w}</li>`).join("")}
+      </ul>
 
-          <div class="spec-item">
-            Install: ${item.system?.install || "-"}
-          </div>
-        </div>
-      </div>
-
-      <!-- REQUIREMENTS -->
-      <div class="section">
-        <h3>Requirements</h3>
-
-        <div class="spec-list">
-          ${(item.requirements || [])
-            .map((r) => `<div class="spec-item">${r}</div>`)
-            .join("")}
-        </div>
-      </div>
-
-      <!-- WARNINGS -->
-      <div class="section">
-        <h3>Warnings</h3>
-
-        <div class="spec-list">
-          ${(item.warnings || [])
-            .map((w) => `<div class="spec-item">${w}</div>`)
-            .join("")}
-        </div>
-      </div>
-
-      <!-- SPECIFICATIONS -->
-      <div class="section">
-        <h3>Specifications</h3>
-
-        <div class="spec-list">
-          <div class="spec-item">
-            Vendor: ${item.specifications?.vendor || "-"}
-          </div>
-
-          <div class="spec-item">
-            Cost: ${item.specifications?.cost || "-"}
-          </div>
-
-          <div class="spec-item">
-            Material: ${item.specifications?.material || "-"}
-          </div>
-
-          <div class="spec-item">
-            Finish: ${item.specifications?.finish || "-"}
-          </div>
-        </div>
-      </div>
+      <h3>Installation Notes</h3>
+      <p>${item.details?.installation_notes || ""}</p>
 
     </div>
   `;
-
-  /* MOBILE SCROLL FIX */
-  if (window.innerWidth < 900) {
-    detail.scrollIntoView({ behavior: "smooth" });
-  }
 }
 
 /* =========================
