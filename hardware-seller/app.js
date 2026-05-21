@@ -43,9 +43,26 @@ function renderSidebar() {
       const div = document.createElement("div");
       div.className = "item";
 
-      div.innerHTML = item.name || "Unnamed item";
+      div.innerHTML = `
+          <div class="item-name">
+            ${item.name || "Unnamed"}
+          </div>
+        
+          <div class="item-meta">
+            ${item.brand || ""} ${item.size || ""}
+          </div>
+        `;
 
-      div.onclick = () => renderDetail(item);
+      div.onclick = () => {
+        
+          document
+            .querySelectorAll(".item")
+            .forEach(x => x.classList.remove("active"));
+        
+          div.classList.add("active");
+        
+          renderDetail(item);
+        };
 
       group.appendChild(div);
     });
