@@ -71,7 +71,13 @@ function renderDetail(item){
     </div>
   `;
 }
+function toggleMenu(){
+  document.getElementById("mainMenu").classList.toggle("show");
+}
 
+function toggleDropdown(btn){
+  btn.parentElement.classList.toggle("open");
+}
 function groupBy(arr, key){
   return arr.reduce((acc,obj)=>{
     (acc[obj[key]] = acc[obj[key]] || []).push(obj);
