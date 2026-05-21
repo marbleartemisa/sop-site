@@ -11,19 +11,21 @@ async function loadData() {
     const res = await fetch(API);
     const data = await res.json();
 
-    // seguridad contra API vacía o error
     DB = Array.isArray(data) ? data : [];
 
     renderSidebar();
   } catch (err) {
     console.error("API error:", err);
+
     document.getElementById("sidebar").innerHTML =
-      "<p style='color:red;padding:10px'>Error loading data</p>";
+      `<div style="color:red;padding:10px">
+        Error loading hardware data
+      </div>`;
   }
 }
 
 /* =========================
-   RENDER SIDEBAR
+   SIDEBAR
 ========================= */
 function renderSidebar() {
   const sidebar = document.getElementById("sidebar");
@@ -44,25 +46,19 @@ function renderSidebar() {
       div.className = "item";
 
       div.innerHTML = `
-          <div class="item-name">
-            ${item.name || "Unnamed"}
-          </div>
-        
-          <div class="item-meta">
-            ${item.brand || ""} ${item.size || ""}
-          </div>
-        `;
+        <div class="item-name">${item.name || "Unnamed"}</div>
+        <div class="item-meta">${item.category || ""}</div>
+      `;
 
       div.onclick = () => {
-        
-          document
-            .querySelectorAll(".item")
-            .forEach(x => x.classList.remove("active"));
-        
-          div.classList.add("active");
-        
-          renderDetail(item);
-        };
+        document
+          .querySelectorAll(".item")
+          .forEach((x) => x.classList.remove("active"));
+
+        div.classList.add("active");
+
+        renderDetail(item);
+      };
 
       group.appendChild(div);
     });
@@ -72,39 +68,38 @@ function renderSidebar() {
 }
 
 /* =========================
-   RENDER DETAIL PANEL
+   DETAIL PANEL (NEW STRUCTURE)
 ========================= */
-function renderDetail(item){
-
+function renderDetail(item) {
   const detail = document.getElementById("detail");
 
+  // IMAGEN (media array o fallback)
   const image =
-    item.image ||
-    item.photo ||
+    (item.media && item.media[0]?.url) ||
+    item.image_url ||
     "/sop-site/images/no-image.png";
 
   detail.innerHTML = `
-
     <div class="card">
 
       <!-- HERO -->
       <div class="card-hero">
 
         <div class="card-image">
-          <img src="${image}">
+          <img src="${image}" alt="${item.name}">
         </div>
 
         <div class="card-info">
 
           <h1>${item.name || "Unnamed Hardware"}</h1>
 
-          <div class="card-desc">
+          <p class="card-desc">
             ${item.description || "No description available"}
-          </div>
+          </p>
 
           <div class="tags">
             ${(item.compatible || [])
-              .map(c=>`<div class="tag">${c}</div>`)
+              .map((c) => `<div class="tag">${c}</div>`)
               .join("")}
           </div>
 
@@ -112,84 +107,81 @@ function renderDetail(item){
 
       </div>
 
-      <!-- CONTENT -->
-      <div class="card-content">
+      <!-- SYSTEM INFO -->
+      <div class="section">
+        <h3>System</h3>
 
-        <!-- REQUIREMENTS -->
-        <div class="section">
-
-          <h3>Requirements</h3>
-
-          <div class="spec-list">
-
-            ${(item.requirements || [])
-              .map(r=>`
-                <div class="spec-item">
-                  ${r}
-                </div>
-              `).join("")}
-
+        <div class="spec-list">
+          <div class="spec-item">
+            Type: ${item.system?.type || "-"}
           </div>
 
-        </div>
-
-        <!-- WARNINGS -->
-        <div class="section">
-
-          <h3>Warnings</h3>
-
-          <div class="spec-list">
-
-            ${(item.warnings || [])
-              .map(w=>`
-                <div class="spec-item">
-                  ${w}
-                </div>
-              `).join("")}
-
+          <div class="spec-item">
+            Corner: ${item.system?.corner || "-"}
           </div>
 
+          <div class="spec-item">
+            Install: ${item.system?.install || "-"}
+          </div>
         </div>
+      </div>
 
-        <!-- SPECS -->
-        <div class="section">
+      <!-- REQUIREMENTS -->
+      <div class="section">
+        <h3>Requirements</h3>
 
-          <h3>Specifications</h3>
+        <div class="spec-list">
+          ${(item.requirements || [])
+            .map((r) => `<div class="spec-item">${r}</div>`)
+            .join("")}
+        </div>
+      </div>
 
-          <div class="spec-list">
+      <!-- WARNINGS -->
+      <div class="section">
+        <h3>Warnings</h3>
 
-            <div class="spec-item">
-              Vendor:
-              ${item.specs?.vendor || "-"}
-            </div>
+        <div class="spec-list">
+          ${(item.warnings || [])
+            .map((w) => `<div class="spec-item">${w}</div>`)
+            .join("")}
+        </div>
+      </div>
 
-            <div class="spec-item">
-              Cost:
-              ${item.specs?.cost || "-"}
-            </div>
+      <!-- SPECIFICATIONS -->
+      <div class="section">
+        <h3>Specifications</h3>
 
+        <div class="spec-list">
+          <div class="spec-item">
+            Vendor: ${item.specifications?.vendor || "-"}
           </div>
 
-        </div>
+          <div class="spec-item">
+            Cost: ${item.specifications?.cost || "-"}
+          </div>
 
+          <div class="spec-item">
+            Material: ${item.specifications?.material || "-"}
+          </div>
+
+          <div class="spec-item">
+            Finish: ${item.specifications?.finish || "-"}
+          </div>
+        </div>
       </div>
 
     </div>
   `;
 
-  /* MOBILE AUTO SCROLL */
-
-  if(window.innerWidth < 900){
-
-    detail.scrollIntoView({
-      behavior:"smooth"
-    });
-
+  /* MOBILE SCROLL FIX */
+  if (window.innerWidth < 900) {
+    detail.scrollIntoView({ behavior: "smooth" });
   }
 }
 
 /* =========================
-   UI TOGGLES
+   TOGGLES
 ========================= */
 function toggleMenu() {
   document.getElementById("mainMenu").classList.toggle("show");
