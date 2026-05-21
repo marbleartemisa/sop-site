@@ -2,31 +2,37 @@ const API =
   "https://script.google.com/macros/s/AKfycbzY1yMs1NX3IlkIXI1iKjRvZvaCxIJUFAxR5R47xkN6Cc4zMD2IuVGFbM0mjGzO1DMt8w/exec?type=full";
 
 let DB = [];
+let INDEX = {}; // lookup rápido por id
 
 /* =========================
-   LOAD DATA
+   LOAD DATA (OPTIMIZADO)
 ========================= */
 async function loadData() {
   try {
     const res = await fetch(API);
     const data = await res.json();
 
-    DB = Array.isArray(data) ? data : [];
+    if (!Array.isArray(data)) throw new Error("Invalid API response");
+
+    DB = data;
+
+    // 🔥 INDEX PARA PERFORMANCE (CLAVE)
+    INDEX = {};
+    DB.forEach(item => {
+      if (item?.id) INDEX[item.id] = item;
+    });
 
     renderSidebar();
 
   } catch (err) {
     console.error("API error:", err);
-
     document.getElementById("sidebar").innerHTML =
-      `<div style="color:red;padding:10px">
-        Error loading hardware data
-      </div>`;
+      `<div style="color:red;padding:10px">Error loading data</div>`;
   }
 }
 
 /* =========================
-   SIDEBAR
+   SIDEBAR (RÁPIDO + SEGURO)
 ========================= */
 function renderSidebar() {
   const sidebar = document.getElementById("sidebar");
@@ -36,66 +42,72 @@ function renderSidebar() {
 
   const grouped = groupBy(DB, "category");
 
-  Object.keys(grouped).forEach((cat) => {
+  for (const cat in grouped) {
+
     const group = document.createElement("div");
     group.className = "group";
 
-    group.innerHTML = `<div class="group-title">${cat}</div>`;
+    group.innerHTML = `<div class="group-title">${cat || "Uncategorized"}</div>`;
 
-    grouped[cat].forEach((item) => {
+    grouped[cat].forEach(item => {
+
       const div = document.createElement("div");
       div.className = "item";
 
       div.innerHTML = `
-        <div class="item-name">${item.name || "Unnamed"}</div>
-        <div class="item-meta">${item.system || ""} ${item.size || ""}</div>
+        <div class="item-name">${item?.name || "Unnamed"}</div>
+        <div class="item-meta">
+          ${item?.system || ""} ${item?.size || ""}
+        </div>
       `;
 
-      div.onclick = () => {
-        document
-          .querySelectorAll(".item")
-          .forEach((x) => x.classList.remove("active"));
+      div.addEventListener("click", () => {
+
+        document.querySelectorAll(".item")
+          .forEach(x => x.classList.remove("active"));
 
         div.classList.add("active");
 
-        renderDetail(item);
-      };
+        renderDetail(item.id); // 🔥 ahora usa INDEX (más rápido)
+      });
 
       group.appendChild(div);
     });
 
     sidebar.appendChild(group);
-  });
+  }
 }
 
 /* =========================
-   DETAIL PANEL (ROBUSTO)
+   DETAIL (FIX PRINCIPAL)
 ========================= */
-function renderDetail(item) {
+function renderDetail(id) {
+
+  const item = INDEX[id];
 
   const detail = document.getElementById("detail");
 
-  const variants = Array.isArray(item.variants) ? item.variants : [];
-  const details = item.details || {};
+  if (!item) {
+    detail.innerHTML = `<div style="padding:20px">Item not found</div>`;
+    return;
+  }
 
-  const mainVariant = variants[0] || {};
+  // 🔥 SAFE VARIANTS PARSE
+  const variants = parseVariants(item.variants);
+
+  const details = item.details || {};
 
   detail.innerHTML = `
     <div class="card">
 
-      <!-- HEADER -->
       <h1>${item.name || "Unnamed Item"}</h1>
 
-      <p>
-        ${item.system || ""} - ${item.size || ""}
-      </p>
+      <p>${item.system || ""} - ${item.size || ""}</p>
 
-      <p>
-        Cabinet: ${item.cabinet_required || "-"}
-      </p>
+      <p>Cabinet: ${item.cabinet_required || "-"}</p>
 
       <!-- VARIANTS -->
-      <h3>Available Brands</h3>
+      <h3>Brands / Variants</h3>
 
       <div class="variants">
         ${
@@ -113,9 +125,8 @@ function renderDetail(item) {
                   </div>
 
                   <div>
-                    <a href="${v.image_url || "#"}" target="_blank">Image</a>
-                    |
-                    <a href="${v.diagram_url || "#"}" target="_blank">Diagram</a>
+                    ${v.image_url ? `<a href="${v.image_url}" target="_blank">Image</a>` : ""}
+                    ${v.diagram_url ? ` | <a href="${v.diagram_url}" target="_blank">Diagram</a>` : ""}
                   </div>
 
                 </div>
@@ -126,25 +137,13 @@ function renderDetail(item) {
 
       <!-- DETAILS -->
       <h3>Requirements</h3>
-      <ul>
-        ${(details.requirements || [])
-          .map(r => `<li>${r}</li>`)
-          .join("") || "<li>-</li>"}
-      </ul>
+      ${renderList(details.requirements)}
 
       <h3>Recommendations</h3>
-      <ul>
-        ${(details.recommendations || [])
-          .map(r => `<li>${r}</li>`)
-          .join("") || "<li>-</li>"}
-      </ul>
+      ${renderList(details.recommendations)}
 
       <h3>Warnings</h3>
-      <ul>
-        ${(details.warnings || [])
-          .map(w => `<li>${w}</li>`)
-          .join("") || "<li>-</li>"}
-      </ul>
+      ${renderList(details.warnings)}
 
       <h3>Installation Notes</h3>
       <p>${details.installation_notes || "-"}</p>
@@ -154,21 +153,44 @@ function renderDetail(item) {
 
     </div>
   `;
+
+  // UX: scroll en mobile
+  if (window.innerWidth < 900) {
+    detail.scrollIntoView({ behavior: "smooth" });
+  }
 }
 
 /* =========================
-   TOGGLES
+   HELPERS
 ========================= */
-function toggleMenu() {
-  document.getElementById("mainMenu")?.classList.toggle("show");
+
+// 🔥 FIX VARIANTS (por si viene string o null)
+function parseVariants(v) {
+  if (!v) return [];
+  if (Array.isArray(v)) return v;
+
+  try {
+    return JSON.parse(v);
+  } catch {
+    return [];
+  }
 }
 
-function toggleDropdown(btn) {
-  btn.parentElement.classList.toggle("open");
+// safe list render
+function renderList(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return "<ul><li>-</li></ul>";
+  }
+
+  return `
+    <ul>
+      ${arr.map(x => `<li>${x}</li>`).join("")}
+    </ul>
+  `;
 }
 
 /* =========================
-   GROUP BY SAFE
+   GROUP BY
 ========================= */
 function groupBy(arr, key) {
   return (arr || []).reduce((acc, obj) => {
