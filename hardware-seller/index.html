@@ -4,652 +4,95 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hardware Library</title>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background-image:url('/sop-site/wall0.png');
-  background-size:cover;
-  background-position:center;
-  background-attachment:fixed;
-  color:white;
-}
-
-.overlay{
-  background:rgba(0,0,0,0.45);
-  min-height:100vh;
-}
-
-/* NAVBAR */
-
-.navbar{
-  position:sticky;
-  top:0;
-  background:rgba(0,0,0,0.72);
-  backdrop-filter:blur(10px);
-  padding:12px 25px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:999;
-}
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.logo img{
-  height:42px;
-}
-
-.logo span{
-  font-weight:700;
-  letter-spacing:.5px;
-}
-
-.menu{
-  display:flex;
-  gap:20px;
-}
-
-.menu a{
-  color:white;
-  text-decoration:none;
-  font-weight:600;
-  transition:.25s;
-}
-
-.menu a:hover{
-  color:#00aaff;
-}
-
-/* HERO */
-
-.hero{
-  text-align:center;
-  padding:50px 20px 30px;
-}
-
-.hero h1{
-  margin:0;
-  font-size:3rem;
-  font-weight:800;
-}
-
-.hero p{
-  margin-top:12px;
-  font-size:1.1rem;
-  opacity:.9;
-}
-
-.hero-badges{
-  margin-top:20px;
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  flex-wrap:wrap;
-}
-
-.hero-badge{
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.1);
-  padding:10px 16px;
-  border-radius:999px;
-  backdrop-filter:blur(8px);
-  font-size:.9rem;
-}
-
-/* FILTERS */
-
-.filters{
-  max-width:1300px;
-  margin:20px auto;
-  padding:0 20px;
-  display:flex;
-  gap:15px;
-  flex-wrap:wrap;
-  justify-content:center;
-}
-
-
-  .filters input,
-.filters select{
-  padding:14px 18px;
-  border:none;
-  border-radius:14px;
-  background:rgba(255,255,255,0.12);
-  color:white;
-  min-width:240px;
-  backdrop-filter:blur(8px);
-  font-size:0.95rem;
-}
-
-/* PLACEHOLDER */
-
-.filters input::placeholder{
-  color:#e5e7eb;
-}
-
-/* DROPDOWN FIX */
-
-.filters select{
-  appearance:none;
-  -webkit-appearance:none;
-  -moz-appearance:none;
-}
-
-/* OPCIONES DEL SELECT */
-
-.filters select option{
-  background:#1e293b;
-  color:white;
-}
-  .filters select{
-  font-weight:600;
-}
-.filters select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 14px center;
-  background-size:14px;
-  padding-right:40px;
-}
-/* GRID */
-
-.library-grid{
-  max-width:1450px;
-  margin:35px auto 80px;
-  padding:0 20px;
-
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-  gap:25px;
-}
-
-/* CARD */
-
-.hardware-card{
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.08);
-  backdrop-filter:blur(12px);
-  border-radius:24px;
-  overflow:hidden;
-  box-shadow:0 10px 30px rgba(0,0,0,0.3);
-  transition:.3s;
-}
-
-.hardware-card:hover{
-  transform:translateY(-6px);
-}
-
-.card-image{
-  position:relative;
-  height:240px;
-  overflow:hidden;
-}
-
-.card-image img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.category-badge{
-  position:absolute;
-  top:15px;
-  left:15px;
-  background:#0072C6;
-  padding:8px 14px;
-  border-radius:999px;
-  font-size:.8rem;
-  font-weight:700;
-}
-
-.vendor-badge{
-  position:absolute;
-  top:15px;
-  right:15px;
-  background:rgba(0,0,0,0.65);
-  padding:8px 14px;
-  border-radius:999px;
-  font-size:.8rem;
-}
-
-/* CARD BODY */
-
-.card-body{
-  padding:22px;
-}
-
-.card-title{
-  font-size:1.3rem;
-  font-weight:700;
-  margin-bottom:6px;
-}
-
-.card-subtitle{
-  opacity:.8;
-  margin-bottom:18px;
-  font-size:.95rem;
-}
-
-.info-row{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:10px;
-  gap:10px;
-}
-
-.info-label{
-  opacity:.7;
-}
-
-.compatibility{
-  margin-top:18px;
-}
-
-.compatibility h4{
-  margin-bottom:10px;
-}
-
-.compatibility-grid{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.compatibility-item{
-  padding:8px 12px;
-  border-radius:12px;
-  font-size:.82rem;
-  font-weight:700;
-}
-
-.optimal{
-  background:#10b981;
-}
-
-.acceptable{
-  background:#f59e0b;
-}
-
-.not-compatible{
-  background:#ef4444;
-}
-
-/* MATERIALS */
-
-.materials{
-  margin-top:18px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.material{
-  background:rgba(255,255,255,0.1);
-  padding:8px 12px;
-  border-radius:999px;
-  font-size:.8rem;
-}
-
-/* ACTIONS */
-
-.card-actions{
-  margin-top:22px;
-  display:flex;
-  gap:12px;
-}
-
-.action-btn{
-  flex:1;
-  text-align:center;
-  padding:12px;
-  border-radius:14px;
-  text-decoration:none;
-  color:white;
-  font-weight:700;
-  transition:.25s;
-}
-
-.primary-btn{
-  background:linear-gradient(135deg,#0072C6,#005a9e);
-}
-
-.secondary-btn{
-  background:rgba(255,255,255,0.12);
-}
-
-.action-btn:hover{
-  transform:scale(1.03);
-}
-
-/* FOOTER */
-
-.footer{
-  text-align:center;
-  padding:30px;
-  color:white;
-  opacity:.8;
-}
-
-/* MOBILE */
-
-@media(max-width:900px){
-
-  .hero h1{
-    font-size:2rem;
-  }
-
-  .menu{
-    display:none;
-  }
-
-}
-
-  .form-group input,
-.form-group select{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:rgba(255,255,255,0.15);
-  color:white;
-}
-
-/* FIX DROPDOWN */
-
-.form-group select option{
-  background:#1e293b;
-  color:white;
-}
-
-  
-
-</style>
+<title>Hardware Seller - SOP</title>
+
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<div class="overlay">
-
 <!-- NAVBAR -->
-
 <div class="navbar">
 
   <div class="logo">
     <img src="/sop-site/logo.png">
-    <span>ARTEMISA HARDWARE LIBRARY</span>
+    <span>ARTEMISA MARBLE & CABINETS</span>
+  </div>
+
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
   </div>
 
   <div class="menu">
+
     <a href="/sop-site/">Inicio</a>
-    <a href="/sop-site/hardware-selector/">Selector</a>
-    <a href="/sop-site/hardware-admin/">DB Admin</a>
+
+    <!-- SOP -->
+    <div class="dropdown">
+      <button class="drop-btn" onclick="toggleDropdown(this)">
+        SOP <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+        <a href="/sop-site/Aportes/">Aportes SOP</a>
+        <a href="/sop-site/analisis/">Análisis SOP</a>
+        <a href="#" onclick="editSOP()">Editar SOP</a>
+        <a href="/sop-site/admin/">Admin</a>
+      </div>
+    </div>
+
+    <!-- HELPERS -->
+    <div class="dropdown">
+      <button class="drop-btn" onclick="toggleDropdown(this)">
+        Helpers <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="/sop-site/hardware-seller/">List of items</a>
+        <a href="/sop-site/hardware-library/">Hardware Library</a>
+        <a href="/sop-site/hardware-selector/">Selector de Hardware</a>
+      </div>
+    </div>
+
+    <!-- DB -->
+    <div class="dropdown">
+      <button class="drop-btn" onclick="toggleDropdown(this)">
+        DB-Admin <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="/sop-site/hardware-admin/">Load Data</a>
+        <a href="/sop-site/admin/">Admin</a>
+      </div>
+    </div>
+
+    <a href="https://marbleartemisa.github.io/artemisa/index.html">
+      Portal Web
+    </a>
+
   </div>
-
 </div>
 
-<!-- HERO -->
+<!-- PAGE WRAPPER -->
+<div class="layout">
 
-<div class="hero">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar"></aside>
 
-  <h1>Hardware Library</h1>
+  <!-- DETAIL -->
+  <main class="detail" id="detail">
 
-  <p>
-    Sistema centralizado para especificación de herrajes,
-    compatibilidad y selección de gabinete.
-  </p>
-
-  <div class="hero-badges">
-
-    <div class="hero-badge">
-      <i class="fa-solid fa-circle-check"></i>
-      Compatible
+    <div class="empty">
+      <i class="fa-solid fa-hand-pointer"></i>
+      <h2>Select Hardware</h2>
+      <p>Choose an item from the left panel</p>
     </div>
 
-    <div class="hero-badge">
-      <i class="fa-solid fa-ruler-combined"></i>
-      Cabinet Driven
-    </div>
-
-    <div class="hero-badge">
-      <i class="fa-solid fa-layer-group"></i>
-      Data Driven
-    </div>
-
-  </div>
+  </main>
 
 </div>
 
-<!-- FILTERS -->
-
-<div class="filters">
-
-  <input
-    type="text"
-    id="search"
-    placeholder="Buscar hardware..."
-    oninput="renderHardware()"
-  >
-
-  <select id="categoryFilter" onchange="renderHardware()">
-    <option value="">Todas las categorías</option>
-
-    <option value="LAZY SUSAN">
-      Lazy Susan
-    </option>
-
-    <option value="TRASH CAN">
-      Trash Can
-    </option>
-
-    <option value="MAGIC CORNER">
-      Magic Corner
-    </option>
-
-    <option value="LEMANS">
-      LeMans
-    </option>
-
-  </select>
-
-</div>
-
-<!-- GRID -->
-
-<div class="library-grid" id="libraryGrid"></div>
-<!-- FOOTER -->
-
-<div class="footer">
-  © 2026 ARTEMISA SOP SYSTEM
-</div>
-
-</div>
-
-<script>
-
-function normalizeText(text){
-
-  return text
-    .toLowerCase()
-    .trim();
-
-}
-/* LOAD JSON */
-
-let hardwareDB = [];
-
-fetch('/sop-site/hardware-db/hardware.json?v=' + Date.now())
-
-.then(res => res.json())
-
-.then(data => {
-
-  console.log("JSON LOADED:", data);
-
-  hardwareDB = data.flatMap(category => {
-
-    return category.items.map(item => ({
-
-      ...item,
-
-      category: category.category
-
-    }));
-
-  });
-
-  console.log("FLAT DB:", hardwareDB);
-
-  renderHardware();
-
-})
-
-.catch(err => {
-
-  console.error("ERROR LOADING JSON:", err);
-
-});
-
-/* RENDER */
-
-function renderHardware(){
-
-  const grid = document.getElementById("libraryGrid");
-
-  const search = normalizeText(
-    document.getElementById("search").value
-  );
-
-  const category = normalizeText(
-    document.getElementById("categoryFilter").value
-  );
-
-  const filtered = hardwareDB.filter(item => {
-
-    const itemName = normalizeText(item.name || "");
-
-    const itemCategory = normalizeText(item.category || "");
-
-    const itemVendor = normalizeText(item.specs?.vendor || "");
-
-    const itemSubtitle = normalizeText(item.subtitle || "");
-
-    const matchesSearch =
-
-      itemName.includes(search) ||
-
-      itemCategory.includes(search) ||
-
-      itemVendor.includes(search) ||
-
-      itemSubtitle.includes(search);
-
-    const matchesCategory =
-
-      !category ||
-
-      itemCategory === category;
-
-    return matchesSearch && matchesCategory;
-
-  });
-
-  console.log(filtered);
-
-  grid.innerHTML = "";
-
-  if(filtered.length === 0){
-
-    grid.innerHTML = `
-      <div class="empty-state">
-        No se encontraron resultados
-      </div>
-    `;
-
-    return;
-  }
-
-  filtered.forEach(item => {
-
-    grid.innerHTML += `
-
-      <div class="hardware-card">
-
-        <img src="${item.image}" class="hardware-img">
-
-        <div class="hardware-body">
-
-          <div class="hardware-category">
-            ${item.category}
-          </div>
-
-          <h3>${item.name}</h3>
-
-          <p>${item.subtitle || ""}</p>
-
-          <div class="hardware-meta">
-
-            <span>
-              ${item.specs?.vendor || "-"}
-            </span>
-
-            <span>
-              ${item.specs?.cost || "-"}
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    `;
-
-  });
-
-}
-
-/* COMPATIBILITY */
-
-function renderCompatibility(comp){
-
-  if(!comp) return '';
-
-  return Object.entries(comp).map(([cab,status]) => {
-
-    let cls = '';
-
-    if(status === 'optimal') cls = 'optimal';
-    if(status === 'acceptable') cls = 'acceptable';
-    if(status === 'non-compatible') cls = 'not-compatible';
-
-    return `
-      <div class="compatibility-item ${cls}">
-        ${cab}
-      </div>
-    `;
-
-  }).join('');
-
-}
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
