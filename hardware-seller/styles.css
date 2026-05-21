@@ -438,4 +438,17 @@ body{
   padding:12px 15px;
   color:#cbd5e1;
 }
+.variants{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:10px;
+  margin-bottom:15px;
+}
 
+.variant-card{
+  background:#111827;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #334155;
+  font-size:0.85rem;
+}
