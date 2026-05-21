@@ -7,85 +7,62 @@
 <title>Hardware Seller - SOP</title>
 
 <link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
 
-<!-- NAVBAR -->
+<!-- NAVBAR (tu estándar) -->
 <div class="navbar">
-
   <div class="logo">
     <img src="/sop-site/logo.png">
-    <span>ARTEMISA MARBLE & CABINETS</span>
-  </div>
-
-  <div class="menu-toggle" onclick="toggleMenu()">
-    <i class="fa-solid fa-bars"></i>
+    <span>ARTEMISA HARDWARE</span>
   </div>
 
   <div class="menu">
 
     <a href="/sop-site/">Inicio</a>
 
-    <!-- SOP -->
     <div class="dropdown">
       <button class="drop-btn" onclick="toggleDropdown(this)">
         SOP <i class="fa-solid fa-chevron-down"></i>
       </button>
+
       <div class="dropdown-content">
         <a href="/sop-site/registrar-sop/">Registrar SOP</a>
         <a href="/sop-site/Aportes/">Aportes SOP</a>
         <a href="/sop-site/analisis/">Análisis SOP</a>
-        <a href="#" onclick="editSOP()">Editar SOP</a>
         <a href="/sop-site/admin/">Admin</a>
       </div>
     </div>
 
-    <!-- HELPERS -->
     <div class="dropdown">
       <button class="drop-btn" onclick="toggleDropdown(this)">
         Helpers <i class="fa-solid fa-chevron-down"></i>
       </button>
+
       <div class="dropdown-content">
         <a href="/sop-site/hardware-seller/">List of items</a>
         <a href="/sop-site/hardware-library/">Hardware Library</a>
-        <a href="/sop-site/hardware-selector/">Selector de Hardware</a>
       </div>
     </div>
-
-    <!-- DB -->
-    <div class="dropdown">
-      <button class="drop-btn" onclick="toggleDropdown(this)">
-        DB-Admin <i class="fa-solid fa-chevron-down"></i>
-      </button>
-      <div class="dropdown-content">
-        <a href="/sop-site/hardware-admin/">Load Data</a>
-        <a href="/sop-site/admin/">Admin</a>
-      </div>
-    </div>
-
-    <a href="https://marbleartemisa.github.io/artemisa/index.html">
-      Portal Web
-    </a>
 
   </div>
 </div>
 
-<!-- PAGE WRAPPER -->
+<!-- MAIN -->
 <div class="layout">
 
   <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar"></aside>
+  <aside id="sidebar"></aside>
 
   <!-- DETAIL -->
-  <main class="detail" id="detail">
+  <main id="detail">
 
     <div class="empty">
       <i class="fa-solid fa-hand-pointer"></i>
-      <h2>Select Hardware</h2>
-      <p>Choose an item from the left panel</p>
+      <h2>Select a hardware item</h2>
+      <p>Choose from the left list</p>
     </div>
 
   </main>
@@ -93,6 +70,5 @@
 </div>
 
 <script src="app.js"></script>
-
 </body>
 </html>
