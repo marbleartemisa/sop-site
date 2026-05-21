@@ -14,6 +14,7 @@ async function loadData() {
     DB = Array.isArray(data) ? data : [];
 
     renderSidebar();
+
   } catch (err) {
     console.error("API error:", err);
 
@@ -47,7 +48,7 @@ function renderSidebar() {
 
       div.innerHTML = `
         <div class="item-name">${item.name || "Unnamed"}</div>
-        <div class="item-meta">${item.category || ""}</div>
+        <div class="item-meta">${item.system || ""} ${item.size || ""}</div>
       `;
 
       div.onclick = () => {
@@ -68,62 +69,88 @@ function renderSidebar() {
 }
 
 /* =========================
-   DETAIL PANEL (NEW STRUCTURE)
+   DETAIL PANEL (ROBUSTO)
 ========================= */
-function renderDetail(item){
+function renderDetail(item) {
 
   const detail = document.getElementById("detail");
 
-  const variant = item.variants?.[0] || {};
+  const variants = Array.isArray(item.variants) ? item.variants : [];
+  const details = item.details || {};
+
+  const mainVariant = variants[0] || {};
 
   detail.innerHTML = `
     <div class="card">
 
-      <h1>${item.name}</h1>
+      <!-- HEADER -->
+      <h1>${item.name || "Unnamed Item"}</h1>
 
       <p>
         ${item.system || ""} - ${item.size || ""}
       </p>
 
       <p>
-        Cabinet: ${item.cabinet_required || ""}
+        Cabinet: ${item.cabinet_required || "-"}
       </p>
 
       <!-- VARIANTS -->
-      <h3>Brands</h3>
+      <h3>Available Brands</h3>
 
       <div class="variants">
-        ${(item.variants || []).map(v => `
-          <div class="variant-card">
-            <strong>${v.brand}</strong><br>
-            SKU: ${v.sku}<br>
-            Finish: ${v.finish}<br>
-            Price: $${v.price_min} - $${v.price_max}
-          </div>
-        `).join("")}
+        ${
+          variants.length
+            ? variants.map(v => `
+                <div class="variant-card">
+
+                  <strong>${v.brand || "-"}</strong>
+
+                  <div>SKU: ${v.sku || "-"}</div>
+                  <div>Finish: ${v.finish || "-"}</div>
+
+                  <div>
+                    Price: $${v.price_min || "-"} - $${v.price_max || "-"}
+                  </div>
+
+                  <div>
+                    <a href="${v.image_url || "#"}" target="_blank">Image</a>
+                    |
+                    <a href="${v.diagram_url || "#"}" target="_blank">Diagram</a>
+                  </div>
+
+                </div>
+              `).join("")
+            : `<p>No variants available</p>`
+        }
       </div>
 
       <!-- DETAILS -->
       <h3>Requirements</h3>
       <ul>
-        ${(item.details?.requirements || [])
-          .map(r => `<li>${r}</li>`).join("")}
+        ${(details.requirements || [])
+          .map(r => `<li>${r}</li>`)
+          .join("") || "<li>-</li>"}
       </ul>
 
       <h3>Recommendations</h3>
       <ul>
-        ${(item.details?.recommendations || [])
-          .map(r => `<li>${r}</li>`).join("")}
+        ${(details.recommendations || [])
+          .map(r => `<li>${r}</li>`)
+          .join("") || "<li>-</li>"}
       </ul>
 
       <h3>Warnings</h3>
       <ul>
-        ${(item.details?.warnings || [])
-          .map(w => `<li>${w}</li>`).join("")}
+        ${(details.warnings || [])
+          .map(w => `<li>${w}</li>`)
+          .join("") || "<li>-</li>"}
       </ul>
 
       <h3>Installation Notes</h3>
-      <p>${item.details?.installation_notes || ""}</p>
+      <p>${details.installation_notes || "-"}</p>
+
+      <h3>Plumbing Notes</h3>
+      <p>${details.plumbing_notes || "-"}</p>
 
     </div>
   `;
@@ -133,7 +160,7 @@ function renderDetail(item){
    TOGGLES
 ========================= */
 function toggleMenu() {
-  document.getElementById("mainMenu").classList.toggle("show");
+  document.getElementById("mainMenu")?.classList.toggle("show");
 }
 
 function toggleDropdown(btn) {
