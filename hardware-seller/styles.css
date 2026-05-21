@@ -81,3 +81,40 @@ body{
   border-radius:20px;
   font-size:12px;
 }
+.menu-toggle{
+  display:none;
+  font-size:22px;
+  color:white;
+  cursor:pointer;
+}
+
+@media (max-width:900px){
+
+  .menu-toggle{
+    display:block;
+  }
+
+  .menu{
+    display:none;
+    position:absolute;
+    top:60px;
+    left:0;
+    width:100%;
+    flex-direction:column;
+    background:black;
+  }
+
+  .menu.show{
+    display:flex;
+  }
+
+  .dropdown-content{
+    position:static;
+    display:none;
+  }
+
+  .dropdown.open .dropdown-content{
+    display:flex;
+    flex-direction:column;
+  }
+}
