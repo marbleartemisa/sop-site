@@ -1,21 +1,19 @@
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0f172a;
-  color:white;
-}
-
 /* NAVBAR */
 .navbar{
   display:flex;
   justify-content:space-between;
+  align-items:center;
   padding:10px 20px;
   background:#111827;
+  position:sticky;
+  top:0;
+  z-index:1000;
 }
 
 .menu{
   display:flex;
   gap:20px;
+  align-items:center;
 }
 
 .menu a{
@@ -23,64 +21,39 @@ body{
   text-decoration:none;
 }
 
-/* LAYOUT */
-.layout{
-  display:grid;
-  grid-template-columns:320px 1fr;
-  height:calc(100vh - 60px);
+/* DROPDOWN BASE (TE FALTABA EN DESKTOP) */
+.dropdown{
+  position:relative;
 }
 
-/* SIDEBAR */
-#sidebar{
+.dropdown-content{
+  display:none;
+  position:absolute;
+  top:100%;
+  left:0;
   background:#1e293b;
-  overflow:auto;
+  min-width:180px;
+  flex-direction:column;
+  border-radius:8px;
+  overflow:hidden;
+  z-index:999;
+}
+
+.dropdown-content a{
   padding:10px;
+  color:white;
 }
 
-.group{
-  margin-bottom:20px;
-}
-
-.group-title{
-  font-weight:bold;
-  padding:10px;
-  color:#38bdf8;
-}
-
-.item{
-  padding:10px;
-  cursor:pointer;
-  border-bottom:1px solid #334155;
-}
-
-.item:hover{
+.dropdown-content a:hover{
   background:#334155;
 }
 
-/* DETAIL */
-#detail{
-  padding:20px;
-  overflow:auto;
-}
-
-.card{
-  background:#111827;
-  padding:20px;
-  border-radius:10px;
-}
-
-.tags{
+/* OPEN STATE */
+.dropdown.open .dropdown-content{
   display:flex;
-  flex-wrap:wrap;
-  gap:5px;
 }
 
-.tag{
-  background:#2563eb;
-  padding:4px 8px;
-  border-radius:20px;
-  font-size:12px;
-}
+/* HAMBURGER */
 .menu-toggle{
   display:none;
   font-size:22px;
@@ -88,6 +61,14 @@ body{
   cursor:pointer;
 }
 
+/* LAYOUT FIX */
+.layout{
+  display:grid;
+  grid-template-columns:320px 1fr;
+  height:calc(100vh - 60px);
+}
+
+/* MOBILE FIX COMPLETO */
 @media (max-width:900px){
 
   .menu-toggle{
@@ -101,20 +82,20 @@ body{
     left:0;
     width:100%;
     flex-direction:column;
-    background:black;
+    background:#0f172a;
+    padding:10px;
   }
 
   .menu.show{
     display:flex;
   }
 
-  .dropdown-content{
-    position:static;
-    display:none;
+  .layout{
+    grid-template-columns:1fr;
   }
 
-  .dropdown.open .dropdown-content{
-    display:flex;
-    flex-direction:column;
+  .dropdown-content{
+    position:relative;
+    width:100%;
   }
 }
