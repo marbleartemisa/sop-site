@@ -438,17 +438,24 @@ body{
   padding:12px 15px;
   color:#cbd5e1;
 }
+
+
 .variants{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:10px;
-  margin-bottom:15px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+  margin-top:10px;
 }
 
 .variant-card{
-  background:#111827;
-  padding:10px;
-  border-radius:10px;
+  background:#0f172a;
   border:1px solid #334155;
-  font-size:0.85rem;
+  padding:12px;
+  border-radius:12px;
+  transition:0.2s;
+}
+
+.variant-card:hover{
+  transform:scale(1.02);
+  border-color:#38bdf8;
 }
