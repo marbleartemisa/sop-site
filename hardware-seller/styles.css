@@ -1,94 +1,39 @@
-*{
-  box-sizing:border-box;
-}
-
 body{
   margin:0;
-  font-family:'Inter',sans-serif;
-  background:#0b1220;
-  color:#fff;
+  font-family:Arial;
+  background:#0f172a;
+  color:white;
 }
 
 /* NAVBAR */
 .navbar{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  padding:10px 25px;
-  background:rgba(0,0,0,0.75);
-  position:sticky;
-  top:0;
-  z-index:1000;
+  padding:10px 20px;
+  background:#111827;
 }
 
-.logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.logo img{
-  height:40px;
-}
-
-/* MENU */
 .menu{
   display:flex;
   gap:20px;
-  align-items:center;
 }
 
 .menu a{
   color:white;
   text-decoration:none;
-  font-weight:600;
-}
-
-/* DROPDOWN */
-.dropdown{
-  position:relative;
-}
-
-.drop-btn{
-  background:none;
-  border:none;
-  color:white;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.dropdown-content{
-  display:none;
-  position:absolute;
-  top:100%;
-  background:#111827;
-  min-width:200px;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.dropdown-content a{
-  display:block;
-  padding:10px;
-  color:white;
-  text-decoration:none;
-}
-
-.dropdown.open .dropdown-content{
-  display:block;
 }
 
 /* LAYOUT */
 .layout{
   display:grid;
   grid-template-columns:320px 1fr;
-  height:calc(100vh - 70px);
+  height:calc(100vh - 60px);
 }
 
 /* SIDEBAR */
-.sidebar{
-  background:#0f172a;
-  overflow-y:auto;
+#sidebar{
+  background:#1e293b;
+  overflow:auto;
   padding:10px;
 }
 
@@ -97,44 +42,42 @@ body{
 }
 
 .group-title{
-  font-weight:700;
+  font-weight:bold;
   padding:10px;
-  background:#111827;
-  border-radius:8px;
+  color:#38bdf8;
 }
 
 .item{
   padding:10px;
   cursor:pointer;
-  border-radius:8px;
+  border-bottom:1px solid #334155;
 }
 
 .item:hover{
-  background:#1e293b;
+  background:#334155;
 }
 
 /* DETAIL */
-.detail{
-  padding:30px;
-  overflow-y:auto;
+#detail{
+  padding:20px;
+  overflow:auto;
 }
 
-.empty{
-  text-align:center;
-  opacity:0.6;
-  margin-top:80px;
+.card{
+  background:#111827;
+  padding:20px;
+  border-radius:10px;
 }
 
-.card-title{
-  font-size:28px;
-  font-weight:800;
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
 }
 
 .tag{
-  display:inline-block;
-  padding:5px 10px;
-  background:#1e40af;
+  background:#2563eb;
+  padding:4px 8px;
   border-radius:20px;
-  margin:3px;
   font-size:12px;
 }
