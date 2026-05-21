@@ -1,83 +1,82 @@
-const sidebar = document.getElementById("sidebar");
-const detail = document.getElementById("detail");
+const API = "https://script.google.com/macros/s/AKfycbzY1yMs1NX3IlkIXI1iKjRvZvaCxIJUFAxR5R47xkN6Cc4zMD2IuVGFbM0mjGzO1DMt8w/exec?type=full";
 
-/* TEMP DATA (luego lo conectamos a Sheets) */
-const data = [
-  {
-    category:"LAZY SUSAN",
-    items:[
-      {
-        id:"lazy-full",
-        name:"Full Circle Lazy Susan",
-        description:"Rotating corner system",
-        image:"/sop-site/images/lazy-fullcircle.png",
-        compatible:["33 corner","36 corner"],
-        materials:["Wood","Steel"],
-        warnings:["Needs center alignment"]
-      }
-    ]
-  }
-];
+let DB = [];
 
-/* =========================
-   RENDER SIDEBAR
-========================= */
+async function loadData(){
+  const res = await fetch(API);
+  DB = await res.json();
+  renderSidebar();
+}
+
 function renderSidebar(){
 
-  sidebar.innerHTML="";
+  const sidebar = document.getElementById("sidebar");
+  sidebar.innerHTML = "";
 
-  data.forEach(group=>{
+  const grouped = groupBy(DB, "category");
 
-    const g=document.createElement("div");
-    g.className="group";
+  Object.keys(grouped).forEach(cat=>{
 
-    g.innerHTML=`
-      <div class="group-title">${group.category}</div>
-    `;
+    const group = document.createElement("div");
+    group.className = "group";
 
-    group.items.forEach(item=>{
+    group.innerHTML = `<div class="group-title">${cat}</div>`;
 
-      const el=document.createElement("div");
-      el.className="item";
-      el.textContent=item.name;
+    grouped[cat].forEach(item=>{
 
-      el.onclick=()=>renderDetail(item);
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = item.name;
 
-      g.appendChild(el);
+      div.onclick = () => renderDetail(item);
+
+      group.appendChild(div);
     });
 
-    sidebar.appendChild(g);
+    sidebar.appendChild(group);
   });
 }
 
-/* =========================
-   DETAIL VIEW
-========================= */
 function renderDetail(item){
 
-  detail.innerHTML=`
-    <div class="card-title">${item.name}</div>
-    <p>${item.description}</p>
+  const detail = document.getElementById("detail");
 
-    <img src="${item.image}" style="max-width:300px">
+  detail.innerHTML = `
+    <div class="card">
 
-    <h3>Compatible</h3>
-    ${item.compatible.map(c=>`<span class="tag">${c}</span>`).join("")}
+      <h1>${item.name}</h1>
+      <p>${item.description || ""}</p>
 
-    <h3>Materials</h3>
-    ${item.materials.map(m=>`<span class="tag">${m}</span>`).join("")}
+      <h3>Compatible</h3>
+      <div class="tags">
+        ${(item.compatible || []).map(c=>`<div class="tag">${c}</div>`).join("")}
+      </div>
 
-    <h3>Warnings</h3>
-    <ul>
-      ${item.warnings.map(w=>`<li>${w}</li>`).join("")}
-    </ul>
+      <h3>Requirements</h3>
+      <ul>
+        ${(item.requirements || []).map(r=>`<li>${r}</li>`).join("")}
+      </ul>
+
+      <h3>Warnings</h3>
+      <ul>
+        ${(item.warnings || []).map(w=>`<li>${w}</li>`).join("")}
+      </ul>
+
+      <h3>Vendor</h3>
+      <p>${item.specs?.vendor || ""}</p>
+
+      <h3>Cost</h3>
+      <p>${item.specs?.cost || ""}</p>
+
+    </div>
   `;
 }
 
-/* INIT */
-renderSidebar();
-
-/* DROPDOWN */
-function toggleDropdown(btn){
-  btn.parentElement.classList.toggle("open");
+function groupBy(arr, key){
+  return arr.reduce((acc,obj)=>{
+    (acc[obj[key]] = acc[obj[key]] || []).push(obj);
+    return acc;
+  }, {});
 }
+
+loadData();
