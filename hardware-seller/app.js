@@ -74,50 +74,118 @@ function renderSidebar() {
 /* =========================
    RENDER DETAIL PANEL
 ========================= */
-function renderDetail(item) {
+function renderDetail(item){
+
   const detail = document.getElementById("detail");
 
-  const safeArray = (arr) => (Array.isArray(arr) ? arr : []);
+  const image =
+    item.image ||
+    item.photo ||
+    "/sop-site/images/no-image.png";
 
   detail.innerHTML = `
+
     <div class="card">
 
-      <h1>${item.name || "N/A"}</h1>
+      <!-- HERO -->
+      <div class="card-hero">
 
-      <p>${item.description || "No description available"}</p>
+        <div class="card-image">
+          <img src="${image}">
+        </div>
 
-      <h3>Compatible</h3>
-      <div class="tags">
-        ${safeArray(item.compatible)
-          .map((c) => `<div class="tag">${c}</div>`)
-          .join("")}
+        <div class="card-info">
+
+          <h1>${item.name || "Unnamed Hardware"}</h1>
+
+          <div class="card-desc">
+            ${item.description || "No description available"}
+          </div>
+
+          <div class="tags">
+            ${(item.compatible || [])
+              .map(c=>`<div class="tag">${c}</div>`)
+              .join("")}
+          </div>
+
+        </div>
+
       </div>
 
-      <h3>Requirements</h3>
-      <ul>
-        ${safeArray(item.requirements)
-          .map((r) => `<li>${r}</li>`)
-          .join("")}
-      </ul>
+      <!-- CONTENT -->
+      <div class="card-content">
 
-      <h3>Warnings</h3>
-      <ul>
-        ${safeArray(item.warnings)
-          .map((w) => `<li>⚠️ ${w}</li>`)
-          .join("")}
-      </ul>
+        <!-- REQUIREMENTS -->
+        <div class="section">
 
-      <h3>Vendor</h3>
-      <p>${item.specs?.vendor || "N/A"}</p>
+          <h3>Requirements</h3>
 
-      <h3>Cost</h3>
-      <p>${item.specs?.cost || "N/A"}</p>
+          <div class="spec-list">
 
-      <h3>Memo</h3>
-      <p>${item.specs?.memo || ""}</p>
+            ${(item.requirements || [])
+              .map(r=>`
+                <div class="spec-item">
+                  ${r}
+                </div>
+              `).join("")}
+
+          </div>
+
+        </div>
+
+        <!-- WARNINGS -->
+        <div class="section">
+
+          <h3>Warnings</h3>
+
+          <div class="spec-list">
+
+            ${(item.warnings || [])
+              .map(w=>`
+                <div class="spec-item">
+                  ${w}
+                </div>
+              `).join("")}
+
+          </div>
+
+        </div>
+
+        <!-- SPECS -->
+        <div class="section">
+
+          <h3>Specifications</h3>
+
+          <div class="spec-list">
+
+            <div class="spec-item">
+              Vendor:
+              ${item.specs?.vendor || "-"}
+            </div>
+
+            <div class="spec-item">
+              Cost:
+              ${item.specs?.cost || "-"}
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
   `;
+
+  /* MOBILE AUTO SCROLL */
+
+  if(window.innerWidth < 900){
+
+    detail.scrollIntoView({
+      behavior:"smooth"
+    });
+
+  }
 }
 
 /* =========================
