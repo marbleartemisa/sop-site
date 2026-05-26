@@ -177,14 +177,42 @@ function parseVariants(v) {
 }
 
 // safe list render
-function renderList(arr) {
-  if (!Array.isArray(arr) || arr.length === 0) {
+function renderList(data) {
+
+  // vacío
+  if (!data) {
+    return "<ul><li>-</li></ul>";
+  }
+
+  // si viene string desde Sheets
+  if (typeof data === "string") {
+
+    // intenta parse JSON
+    try {
+      const parsed = JSON.parse(data);
+
+      if (Array.isArray(parsed)) {
+        data = parsed;
+      }
+
+    } catch {
+
+      // separa por saltos, coma o pipe
+      data = data
+        .split(/\n|,|\|/)
+        .map(x => x.trim())
+        .filter(Boolean);
+    }
+  }
+
+  // si no es array válido
+  if (!Array.isArray(data) || data.length === 0) {
     return "<ul><li>-</li></ul>";
   }
 
   return `
     <ul>
-      ${arr.map(x => `<li>${x}</li>`).join("")}
+      ${data.map(x => `<li>${x}</li>`).join("")}
     </ul>
   `;
 }
