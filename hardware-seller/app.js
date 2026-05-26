@@ -100,6 +100,20 @@ function renderDetail(id) {
   detail.innerHTML = `
     <div class="card">
 
+  ${
+    item.image_url
+      ? `
+        <div class="card-image-wrap">
+          <img
+            src="${item.image_url}"
+            alt="${item.name}"
+            class="main-image"
+          >
+        </div>
+      `
+      : ""
+  }
+
       <h1>${item.name || "Unnamed Item"}</h1>
 
       <p>${item.system || ""} - ${item.size || ""}</p>
