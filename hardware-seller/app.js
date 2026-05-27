@@ -96,7 +96,7 @@ function renderDetail(id) {
 
   const images =
     media.filter(x =>
-      (x.type || "").toLowerCase() === "image"
+      (x.type || "").trim().toLowerCase() === "image"
     );
 
   const diagrams =
