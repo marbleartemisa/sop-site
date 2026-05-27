@@ -248,36 +248,39 @@ detail.innerHTML = `
                     $${v.price_min || "-"} - $${v.price_max || "-"}
                   </strong>
                 </div>
+<div class="variant-links">
 
-                <div class="variant-links">
+  ${
+    v.image_url
+      ? `
+        <a
+          href="${v.image_url}"
+          target="_blank"
+          class="brand-link"
+        >
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          Brand Website
+        </a>
+      `
+      : ""
+  }
 
-                  ${
-                    v.image_url
-                      ? `
-                        <a
-                          href="${v.image_url}"
-                          target="_blank"
-                        >
-                          Visit ${v.brand}
-                        </a>
-                      `
-                      : ""
-                  }
+  ${
+    v.diagram_url
+      ? `
+        <a
+          href="${v.diagram_url}"
+          target="_blank"
+          class="spec-link"
+        >
+          <i class="fa-solid fa-ruler-combined"></i>
+          Technical Specs
+        </a>
+      `
+      : ""
+  }
 
-                  ${
-                    v.diagram_url
-                      ? `
-                        <a
-                          href="${v.diagram_url}"
-                          target="_blank"
-                        >
-                          Specs
-                        </a>
-                      `
-                      : ""
-                  }
-
-                </div>
+</div>
 
               </div>
             `).join("")
