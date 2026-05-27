@@ -93,9 +93,13 @@ function renderDetail(id) {
   }
 
   // 🔥 SAFE VARIANTS PARSE
-  const variants = parseVariants(item.variants);
+const media = item.media || [];
 
-  const details = item.details || {};
+const images =
+  media.filter(x => x.type === "image");
+
+const diagrams =
+  media.filter(x => x.type === "diagram");
 
   detail.innerHTML = `
     <div class="card">
@@ -119,7 +123,59 @@ function renderDetail(id) {
       <p>${item.system || ""} - ${item.size || ""}</p>
 
       <p>Cabinet: ${item.cabinet_required || "-"}</p>
+      <!-- GALLERY -->
 
+${
+  images.length > 1
+    ? `
+      <div class="section">
+
+        <h3>Gallery</h3>
+
+        <div class="gallery">
+
+          ${images.map(img => `
+
+            <img
+              src="${img.url}"
+              alt="${img.description || ''}"
+            >
+
+          `).join("")}
+
+        </div>
+
+      </div>
+    `
+    : ""
+}
+
+<!-- DIAGRAMS -->
+
+${
+  diagrams.length
+    ? `
+      <div class="section">
+
+        <h3>Technical Diagrams</h3>
+
+        <div class="gallery">
+
+          ${diagrams.map(img => `
+
+            <img
+              src="${img.url}"
+              alt="${img.description || ''}"
+            >
+
+          `).join("")}
+
+        </div>
+
+      </div>
+    `
+    : ""
+}
       <!-- VARIANTS -->
       <h3>Brands / Variants</h3>
 
@@ -138,10 +194,29 @@ function renderDetail(id) {
                     Price: $${v.price_min || "-"} - $${v.price_max || "-"}
                   </div>
 
-                  <div>
-                    ${v.image_url ? `<a href="${v.image_url}" target="_blank">Image</a>` : ""}
-                    ${v.diagram_url ? ` | <a href="${v.diagram_url}" target="_blank">Diagram</a>` : ""}
-                  </div>
+<div class="variant-links">
+
+  ${
+    v.image_url
+      ? `
+      <a href="${v.image_url}" target="_blank">
+        Brand Website
+      </a>
+      `
+      : ""
+  }
+
+  ${
+    v.diagram_url
+      ? `
+      <a href="${v.diagram_url}" target="_blank">
+        Specs
+      </a>
+      `
+      : ""
+  }
+
+</div>
 
                 </div>
               `).join("")
