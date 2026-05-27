@@ -520,3 +520,50 @@ body{
 .variant-links a:hover{
   background:#38bdf8;
 }
+
+.hero-meta{
+  color:#94a3b8;
+  margin-bottom:12px;
+}
+
+.hero-cabinet{
+  margin-bottom:20px;
+  color:#cbd5e1;
+}
+
+.gallery-item{
+  background:rgba(255,255,255,.03);
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.gallery-item img{
+  width:100%;
+  display:block;
+}
+
+.gallery-caption{
+  padding:10px;
+  font-size:.82rem;
+  color:#cbd5e1;
+}
+
+.variant-brand{
+  font-size:1rem;
+  font-weight:700;
+  margin-bottom:12px;
+  color:#38bdf8;
+}
+
+.variant-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+  font-size:.84rem;
+}
+
+.variant-row span{
+  color:#94a3b8;
+}
