@@ -104,58 +104,121 @@ function renderDetail(id) {
       (x.type || "").toLowerCase() === "diagram"
     );
 
-  detail.innerHTML = `
-    <div class="card">
+detail.innerHTML = `
+<div class="card">
 
-      ${
-        item.image_url
-          ? `
-            <div class="card-image-wrap">
-              <img src="${item.image_url}" class="main-image">
-            </div>
-          `
-          : ""
-      }
+  <!-- HERO -->
+  <div class="card-hero">
+
+    <div class="card-image">
+
+      <img
+        src="${item.image_url || ''}"
+        alt="${item.name || ''}"
+      >
+
+    </div>
+
+    <div class="card-info">
 
       <h1>${item.name || "Unnamed Item"}</h1>
 
-      <p>${item.system || ""} - ${item.size || ""}</p>
+      <div class="hero-meta">
+        ${item.system || ""} ${item.size || ""}
+      </div>
 
-      <p>Cabinet: ${item.cabinet_required || "-"}</p>
+      <div class="hero-cabinet">
+        Cabinet Required:
+        <strong>${item.cabinet_required || "-"}</strong>
+      </div>
 
-      <!-- GALLERY -->
       ${
-        images.length
+        item.description
           ? `
-            <div class="section">
-              <h3>Gallery</h3>
-              <div class="gallery">
-                ${images.map(img => `
-                  <img src="${img.url}" alt="${img.description || ""}">
-                `).join("")}
-              </div>
-            </div>
-          `
+          <div class="card-desc">
+            ${item.description}
+          </div>
+        `
           : ""
       }
 
-      <!-- DIAGRAMS -->
-      ${
-        diagrams.length
-          ? `
-            <div class="section">
-              <h3>Technical Diagrams</h3>
-              <div class="gallery">
-                ${diagrams.map(img => `
-                  <img src="${img.url}" alt="${img.description || ""}">
-                `).join("")}
-              </div>
-            </div>
-          `
-          : ""
-      }
+    </div>
 
-      <!-- VARIANTS -->
+  </div>
+
+  <div class="card-content">
+
+    <!-- GALLERY -->
+    ${
+      images.length
+        ? `
+        <div class="section">
+
+          <h3>Product Gallery</h3>
+
+          <div class="gallery">
+
+            ${images.map(img => `
+              <div class="gallery-item">
+
+                <img
+                  src="${img.url}"
+                  alt="${img.description || ''}"
+                >
+
+                ${
+                  img.description
+                    ? `<div class="gallery-caption">${img.description}</div>`
+                    : ""
+                }
+
+              </div>
+            `).join("")}
+
+          </div>
+
+        </div>
+      `
+        : ""
+    }
+
+    <!-- DIAGRAMS -->
+    ${
+      diagrams.length
+        ? `
+        <div class="section">
+
+          <h3>Technical Diagrams</h3>
+
+          <div class="gallery">
+
+            ${diagrams.map(img => `
+              <div class="gallery-item">
+
+                <img
+                  src="${img.url}"
+                  alt="${img.description || ''}"
+                >
+
+                ${
+                  img.description
+                    ? `<div class="gallery-caption">${img.description}</div>`
+                    : ""
+                }
+
+              </div>
+            `).join("")}
+
+          </div>
+
+        </div>
+      `
+        : ""
+    }
+
+    <!-- VARIANTS -->
+    <div class="section">
+
       <h3>Brands / Variants</h3>
 
       <div class="variants">
@@ -163,58 +226,108 @@ function renderDetail(id) {
         ${
           variants.length
             ? variants.map(v => `
-                <div class="variant-card">
+              <div class="variant-card">
 
-                  <strong>${v.brand || "-"}</strong>
+                <div class="variant-brand">
+                  ${v.brand || "-"}
+                </div>
 
-                  <div>SKU: ${v.sku || "-"}</div>
-                  <div>Finish: ${v.finish || "-"}</div>
+                <div class="variant-row">
+                  <span>SKU</span>
+                  <strong>${v.sku || "-"}</strong>
+                </div>
 
-                  <div>
-                    Price: $${v.price_min || "-"} - $${v.price_max || "-"}
-                  </div>
+                <div class="variant-row">
+                  <span>Finish</span>
+                  <strong>${v.finish || "-"}</strong>
+                </div>
 
-                  <div class="variant-links">
+                <div class="variant-row">
+                  <span>Price</span>
+                  <strong>
+                    $${v.price_min || "-"} - $${v.price_max || "-"}
+                  </strong>
+                </div>
 
-                    ${
-                      v.image_url
-                        ? `<a href="${v.image_url}" target="_blank">Brand Link</a>`
-                        : ""
-                    }
+                <div class="variant-links">
 
-                    ${
-                      v.diagram_url
-                        ? `<a href="${v.diagram_url}" target="_blank">Specs</a>`
-                        : ""
-                    }
+                  ${
+                    v.image_url
+                      ? `
+                        <a
+                          href="${v.image_url}"
+                          target="_blank"
+                        >
+                          Visit ${v.brand}
+                        </a>
+                      `
+                      : ""
+                  }
 
-                  </div>
+                  ${
+                    v.diagram_url
+                      ? `
+                        <a
+                          href="${v.diagram_url}"
+                          target="_blank"
+                        >
+                          Specs
+                        </a>
+                      `
+                      : ""
+                  }
 
                 </div>
-              `).join("")
+
+              </div>
+            `).join("")
             : `<p>No variants available</p>`
         }
 
       </div>
 
-      <!-- DETAILS -->
+    </div>
+
+    <!-- DETAILS -->
+    <div class="section">
+
       <h3>Requirements</h3>
       ${renderList(details.requirements)}
+
+    </div>
+
+    <div class="section">
 
       <h3>Recommendations</h3>
       ${renderList(details.recommendations)}
 
+    </div>
+
+    <div class="section">
+
       <h3>Warnings</h3>
       ${renderList(details.warnings)}
 
+    </div>
+
+    <div class="section">
+
       <h3>Installation Notes</h3>
       <p>${details.installation_notes || "-"}</p>
+
+    </div>
+
+    <div class="section">
 
       <h3>Plumbing Notes</h3>
       <p>${details.plumbing_notes || "-"}</p>
 
     </div>
-  `;
+
+  </div>
+
+</div>
+`;
 
   if (window.innerWidth < 900) {
     detail.scrollIntoView({ behavior: "smooth" });
