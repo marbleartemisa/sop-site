@@ -2,10 +2,10 @@ const API =
   "https://script.google.com/macros/s/AKfycbzY1yMs1NX3IlkIXI1iKjRvZvaCxIJUFAxR5R47xkN6Cc4zMD2IuVGFbM0mjGzO1DMt8w/exec?type=full";
 
 let DB = [];
-let INDEX = {}; // lookup rápido por id
+let INDEX = {};
 
 /* =========================
-   LOAD DATA (OPTIMIZADO)
+   LOAD DATA
 ========================= */
 async function loadData() {
   try {
@@ -16,7 +16,6 @@ async function loadData() {
 
     DB = data;
 
-    // 🔥 INDEX PARA PERFORMANCE (CLAVE)
     INDEX = {};
     DB.forEach(item => {
       if (item?.id) INDEX[item.id] = item;
@@ -32,7 +31,7 @@ async function loadData() {
 }
 
 /* =========================
-   SIDEBAR (RÁPIDO + SEGURO)
+   SIDEBAR
 ========================= */
 function renderSidebar() {
   const sidebar = document.getElementById("sidebar");
@@ -68,7 +67,7 @@ function renderSidebar() {
 
         div.classList.add("active");
 
-        renderDetail(item.id); // 🔥 ahora usa INDEX (más rápido)
+        renderDetail(item.id);
       });
 
       group.appendChild(div);
@@ -79,12 +78,11 @@ function renderSidebar() {
 }
 
 /* =========================
-   DETAIL (FIX PRINCIPAL)
+   DETAIL VIEW
 ========================= */
 function renderDetail(id) {
 
   const item = INDEX[id];
-
   const detail = document.getElementById("detail");
 
   if (!item) {
@@ -92,31 +90,32 @@ function renderDetail(id) {
     return;
   }
 
-  // 🔥 SAFE VARIANTS PARSE
-const media = item.media || [];
+  const variants = parseVariants(item.variants);
+  const details = item.details || [];
+  const media = item.media || [];
 
-const images =
-  media.filter(x => x.type === "image");
+  const images =
+    media.filter(x =>
+      (x.type || "").toLowerCase() === "image"
+    );
 
-const diagrams =
-  media.filter(x => x.type === "diagram");
+  const diagrams =
+    media.filter(x =>
+      (x.type || "").toLowerCase() === "diagram"
+    );
 
   detail.innerHTML = `
     <div class="card">
 
-  ${
-    item.image_url
-      ? `
-        <div class="card-image-wrap">
-          <img
-            src="${item.image_url}"
-            alt="${item.name}"
-            class="main-image"
-          >
-        </div>
-      `
-      : ""
-  }
+      ${
+        item.image_url
+          ? `
+            <div class="card-image-wrap">
+              <img src="${item.image_url}" class="main-image">
+            </div>
+          `
+          : ""
+      }
 
       <h1>${item.name || "Unnamed Item"}</h1>
 
@@ -124,60 +123,43 @@ const diagrams =
 
       <p>Cabinet: ${item.cabinet_required || "-"}</p>
 
-${
-  images.length > 1
-    ? `
-      <div class="section">
+      <!-- GALLERY -->
+      ${
+        images.length
+          ? `
+            <div class="section">
+              <h3>Gallery</h3>
+              <div class="gallery">
+                ${images.map(img => `
+                  <img src="${img.url}" alt="${img.description || ""}">
+                `).join("")}
+              </div>
+            </div>
+          `
+          : ""
+      }
 
-        <h3>Gallery</h3>
-
-        <div class="gallery">
-
-          ${images.map(img => `
-
-            <img
-              src="${img.url}"
-              alt="${img.description || ''}"
-            >
-
-          `).join("")}
-
-        </div>
-
-      </div>
-    `
-    : ""
-}
-
-${
-  diagrams.length
-    ? `
-      <div class="section">
-
-        <h3>Technical Diagrams</h3>
-
-        <div class="gallery">
-
-          ${diagrams.map(img => `
-
-            <img
-              src="${img.url}"
-              alt="${img.description || ''}"
-            >
-
-          `).join("")}
-
-        </div>
-
-      </div>
-    `
-    : ""
-}
+      <!-- DIAGRAMS -->
+      ${
+        diagrams.length
+          ? `
+            <div class="section">
+              <h3>Technical Diagrams</h3>
+              <div class="gallery">
+                ${diagrams.map(img => `
+                  <img src="${img.url}" alt="${img.description || ""}">
+                `).join("")}
+              </div>
+            </div>
+          `
+          : ""
+      }
 
       <!-- VARIANTS -->
       <h3>Brands / Variants</h3>
 
       <div class="variants">
+
         ${
           variants.length
             ? variants.map(v => `
@@ -192,34 +174,27 @@ ${
                     Price: $${v.price_min || "-"} - $${v.price_max || "-"}
                   </div>
 
-<div class="variant-links">
+                  <div class="variant-links">
 
-  ${
-    v.image_url
-      ? `
-      <a href="${v.image_url}" target="_blank">
-        Brand Website
-      </a>
-      `
-      : ""
-  }
+                    ${
+                      v.image_url
+                        ? `<a href="${v.image_url}" target="_blank">Brand Link</a>`
+                        : ""
+                    }
 
-  ${
-    v.diagram_url
-      ? `
-      <a href="${v.diagram_url}" target="_blank">
-        Specs
-      </a>
-      `
-      : ""
-  }
+                    ${
+                      v.diagram_url
+                        ? `<a href="${v.diagram_url}" target="_blank">Specs</a>`
+                        : ""
+                    }
 
-</div>
+                  </div>
 
                 </div>
               `).join("")
             : `<p>No variants available</p>`
         }
+
       </div>
 
       <!-- DETAILS -->
@@ -241,7 +216,6 @@ ${
     </div>
   `;
 
-  // UX: scroll en mobile
   if (window.innerWidth < 900) {
     detail.scrollIntoView({ behavior: "smooth" });
   }
@@ -251,7 +225,6 @@ ${
    HELPERS
 ========================= */
 
-// 🔥 FIX VARIANTS (por si viene string o null)
 function parseVariants(v) {
   if (!v) return [];
   if (Array.isArray(v)) return v;
@@ -263,50 +236,26 @@ function parseVariants(v) {
   }
 }
 
-// safe list render
 function renderList(data) {
 
-  // vacío
-  if (!data) {
-    return "<ul><li>-</li></ul>";
-  }
+  if (!data) return "<ul><li>-</li></ul>";
 
-  // si viene string desde Sheets
   if (typeof data === "string") {
-
-    // intenta parse JSON
     try {
       const parsed = JSON.parse(data);
-
-      if (Array.isArray(parsed)) {
-        data = parsed;
-      }
-
+      if (Array.isArray(parsed)) data = parsed;
     } catch {
-
-      // separa por saltos, coma o pipe
-      data = data
-        .split(/\n|,|\|/)
-        .map(x => x.trim())
-        .filter(Boolean);
+      data = data.split(/\n|,|\|/).map(x => x.trim()).filter(Boolean);
     }
   }
 
-  // si no es array válido
-  if (!Array.isArray(data) || data.length === 0) {
+  if (!Array.isArray(data) || !data.length) {
     return "<ul><li>-</li></ul>";
   }
 
-  return `
-    <ul>
-      ${data.map(x => `<li>${x}</li>`).join("")}
-    </ul>
-  `;
+  return `<ul>${data.map(x => `<li>${x}</li>`).join("")}</ul>`;
 }
 
-/* =========================
-   GROUP BY
-========================= */
 function groupBy(arr, key) {
   return (arr || []).reduce((acc, obj) => {
     const k = obj?.[key] || "Uncategorized";
