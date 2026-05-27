@@ -473,3 +473,50 @@ body{
   object-fit:cover;
   display:block;
 }
+
+/* ===== GALLERY ===== */
+
+.gallery{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+  gap:16px;
+  margin-top:15px;
+}
+
+.gallery img{
+  width:100%;
+  border-radius:14px;
+  background:#0f172a;
+  border:1px solid rgba(255,255,255,.08);
+  cursor:pointer;
+  transition:.25s;
+}
+
+.gallery img:hover{
+  transform:scale(1.02);
+}
+
+/* ===== VARIANT LINKS ===== */
+
+.variant-links{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+
+.variant-links a{
+  background:#2563eb;
+  color:white;
+  padding:8px 12px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:.8rem;
+  transition:.2s;
+}
+
+.variant-links a:hover{
+  background:#38bdf8;
+}
