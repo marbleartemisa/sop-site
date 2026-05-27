@@ -567,3 +567,21 @@ body{
 .variant-row span{
   color:#94a3b8;
 }
+
+.variant-links a{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.brand-link{
+  background:#2563eb;
+}
+
+.spec-link{
+  background:#0f766e;
+}
+
+.spec-link:hover{
+  background:#14b8a6;
+}
