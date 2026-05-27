@@ -1,5 +1,6 @@
 const API =
-  "https://script.google.com/macros/s/AKfycbzY1yMs1NX3IlkIXI1iKjRvZvaCxIJUFAxR5R47xkN6Cc4zMD2IuVGFbM0mjGzO1DMt8w/exec?type=full";
+  "https://script.google.com/macros/s/AKfycbwwA8TFM4pxWwY_LiQQooUUACuWE_Q1BrPP3YieqwWCR1bTnIZB78S72pDLAhqgxWND4g/exec?type=full";
+
 
 let DB = [];
 let INDEX = {};
