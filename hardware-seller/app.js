@@ -123,7 +123,6 @@ const diagrams =
       <p>${item.system || ""} - ${item.size || ""}</p>
 
       <p>Cabinet: ${item.cabinet_required || "-"}</p>
-      <!-- GALLERY -->
 
 ${
   images.length > 1
@@ -150,8 +149,6 @@ ${
     : ""
 }
 
-<!-- DIAGRAMS -->
-
 ${
   diagrams.length
     ? `
@@ -176,6 +173,7 @@ ${
     `
     : ""
 }
+
       <!-- VARIANTS -->
       <h3>Brands / Variants</h3>
 
