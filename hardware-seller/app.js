@@ -94,15 +94,23 @@ function renderDetail(id) {
   const details = item.details || [];
   const media = item.media || [];
 
-  const images =
-    media.filter(x =>
-      (x.type || "").trim().toLowerCase() === "image"
-    );
+const images = media.filter(x =>
+  String(x.type || "")
+    .trim()
+    .toLowerCase() === "image"
+);
 
-  const diagrams =
-    media.filter(x =>
-      (x.type || "").toLowerCase() === "diagram"
-    );
+const diagrams = media.filter(x =>
+  String(x.type || "")
+    .trim()
+    .toLowerCase() === "diagram"
+);
+
+/* HERO IMAGE */
+const heroImage = images[0] || null;
+
+/* GALLERY IMAGES */
+const galleryImages = images.slice(1);
 
 detail.innerHTML = `
 <div class="card">
@@ -113,7 +121,7 @@ detail.innerHTML = `
     <div class="card-image">
 
       <img
-        src="${item.image_url || ''}"
+        src="${heroImage?.url || item.image_url || ''}"
         alt="${item.name || ''}"
       >
 
@@ -150,7 +158,7 @@ detail.innerHTML = `
 
     <!-- GALLERY -->
     ${
-      images.length
+      galleryImages.length
         ? `
         <div class="section">
 
@@ -158,7 +166,7 @@ detail.innerHTML = `
 
           <div class="gallery">
 
-            ${images.map(img => `
+            ${galleryImages.map(img =>`
               <div class="gallery-item">
 
                 <img
