@@ -78,10 +78,11 @@
       .menu a:hover{
         color:#00aaff;
       }
-
-      .menu a.active {
-              background: #003366;   /* color de fondo destacado */
-              color: #fff;           /* texto blanco */
+            
+            .menu a.active,
+            .drop-btn.active {
+              background: #003366;
+              color: #fff;
               border-radius: 6px;
               padding: 5px 10px;
             }
@@ -471,6 +472,8 @@ tr:hover .sop-nombre {
   background: none;
   border: none;
   color: white;
+  padding: 8px 10px;
+  border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
   font-size: 0.95rem;
@@ -482,7 +485,7 @@ tr:hover .sop-nombre {
 .dropdown-content {
   display: none;
   position: absolute;
-  top: 100%;
+  top: calc(100% - 2px);
   left: 0;
   background: rgba(15,23,42,0.98);
   min-width: 200px;
@@ -514,6 +517,11 @@ tr:hover .sop-nombre {
   transition: 0.3s;
 }
 
+@media (min-width: 901px) {
+  .dropdown:hover .dropdown-content {
+    display: flex;
+  }
+}      
 /* MOBILE */
 @media (max-width: 900px) {
 
@@ -564,7 +572,7 @@ tr:hover .sop-nombre {
 
   <!-- SOP DROPDOWN -->
   <div class="dropdown">
-    <button class="drop-btn" onclick="toggleDropdown(this)">
+    <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
       SOP <i class="fa-solid fa-chevron-down"></i>
     </button>
 
@@ -579,7 +587,7 @@ tr:hover .sop-nombre {
 
   <!-- HELPERS DROPDOWN -->
   <div class="dropdown">
-    <button class="drop-btn" onclick="toggleDropdown(this)">
+    <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
       Helpers <i class="fa-solid fa-chevron-down"></i>
     </button>
 
@@ -592,7 +600,7 @@ tr:hover .sop-nombre {
 
         <!-- ADMIN DROPDOWN -->
   <div class="dropdown">
-    <button class="drop-btn" onclick="toggleDropdown(this)">
+    <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
       DB-Admin <i class="fa-solid fa-chevron-down"></i>
     </button>
 
