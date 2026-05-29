@@ -81,13 +81,14 @@
         color:#00aaff;
       }
             
-            .menu a.active,
-            .drop-btn.active {
-              background: #003366;
-               color:white;
+           .menu > a.active,
+            .drop-btn.active{
+              background:#003366;
+              color:white;
               border-radius:8px;
               padding:8px 12px;
             }
+          
 
 
             .menu-toggle{
@@ -951,12 +952,17 @@ function destacarMenu(){
 
   const path = window.location.pathname;
 
-  // limpiar todos
-  document.querySelectorAll(".menu a, .drop-btn")
-    .forEach(el => el.classList.remove("active"));
+  // LIMPIAR TODO
+  document.querySelectorAll(".menu a").forEach(a=>{
+    a.classList.remove("active");
+  });
 
-  // links normales
-  document.querySelectorAll(".menu > a").forEach(link => {
+  document.querySelectorAll(".drop-btn").forEach(btn=>{
+    btn.classList.remove("active");
+  });
+
+  // ===== LINKS PRINCIPALES =====
+  document.querySelectorAll(".menu > a").forEach(link=>{
 
     const href = new URL(link.href).pathname;
 
@@ -968,23 +974,29 @@ function destacarMenu(){
 
   });
 
-  // dropdowns
-  document.querySelectorAll(".dropdown").forEach(drop => {
+  // ===== DROPDOWNS =====
+  document.querySelectorAll(".dropdown").forEach(drop=>{
 
-    const links = drop.querySelectorAll(".dropdown-content a");
+    let dropdownActivo = false;
 
-    links.forEach(link => {
+    drop.querySelectorAll(".dropdown-content a").forEach(link=>{
 
       const href = new URL(link.href).pathname;
 
       if(href === path){
 
-        drop.querySelector(".drop-btn")
-            .classList.add("active");
+        dropdownActivo = true;
 
       }
 
     });
+
+    if(dropdownActivo){
+
+      drop.querySelector(".drop-btn")
+          .classList.add("active");
+
+    }
 
   });
 
