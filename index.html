@@ -38,6 +38,7 @@
       .navbar{
         position:sticky;
         top:0;
+        isolation: isolate;
         background:rgba(0,0,0,0.65);
         backdrop-filter:blur(8px);
         padding:10px 30px;
@@ -46,8 +47,9 @@
         display:flex;
         justify-content:space-between;
         align-items:center;
-        z-index:999;
+        z-index:999999;
       }
+
       
       .logo{
         display:flex;
@@ -82,10 +84,11 @@
             .menu a.active,
             .drop-btn.active {
               background: #003366;
-              color: #fff;
-              border-radius: 6px;
-              padding: 5px 10px;
+               color:white;
+              border-radius:8px;
+              padding:8px 12px;
             }
+
 
             .menu-toggle{
               display:none;
@@ -173,7 +176,10 @@
         padding:40px 20px 20px;
         color:white;
       }
-      
+      .banner{
+        position:relative;
+        z-index:1;
+      }
       .banner h1{
         margin:0;
         font-size:2.2rem;
@@ -445,16 +451,18 @@ tr:hover .sop-nombre {
         cursor:pointer;
       }
 
-      .video-background {
+.video-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    z-index: -1; /* queda detrás de todo */
+    pointer-events:none;
+    z-index: -10; /* queda detrás de todo */
 }
 
+      
 .video-background video {
     width: 100%;
     height: 100%;
@@ -466,7 +474,9 @@ tr:hover .sop-nombre {
   position: relative;
   display: flex;
   align-items: center;
+      z-index: 999999;
 }
+
 
 .drop-btn {
   background: none;
@@ -482,27 +492,50 @@ tr:hover .sop-nombre {
   gap: 6px;
 }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: calc(100% - 2px);
-  left: 0;
-  background: rgba(15,23,42,0.98);
-  min-width: 200px;
-  border-radius: 10px;
-  padding: 8px 0;
-  z-index: 9999;
-  flex-direction: column;
+
+.dropdown-content{
+
+  position:absolute;
+
+  top:100%;
+  left:0;
+
+  display:none;
+  flex-direction:column;
+
+  min-width:240px;
+
+  padding:10px 0;
+
+  border-radius:12px;
+
+  background:#0f172a;
+
+  box-shadow:0 15px 40px rgba(0,0,0,0.45);
+
+  z-index:9999999;
+
+  overflow:hidden;
 }
 
-.dropdown-content a {
-  color: white;
-  padding: 10px 15px;
-  text-decoration: none;
-  display: block;
-  font-size: 0.9rem;
-}
 
+.dropdown-content a{
+
+  display:block;
+
+  padding:14px 18px;
+
+  color:white;
+
+  text-decoration:none;
+
+  white-space:nowrap;
+
+  position:relative;
+
+  z-index:9999999;
+}
+      
 .dropdown-content a:hover {
   background: rgba(255,255,255,0.08);
 }
@@ -542,6 +575,9 @@ tr:hover .sop-nombre {
     padding: 10px;
   }
 }
+
+
+      
 </style>
 </head>
 <body>
@@ -909,16 +945,49 @@ function filterDept(dep){
 }
 
 // 🔹 Destacar opción de menú según URL
-function destacarMenu() {
-  const links = document.querySelectorAll(".menu a");
-  const path = window.location.pathname; // ruta actual
-  links.forEach(link => {
-    if (link.getAttribute("href") === path) {
+
+
+function destacarMenu(){
+
+  const path = window.location.pathname;
+
+  // limpiar todos
+  document.querySelectorAll(".menu a, .drop-btn")
+    .forEach(el => el.classList.remove("active"));
+
+  // links normales
+  document.querySelectorAll(".menu > a").forEach(link => {
+
+    const href = new URL(link.href).pathname;
+
+    if(href === path){
+
       link.classList.add("active");
-    } else {
-      link.classList.remove("active");
+
     }
+
   });
+
+  // dropdowns
+  document.querySelectorAll(".dropdown").forEach(drop => {
+
+    const links = drop.querySelectorAll(".dropdown-content a");
+
+    links.forEach(link => {
+
+      const href = new URL(link.href).pathname;
+
+      if(href === path){
+
+        drop.querySelector(".drop-btn")
+            .classList.add("active");
+
+      }
+
+    });
+
+  });
+
 }
 
 window.addEventListener("DOMContentLoaded", () => {
