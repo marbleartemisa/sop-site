@@ -924,18 +924,98 @@ function getDepartmentBadge(dep){
   return `<span class="dept-badge dept-${dep}">${names[dep]||dep}</span>`;
 }
 
+      function score(sop, search) {
+
+  const q = (search || "").toLowerCase().trim();
+  if (!q) return 0;
+
+  const title = (sop.title || "").toLowerCase();
+  const text = (sop.search_text || "").toLowerCase();
+  const keywords = (sop.keywords || "").toLowerCase();
+  const dept = (sop.department || "").toLowerCase();
+
+  let score = 0;
+
+  // =========================
+  // 1. MATCH EXACTO (máxima prioridad)
+  // =========================
+  if (title === q) score += 200;
+
+  // =========================
+  // 2. TITLE MATCH (muy alto valor)
+  // =========================
+  if (title.includes(q)) score += 120;
+
+  // =========================
+  // 3. KEYWORDS MATCH (muy importante en SOP)
+  // =========================
+  if (keywords.includes(q)) score += 90;
+
+  // =========================
+  // 4. SEARCH TEXT MATCH (contenido completo)
+  // =========================
+  if (text.includes(q)) score += 50;
+
+  // =========================
+  // 5. DEPARTAMENTO (baja prioridad)
+  // =========================
+  if (dept.includes(q)) score += 10;
+
+  // =========================
+  // 6. MULTI-WORD INTELLIGENCE
+  // =========================
+  const words = q.split(" ").filter(w => w.length > 2);
+
+  for (const w of words) {
+
+    if (title.includes(w)) score += 25;
+    if (keywords.includes(w)) score += 15;
+    if (text.includes(w)) score += 8;
+
+  }
+
+  // =========================
+  // 7. BOOST: aparición temprana (tipo Google)
+  // =========================
+  const pos = text.indexOf(q);
+  if (pos === 0) score += 40;
+  else if (pos > 0 && pos < 50) score += 20;
+
+  return score;
+}
+
 /* ===== FILTROS ===== */
 document.getElementById("searchInput").addEventListener("input",filterSOP);
 document.getElementById("deptFilter").addEventListener("change",filterSOP);
 
 function filterSOP(){
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const dept = document.getElementById("deptFilter").value;
+  const search = (document.getElementById("searchInput").value || "")
+    .toLowerCase()
+    .trim();
 
-  const filtered = SOP_INDEX.filter(sop=>{
-    return (!dept || sop.department===dept) &&
-    (sop.title.toLowerCase().includes(search));
-  });
+  const dept = document.getElementById("deptFilter").value;
+  const hasSearch = search.length > 0;
+
+  const filtered = SOP_INDEX
+    .filter(sop => {
+
+      const matchDept = !dept || sop.department === dept;
+
+      const title = (sop.title || "").toLowerCase();
+      const text = (sop.search_text || "").toLowerCase();
+
+      const matchSearch =
+        !hasSearch ||
+        title.includes(search) ||
+        text.includes(search);
+
+      return matchDept && matchSearch;
+    })
+    .sort((a, b) => {
+      if (!hasSearch) return 0;
+
+      return score(b, search) - score(a, search);
+    });
 
   renderSOP(filtered);
 }
