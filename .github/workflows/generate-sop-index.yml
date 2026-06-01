@@ -54,19 +54,40 @@ jobs:
                 description=$(grep -i 'meta name="description"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
                 meta_keywords=$(grep -i 'meta name="keywords"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
 
-                jq --arg title "$title" \
-                   --arg department "$department" \
-                   --arg keywords "$keywords" \
-                   --arg objective "$objective" \
-                   --arg description "$description" \
-                   --arg url "$url" \
+                # EXTRAER TEXTO DEL HTML
+
+                raw_text=$(cat "$dir/index.html" \
+                  | sed 's/<script[^>]*>.*<\/script>//g' \
+                  | sed 's/<style[^>]*>.*<\/style>//g' \
+                  | sed 's/<[^>]*>/ /g' \
+                  | tr '[:upper:]' '[:lower:]')
+
+                  search_text=$(echo "$raw_text" \
+                      | tr ' ' '\n' \
+                      | grep -E '^[a-z0-9-]{4,}$' \
+                      | grep -vE '^(artemisa|procedimiento|objetivo|alcance|responsable|version|revision|documento|tabla|formulario|manual|empresa|departamento|area)$' \
+                      | sort \
+                      | uniq -c \
+                      | sort -nr \
+                      | head -50 \
+                      | awk '{print $2}' \
+                      | tr '\n' ' ')
+
+                    jq --arg title "$title" \
+                     --arg department "$department" \
+                     --arg keywords "$keywords" \
+                     --arg objective "$objective" \
+                     --arg description "$description" \
+                     --arg searchText "$search_text" \
+                     --arg url "$url" \
                    '. += [{
-                      "title": $title,
-                      "department": $department,
-                      "keywords": $keywords,
-                      "objective": $objective,
-                      "description": $description,
-                      "url": $url
+                    "title": $title,
+                    "department": $department,
+                    "keywords": $keywords,
+                    "objective": $objective,
+                    "description": $description,
+                    "searchText": $searchText,
+                    "url": $url
                    }]' \
                    SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
