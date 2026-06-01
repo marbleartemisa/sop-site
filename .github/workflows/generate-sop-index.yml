@@ -23,91 +23,89 @@ jobs:
 
           echo "[]" > SOP_INDEX.json
 
-          # buscar carpetas que contengan SOP-*
+          # =========================
+          # STOPWORDS (PALABRAS BASURA)
+          # =========================
+          STOPWORDS="and the under into dentro para bajo mayor menor esta esto el la los las de del a en con sin por to of in on at for from by y o"
+
           for area in */ ; do
 
             area=${area%/}
 
-            # saltar carpetas del sistema
             case "$area" in
               .github|images|admin|biblioteca|analisis|Aportes|registrar-sop|sop-viewer-edit)
                 continue
                 ;;
             esac
 
-            # buscar SOP dentro del area
             for dir in "$area"/SOP-*; do
 
               if [ -d "$dir" ] && [ -f "$dir/index.html" ]; then
 
                 sopname=$(basename "$dir")
-
                 title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
 
-                keywords=$(echo "$title" | tr 'A-Z' 'a-z')
-
                 url="$dir/index.html"
-
                 department="$area"
 
+                # =========================
+                # METAS HTML
+                # =========================
                 objective=$(grep -i 'meta name="objective"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
                 description=$(grep -i 'meta name="description"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
-                # =========================
-                # CLEAN TEXT FROM HTML
-                # =========================
-                text=$(sed -E 's/<[^>]+>/ /g' "$dir/index.html" \
-                  | tr '\n' ' ' \
-                  | tr -s ' ' \
-                  | tr '[:upper:]' '[:lower:]')
-                
-                # =========================
-                # STOPWORDS (PALABRAS BASURA)
-                # =========================
-                stopwords="and the under into dentro para bajo mayor menor esta esto those el la los las de del a en con sin por"
-                
-                # =========================
-                # KEYWORD EXTRACTION CLEAN
-                # =========================
-                keywords=$(echo "$text" \
-                  | grep -oE '\b[a-z]{3,}\b' \
-                  | grep -vwF -e $stopwords \
-                  | sort -u \
-                  | paste -sd "," -)
 
-                # EXTRAER TEXTO DEL HTML
-
-                raw_text=$(cat "$dir/index.html" \
+                # =========================
+                # LIMPIEZA HTML COMPLETA
+                # =========================
+                clean_text=$(cat "$dir/index.html" \
                   | sed 's/<script[^>]*>.*<\/script>//g' \
                   | sed 's/<style[^>]*>.*<\/style>//g' \
                   | sed 's/<[^>]*>/ /g' \
-                  | tr '[:upper:]' '[:lower:]')
+                  | tr '[:upper:]' '[:lower:]' \
+                  | tr -s ' ')
 
-                  search_text=$(echo "$raw_text" \
-                      | tr ' ' '\n' \
-                      | grep -E '^[a-z0-9-]{4,}$' \
-                      | grep -vE '^(artemisa|procedimiento|objetivo|alcance|responsable|version|revision|documento|tabla|formulario|manual|empresa|departamento|area)$' \
-                      | sort \
-                      | uniq -c \
-                      | sort -nr \
-                      | head -50 \
-                      | awk '{print $2}' \
-                      | tr '\n' ' ')
+                # =========================
+                # SEARCH TEXT (ranking real)
+                # =========================
+                search_text=$(echo "$clean_text" \
+                  | tr ' ' '\n' \
+                  | grep -E '^[a-z]{4,}$' \
+                  | grep -v -E "$(echo $STOPWORDS | sed 's/ /|/g')" \
+                  | sort \
+                  | uniq -c \
+                  | sort -nr \
+                  | head -40 \
+                  | awk '{print $2}' \
+                  | tr '\n' ' ')
 
-                    jq --arg title "$title" \
-                     --arg department "$department" \
-                     --arg keywords "$keywords" \
-                     --arg objective "$objective" \
-                     --arg description "$description" \
-                     --arg searchText "$search_text" \
-                     --arg url "$url" \
+                # =========================
+                # KEYWORDS (limpias para filtros UI)
+                # =========================
+                keywords=$(echo "$search_text" \
+                  | tr ' ' '\n' \
+                  | sort -u \
+                  | head -20 \
+                  | tr '\n' ',' \
+                  | sed 's/,$//')
+
+                # =========================
+                # JSON FINAL
+                # =========================
+                jq --arg title "$title" \
+                   --arg department "$department" \
+                   --arg keywords "$keywords" \
+                   --arg objective "$objective" \
+                   --arg description "$description" \
+                   --arg searchText "$search_text" \
+                   --arg url "$url" \
                    '. += [{
-                    "title": $title,
-                    "department": $department,
-                    "keywords": $keywords,
-                    "objective": $objective,
-                    "description": $description,
-                    "searchText": $searchText,
-                    "url": $url
+                      "title": $title,
+                      "department": $department,
+                      "keywords": $keywords,
+                      "objective": $objective,
+                      "description": $description,
+                      "searchText": $searchText,
+                      "url": $url
                    }]' \
                    SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
