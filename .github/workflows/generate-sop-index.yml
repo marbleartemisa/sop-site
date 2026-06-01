@@ -26,8 +26,7 @@ jobs:
           # =========================
           # STOPWORDS (AMPLIADO PRO)
           # =========================
-          stopwords="and the under into dentro para bajo mayor menor esta esto those el la los las de del a en con sin por para from this that which what cuando como sobre sistema systems processes process procedimiento procedimiento SOP version revision documento area department manual empresa organization production admin administration comercial sales stone carpinteria installation tools hardware cabinet marble quartz granite"
-
+          stopwords="and the under into within inside outside above below dentro para bajo mayor menor esta esto those el la los las de del a en con sin por from to of system process procedure step steps work working workflow job jobs time times team teams material materials use using used be been being is are was were this that those these with without by for from as at on in or an a"
           normalize_text () {
             echo "$1" \
             | sed -E 's/<script[^>]*>.*<\/script>//gI' \
@@ -97,16 +96,18 @@ jobs:
                 objective=$(echo "$raw_html" | grep -i 'meta name="objective"' | sed -E 's/.*content="([^"]+)".*/\1/' || true)
                 description=$(echo "$raw_html" | grep -i 'meta name="description"' | sed -E 's/.*content="([^"]+)".*/\1/' || true)
 
+
                 # =========================
-                # DEPARTMENT (AUTO + FALLBACK)
+                # DEPARTMENT (IA + VALIDACIÓN SEGURA)
                 # =========================
                 department=$(classify_department "$clean_text")
-
-                # override folder if valid
-                folder_dep=$(echo "$area" | tr '[:upper:]' '[:lower:]')
-                if [ ! -z "$folder_dep" ]; then
-                  department="$folder_dep"
-                fi
+                
+                # SOLO override si la carpeta es válida de SOP
+                case "$area" in
+                  produccion|administracion|comercial|instalacion|maquinarias|vehiculos|ecopower|taller|medidas|houzz-pro)
+                    department="$area"
+                    ;;
+                esac
 
                 # =========================
                 # KEYWORDS PRO
