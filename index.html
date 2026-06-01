@@ -902,6 +902,63 @@ function renderSOP(filtered){
   container.innerHTML = html;
 }
 
+function scoreSOP(sop, search){
+
+  const text = (
+    sop.title + " " +
+    (sop.keywords || "") + " " +
+    (sop.description || "") + " " +
+    (sop.objective || "") + " " +
+    (sop.searchText || "")
+  ).toLowerCase();
+
+  const q = search.toLowerCase();
+
+  let score = 0;
+
+  // coincidencia exacta
+  // match completo o parcial inteligente
+      if(text === q) score += 10;
+      else if(text.includes(q)) score += 6;
+      else if(q.includes(text)) score += 3;
+
+  // palabras individuales
+  const words = q.split(" ").filter(w => w.length > 2);
+
+  words.forEach(w=>{
+    if(text.includes(w)) score += 2;
+  });
+
+  // bonus técnico (inglés/español industrial)
+  const techTerms = [
+    "countertop","cabinet","cabinets","backsplash","sink",
+    "cutout","hole","granite","quartz","marble",
+    "instalacion","produccion","carpinteria"
+  ];
+
+  techTerms.forEach(t=>{
+    if(text.includes(t) && q.includes(t)) score += 3;
+  });
+
+      // normalización ligera ES/EN
+      const synonyms = {
+              countertop: ["counter top", "encimera"],
+              cabinet: ["gabinete", "mueble"],
+              backsplash: ["salpicadero", "pared cocina"],
+              cutout: ["corte", "hole", "agujero"]
+            };
+            
+            Object.keys(synonyms).forEach(key=>{
+              if(q.includes(key) || synonyms[key].some(s=>q.includes(s))) {
+                if(text.includes(key) || synonyms[key].some(s=>text.includes(s))) {
+                  score += 4;
+                }
+              }
+            });
+  return score;
+}
+      
+
 /* ===== BADGES ===== */
 function getDepartmentBadge(dep){
 
@@ -929,28 +986,31 @@ document.getElementById("searchInput").addEventListener("input",filterSOP);
 document.getElementById("deptFilter").addEventListener("change",filterSOP);
 
 function filterSOP(){
+
   const search = document.getElementById("searchInput").value.toLowerCase();
   const dept = document.getElementById("deptFilter").value;
 
-const filtered = SOP_INDEX.filter(sop=>{
+  let filtered = SOP_INDEX;
 
-  const searchable = [
-    sop.title || "",
-    sop.keywords || "",
-    sop.description || "",
-    sop.objective || "",
-    sop.searchText || ""
-  ]
-  .join(" ")
-  .toLowerCase();
+  // filtro por departamento primero
+  if(dept){
+    filtered = filtered.filter(sop => sop.department === dept);
+  }
 
-  return (
-    (!dept || sop.department===dept)
-    &&
-    searchable.includes(search)
-  );
+  // si no hay búsqueda → solo mostrar
+  if(!search){
+    renderSOP(filtered);
+    return;
+  }
 
-});
+  // scoring inteligente
+  filtered = filtered
+    .map(sop => ({
+      ...sop,
+      _score: scoreSOP(sop, search)
+    }))
+    .filter(sop => sop._score > 0)
+    .sort((a,b) => b._score - a._score);
 
   renderSOP(filtered);
 }
