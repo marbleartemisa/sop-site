@@ -932,10 +932,25 @@ function filterSOP(){
   const search = document.getElementById("searchInput").value.toLowerCase();
   const dept = document.getElementById("deptFilter").value;
 
-  const filtered = SOP_INDEX.filter(sop=>{
-    return (!dept || sop.department===dept) &&
-    (sop.title.toLowerCase().includes(search));
-  });
+const filtered = SOP_INDEX.filter(sop=>{
+
+  const searchable = [
+    sop.title || "",
+    sop.keywords || "",
+    sop.description || "",
+    sop.objective || "",
+    sop.searchText || ""
+  ]
+  .join(" ")
+  .toLowerCase();
+
+  return (
+    (!dept || sop.department===dept)
+    &&
+    searchable.includes(search)
+  );
+
+});
 
   renderSOP(filtered);
 }
