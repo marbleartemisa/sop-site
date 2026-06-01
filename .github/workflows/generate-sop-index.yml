@@ -1,4 +1,4 @@
-name: Generate SOP Index PRO
+name: Generate SOP Index
 
 on:
   push:
@@ -23,125 +23,52 @@ jobs:
 
           echo "[]" > SOP_INDEX.json
 
-          stopwords="and the under into within inside outside above below dentro para bajo mayor menor esta esto those el la los las de del a en con sin por from to of system process procedure step steps work working workflow job jobs time times team teams material materials use using used be been being is are was were this that those these with without by for from as at on in or an a"
-
-          normalize_text () {
-            echo "$1" \
-            | sed -E 's/<script[^>]*>.*<\/script>//gI' \
-            | sed -E 's/<style[^>]*>.*<\/style>//gI' \
-            | sed -E 's/<[^>]+>/ /g' \
-            | tr '[:upper:]' '[:lower:]' \
-            | tr -s ' '
-          }
-
-          extract_terms () {
-            echo "$1" \
-            | grep -oE '\b[a-z]{3,}\b' \
-            | grep -vwF -e $stopwords \
-            | sort \
-            | uniq -c \
-            | sort -nr \
-            | awk '{print $2}' \
-            | head -60 \
-            | tr '\n' ' '
-          }
-
-          classify_department () {
-            text="$1"
-
-            if echo "$text" | grep -qi "cabinet|carpentry|wood"; then echo "produccion"; return; fi
-            if echo "$text" | grep -qi "invoice|account|finance|admin"; then echo "administracion"; return; fi
-            if echo "$text" | grep -qi "sales|client|quote|estimate"; then echo "comercial"; return; fi
-            if echo "$text" | grep -qi "stone|granite|quartz|marble"; then echo "instalacion"; return; fi
-            if echo "$text" | grep -qi "machine|tool|maintenance"; then echo "maquinarias"; return; fi
-
-            echo "administracion"
-          }
-
+          # buscar carpetas que contengan SOP-*
           for area in */ ; do
+
             area=${area%/}
 
+            # saltar carpetas del sistema
             case "$area" in
               .github|images|admin|biblioteca|analisis|Aportes|registrar-sop|sop-viewer-edit)
                 continue
                 ;;
             esac
 
+            # buscar SOP dentro del area
             for dir in "$area"/SOP-*; do
 
               if [ -d "$dir" ] && [ -f "$dir/index.html" ]; then
 
                 sopname=$(basename "$dir")
+
                 title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
+
+                keywords=$(echo "$title" | tr 'A-Z' 'a-z')
+
                 url="$dir/index.html"
 
-                raw_html=$(cat "$dir/index.html")
+                department="$area"
 
-                clean_text=$(normalize_text "$raw_html")
+                objective=$(grep -i 'meta name="objective"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
+                description=$(grep -i 'meta name="description"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
+                meta_keywords=$(grep -i 'meta name="keywords"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
 
-                objective=$(echo "$raw_html" | grep -i 'meta name="objective"' | sed -E 's/.*content="([^"]+)".*/\1/' || true)
-                description=$(echo "$raw_html" | grep -i 'meta name="description"' | sed -E 's/.*content="([^"]+)".*/\1/' || true)
-
-                department=$(classify_department "$clean_text")
-
-                case "$area" in
-                  produccion|administracion|comercial|instalacion|maquinarias|vehiculos|ecopower|taller|medidas|houzz-pro)
-                    department="$area"
-                    ;;
-                esac
-
-                body_text=$(echo "$clean_text")
-
-                # =========================
-                # 🔥 CORE SEARCH INTELLIGENCE
-                # =========================
-
-                keywords=$(extract_terms "$body_text")
-
-                glossary=$(echo "$body_text" \
-                  | grep -oE '\b[a-z]{4,}\b' \
-                  | grep -vwF -e $stopwords \
-                  | sort | uniq -c | sort -nr \
-                  | awk '{print $2}' \
-                  | head -25 \
-                  | tr '\n' ' ')
-
-                search_text=$(echo "$body_text" \
-                  | grep -oE '\b[a-z]{3,}\b' \
-                  | grep -vwF -e $stopwords \
-                  | sort | uniq \
-                  | tr '\n' ' ')
-
-                # 🔥 FIX REAL PARA TU PROBLEMA (INGLETADORA / OLIMPIC / WALT)
-                semantic_tags=$(echo "$body_text" | awk '
-                  {
-                    if ($0 ~ /miter|ingletadora|ingletadora/) print "miter_saw ingletadora";
-                    if ($0 ~ /walt|dewalt/) print "dewalt walt tool";
-                    if ($0 ~ /olimpic|edgebander/) print "edge_banding olimpic k560";
-                  }' | tr '\n' ' ')
-
-                title_clean=$(echo "$title" | tr '-' ' ')
-
-                jq --arg title "$title_clean" \
+                jq --arg title "$title" \
                    --arg department "$department" \
                    --arg keywords "$keywords" \
-                   --arg glossary "$glossary" \
-                   --arg searchText "$search_text" \
-                   --arg semantic "$semantic_tags" \
                    --arg objective "$objective" \
                    --arg description "$description" \
                    --arg url "$url" \
-                '. += [{
-                  "title": $title,
-                  "department": $department,
-                  "keywords": $keywords,
-                  "glossary": $glossary,
-                  "searchText": $searchText,
-                  "semanticTags": $semantic,
-                  "objective": $objective,
-                  "description": $description,
-                  "url": $url
-                }]' SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
+                   '. += [{
+                      "title": $title,
+                      "department": $department,
+                      "keywords": $keywords,
+                      "objective": $objective,
+                      "description": $description,
+                      "url": $url
+                   }]' \
+                   SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
               fi
             done
@@ -158,7 +85,7 @@ jobs:
 
           git diff --cached --quiet && echo "No changes" && exit 0
 
-          git commit -m "Auto update SOP index PRO"
+          git commit -m "Auto update SOP index"
 
           git pull --rebase origin main
 
