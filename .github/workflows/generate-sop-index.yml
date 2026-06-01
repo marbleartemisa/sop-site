@@ -52,7 +52,27 @@ jobs:
 
                 objective=$(grep -i 'meta name="objective"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
                 description=$(grep -i 'meta name="description"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
-                meta_keywords=$(grep -i 'meta name="keywords"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
+                # =========================
+                # CLEAN TEXT FROM HTML
+                # =========================
+                text=$(sed -E 's/<[^>]+>/ /g' "$dir/index.html" \
+                  | tr '\n' ' ' \
+                  | tr -s ' ' \
+                  | tr '[:upper:]' '[:lower:]')
+                
+                # =========================
+                # STOPWORDS (PALABRAS BASURA)
+                # =========================
+                stopwords="and the under into dentro para bajo mayor menor esta esto those el la los las de del a en con sin por"
+                
+                # =========================
+                # KEYWORD EXTRACTION CLEAN
+                # =========================
+                keywords=$(echo "$text" \
+                  | grep -oE '\b[a-z]{3,}\b' \
+                  | grep -vwF -e $stopwords \
+                  | sort -u \
+                  | paste -sd "," -)
 
                 # EXTRAER TEXTO DEL HTML
 
