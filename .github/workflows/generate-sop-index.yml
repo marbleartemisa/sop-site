@@ -23,10 +23,8 @@ jobs:
 
           echo "[]" > SOP_INDEX.json
 
-          # =========================
-          # STOPWORDS (AMPLIADO PRO)
-          # =========================
           stopwords="and the under into within inside outside above below dentro para bajo mayor menor esta esto those el la los las de del a en con sin por from to of system process procedure step steps work working workflow job jobs time times team teams material materials use using used be been being is are was were this that those these with without by for from as at on in or an a"
+
           normalize_text () {
             echo "$1" \
             | sed -E 's/<script[^>]*>.*<\/script>//gI' \
@@ -36,7 +34,7 @@ jobs:
             | tr -s ' '
           }
 
-          extract_keywords () {
+          extract_terms () {
             echo "$1" \
             | grep -oE '\b[a-z]{3,}\b' \
             | grep -vwF -e $stopwords \
@@ -44,27 +42,23 @@ jobs:
             | uniq -c \
             | sort -nr \
             | awk '{print $2}' \
-            | head -25 \
+            | head -60 \
             | tr '\n' ' '
           }
 
           classify_department () {
             text="$1"
 
-            if echo "$text" | grep -qi "cabinet\|carpentry\|wood"; then echo "produccion"; return; fi
-            if echo "$text" | grep -qi "invoice\|account\|finance\|admin"; then echo "administracion"; return; fi
-            if echo "$text" | grep -qi "sales\|client\|quote\|estimate"; then echo "comercial"; return; fi
-            if echo "$text" | grep -qi "stone\|granite\|quartz\|marble"; then echo "instalacion"; return; fi
-            if echo "$text" | grep -qi "machine\|tool\|maintenance"; then echo "maquinarias"; return; fi
+            if echo "$text" | grep -qi "cabinet|carpentry|wood"; then echo "produccion"; return; fi
+            if echo "$text" | grep -qi "invoice|account|finance|admin"; then echo "administracion"; return; fi
+            if echo "$text" | grep -qi "sales|client|quote|estimate"; then echo "comercial"; return; fi
+            if echo "$text" | grep -qi "stone|granite|quartz|marble"; then echo "instalacion"; return; fi
+            if echo "$text" | grep -qi "machine|tool|maintenance"; then echo "maquinarias"; return; fi
 
             echo "administracion"
           }
 
-          # =========================
-          # SCAN ROOT FOLDERS
-          # =========================
           for area in */ ; do
-
             area=${area%/}
 
             case "$area" in
@@ -78,92 +72,74 @@ jobs:
               if [ -d "$dir" ] && [ -f "$dir/index.html" ]; then
 
                 sopname=$(basename "$dir")
-
                 title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
-
                 url="$dir/index.html"
 
-                # =========================
-                # READ HTML
-                # =========================
                 raw_html=$(cat "$dir/index.html")
 
                 clean_text=$(normalize_text "$raw_html")
 
-                # =========================
-                # META EXTRACTION
-                # =========================
                 objective=$(echo "$raw_html" | grep -i 'meta name="objective"' | sed -E 's/.*content="([^"]+)".*/\1/' || true)
                 description=$(echo "$raw_html" | grep -i 'meta name="description"' | sed -E 's/.*content="([^"]+)".*/\1/' || true)
 
-
-                # =========================
-                # DEPARTMENT (IA + VALIDACIÓN SEGURA)
-                # =========================
                 department=$(classify_department "$clean_text")
-                
-                # SOLO override si la carpeta es válida de SOP
+
                 case "$area" in
                   produccion|administracion|comercial|instalacion|maquinarias|vehiculos|ecopower|taller|medidas|houzz-pro)
                     department="$area"
                     ;;
                 esac
 
-                # =========================
-                # KEYWORDS PRO
-                # =========================
-                keywords=$(extract_keywords "$clean_text")
+                body_text=$(echo "$clean_text")
 
                 # =========================
-                # SEARCH TEXT (FRECUENCIA REAL)
+                # 🔥 CORE SEARCH INTELLIGENCE
                 # =========================
-          search_text=$(echo "$clean_text" \
-                  | tr '[:upper:]' '[:lower:]' \
-                  | tr -s ' ' \
-                  | grep -Eo '[a-z]{4,}' \
+
+                keywords=$(extract_terms "$body_text")
+
+                glossary=$(echo "$body_text" \
+                  | grep -oE '\b[a-z]{4,}\b' \
                   | grep -vwF -e $stopwords \
-                  | sort \
-                  | uniq -c \
-                  | sort -nr \
-                  | head -60 \
+                  | sort | uniq -c | sort -nr \
                   | awk '{print $2}' \
+                  | head -25 \
                   | tr '\n' ' ')
 
-                  # =========================
-                  # EMBEDDING TEXT (NIVEL GOOGLE)
-                  # =========================
-                  embedding_text=$(echo "$clean_text" \
-                    | tr ' ' '\n' \
-                    | grep -E '^[a-z]{3,}$' \
-                    | grep -vE "$stopwords" \
-                    | grep -vE '^(and|the|for|with|from|this|that|these|those)$' \
-                    | sort \
-                    | uniq \
-                    | paste -sd " " -)
+                search_text=$(echo "$body_text" \
+                  | grep -oE '\b[a-z]{3,}\b' \
+                  | grep -vwF -e $stopwords \
+                  | sort | uniq \
+                  | tr '\n' ' ')
 
-                # =========================
-                # TITLE CLEAN
-                # =========================
+                # 🔥 FIX REAL PARA TU PROBLEMA (INGLETADORA / OLIMPIC / WALT)
+                semantic_tags=$(echo "$body_text" | awk '
+                  {
+                    if ($0 ~ /miter|ingletadora|ingletadora/) print "miter_saw ingletadora";
+                    if ($0 ~ /walt|dewalt/) print "dewalt walt tool";
+                    if ($0 ~ /olimpic|edgebander/) print "edge_banding olimpic k560";
+                  }' | tr '\n' ' ')
+
                 title_clean=$(echo "$title" | tr '-' ' ')
 
-                # =========================
-                # BUILD JSON
-                # =========================
                 jq --arg title "$title_clean" \
                    --arg department "$department" \
                    --arg keywords "$keywords" \
+                   --arg glossary "$glossary" \
+                   --arg searchText "$search_text" \
+                   --arg semantic "$semantic_tags" \
                    --arg objective "$objective" \
                    --arg description "$description" \
-                   --arg searchText "$search_text" \
-                   --arg embedding_text "$embedding_text"\
                    --arg url "$url" \
                 '. += [{
                   "title": $title,
                   "department": $department,
                   "keywords": $keywords,
+                  "glossary": $glossary,
+                  "searchText": $searchText,
+                  "semanticTags": $semantic,
                   "objective": $objective,
                   "description": $description,
-                  "searchText": $searchText,
                   "url": $url
                 }]' SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
@@ -171,9 +147,6 @@ jobs:
             done
           done
 
-          # =========================
-          # FINAL SORT
-          # =========================
           jq 'sort_by(.department, .title)' SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
       - name: Commit and push
