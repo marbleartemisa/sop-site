@@ -51,45 +51,33 @@ jobs:
                 department="$area"
 
                 html=$(cat "$dir/index.html")
-
-                objective=$(echo "$html" | grep -oiE '<meta[^>]*name="objective"[^>]*content="[^"]*"' | sed -E 's/.*content="([^"]*)".*/\1/' | head -n 1)
-                
-                description=$(echo "$html" | grep -oiE '<meta[^>]*name="description"[^>]*content="[^"]*"' | sed -E 's/.*content="([^"]*)".*/\1/' | head -n 1)
-                
-                meta_keywords=$(echo "$html" | grep -oiE '<meta[^>]*name="keywords"[^>]*content="[^"]*"' | sed -E 's/.*content="([^"]*)".*/\1/' | head -n 1)
-                              
                 content=$(cat "$dir/index.html" \
-                  | sed 's/<script[^>]*>.*<\/script>//g' \
-                  | sed 's/<style[^>]*>.*<\/style>//g' \
-                  | sed 's/<[^>]*>/ /g' \
-                  | tr '\n' ' ' \
-                  | tr '[:upper:]' '[:lower:]' \
-                  | sed 's/&nbsp;/ /g' \
-                  | tr -s ' ')
+                    | sed 's/<script[^>]*>.*<\/script>//g' \
+                    | sed 's/<style[^>]*>.*<\/style>//g' \
+                    | sed 's/<[^>]*>/ /g' \
+                    | tr '\n' ' ' \
+                    | tr '[:upper:]' '[:lower:]' \
+                    | sed 's/&nbsp;/ /g' \
+                    | tr -s ' ' \
+                    | cut -c1-10000)
 
-                jq --arg title "$title" \
-                   --arg department "$department" \
-                   --arg keywords "$keywords" \
-                   --arg objective "$objective" \
-                   --arg description "$description" \
-                   --arg content "$content" \
-                   --arg url "$url" \
+                    jq --arg title "$title" \
+                     --arg department "$department" \
+                     --arg keywords "$keywords" \
+                     --arg content "$content" \
+                     --arg url "$url" \
+                   
                    '. += [{
-                      "title": $title,
-                      "department": $department,
-                      "keywords": $keywords,
-                      "objective": $objective,
-                      "description": $description,
+                  "title": $title,
+                    "department": $department,
+                    "keywords": $keywords,
 
-                      "search_text": (
-                        ($title // "") + " " +
-                        ($department // "") + " " +
-                        ($keywords // "") + " " +
-                        ($objective // "") + " " +
-                        ($description // "") + " " +
-                        ($content // "")
-                      ),
-
+                 "search_text": (
+                    ($title // "") + " " +
+                    ($department // "") + " " +
+                    ($keywords // "") + " " +
+                    ($content // "")
+                  ),
                       "url": $url
                    }]' \
                    SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
