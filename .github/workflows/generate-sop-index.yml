@@ -21,72 +21,83 @@ jobs:
       - name: Generate SOP_INDEX.json
         run: |
 
+          echo "Starting SOP index generation..."
           echo "[]" > SOP_INDEX.json
 
-          # buscar carpetas que contengan SOP-*
-          for area in */ ; do
+          # Buscar carpetas de nivel 1 del repo
+          for area in $(find . -maxdepth 1 -type d); do
 
-            area=${area%/}
+            area=${area#./}
 
-            # saltar carpetas del sistema
+            # limpiar basura
+            [ -z "$area" ] && continue
+            [ "$area" = "." ] && continue
+
+            # excluir carpetas del sistema
             case "$area" in
               .github|images|admin|biblioteca|analisis|Aportes|registrar-sop|sop-viewer-edit)
                 continue
                 ;;
             esac
 
-            # buscar SOP dentro del area
+            echo "📁 Scanning area: $area"
+
+            # buscar SOPs dentro del area
             for dir in "$area"/SOP-*; do
 
-              if [ -d "$dir" ] && [ -f "$dir/index.html" ]; then
+              # evitar glob vacío o inválido
+              [ -d "$dir" ] || continue
 
-                sopname=$(basename "$dir")
+              echo "   🔎 Found SOP: $dir"
 
-                title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
+              sopname=$(basename "$dir")
 
-                keywords=$(echo "$title $area" | tr 'A-Z' 'a-z' | tr ' ' ',')
+              title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
 
-                url="$dir/index.html"
+              keywords=$(echo "$title $area" | tr 'A-Z' 'a-z' | tr ' ' ',')
 
-                department="$area"
+              url="$dir/index.html"
+              department="$area"
 
-                html=$(cat "$dir/index.html")
-                content=$(cat "$dir/index.html" \
-                    | sed 's/<script[^>]*>.*<\/script>//g' \
-                    | sed 's/<style[^>]*>.*<\/style>//g' \
-                    | sed 's/<[^>]*>/ /g' \
-                    | tr '\n' ' ' \
-                    | tr '[:upper:]' '[:lower:]' \
-                    | sed 's/&nbsp;/ /g' \
-                    | tr -s ' ' \
-                    | cut -c1-10000)
+              # leer contenido HTML limpio
+              content=$(cat "$dir/index.html" \
+                | sed 's/<script[^>]*>.*<\/script>//g' \
+                | sed 's/<style[^>]*>.*<\/style>//g' \
+                | sed 's/<[^>]*>/ /g' \
+                | tr '\n' ' ' \
+                | tr '[:upper:]' '[:lower:]' \
+                | sed 's/&nbsp;/ /g' \
+                | tr -s ' ' \
+                | cut -c1-10000)
 
-                    jq --arg title "$title" \
-                     --arg department "$department" \
-                     --arg keywords "$keywords" \
-                     --arg content "$content" \
-                     --arg url "$url" \
-                   
-                   '. += [{
-                  "title": $title,
+              # construir JSON
+              jq --arg title "$title" \
+                 --arg department "$department" \
+                 --arg keywords "$keywords" \
+                 --arg content "$content" \
+                 --arg url "$url" \
+                 '
+                 . += [{
+                    "title": $title,
                     "department": $department,
                     "keywords": $keywords,
+                    "search_text": (
+                      ($title // "") + " " +
+                      ($department // "") + " " +
+                      ($keywords // "") + " " +
+                      ($content // "")
+                    ),
+                    "url": $url
+                 }]
+                 ' SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
-                 "search_text": (
-                    ($title // "") + " " +
-                    ($department // "") + " " +
-                    ($keywords // "") + " " +
-                    ($content // "")
-                  ),
-                      "url": $url
-                   }]' \
-                   SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
-
-              fi
             done
           done
 
+          # ordenar resultados
           jq 'sort_by(.department, .title)' SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
+
+          echo "✅ SOP index generated successfully"
 
       - name: Commit and push
         run: |
@@ -95,10 +106,12 @@ jobs:
 
           git add SOP_INDEX.json
 
-          git diff --cached --quiet && echo "No changes" && exit 0
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
 
           git commit -m "Auto update SOP index"
 
           git pull --rebase origin main
-
           git push
