@@ -1,4 +1,4 @@
-name: Generate SOP Index
+name: Generate SOP Index PRO
 
 on:
   push:
@@ -24,10 +24,46 @@ jobs:
           echo "[]" > SOP_INDEX.json
 
           # =========================
-          # STOPWORDS (PALABRAS BASURA)
+          # STOPWORDS (AMPLIADO PRO)
           # =========================
-          STOPWORDS="and the under into dentro para bajo mayor menor esta esto el la los las de del a en con sin por to of in on at for from by y o"
+          stopwords="and the under into dentro para bajo mayor menor esta esto those el la los las de del a en con sin por para from this that which what cuando como sobre sistema systems processes process procedimiento procedimiento SOP version revision documento area department manual empresa organization production admin administration comercial sales stone carpinteria installation tools hardware cabinet marble quartz granite"
 
+          normalize_text () {
+            echo "$1" \
+            | sed -E 's/<script[^>]*>.*<\/script>//gI' \
+            | sed -E 's/<style[^>]*>.*<\/style>//gI' \
+            | sed -E 's/<[^>]+>/ /g' \
+            | tr '[:upper:]' '[:lower:]' \
+            | tr -s ' '
+          }
+
+          extract_keywords () {
+            echo "$1" \
+            | grep -oE '\b[a-z]{3,}\b' \
+            | grep -vwF -e $stopwords \
+            | sort \
+            | uniq -c \
+            | sort -nr \
+            | awk '{print $2}' \
+            | head -25 \
+            | tr '\n' ' '
+          }
+
+          classify_department () {
+            text="$1"
+
+            if echo "$text" | grep -qi "cabinet\|carpentry\|wood"; then echo "produccion"; return; fi
+            if echo "$text" | grep -qi "invoice\|account\|finance\|admin"; then echo "administracion"; return; fi
+            if echo "$text" | grep -qi "sales\|client\|quote\|estimate"; then echo "comercial"; return; fi
+            if echo "$text" | grep -qi "stone\|granite\|quartz\|marble"; then echo "instalacion"; return; fi
+            if echo "$text" | grep -qi "machine\|tool\|maintenance"; then echo "maquinarias"; return; fi
+
+            echo "administracion"
+          }
+
+          # =========================
+          # SCAN ROOT FOLDERS
+          # =========================
           for area in */ ; do
 
             area=${area%/}
@@ -43,34 +79,47 @@ jobs:
               if [ -d "$dir" ] && [ -f "$dir/index.html" ]; then
 
                 sopname=$(basename "$dir")
-                title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
+
+                title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ' | tr '[:upper:]' '[:lower:]')
 
                 url="$dir/index.html"
-                department="$area"
 
                 # =========================
-                # METAS HTML
+                # READ HTML
                 # =========================
-                objective=$(grep -i 'meta name="objective"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
-                description=$(grep -i 'meta name="description"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
+                raw_html=$(cat "$dir/index.html")
+
+                clean_text=$(normalize_text "$raw_html")
 
                 # =========================
-                # LIMPIEZA HTML COMPLETA
+                # META EXTRACTION
                 # =========================
-                clean_text=$(cat "$dir/index.html" \
-                  | sed 's/<script[^>]*>.*<\/script>//g' \
-                  | sed 's/<style[^>]*>.*<\/style>//g' \
-                  | sed 's/<[^>]*>/ /g' \
-                  | tr '[:upper:]' '[:lower:]' \
-                  | tr -s ' ')
+                objective=$(echo "$raw_html" | grep -i 'meta name="objective"' | sed -E 's/.*content="([^"]+)".*/\1/' || true)
+                description=$(echo "$raw_html" | grep -i 'meta name="description"' | sed -E 's/.*content="([^"]+)".*/\1/' || true)
 
                 # =========================
-                # SEARCH TEXT (ranking real)
+                # DEPARTMENT (AUTO + FALLBACK)
+                # =========================
+                department=$(classify_department "$clean_text")
+
+                # override folder if valid
+                folder_dep=$(echo "$area" | tr '[:upper:]' '[:lower:]')
+                if [ ! -z "$folder_dep" ]; then
+                  department="$folder_dep"
+                fi
+
+                # =========================
+                # KEYWORDS PRO
+                # =========================
+                keywords=$(extract_keywords "$clean_text")
+
+                # =========================
+                # SEARCH TEXT (FRECUENCIA REAL)
                 # =========================
                 search_text=$(echo "$clean_text" \
                   | tr ' ' '\n' \
                   | grep -E '^[a-z]{4,}$' \
-                  | grep -v -E "$(echo $STOPWORDS | sed 's/ /|/g')" \
+                  | grep -vwF -e $stopwords \
                   | sort \
                   | uniq -c \
                   | sort -nr \
@@ -79,40 +128,37 @@ jobs:
                   | tr '\n' ' ')
 
                 # =========================
-                # KEYWORDS (limpias para filtros UI)
+                # TITLE CLEAN
                 # =========================
-                keywords=$(echo "$search_text" \
-                  | tr ' ' '\n' \
-                  | sort -u \
-                  | head -20 \
-                  | tr '\n' ',' \
-                  | sed 's/,$//')
+                title_clean=$(echo "$title" | tr '-' ' ')
 
                 # =========================
-                # JSON FINAL
+                # BUILD JSON
                 # =========================
-                jq --arg title "$title" \
+                jq --arg title "$title_clean" \
                    --arg department "$department" \
                    --arg keywords "$keywords" \
                    --arg objective "$objective" \
                    --arg description "$description" \
                    --arg searchText "$search_text" \
                    --arg url "$url" \
-                   '. += [{
-                      "title": $title,
-                      "department": $department,
-                      "keywords": $keywords,
-                      "objective": $objective,
-                      "description": $description,
-                      "searchText": $searchText,
-                      "url": $url
-                   }]' \
-                   SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
+                '. += [{
+                  "title": $title,
+                  "department": $department,
+                  "keywords": $keywords,
+                  "objective": $objective,
+                  "description": $description,
+                  "searchText": $searchText,
+                  "url": $url
+                }]' SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
               fi
             done
           done
 
+          # =========================
+          # FINAL SORT
+          # =========================
           jq 'sort_by(.department, .title)' SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
       - name: Commit and push
@@ -124,7 +170,7 @@ jobs:
 
           git diff --cached --quiet && echo "No changes" && exit 0
 
-          git commit -m "Auto update SOP index"
+          git commit -m "Auto update SOP index PRO"
 
           git pull --rebase origin main
 
