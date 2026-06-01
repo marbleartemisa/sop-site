@@ -79,7 +79,7 @@ jobs:
 
                 sopname=$(basename "$dir")
 
-                title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ' | tr '[:upper:]' '[:lower:]')
+                title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
 
                 url="$dir/index.html"
 
