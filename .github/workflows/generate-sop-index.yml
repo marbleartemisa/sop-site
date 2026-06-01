@@ -117,14 +117,15 @@ jobs:
                 # =========================
                 # SEARCH TEXT (FRECUENCIA REAL)
                 # =========================
-                search_text=$(echo "$clean_text" \
-                  | tr ' ' '\n' \
-                  | grep -E '^[a-z]{4,}$' \
+          search_text=$(echo "$clean_text" \
+                  | tr '[:upper:]' '[:lower:]' \
+                  | tr -s ' ' \
+                  | grep -Eo '[a-z]{4,}' \
                   | grep -vwF -e $stopwords \
                   | sort \
                   | uniq -c \
                   | sort -nr \
-                  | head -40 \
+                  | head -60 \
                   | awk '{print $2}' \
                   | tr '\n' ' ')
 
