@@ -44,7 +44,7 @@ jobs:
 
                 title=$(echo "$sopname" | sed 's/SOP-//' | tr '-' ' ')
 
-                keywords=$(echo "$title" | tr 'A-Z' 'a-z')
+                keywords=$(echo "$title $area" | tr 'A-Z' 'a-z' | tr ' ' ',')
 
                 url="$dir/index.html"
 
@@ -54,11 +54,21 @@ jobs:
                 description=$(grep -i 'meta name="description"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
                 meta_keywords=$(grep -i 'meta name="keywords"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
 
+                content=$(cat "$dir/index.html" \
+                  | sed 's/<script[^>]*>.*<\/script>//g' \
+                  | sed 's/<style[^>]*>.*<\/style>//g' \
+                  | sed 's/<[^>]*>/ /g' \
+                  | tr '\n' ' ' \
+                  | tr '[:upper:]' '[:lower:]' \
+                  | sed 's/&nbsp;/ /g' \
+                  | tr -s ' ')
+
                 jq --arg title "$title" \
                    --arg department "$department" \
                    --arg keywords "$keywords" \
                    --arg objective "$objective" \
                    --arg description "$description" \
+                   --arg content "$content" \
                    --arg url "$url" \
                    '. += [{
                       "title": $title,
@@ -66,6 +76,16 @@ jobs:
                       "keywords": $keywords,
                       "objective": $objective,
                       "description": $description,
+
+                      "search_text": (
+                        ($title // "") + " " +
+                        ($department // "") + " " +
+                        ($keywords // "") + " " +
+                        ($objective // "") + " " +
+                        ($description // "") + " " +
+                        ($content // "")
+                      ),
+
                       "url": $url
                    }]' \
                    SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
