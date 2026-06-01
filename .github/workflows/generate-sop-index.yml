@@ -50,10 +50,14 @@ jobs:
 
                 department="$area"
 
-                objective=$(grep -i 'meta name="objective"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
-                description=$(grep -i 'meta name="description"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
-                meta_keywords=$(grep -i 'meta name="keywords"' "$dir/index.html" | sed -E 's/.*content="([^"]+)".*/\1/' || true)
+                html=$(cat "$dir/index.html")
 
+                objective=$(echo "$html" | grep -oiE '<meta[^>]*name="objective"[^>]*content="[^"]*"' | sed -E 's/.*content="([^"]*)".*/\1/' | head -n 1)
+                
+                description=$(echo "$html" | grep -oiE '<meta[^>]*name="description"[^>]*content="[^"]*"' | sed -E 's/.*content="([^"]*)".*/\1/' | head -n 1)
+                
+                meta_keywords=$(echo "$html" | grep -oiE '<meta[^>]*name="keywords"[^>]*content="[^"]*"' | sed -E 's/.*content="([^"]*)".*/\1/' | head -n 1)
+                              
                 content=$(cat "$dir/index.html" \
                   | sed 's/<script[^>]*>.*<\/script>//g' \
                   | sed 's/<style[^>]*>.*<\/style>//g' \
