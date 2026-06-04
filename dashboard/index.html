@@ -1,1 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Artemisa Production Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+  <header>
+    <h1>🏭 Artemisa Production Dashboard</h1>
+    <button onclick="loadData()">🔄 Refresh</button>
+  </header>
+
+  <section id="summary"></section>
+
+  <section class="grid">
+
+    <div class="panel">
+      <h2>BRETON QUEUE</h2>
+      <table id="breton"></table>
+    </div>
+
+    <div class="panel">
+      <h2>MANUAL QUEUE</h2>
+      <table id="manual"></table>
+    </div>
+
+  </section>
+
+  <section class="panel full">
+    <h2>ALL SCHEDULE</h2>
+    <table id="all"></table>
+  </section>
+
+  <script src="app.js"></script>
+
+</body>
+</html>
