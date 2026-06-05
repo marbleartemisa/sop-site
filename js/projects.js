@@ -50,3 +50,54 @@ function groupByProject(data) {
 function format(date) {
   return new Date(date).toLocaleDateString();
 }
+
+
+async function renderProjectsPanel() {
+
+  const projects = await getProjects();
+
+  let html = `
+    <div class="panel">
+      <h2>📦 Projects Control Panel</h2>
+
+      <button onclick="openCreateForm()">➕ New Project</button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  projects.forEach(p => {
+
+    html += `
+      <tr>
+        <td>${p.ProjectID}</td>
+        <td>${p.Customer}</td>
+        <td>${p.Status}</td>
+        <td>${p.Priority}</td>
+
+        <td>
+
+          <button onclick="editProject('${p.ProjectID}')">✏️</button>
+
+          <button onclick="pauseProject('${p.ProjectID}')">⛔</button>
+
+          <button onclick="deleteProject('${p.ProjectID}')">🗑</button>
+
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `</tbody></table></div>`;
+
+  document.getElementById("view-container").innerHTML = html;
+}
