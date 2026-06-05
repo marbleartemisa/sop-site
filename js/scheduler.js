@@ -40,3 +40,7 @@ export function generateSchedule() {
 
   console.log("SCHEDULE GENERATED", state.projects);
 }
+
+window.runScheduler = function () {
+  generateSchedule();
+};
