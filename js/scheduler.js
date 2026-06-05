@@ -1,19 +1,42 @@
-async function initERP() {
-  await refresh();
-  showView('projects');
-}
+import { state } from "./state.js";
 
-async function refresh() {
-  STATE.schedule = await fetchSchedule();
-  renderProjects();
-}
+/*
+  RULE:
+  - cada proyecto tiene fases:
+    NEED -> FAB -> INST
+  - cada fase tiene duración estimada
+  - recursos limitados (simple version)
+*/
 
-function showView(view) {
-  const container = document.getElementById("view-container");
+const DEFAULT_DURATIONS = {
+  NEED: 2,
+  FAB: 5,
+  INST: 2
+};
 
-  if (view === "projects") renderProjects();
-  if (view === "gantt") renderGantt();
-  if (view === "resources") renderResources();
-  if (view === "create") renderCreateProject();
-  if (view === "history") renderHistory();
+export function generateSchedule() {
+  let currentDate = new Date();
+
+  state.projects.forEach(project => {
+
+    project.timeline = [];
+
+    Object.keys(DEFAULT_DURATIONS).forEach(phase => {
+
+      const start = new Date(currentDate);
+      const end = new Date(currentDate);
+      end.setDate(end.getDate() + DEFAULT_DURATIONS[phase]);
+
+      project.timeline.push({
+        phase,
+        start,
+        end
+      });
+
+      // siguiente fase empieza donde termina esta
+      currentDate = new Date(end);
+    });
+  });
+
+  console.log("SCHEDULE GENERATED", state.projects);
 }
