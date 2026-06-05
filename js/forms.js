@@ -25,6 +25,10 @@ async function pauseProject(id) {
   renderProjectsPanel();
 }
 
+function closeModal() {
+  document.querySelector(".modal")?.remove();
+}
+
 async function deleteProject(id) {
   await post("DELETE_PROJECT", { projectId: id });
   renderProjectsPanel();
@@ -44,5 +48,6 @@ async function submitProject(isEdit) {
     await post("CREATE_PROJECT", data);
   }
 
-  location.reload();
+  closeModal();
+renderProjectsPanel();
 }
