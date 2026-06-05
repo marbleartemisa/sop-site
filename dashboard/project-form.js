@@ -152,7 +152,24 @@ function generateOperationsFromUI(p) {
 
   return ops;
 }
+async function updateLiveEstimate() {
 
+  const project = readForm();
+  const ops = generateOperationsFromUI(project);
+
+  const schedule = await getSchedule(); // backend actual
+
+  const simulation = simulateResourceLoad(schedule, ops);
+
+  const totalTime = ops.reduce((a, b) => a + b.time, 0);
+
+  document.getElementById("liveResult").innerHTML = `
+    ⏱ Total Time: <b>${totalTime.toFixed(2)} hrs</b><br>
+    🧱 Operations: <b>${ops.length}</b><br>
+    <hr>
+    ${renderSimulationHTML(simulation.simulation)}
+  `;
+}
 async function submitProject() {
 
   const project = readForm();
