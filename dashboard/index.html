@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <title>Artemisa ERP - Production Control Center</title>
 
-  <!-- ================= CORE UI (GLOBAL SYSTEM) ================= -->
+  <!-- ================= CORE UI (GLOBAL DESIGN SYSTEM) ================= -->
   <link rel="stylesheet" href="/sop-site/core/ui-core.css">
 
-  <!-- ================= DASHBOARD (ERP ONLY) ================= -->
-  <link rel="stylesheet" href="/sop-site/css/dashboard.css">
+  <!-- ================= DASHBOARD LAYOUT ================= -->
+  <link rel="stylesheet" href="/sop-site/dashboard/css/dashboard.css">
 
   <!-- ICONS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -17,19 +17,22 @@
 <body>
 
 <!-- =========================================================
- NAVBAR UNIFICADO (SOP + ERP MISMO SISTEMA)
+ NAVBAR (GLOBAL SYSTEM - SOP + ERP UNIFIED)
 ========================================================= -->
 <div class="navbar">
 
+  <!-- LOGO -->
   <div class="logo">
-    <img src="/sop-site/assets/logo.png">
+    <img src="/sop-site/assets/logo.png" alt="Artemisa Logo">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
 
+  <!-- MOBILE TOGGLE -->
   <div class="menu-toggle" onclick="toggleMenu()">
     <i class="fa-solid fa-bars"></i>
   </div>
 
+  <!-- MENU -->
   <div class="menu">
 
     <a href="/sop-site/">SOP Library</a>
@@ -52,6 +55,7 @@
 
   </div>
 
+  <!-- USER INFO -->
   <div class="user-info" id="userInfo" style="display:none;">
     <span id="userName"></span>
     <button onclick="logout()" title="Logout">
@@ -65,6 +69,7 @@
  ERP HEADER (CONTROL CENTER)
 ========================================================= -->
 <header class="erp-header">
+
   <div>
     <h1>🏭 Production Control Center</h1>
     <p>Live scheduling · Resource queues · Project tracking</p>
@@ -75,33 +80,35 @@
     <button onclick="runScheduler()">⚙️ Recalculate</button>
     <button onclick="openNewProject()">➕ New Project</button>
   </div>
+
 </header>
 
 <!-- =========================================================
- SUMMARY (KPI CARDS)
+ KPI / SUMMARY SECTION
 ========================================================= -->
 <section id="summary" class="summary-grid"></section>
 
 <!-- =========================================================
- MAIN VIEW CONTAINER (DINÁMICO)
+ MAIN ERP VIEW (DYNAMIC RENDERING SYSTEM)
 ========================================================= -->
 <section id="view-container"></section>
 
 <!-- =========================================================
- MODAL PLACEHOLDER (CREATE / EDIT PROJECT)
+ MODAL SYSTEM (CREATE / EDIT / DETAILS)
 ========================================================= -->
 <div id="modal-container"></div>
 
 <!-- =========================================================
  FOOTER
 ========================================================= -->
-<footer style="text-align:center;color:#aaa;padding:20px;">
+<footer class="footer">
   ARTEMISA ERP © 2026 · Production System
 </footer>
 
 <!-- =========================================================
- SCRIPTS (MODULAR ERP)
+ CORE ERP SCRIPTS (MODULAR ARCHITECTURE)
 ========================================================= -->
+
 <script src="/sop-site/core/ui-core.js"></script>
 
 <script src="/sop-site/js/api.js"></script>
@@ -112,9 +119,13 @@
 <script src="/sop-site/js/gantt.js"></script>
 <script src="/sop-site/js/events.js"></script>
 
-<!-- INIT -->
+<!-- INIT SYSTEM -->
 <script>
-  initERP();
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof initERP === "function") {
+      initERP();
+    }
+  });
 </script>
 
 </body>
