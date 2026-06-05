@@ -101,3 +101,17 @@ async function renderProjectsPanel() {
 
   document.getElementById("view-container").innerHTML = html;
 }
+
+async function pauseProject(id) {
+  await post("PAUSE_PROJECT", { projectId: id });
+  renderProjectsPanel();
+}
+
+async function deleteProject(id) {
+  await post("DELETE_PROJECT", { projectId: id });
+  renderProjectsPanel();
+}
+
+function openCreateForm() {
+  openProjectModal();
+}
