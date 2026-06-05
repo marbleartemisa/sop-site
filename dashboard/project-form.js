@@ -50,3 +50,130 @@ function renderProjectConfigurator() {
   attachLiveListeners();
   updateLiveEstimate();
 }
+
+function attachLiveListeners() {
+
+  const inputs = document.querySelectorAll(
+    "#roomType, #complexity, #ft2, #island, #waterfall, #backsplash, #led, #frame"
+  );
+
+  inputs.forEach(i => {
+    i.addEventListener("input", updateLiveEstimate);
+    i.addEventListener("change", updateLiveEstimate);
+  });
+}
+
+function updateLiveEstimate() {
+
+  const project = readForm();
+
+  const ops = generateOperationsFromUI(project);
+
+  const totalTime = ops.reduce((sum, op) => sum + op.time, 0);
+
+  document.getElementById("liveResult").innerHTML = `
+    ⏱ Total Time: <b>${totalTime.toFixed(2)} hours</b><br>
+    🧱 Operations: <b>${ops.length}</b><br>
+    🏭 Room: <b>${project.roomType}</b>
+  `;
+}
+
+function readForm() {
+
+  return {
+    roomType: document.getElementById("roomType").value,
+    complexity: document.getElementById("complexity").value,
+    Ft2: Number(document.getElementById("ft2").value),
+
+    features: {
+      island: document.getElementById("island").checked,
+      waterfall: document.getElementById("waterfall").checked,
+      backsplash_full: document.getElementById("backsplash").checked,
+      led: document.getElementById("led").checked,
+      frame: document.getElementById("frame").checked
+    }
+  };
+}
+
+function generateOperationsFromUI(p) {
+
+  let ops = [];
+
+  // BASE CUT
+  ops.push({
+    step: "CUT",
+    time: p.Ft2 * 0.2
+  });
+
+  // COMPLEXITY
+  let complexityFactor =
+    p.complexity === "COMPLEX" ? 1.5 :
+    p.complexity === "STANDARD" ? 1.2 : 1.0;
+
+  // ISLAND
+  if (p.features.island) {
+    ops.push({
+      step: "ISLAND",
+      time: p.Ft2 * 0.15 * complexityFactor
+    });
+  }
+
+  // WATERFALL
+  if (p.features.waterfall) {
+    ops.push({
+      step: "WATERFALL",
+      time: p.Ft2 * 0.25
+    });
+  }
+
+  // BACKSPLASH
+  if (p.features.backsplash_full) {
+    ops.push({
+      step: "BACKSPLASH",
+      time: p.Ft2 * 0.1
+    });
+  }
+
+  // LED
+  if (p.features.led) {
+    ops.push({
+      step: "LED",
+      time: p.Ft2 * 0.05
+    });
+  }
+
+  // FRAME
+  if (p.features.frame) {
+    ops.push({
+      step: "FRAME",
+      time: p.Ft2 * 0.3
+    });
+  }
+
+  return ops;
+}
+
+async function submitProject() {
+
+  const project = readForm();
+  const ops = generateOperationsFromUI(project);
+
+  const payload = {
+    action: "CREATE_PROJECT",
+    data: {
+      ProjectID: "P-" + Date.now(),
+      Customer: "MANUAL",
+      Status: "READY",
+      Ft2: project.Ft2,
+      Material: "DEFAULT",
+      ReadyDate: new Date(),
+
+      features: project.features,
+      operations: ops
+    }
+  };
+
+  await post(API, payload);
+
+  alert("Project created!");
+}
