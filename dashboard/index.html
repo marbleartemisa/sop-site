@@ -2,71 +2,120 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Artemisa Production Dashboard</title>
+  <title>Artemisa ERP - Production Control Center</title>
 
-  <!-- CORE UI GLOBAL -->
+  <!-- ================= CORE UI (GLOBAL SYSTEM) ================= -->
   <link rel="stylesheet" href="/sop-site/core/ui-core.css">
 
-  <!-- DASHBOARD STYLE -->
+  <!-- ================= DASHBOARD (ERP ONLY) ================= -->
   <link rel="stylesheet" href="/sop-site/css/dashboard.css">
+
+  <!-- ICONS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
 
-  <!-- NAVBAR (MISMO QUE SOP) -->
-  <div class="navbar">
-    <div class="logo">
-      <img src="/sop-site/assets/logo.png">
-      <span>ARTEMISA MARBLE & CABINETS</span>
-    </div>
+<!-- =========================================================
+ NAVBAR UNIFICADO (SOP + ERP MISMO SISTEMA)
+========================================================= -->
+<div class="navbar">
 
-    <div class="menu-toggle" onclick="toggleMenu()">
-      <i class="fa-solid fa-bars"></i>
-    </div>
-
-    <div class="menu">
-      <a href="/sop-site/">SOP</a>
-      <a href="/sop-site/dashboard/">Dashboard</a>
-    </div>
-
-    <div class="user-info" id="userInfo" style="display:none;">
-      <span id="userName"></span>
-      <button onclick="logout()">⎋</button>
-    </div>
+  <div class="logo">
+    <img src="/sop-site/assets/logo.png">
+    <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
 
-  <!-- HEADER DASHBOARD -->
-  <header>
-    <h1>🏭 Artemisa Production Dashboard</h1>
-    <button onclick="loadData()">🔄 Refresh</button>
-  </header>
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
+  </div>
 
-  <!-- SUMMARY -->
-  <section id="summary"></section>
+  <div class="menu">
 
-  <!-- GRID -->
-  <section class="grid">
+    <a href="/sop-site/">SOP Library</a>
 
-    <div class="panel">
-      <h2>BRETON QUEUE</h2>
-      <table id="breton"></table>
-    </div>
+    <a href="/sop-site/dashboard/" class="active">
+      Production ERP
+    </a>
 
-    <div class="panel">
-      <h2>MANUAL QUEUE</h2>
-      <table id="manual"></table>
-    </div>
+    <a href="/sop-site/dashboard/#projects">
+      Projects
+    </a>
 
-  </section>
+    <a href="/sop-site/dashboard/#gantt">
+      Gantt
+    </a>
 
-  <section class="panel full">
-    <h2>ALL SCHEDULE</h2>
-    <table id="all"></table>
-  </section>
+    <a href="/sop-site/dashboard/#resources">
+      Resources
+    </a>
 
-  <!-- SCRIPTS -->
-  <script src="/sop-site/core/ui-core.js"></script>
-  <script src="/sop-site/js/dashboard.js"></script>
+  </div>
+
+  <div class="user-info" id="userInfo" style="display:none;">
+    <span id="userName"></span>
+    <button onclick="logout()" title="Logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+  </div>
+
+</div>
+
+<!-- =========================================================
+ ERP HEADER (CONTROL CENTER)
+========================================================= -->
+<header class="erp-header">
+  <div>
+    <h1>🏭 Production Control Center</h1>
+    <p>Live scheduling · Resource queues · Project tracking</p>
+  </div>
+
+  <div class="actions">
+    <button onclick="refreshData()">🔄 Refresh</button>
+    <button onclick="runScheduler()">⚙️ Recalculate</button>
+    <button onclick="openNewProject()">➕ New Project</button>
+  </div>
+</header>
+
+<!-- =========================================================
+ SUMMARY (KPI CARDS)
+========================================================= -->
+<section id="summary" class="summary-grid"></section>
+
+<!-- =========================================================
+ MAIN VIEW CONTAINER (DINÁMICO)
+========================================================= -->
+<section id="view-container"></section>
+
+<!-- =========================================================
+ MODAL PLACEHOLDER (CREATE / EDIT PROJECT)
+========================================================= -->
+<div id="modal-container"></div>
+
+<!-- =========================================================
+ FOOTER
+========================================================= -->
+<footer style="text-align:center;color:#aaa;padding:20px;">
+  ARTEMISA ERP © 2026 · Production System
+</footer>
+
+<!-- =========================================================
+ SCRIPTS (MODULAR ERP)
+========================================================= -->
+<script src="/sop-site/core/ui-core.js"></script>
+
+<script src="/sop-site/js/api.js"></script>
+<script src="/sop-site/js/state.js"></script>
+<script src="/sop-site/js/scheduler.js"></script>
+<script src="/sop-site/js/projects.js"></script>
+<script src="/sop-site/js/resources.js"></script>
+<script src="/sop-site/js/gantt.js"></script>
+<script src="/sop-site/js/events.js"></script>
+
+<!-- INIT -->
+<script>
+  initERP();
+</script>
 
 </body>
 </html>
