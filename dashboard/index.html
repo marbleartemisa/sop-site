@@ -125,12 +125,13 @@
 
 <!-- INIT SYSTEM -->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    if (typeof initERP === "function") {
-      initERP();
-    }
-  });
-</script>
 
+  document.addEventListener("DOMContentLoaded", () => {
+  if (typeof initERP === "function") {
+    initERP();
+  }
+});
+</script>
+<script type="module" src="/sop-site/js/app.js"></script>
 </body>
 </html>
