@@ -3,18 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Artemisa Production Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- CORE UI GLOBAL -->
+  <link rel="stylesheet" href="/sop-site/core/ui-core.css">
+
+  <!-- DASHBOARD STYLE -->
+  <link rel="stylesheet" href="/sop-site/css/dashboard.css">
 </head>
 
 <body>
 
+  <!-- NAVBAR (MISMO QUE SOP) -->
+  <div class="navbar">
+    <div class="logo">
+      <img src="/sop-site/assets/logo.png">
+      <span>ARTEMISA MARBLE & CABINETS</span>
+    </div>
+
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+
+    <div class="menu">
+      <a href="/sop-site/">SOP</a>
+      <a href="/sop-site/dashboard/">Dashboard</a>
+    </div>
+
+    <div class="user-info" id="userInfo" style="display:none;">
+      <span id="userName"></span>
+      <button onclick="logout()">⎋</button>
+    </div>
+  </div>
+
+  <!-- HEADER DASHBOARD -->
   <header>
     <h1>🏭 Artemisa Production Dashboard</h1>
     <button onclick="loadData()">🔄 Refresh</button>
   </header>
 
+  <!-- SUMMARY -->
   <section id="summary"></section>
 
+  <!-- GRID -->
   <section class="grid">
 
     <div class="panel">
@@ -34,7 +64,9 @@
     <table id="all"></table>
   </section>
 
-  <script src="app.js"></script>
+  <!-- SCRIPTS -->
+  <script src="/sop-site/core/ui-core.js"></script>
+  <script src="/sop-site/js/dashboard.js"></script>
 
 </body>
 </html>
