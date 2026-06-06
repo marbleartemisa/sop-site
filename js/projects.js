@@ -111,3 +111,5 @@ async function deleteProject(id) {
 function openCreateForm() {
   openProjectModal();
 }
+
+window.openNewProject = openCreateForm;
