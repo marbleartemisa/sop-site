@@ -4,6 +4,12 @@ let STATE = {
   resources: []
 };
 
+// state.js
+export const STATE = {
+  schedule: [],
+  projects: []
+};
+
 // Load state from storage
 function loadState() {
   const saved = localStorage.getItem("STATE");
