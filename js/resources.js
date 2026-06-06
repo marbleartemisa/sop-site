@@ -1,21 +1,19 @@
-function renderResources() {
+import { STATE } from "./state.js";
 
+function renderResources() {
   const container = document.getElementById("view-container");
+
+  const load = STATE.schedule.reduce((acc, s) => {
+    acc[s.Resource] = (acc[s.Resource] || 0) + Number(s.PF);
+    return acc;
+  }, {});
 
   let html = `<div class="panel"><h2>⚙️ Resource Load</h2>`;
 
-  const load = {};
-
-  STATE.schedule.forEach(s => {
-    if (!load[s.Resource]) load[s.Resource] = 0;
-    load[s.Resource] += Number(s.PF);
+  Object.entries(load).forEach(([r, val]) => {
+    html += `<p>${r}: ${val} PF</p>`;
   });
 
-  Object.keys(load).forEach(r => {
-    html += `<p>${r}: ${load[r]} PF</p>`;
-  });
-
-  html += "</div>";
-
+  html += `</div>`;
   container.innerHTML = html;
 }
