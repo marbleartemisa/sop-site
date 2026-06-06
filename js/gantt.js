@@ -1,24 +1,26 @@
-import { state } from "./state.js";
+import { STATE } from "./state.js";
 
+/**
+ * Render Gantt agrupado por proyectos con timeline
+ */
 export function renderGantt(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
   container.innerHTML = "";
 
-  state.projects.forEach(p => {
-
+  STATE.projects.forEach(project => {
     const row = document.createElement("div");
     row.style.padding = "10px";
     row.style.borderBottom = "1px solid #333";
 
-    let html = `<strong>${p.name}</strong><br/>`;
+    let html = `<strong>${project.name || project.ProjectID}</strong><br/>`;
 
-    if (p.timeline) {
-      p.timeline.forEach(t => {
+    if (project.timeline && Array.isArray(project.timeline)) {
+      project.timeline.forEach(t => {
         html += `
           <div>
-            ${t.phase}: ${t.start.toDateString()} → ${t.end.toDateString()}
+            ${t.phase}: ${formatDate(t.start)} → ${formatDate(t.end)}
           </div>
         `;
       });
@@ -30,34 +32,45 @@ export function renderGantt(containerId) {
 }
 
 
+/**
+ * Render Gantt agrupado por recursos (load view)
+ */
+export function renderResourceGantt(containerId = "view-container") {
+  const container = document.getElementById(containerId);
+  if (!container) return;
 
-function renderGantt() {
+  let html = `<div class="panel">
+    <h2>📊 Resource Gantt</h2>`;
 
-  const container = document.getElementById("view-container");
+  const byResource = groupByResource(STATE.schedule);
 
-  let html = `<div class="panel"><h2>📊 Resource Gantt</h2>`;
+  Object.entries(byResource).forEach(([resource, tasks]) => {
+    html += `<h3>${resource}</h3>`;
 
-  const byResource = {};
-
-  STATE.schedule.forEach(s => {
-    if (!byResource[s.Resource]) byResource[s.Resource] = [];
-    byResource[s.Resource].push(s);
-  });
-
-  Object.keys(byResource).forEach(r => {
-
-    html += `<h3>${r}</h3>`;
-
-    byResource[r].forEach(task => {
+    tasks.forEach(task => {
       html += `
         <div style="margin:5px 0; padding:5px; background:#1c2a45;">
-          ${task.ProjectID} | ${format(task.Start)} → ${format(task.End)}
+          ${task.ProjectID} | ${formatDate(task.Start)} → ${formatDate(task.End)}
         </div>
       `;
     });
-
   });
 
   html += `</div>`;
   container.innerHTML = html;
+}
+
+
+/* ----------------- helpers ----------------- */
+
+function groupByResource(schedule) {
+  return schedule.reduce((acc, item) => {
+    if (!acc[item.Resource]) acc[item.Resource] = [];
+    acc[item.Resource].push(item);
+    return acc;
+  }, {});
+}
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString();
 }
