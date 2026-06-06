@@ -1,8 +1,9 @@
+import { STATE } from "./state.js";
+import { groupBy, formatDate } from "./utils/schedule.js";
+
 function renderProjects() {
-
   const container = document.getElementById("view-container");
-
-  const grouped = groupByProject(STATE.schedule);
+  const grouped = groupBy(STATE.schedule, "ProjectID");
 
   let html = `<div class="panel">
     <h2>📦 Projects Queue</h2>
@@ -15,26 +16,21 @@ function renderProjects() {
           <th>End</th>
         </tr>
       </thead>
-      <tbody>
-  `;
+      <tbody>`;
 
-  Object.keys(grouped).forEach(p => {
-
-    grouped[p].forEach(row => {
+  Object.values(grouped).forEach(rows => {
+    rows.forEach(row => {
       html += `
         <tr>
           <td>${row.ProjectID}</td>
           <td>${row.Resource}</td>
-          <td>${format(row.Start)}</td>
-          <td>${format(row.End)}</td>
-        </tr>
-      `;
+          <td>${formatDate(row.Start)}</td>
+          <td>${formatDate(row.End)}</td>
+        </tr>`;
     });
-
   });
 
-  html += "</tbody></table></div>";
-
+  html += `</tbody></table></div>`;
   container.innerHTML = html;
 }
 
