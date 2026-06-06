@@ -179,3 +179,35 @@ th {
 .actions button {
   white-space: nowrap;
 }
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid #333;
+}
+
+#view-container {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+
+footer {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #333;
+  font-size: 12px;
+  opacity: 0.7;
+}
