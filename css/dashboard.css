@@ -202,7 +202,17 @@ header {
   padding: 16px;
 }
 
-footer {
+
+.navbar {
+  flex-shrink: 0;
+}
+
+.erp-header {
+  flex-shrink: 0;
+}
+
+footer.footer {
+  flex-shrink: 0;
   height: 40px;
   display: flex;
   align-items: center;
