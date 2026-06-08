@@ -1,5 +1,5 @@
 
-const API = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+const API = "https://script.google.com/macros/s/AKfycbzVLUTOzA0gGIfKml7kWBAWIjSE6g473aBDmFCg-cN2UzSG2-VnKElingOTgCSdeIumfg/exec";
 
 let DATA = [];
 
