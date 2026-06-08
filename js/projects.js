@@ -157,7 +157,25 @@ export function renderScheduleView() {
   container.innerHTML = html;
 }
 
+async function submitProject() {
 
+  const project = {
+    id: "PRJ-" + Date.now(),
+    customer: document.getElementById("m_customer").value,
+    material: document.getElementById("m_material").value,
+    ft2: Number(document.getElementById("m_ft2").value),
+    priority: document.getElementById("m_priority").value,
+    readyDate: document.getElementById("m_date").value
+  };
+
+  await createProject(project);
+
+  closeModal();
+
+  await renderProjects();
+}
+
+window.submitProject = submitProject;
 /****************************************************
  * 🧠 GROUP BY (LOCAL UTILITY CLEAN)
  ****************************************************/
@@ -168,3 +186,31 @@ function groupByProject(data) {
     return acc;
   }, {});
 }
+function openProjectModal() {
+
+  const container = document.getElementById("modal-container");
+
+  container.innerHTML = `
+    <div class="modal-backdrop" onclick="closeModal()"></div>
+
+    <div class="modal">
+
+      <h2>New Project</h2>
+
+      <input id="m_customer" placeholder="Customer">
+      <input id="m_material" placeholder="Material">
+      <input id="m_ft2" type="number" placeholder="Ft2">
+      <input id="m_priority" placeholder="Priority">
+      <input id="m_date" type="date">
+
+      <button onclick="submitProject()">Create</button>
+
+    </div>
+  `;
+}
+
+function closeModal() {
+  document.getElementById("modal-container").innerHTML = "";
+}
+
+window.closeModal = closeModal;
