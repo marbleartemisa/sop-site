@@ -141,14 +141,11 @@
 <!-- INIT SYSTEM -->
 <script>
 
-
-window.submitProject = submitProject;
-  document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   if (typeof initERP === "function") {
     initERP();
   }
 });
-
 
 function closeModal() {
   document.getElementById("modal-container").innerHTML = "";
