@@ -1,5 +1,5 @@
 import { STATE } from "./state.js";
-import { groupBy, formatDate } from "./utils/schedule.js";
+import { groupBy, formatDate } from "../utils/schedule.js";
 
 function renderProjects() {
   const container = document.getElementById("view-container");
