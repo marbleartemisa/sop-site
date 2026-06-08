@@ -3,6 +3,7 @@ body {
   font-family: Inter, sans-serif;
   background: #0b1220;
   color: white;
+  padding-top: 70px; /* 👈 ajusta según altura real navbar */
 }
 
 .layout {
@@ -204,13 +205,21 @@ header {
 
 
 .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  z-index: 1000;
   flex-shrink: 0;
 }
+
 
 .erp-header {
+  margin-top: 20px;
+  padding-top: 20px;
   flex-shrink: 0;
 }
-
 footer.footer {
   flex-shrink: 0;
   height: 40px;
