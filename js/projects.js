@@ -1,6 +1,7 @@
 import { STATE } from "./state.js";
 import { getProjects, post } from "./api.js";
 import { formatDate } from "../utils/schedule.js";
+import { createProject } from "./api.js";
 
 /****************************************************
  * 📦 PROJECTS VIEW (MAIN PANEL)
