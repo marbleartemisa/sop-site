@@ -1,36 +1,36 @@
 import { generateSchedule } from "./scheduler.js";
 import { state } from "./state.js";
+import { renderProjects } from "./projects.js";
 
 window.app = {
   init,
   view: "projects"
 };
 
-async function init() {
+export async function init() {
+
   console.log("ERP INIT");
 
   await loadInitialData();
 
-  showView("projects");
+  await renderProjects();
 }
 
 async function loadInitialData() {
-  // aquí luego conectas API real
+
   console.log("Loading data...");
 }
 
-window.showView = function (view) {
-  const container = document.getElementById("view-container");
+/* GLOBAL INIT */
+window.initERP = init;
+
+/* NAVIGATION */
+window.showView = async function(view) {
 
   if (view === "projects") {
-    container.innerHTML = renderProjects();
+    await renderProjects();
+    return;
   }
 
-  if (view === "gantt") {
-    container.innerHTML = renderGantt();
-  }
-
-  if (view === "create") {
-    container.innerHTML = renderProjectConfigurator();
-  }
+  console.log("View not implemented:", view);
 };
