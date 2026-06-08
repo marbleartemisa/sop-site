@@ -215,3 +215,10 @@ function closeModal() {
 }
 
 window.closeModal = closeModal;
+
+window.renderProjects = renderProjects;
+window.openCreateForm = openCreateForm;
+window.openNewProject = openCreateForm;
+window.pauseProject = pauseProject;
+window.deleteProject = deleteProject;
+
