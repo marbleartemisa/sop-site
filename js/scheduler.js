@@ -5,7 +5,6 @@ import { state } from "./state.js";
   - cada proyecto tiene fases:
     NEED -> FAB -> INST
   - cada fase tiene duración estimada
-  - recursos limitados (simple version)
 */
 
 const DEFAULT_DURATIONS = {
@@ -15,6 +14,7 @@ const DEFAULT_DURATIONS = {
 };
 
 export function generateSchedule() {
+
   let currentDate = new Date();
 
   state.projects.forEach(project => {
@@ -25,7 +25,10 @@ export function generateSchedule() {
 
       const start = new Date(currentDate);
       const end = new Date(currentDate);
-      end.setDate(end.getDate() + DEFAULT_DURATIONS[phase]);
+
+      end.setDate(
+        end.getDate() + DEFAULT_DURATIONS[phase]
+      );
 
       project.timeline.push({
         phase,
@@ -33,20 +36,20 @@ export function generateSchedule() {
         end
       });
 
-      // siguiente fase empieza donde termina esta
       currentDate = new Date(end);
     });
+
   });
 
-  console.log("SCHEDULE GENERATED", state.projects);
+  console.log(
+    "SCHEDULE GENERATED",
+    state.projects
+  );
 }
 
-window.runScheduler = function () {
-  generateSchedule();
-};
-window.runScheduler = function () {
-  generateSchedule();
-};
+/* GLOBAL BUTTONS */
+
+window.runScheduler = generateSchedule;
 
 window.createTestProject = function () {
   console.log("TEST PROJECT CLICKED");
@@ -59,31 +62,3 @@ window.renderGantt = function () {
 window.refreshData = function () {
   console.log("REFRESH CLICKED");
 };
-
-
-import { state } from "./state.js";
-
-export function generateSchedule() {
-  let currentDate = new Date();
-
-  state.projects.forEach(project => {
-
-    project.timeline = [];
-
-    Object.keys(DEFAULT_DURATIONS).forEach(phase => {
-
-      const start = new Date(currentDate);
-      const end = new Date(currentDate);
-      end.setDate(end.getDate() + DEFAULT_DURATIONS[phase]);
-
-      project.timeline.push({ phase, start, end });
-
-      currentDate = new Date(end);
-    });
-  });
-
-  console.log("SCHEDULE GENERATED", state.projects);
-}
-
-// 🔥 FIX GLOBAL BUTTONS
-window.runScheduler = generateSchedule;
