@@ -1,62 +1,28 @@
 import { STATE } from "./state.js";
-import { groupBy, formatDate } from "../utils/schedule.js";
+import { getProjects, post } from "./api.js";
+import { formatDate } from "../utils/schedule.js";
 
-function renderProjects() {
+/****************************************************
+ * 📦 PROJECTS VIEW (MAIN PANEL)
+ ****************************************************/
+export async function renderProjects() {
+
   const container = document.getElementById("view-container");
-  const grouped = groupBy(STATE.schedule, "ProjectID");
-
-  let html = `<div class="panel">
-    <h2>📦 Projects Queue</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Project</th>
-          <th>Resource</th>
-          <th>Start</th>
-          <th>End</th>
-        </tr>
-      </thead>
-      <tbody>`;
-
-  Object.values(grouped).forEach(rows => {
-    rows.forEach(row => {
-      html += `
-        <tr>
-          <td>${row.ProjectID}</td>
-          <td>${row.Resource}</td>
-          <td>${formatDate(row.Start)}</td>
-          <td>${formatDate(row.End)}</td>
-        </tr>`;
-    });
-  });
-
-  html += `</tbody></table></div>`;
-  container.innerHTML = html;
-}
-
-function groupByProject(data) {
-  const map = {};
-  data.forEach(d => {
-    if (!map[d.ProjectID]) map[d.ProjectID] = [];
-    map[d.ProjectID].push(d);
-  });
-  return map;
-}
-
-function format(date) {
-  return new Date(date).toLocaleDateString();
-}
-
-
-async function renderProjectsPanel() {
 
   const projects = await getProjects();
 
+  STATE.projects = projects;
+  window.STATE = STATE;
+
   let html = `
     <div class="panel">
-      <h2>📦 Projects Control Panel</h2>
 
-      <button onclick="openCreateForm()">➕ New Project</button>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2>📦 Projects Control Center</h2>
+        <button onclick="openCreateForm()">➕ New Project</button>
+      </div>
+
+      <hr/>
 
       <table>
         <thead>
@@ -64,10 +30,13 @@ async function renderProjectsPanel() {
             <th>ID</th>
             <th>Customer</th>
             <th>Status</th>
+            <th>Material</th>
+            <th>Ft2</th>
             <th>Priority</th>
             <th>Actions</th>
           </tr>
         </thead>
+
         <tbody>
   `;
 
@@ -78,9 +47,11 @@ async function renderProjectsPanel() {
         <td>${p.ProjectID}</td>
         <td>${p.Customer}</td>
         <td>${p.Status}</td>
+        <td>${p.Material}</td>
+        <td>${p.Ft2}</td>
         <td>${p.Priority}</td>
 
-        <td>
+        <td style="display:flex; gap:6px;">
 
           <button onclick="editProject('${p.ProjectID}')">✏️</button>
 
@@ -93,23 +64,107 @@ async function renderProjectsPanel() {
     `;
   });
 
-  html += `</tbody></table></div>`;
+  html += `
+        </tbody>
+      </table>
 
-  document.getElementById("view-container").innerHTML = html;
+    </div>
+  `;
+
+  container.innerHTML = html;
 }
 
+
+/****************************************************
+ * ⛔ PAUSE PROJECT
+ ****************************************************/
 async function pauseProject(id) {
   await post("PAUSE_PROJECT", { projectId: id });
-  renderProjectsPanel();
+  await renderProjects();
 }
 
+window.pauseProject = pauseProject;
+
+
+/****************************************************
+ * 🗑 DELETE PROJECT
+ ****************************************************/
 async function deleteProject(id) {
   await post("DELETE_PROJECT", { projectId: id });
-  renderProjectsPanel();
+  await renderProjects();
 }
 
+window.deleteProject = deleteProject;
+
+
+/****************************************************
+ * ➕ CREATE PROJECT MODAL TRIGGER
+ ****************************************************/
 function openCreateForm() {
   openProjectModal();
 }
 
 window.openNewProject = openCreateForm;
+window.openCreateForm = openCreateForm;
+
+
+/****************************************************
+ * 📊 OPTIONAL: SCHEDULE VIEW (SEPARATE FUNCTION)
+ * (ANTES ESTABA MAL MEZCLADO AQUÍ)
+ ****************************************************/
+export function renderScheduleView() {
+
+  const container = document.getElementById("view-container");
+
+  const grouped = groupByProject(STATE.schedule || []);
+
+  let html = `
+    <div class="panel">
+      <h2>📊 Production Schedule</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Resource</th>
+            <th>Start</th>
+            <th>End</th>
+          </tr>
+        </thead>
+
+        <tbody>
+  `;
+
+  Object.values(grouped).forEach(rows => {
+    rows.forEach(row => {
+      html += `
+        <tr>
+          <td>${row.ProjectID}</td>
+          <td>${row.Resource}</td>
+          <td>${formatDate(row.Start)}</td>
+          <td>${formatDate(row.End)}</td>
+        </tr>
+      `;
+    });
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+
+/****************************************************
+ * 🧠 GROUP BY (LOCAL UTILITY CLEAN)
+ ****************************************************/
+function groupByProject(data) {
+  return data.reduce((acc, item) => {
+    if (!acc[item.ProjectID]) acc[item.ProjectID] = [];
+    acc[item.ProjectID].push(item);
+    return acc;
+  }, {});
+}
