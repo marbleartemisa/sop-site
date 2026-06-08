@@ -1,34 +1,35 @@
-let STATE = {
+const DEFAULT_STATE = {
   projects: [],
   schedule: [],
   resources: []
 };
 
-// state.js
-export const STATE = {
-  schedule: [],
-  projects: []
-};
+let STATE = structuredClone(DEFAULT_STATE);
 
 // Load state from storage
 function loadState() {
   const saved = localStorage.getItem("STATE");
   if (saved) {
-    STATE = JSON.parse(saved);
+    const parsed = JSON.parse(saved);
+
+    // merge seguro (evita romper estructura)
+    STATE.projects = parsed.projects || [];
+    STATE.schedule = parsed.schedule || [];
+    STATE.resources = parsed.resources || [];
   }
 }
 
-// Save state to storage
+// Save state
 function saveState() {
   localStorage.setItem("STATE", JSON.stringify(STATE));
 }
 
-// Getters
+// Getter seguro (evita manipulación directa)
 function getState() {
   return STATE;
 }
 
-// Mutations (controladas)
+// Mutations controladas
 function setProjects(projects) {
   STATE.projects = projects;
   saveState();
@@ -44,12 +45,12 @@ function setResources(resources) {
   saveState();
 }
 
-// Exponer globalmente (IMPORTANTE para tu arquitectura actual)
-window.STATE = STATE;
+// Init
+loadState();
+
+// Exposición global (para tu arquitectura actual híbrida)
 window.getState = getState;
 window.setProjects = setProjects;
 window.setSchedule = setSchedule;
 window.setResources = setResources;
 window.loadState = loadState;
-
-loadState();
