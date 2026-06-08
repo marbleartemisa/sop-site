@@ -259,3 +259,100 @@ footer.footer {
   padding: 8px;
   border-radius: 6px;
 }
+
+:root {
+  --bg: #0b1220;
+  --panel: #111a2e;
+  --card: #16213a;
+  --text: #e6edf7;
+  --muted: #93a4bf;
+  --primary: #4f8cff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: ui-sans-serif, system-ui;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: var(--panel);
+  padding: 20px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+
+.logo {
+  font-weight: 700;
+  margin-bottom: 30px;
+  font-size: 16px;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.sidebar nav a.active {
+  background: rgba(79,140,255,0.15);
+  color: var(--text);
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(17,26,46,0.6);
+  backdrop-filter: blur(10px);
+}
+
+.topbar h1 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* BUTTON */
+.primary {
+  background: var(--primary);
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.primary:hover {
+  opacity: 0.9;
+}
+
+/* CONTENT */
+.content {
+  padding: 24px;
+}
