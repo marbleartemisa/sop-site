@@ -1,7 +1,6 @@
 import { STATE } from "./state.js";
 import { getProjects, post } from "./api.js";
 import { formatDate } from "../utils/schedule.js";
-import { createProject } from "./api.js";
 
 /****************************************************
  * 📦 PROJECTS VIEW (MAIN PANEL)
@@ -37,7 +36,6 @@ export async function renderProjects() {
             <th>Actions</th>
           </tr>
         </thead>
-
         <tbody>
   `;
 
@@ -53,13 +51,9 @@ export async function renderProjects() {
         <td>${p.Priority}</td>
 
         <td style="display:flex; gap:6px;">
-
           <button onclick="editProject('${p.ProjectID}')">✏️</button>
-
           <button onclick="pauseProject('${p.ProjectID}')">⛔</button>
-
           <button onclick="deleteProject('${p.ProjectID}')">🗑</button>
-
         </td>
       </tr>
     `;
@@ -68,13 +62,11 @@ export async function renderProjects() {
   html += `
         </tbody>
       </table>
-
     </div>
   `;
 
   container.innerHTML = html;
 }
-
 
 /****************************************************
  * ⛔ PAUSE PROJECT
@@ -84,9 +76,6 @@ async function pauseProject(id) {
   await renderProjects();
 }
 
-window.pauseProject = pauseProject;
-
-
 /****************************************************
  * 🗑 DELETE PROJECT
  ****************************************************/
@@ -95,23 +84,15 @@ async function deleteProject(id) {
   await renderProjects();
 }
 
-window.deleteProject = deleteProject;
-
-
 /****************************************************
- * ➕ CREATE PROJECT MODAL TRIGGER
+ * ➕ CREATE PROJECT MODAL
  ****************************************************/
 function openCreateForm() {
   openProjectModal();
 }
 
-window.openNewProject = openCreateForm;
-window.openCreateForm = openCreateForm;
-
-
 /****************************************************
- * 📊 OPTIONAL: SCHEDULE VIEW (SEPARATE FUNCTION)
- * (ANTES ESTABA MAL MEZCLADO AQUÍ)
+ * 📊 SCHEDULE VIEW
  ****************************************************/
 export function renderScheduleView() {
 
@@ -132,7 +113,6 @@ export function renderScheduleView() {
             <th>End</th>
           </tr>
         </thead>
-
         <tbody>
   `;
 
@@ -158,6 +138,9 @@ export function renderScheduleView() {
   container.innerHTML = html;
 }
 
+/****************************************************
+ * ➕ SUBMIT PROJECT
+ ****************************************************/
 async function submitProject() {
 
   const project = {
@@ -169,16 +152,14 @@ async function submitProject() {
     readyDate: document.getElementById("m_date").value
   };
 
-  await createProject(project);
+  await post("CREATE_PROJECT", project);
 
   closeModal();
-
   await renderProjects();
 }
 
-window.submitProject = submitProject;
 /****************************************************
- * 🧠 GROUP BY (LOCAL UTILITY CLEAN)
+ * 🧠 GROUP BY UTILITY
  ****************************************************/
 function groupByProject(data) {
   return data.reduce((acc, item) => {
@@ -187,6 +168,10 @@ function groupByProject(data) {
     return acc;
   }, {});
 }
+
+/****************************************************
+ * 🪟 MODAL
+ ****************************************************/
 function openProjectModal() {
 
   const container = document.getElementById("modal-container");
@@ -210,15 +195,20 @@ function openProjectModal() {
   `;
 }
 
+/****************************************************
+ * ❌ CLOSE MODAL
+ ****************************************************/
 function closeModal() {
   document.getElementById("modal-container").innerHTML = "";
 }
 
-window.closeModal = closeModal;
-
+/****************************************************
+ * 🌐 GLOBAL EXPORTS (IMPORTANT FOR HTML ONCLICK)
+ ****************************************************/
 window.renderProjects = renderProjects;
 window.openCreateForm = openCreateForm;
-window.openNewProject = openCreateForm;
 window.pauseProject = pauseProject;
 window.deleteProject = deleteProject;
+window.submitProject = submitProject;
+window.closeModal = closeModal;
 
