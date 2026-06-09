@@ -200,10 +200,31 @@ function openProjectModal() {
         <input id="m_customer" placeholder="Customer">
 
         <select id="m_material">
-          <option>Quartz</option>
-          <option>Granite</option>
-          <option>Marble</option>
-          <option>Porcelain</option>
+          <option>Caesarstone<option>
+          <option>Cambria<option>
+          <option>Dekton<option>
+          <option>Dolomite<option>
+          <option>Engineered Quartz<option>
+          <option>Granite<option>
+          <option>Infinity<option>
+          <option>Lapitec<option>
+          <option>MSI Quartz<option>
+          <option>Neolith<option>
+          <option>Obsidiana<option>
+          <option>Porcelain<option>
+          <option>Quartz<option>
+          <option>Quartzite<option>
+          <option>Sapienstone<option>
+          <option>Silestone<option>
+          <option>Sintered Stone<option>
+          <option>Soapstone<option>
+          <option>Ultra Compact Surfaces<option>
+        </select>
+
+        <select id="m_resource">
+          <option value="BRETON">Breton (CNC)</option>
+          <option value="COACH">Coach (CNC)</option>
+          <option value="MANUAL">Fabricación Manual</option>
         </select>
 
         <input id="m_ft2" type="number" placeholder="Total Ft2">
@@ -211,9 +232,9 @@ function openProjectModal() {
         <input id="m_pieces" type="number" placeholder="Pieces">
 
         <select id="m_level">
-          <option value="1">Level 1 (Simple)</option>
+          <option value="1">Level 1 (Corte y Pulido)</option>
           <option value="2">Level 2 (Standard)</option>
-          <option value="3">Level 3 (VIP)</option>
+          <option value="3">Level 3 (Luxury)</option>
         </select>
 
         <select id="m_edge_type">
@@ -221,6 +242,8 @@ function openProjectModal() {
           <option>45</option>
           <option>laminated</option>
           <option>bullnose</option>
+          <option>half bullnose</option>
+          <option>full bullnose</option>
           <option>ogee</option>
         </select>
 
