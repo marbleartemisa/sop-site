@@ -61,7 +61,7 @@ export async function renderProjects() {
           <button onclick="editProject('${p.ProjectID}')">✏️</button>
           <button onclick="pauseProject('${p.ProjectID}')">⛔</button>
           <button onclick="deleteProject('${p.ProjectID}')">🗑</button>
-          <button onclick="openGantt('${p.ProjectID}')">📊 Gantt</button>
+          <button onclick="openGantt('${p.ProjectID}')">📊 SAP Gantt</button>
         </td>
       </tr>
     `;
@@ -372,7 +372,8 @@ function runScheduleAll() {
 import { renderGantt } from "./gantt.js";
 
 function openGantt(projectId) {
-  renderGantt(projectId);
+  window.lastGanttProject = projectId;
+  renderGantt(projectId, window.currentZoom || "day");
 }
 
 window.openGantt = openGantt;
