@@ -6,38 +6,60 @@ import { calculateProjectSchedule } from "./scheduler.engine.js";
  * Solo coordina la simulación
  */
 
-export function generateSchedule() {
+// scheduler.js
 
-  let currentDate = new Date();
+export function generateSchedule(projectId, state) {
+  const tasks = state.PROJECT_TASKS
+    .filter(t => t.ProjectID === projectId)
+    .sort((a, b) => a.Sequence - b.Sequence);
 
-  STATE.schedule = [];
+  const resourceCalendar = {};
+  const taskMap = {};
 
-  STATE.projects.forEach(project => {
+  for (const task of tasks) {
+    const resource = task.Resource;
 
-    const result = calculateProjectSchedule({
-      ...project,
-      resource: project.resource || "BRETON"
-    });
+    if (!resourceCalendar[resource]) {
+      resourceCalendar[resource] = new Date();
+    }
 
-    const start = new Date(currentDate);
+    // Dependency
+    let dependencyEnd = null;
+
+    if (task.Dependency) {
+      const depTask = taskMap[task.Dependency];
+      if (depTask) {
+        dependencyEnd = new Date(depTask.CalculatedEnd);
+      }
+    }
+
+    // Resource availability
+    const resourceAvailable = new Date(resourceCalendar[resource]);
+
+    // Previous sequence
+    const prevTask = getPreviousTask(tasks, task.Sequence);
+    const prevEnd = prevTask ? new Date(prevTask.CalculatedEnd) : null;
+
+    const candidates = [dependencyEnd, resourceAvailable, prevEnd]
+      .filter(Boolean);
+
+    const start = new Date(Math.max(...candidates.map(d => d.getTime())));
+
     const end = new Date(start);
+    end.setHours(end.getHours() + Number(task.DurationHours || 0));
 
-    end.setHours(end.getHours() + result.totalHours);
+    task.CalculatedStart = start.toISOString();
+    task.CalculatedEnd = end.toISOString();
 
-    const entry = {
-      ProjectID: project.projectId || project.ProjectID,
-      Resource: result.resource,
-      Start: start,
-      End: end,
-      PF: result.totalHours
-    };
+    taskMap[task.Task] = task;
+    resourceCalendar[resource] = end;
+  }
 
-    STATE.schedule.push(entry);
+  return tasks;
+}
 
-    currentDate = new Date(end);
-  });
-
-  console.log("SCHEDULE GENERATED", STATE.schedule);
+function getPreviousTask(tasks, sequence) {
+  return tasks.find(t => t.Sequence === sequence - 1);
 }
 
 /* GLOBAL */
