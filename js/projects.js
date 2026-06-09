@@ -17,10 +17,17 @@ export async function renderProjects() {
   let html = `
     <div class="panel">
 
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2>📦 Projects Control Center</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2>📦 Projects Control Center</h2>
+    
+      <div style="display:flex; gap:10px;">
         <button onclick="openCreateForm()">➕ New Project</button>
+    
+        <button onclick="runScheduleAll()" style="background:#1e40af; color:white;">
+          🧠 Run Schedule
+        </button>
       </div>
+    </div>
 
       <hr/>
 
@@ -164,10 +171,14 @@ async function submitProject() {
 
   console.log("PROJECT READY:", project);
 
-  await post("CREATE_PROJECT", project);
+      await post("CREATE_PROJECT", project);
+    
+    // 🔥 NEW: generar tasks del proyecto
+    await post("GENERATE_SCHEDULE", { projectId: project.projectId });
+    
+    closeModal();
+    await renderProjects();
 
-  closeModal();
-  await renderProjects();
 }
 
 /****************************************************
@@ -340,6 +351,24 @@ function calculateSimulation() {
   if (el) el.innerHTML = html;
 }
 
+import { generateSchedule } from "./scheduler.js";
+
+function runScheduleAll() {
+  const projects = STATE.projects;
+
+  let allTasks = [];
+
+  projects.forEach(p => {
+    const tasks = generateSchedule(p.ProjectID, STATE);
+    allTasks = allTasks.concat(tasks);
+  });
+
+  STATE.schedule = allTasks;
+
+  console.log("SCHEDULE UPDATED:", allTasks);
+}
+
+
 /****************************************************
  * 🌐 GLOBAL EXPORTS (IMPORTANT FOR HTML ONCLICK)
  ****************************************************/
@@ -348,5 +377,6 @@ window.openCreateForm = openCreateForm;
 window.pauseProject = pauseProject;
 window.deleteProject = deleteProject;
 window.submitProject = submitProject;
+window.runScheduleAll = runScheduleAll;
 window.closeModal = closeModal;
 
