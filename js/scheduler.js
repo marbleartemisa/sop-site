@@ -17,7 +17,7 @@ export function generateSchedule() {
 
   let currentDate = new Date();
 
-  state.projects.forEach(project => {
+   STATE.projects.forEach(project => {
 
     project.timeline = [];
 
