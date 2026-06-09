@@ -1,76 +1,93 @@
 import { STATE } from "./state.js";
 
-/**
- * Render Gantt agrupado por proyectos con timeline
- */
-export function renderGantt(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
+/****************************************************
+ * 📊 GANTT PRO VIEW
+ ****************************************************/
+export function renderGantt(projectId) {
 
-  container.innerHTML = "";
+  const container = document.getElementById("view-container");
 
-  STATE.projects.forEach(project => {
-    const row = document.createElement("div");
-    row.style.padding = "10px";
-    row.style.borderBottom = "1px solid #333";
+  const tasks = STATE.PROJECT_TASKS
+    .filter(t => t.ProjectID === projectId)
+    .sort((a, b) => new Date(a.CalculatedStart) - new Date(b.CalculatedStart));
 
-    let html = `<strong>${project.name || project.ProjectID}</strong><br/>`;
+  if (!tasks.length) {
+    container.innerHTML = "<p>No schedule generated yet</p>";
+    return;
+  }
 
-    if (project.timeline && Array.isArray(project.timeline)) {
-      project.timeline.forEach(t => {
-        html += `
-          <div>
-            ${t.phase}: ${formatDate(t.start)} → ${formatDate(t.end)}
-          </div>
-        `;
-      });
-    }
+  const minDate = new Date(Math.min(...tasks.map(t => new Date(t.CalculatedStart))));
+  const maxDate = new Date(Math.max(...tasks.map(t => new Date(t.CalculatedEnd))));
 
-    row.innerHTML = html;
-    container.appendChild(row);
-  });
-}
+  const totalHours = (maxDate - minDate) / (1000 * 60 * 60);
 
+  let html = `
+    <div class="panel">
+      <h2>📊 Gantt - Project ${projectId}</h2>
 
-/**
- * Render Gantt agrupado por recursos (load view)
- */
-export function renderResourceGantt(containerId = "view-container") {
-  const container = document.getElementById(containerId);
-  if (!container) return;
+      <div style="overflow-x:auto;">
+        <div style="position:relative; min-width:1000px; border:1px solid #ccc;">
+  `;
 
-  let html = `<div class="panel">
-    <h2>📊 Resource Gantt</h2>`;
+  tasks.forEach(task => {
 
-  const byResource = groupByResource(STATE.schedule);
+    const start = new Date(task.CalculatedStart);
+    const end = new Date(task.CalculatedEnd);
 
-  Object.entries(byResource).forEach(([resource, tasks]) => {
-    html += `<h3>${resource}</h3>`;
+    const left = ((start - minDate) / (1000 * 60 * 60)) / totalHours * 100;
+    const width = ((end - start) / (1000 * 60 * 60)) / totalHours * 100;
 
-    tasks.forEach(task => {
-      html += `
-        <div style="margin:5px 0; padding:5px; background:#1c2a45;">
-          ${task.ProjectID} | ${formatDate(task.Start)} → ${formatDate(task.End)}
+    const color = getStatusColor(task.Status);
+
+    html += `
+      <div style="
+        position:relative;
+        height:40px;
+        border-bottom:1px solid #eee;
+      ">
+
+        <div style="position:absolute; left:0; width:200px; padding:5px;">
+          ${task.Task}
         </div>
-      `;
-    });
+
+        <div style="
+          position:absolute;
+          left:${left}%;
+          width:${width}%;
+          height:25px;
+          top:7px;
+          background:${color};
+          border-radius:6px;
+          color:white;
+          font-size:12px;
+          display:flex;
+          align-items:center;
+          padding-left:6px;
+        ">
+          ${task.Resource}
+        </div>
+
+      </div>
+    `;
   });
 
-  html += `</div>`;
+  html += `
+        </div>
+      </div>
+    </div>
+  `;
+
   container.innerHTML = html;
 }
 
-
-/* ----------------- helpers ----------------- */
-
-function groupByResource(schedule) {
-  return schedule.reduce((acc, item) => {
-    if (!acc[item.Resource]) acc[item.Resource] = [];
-    acc[item.Resource].push(item);
-    return acc;
-  }, {});
-}
-
-function formatDate(date) {
-  return new Date(date).toLocaleDateString();
+/****************************************************
+ * 🎨 STATUS COLORS
+ ****************************************************/
+function getStatusColor(status) {
+  switch (status) {
+    case "DONE": return "#22c55e";
+    case "IN_PROGRESS": return "#3b82f6";
+    case "BLOCKED": return "#ef4444";
+    default: return "#94a3b8";
+  }
 }
