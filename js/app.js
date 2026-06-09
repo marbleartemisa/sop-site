@@ -1,5 +1,5 @@
 import { generateSchedule } from "./scheduler.js";
-import { state } from "./state.js";
+import { STATE } from "./state.js";
 import { renderProjects } from "./projects.js";
 
 window.app = {
