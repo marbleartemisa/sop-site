@@ -1,45 +1,75 @@
 const DEFAULT_STATE = {
-  projects: [],
-  schedule: [],
-  resources: []
+  PROJECTS: [],
+  PROJECT_TASKS: [],
+  RESOURCES: []
 };
 
 export const STATE = structuredClone(DEFAULT_STATE);
 
-// Load
-function loadState() {
+let isLoaded = false;
+
+// ======================
+// LOAD STATE
+// ======================
+export function loadState() {
   const saved = localStorage.getItem("STATE");
+
   if (saved) {
     const parsed = JSON.parse(saved);
-    STATE.projects = parsed.projects || [];
-    STATE.schedule = parsed.schedule || [];
-    STATE.resources = parsed.resources || [];
+
+    STATE.PROJECTS = parsed.PROJECTS || [];
+    STATE.PROJECT_TASKS = parsed.PROJECT_TASKS || [];
+    STATE.RESOURCES = parsed.RESOURCES || [];
   }
+
+  isLoaded = true;
+  return STATE;
 }
 
-// Save
+// ======================
+// SAVE STATE
+// ======================
 function saveState() {
   localStorage.setItem("STATE", JSON.stringify(STATE));
 }
 
-// setters
+// ======================
+// SETTERS
+// ======================
 export function setProjects(projects) {
-  STATE.projects = projects;
+  STATE.PROJECTS = projects;
   saveState();
 }
 
-export function setSchedule(schedule) {
-  STATE.schedule = schedule;
+export function setProjectTasks(tasks) {
+  STATE.PROJECT_TASKS = tasks;
   saveState();
 }
 
 export function setResources(resources) {
-  STATE.resources = resources;
+  STATE.RESOURCES = resources;
   saveState();
 }
 
-// init
+// ======================
+// GETTERS (IMPORTANTE PARA SCHEDULER)
+// ======================
+export function getProjectTasks() {
+  return STATE.PROJECT_TASKS;
+}
+
+export function getProjects() {
+  return STATE.PROJECTS;
+}
+
+export function getResources() {
+  return STATE.RESOURCES;
+}
+
+// ======================
+// INIT
+// ======================
 loadState();
 
-// opcional compatibilidad debug
+// DEBUG
 window.STATE = STATE;
