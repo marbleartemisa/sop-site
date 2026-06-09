@@ -1,4 +1,4 @@
-import { state } from "./state.js";
+import { STATE } from "./state.js";
 
 /*
   RULE:
