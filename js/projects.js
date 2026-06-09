@@ -243,6 +243,28 @@ function openProjectModal() {
 
     </div>
   `;
+  setTimeout(() => {
+
+  const ids = [
+    "m_ft2",
+    "m_pieces",
+    "m_level",
+    "m_edge_type",
+    "m_edge_ft",
+    "m_cutouts",
+    "m_slabs"
+  ];
+
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+
+    if (el) {
+      el.addEventListener("input", calculateSimulation);
+      el.addEventListener("change", calculateSimulation);
+    }
+  });
+
+}, 200);
 }
 
 /****************************************************
@@ -250,6 +272,49 @@ function openProjectModal() {
  ****************************************************/
 function closeModal() {
   document.getElementById("modal-container").innerHTML = "";
+}
+
+function calculateSimulation() {
+
+  const p = {
+    ft2: Number(document.getElementById("m_ft2")?.value || 0),
+    pieces: Number(document.getElementById("m_pieces")?.value || 0),
+    level: Number(document.getElementById("m_level")?.value || 1),
+    edgeType: document.getElementById("m_edge_type")?.value,
+    edgeFt: Number(document.getElementById("m_edge_ft")?.value || 0),
+    cutouts: Number(document.getElementById("m_cutouts")?.value || 0),
+    slabs: Number(document.getElementById("m_slabs")?.value || 0)
+  };
+
+  const levelFactor = { 1: 1.0, 2: 1.3, 3: 1.7 }[p.level] || 1;
+
+  const edgeFactor = {
+    simple: 1.0,
+    45: 1.2,
+    laminated: 1.3,
+    bullnose: 1.8,
+    ogee: 1.8
+  }[p.edgeType] || 1;
+
+  const cut = p.ft2 * 0.08;
+  const fab = p.pieces * 0.5;
+  const edge = p.edgeFt * 0.15 * edgeFactor;
+  const cutout = p.cutouts * 0.6;
+  const slabs = p.slabs * 0.4;
+
+  const total = (cut + fab + edge + cutout + slabs) * levelFactor;
+
+  const html = `
+    <p><b>Total Hours:</b> ${total.toFixed(2)}</p>
+    <p>Cut: ${cut.toFixed(2)}</p>
+    <p>Fabrication: ${fab.toFixed(2)}</p>
+    <p>Edge: ${edge.toFixed(2)}</p>
+    <p>Cutouts: ${cutout.toFixed(2)}</p>
+    <p>Slabs: ${slabs.toFixed(2)}</p>
+  `;
+
+  const el = document.getElementById("sim-result");
+  if (el) el.innerHTML = html;
 }
 
 /****************************************************
