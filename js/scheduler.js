@@ -1,64 +1,44 @@
 import { STATE } from "./state.js";
+import { calculateProjectSchedule } from "./scheduler.engine.js";
 
-/*
-  RULE:
-  - cada proyecto tiene fases:
-    NEED -> FAB -> INST
-  - cada fase tiene duración estimada
-*/
-
-const DEFAULT_DURATIONS = {
-  NEED: 2,
-  FAB: 5,
-  INST: 2
-};
+/**
+ * ORQUESTADOR PRINCIPAL
+ * Solo coordina la simulación
+ */
 
 export function generateSchedule() {
 
   let currentDate = new Date();
 
-   STATE.projects.forEach(project => {
+  STATE.schedule = [];
 
-    project.timeline = [];
+  STATE.projects.forEach(project => {
 
-    Object.keys(DEFAULT_DURATIONS).forEach(phase => {
-
-      const start = new Date(currentDate);
-      const end = new Date(currentDate);
-
-      end.setDate(
-        end.getDate() + DEFAULT_DURATIONS[phase]
-      );
-
-      project.timeline.push({
-        phase,
-        start,
-        end
-      });
-
-      currentDate = new Date(end);
+    const result = calculateProjectSchedule({
+      ...project,
+      resource: project.resource || "BRETON"
     });
 
+    const start = new Date(currentDate);
+    const end = new Date(start);
+
+    end.setHours(end.getHours() + result.totalHours);
+
+    const entry = {
+      ProjectID: project.projectId || project.ProjectID,
+      Resource: result.resource,
+      Start: start,
+      End: end,
+      PF: result.totalHours
+    };
+
+    STATE.schedule.push(entry);
+
+    currentDate = new Date(end);
   });
 
-  console.log(
-    "SCHEDULE GENERATED",
-    state.projects
-  );
+  console.log("SCHEDULE GENERATED", STATE.schedule);
 }
 
-/* GLOBAL BUTTONS */
-
+/* GLOBAL */
 window.runScheduler = generateSchedule;
-
-window.createTestProject = function () {
-  console.log("TEST PROJECT CLICKED");
-};
-
-window.renderGantt = function () {
-  console.log("GANTT CLICKED");
-};
-
-window.refreshData = function () {
-  console.log("REFRESH CLICKED");
-};
