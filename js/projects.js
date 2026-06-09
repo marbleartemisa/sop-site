@@ -144,13 +144,25 @@ export function renderScheduleView() {
 async function submitProject() {
 
   const project = {
-    id: "PRJ-" + Date.now(),
+    projectId: "PRJ-" + Date.now(),
+
     customer: document.getElementById("m_customer").value,
     material: document.getElementById("m_material").value,
     ft2: Number(document.getElementById("m_ft2").value),
-    priority: document.getElementById("m_priority").value,
-    readyDate: document.getElementById("m_date").value
+    pieces: Number(document.getElementById("m_pieces").value),
+
+    level: Number(document.getElementById("m_level").value),
+    edgeType: document.getElementById("m_edge_type").value,
+    edgeFt: Number(document.getElementById("m_edge_ft").value),
+
+    cutouts: Number(document.getElementById("m_cutouts").value),
+    slabs: Number(document.getElementById("m_slabs").value),
+
+    createdAt: new Date().toISOString(),
+    createdBy: window.currentUser || "system"
   };
+
+  console.log("PROJECT READY:", project);
 
   await post("CREATE_PROJECT", project);
 
@@ -179,17 +191,55 @@ function openProjectModal() {
   container.innerHTML = `
     <div class="modal-backdrop" onclick="closeModal()"></div>
 
-    <div class="modal">
+    <div class="modal" style="display:flex; gap:20px; width:700px;">
 
-      <h2>New Project</h2>
+      <!-- LEFT: FORM -->
+      <div style="flex:1;">
+        <h2>New Project</h2>
 
-      <input id="m_customer" placeholder="Customer">
-      <input id="m_material" placeholder="Material">
-      <input id="m_ft2" type="number" placeholder="Ft2">
-      <input id="m_priority" placeholder="Priority">
-      <input id="m_date" type="date">
+        <input id="m_customer" placeholder="Customer">
 
-      <button onclick="submitProject()">Create</button>
+        <select id="m_material">
+          <option>Quartz</option>
+          <option>Granite</option>
+          <option>Marble</option>
+          <option>Porcelain</option>
+        </select>
+
+        <input id="m_ft2" type="number" placeholder="Total Ft2">
+
+        <input id="m_pieces" type="number" placeholder="Pieces">
+
+        <select id="m_level">
+          <option value="1">Level 1 (Simple)</option>
+          <option value="2">Level 2 (Standard)</option>
+          <option value="3">Level 3 (VIP)</option>
+        </select>
+
+        <select id="m_edge_type">
+          <option>simple</option>
+          <option>45</option>
+          <option>laminated</option>
+          <option>bullnose</option>
+          <option>ogee</option>
+        </select>
+
+        <input id="m_edge_ft" type="number" placeholder="Edge Linear Ft">
+
+        <input id="m_cutouts" type="number" placeholder="Cutouts">
+
+        <input id="m_slabs" type="number" placeholder="Number of Slabs">
+
+        <button onclick="submitProject()">Create</button>
+      </div>
+
+      <!-- RIGHT: LIVE SIMULATION -->
+      <div style="flex:1; background:#0f172a; padding:12px; border-radius:10px;">
+        <h3>Simulation</h3>
+        <div id="sim-result">
+          Fill form to see simulation...
+        </div>
+      </div>
 
     </div>
   `;
