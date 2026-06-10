@@ -16,11 +16,12 @@ export async function post(action, project = {}) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
+     body: JSON.stringify({
         action,
-        project   // 🔥 BACKEND ESPERA ESTO
+        project: data   // 🔥 ESTE ES EL CONTRATO REAL
       })
     });
+
 
     return await res.json();
 
