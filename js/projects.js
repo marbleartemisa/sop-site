@@ -152,34 +152,28 @@ export function renderScheduleView() {
 async function submitProject() {
 
   const project = {
-    projectId: "PRJ-" + Date.now(),
+    ProjectID: "PRJ-" + Date.now(),
+    Customer: document.getElementById("m_customer").value,
+    Material: document.getElementById("m_material").value,
+    Ft2: Number(document.getElementById("m_ft2").value),
+    Pieces: Number(document.getElementById("m_pieces").value),
 
-    customer: document.getElementById("m_customer").value,
-    material: document.getElementById("m_material").value,
-    ft2: Number(document.getElementById("m_ft2").value),
-    pieces: Number(document.getElementById("m_pieces").value),
+    Complexity: Number(document.getElementById("m_level").value),
+    EdgeType: document.getElementById("m_edge_type").value,
+    EdgeLF: Number(document.getElementById("m_edge_ft").value),
 
-    level: Number(document.getElementById("m_level").value),
-    edgeType: document.getElementById("m_edge_type").value,
-    edgeFt: Number(document.getElementById("m_edge_ft").value),
+    Cutouts: Number(document.getElementById("m_cutouts").value),
+    Slabs: Number(document.getElementById("m_slabs").value),
 
-    cutouts: Number(document.getElementById("m_cutouts").value),
-    slabs: Number(document.getElementById("m_slabs").value),
-
-    createdAt: new Date().toISOString(),
-    createdBy: window.currentUser || "system"
+    WorkflowTemplate: "DEFAULT",
+    ServiceType: detectServiceType(),   // 🔥 IMPORTANTE
+    CreatedDate: new Date().toISOString()
   };
 
-  console.log("PROJECT READY:", project);
+  await post("CREATE_PROJECT", project);
 
-      await post("CREATE_PROJECT", project);
-    
-    // 🔥 NEW: generar tasks del proyecto
-    await post("GENERATE_SCHEDULE", { projectId: project.projectId });
-    
-    closeModal();
-    await renderProjects();
-
+  await renderProjects();
+  closeModal();
 }
 
 /****************************************************
