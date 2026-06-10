@@ -1,4 +1,4 @@
-const API = "YOUR_APPS_SCRIPT_URL";
+const API = const API = "https://script.google.com/macros/s/AKfycbzVLUTOzA0gGIfKml7kWBAWIjSE6g473aBDmFCg-cN2UzSG2-VnKElingOTgCSdeIumfg/exec";
 
 async function loadProjects() {
 
