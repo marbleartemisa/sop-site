@@ -149,33 +149,76 @@ export function renderScheduleView() {
 /****************************************************
  * ➕ SUBMIT PROJECT
  ****************************************************/
+import { createProject } from "./api.js";
+
 async function submitProject() {
 
-  const project = {
-    ProjectID: "PRJ-" + Date.now(),
-    Customer: document.getElementById("m_customer").value,
-    Material: document.getElementById("m_material").value,
-    Ft2: Number(document.getElementById("m_ft2").value),
-    Pieces: Number(document.getElementById("m_pieces").value),
+  try {
 
-    Complexity: Number(document.getElementById("m_level").value),
-    EdgeType: document.getElementById("m_edge_type").value,
-    EdgeLF: Number(document.getElementById("m_edge_ft").value),
+    const customer = document.getElementById("m_customer").value?.trim();
 
-    Cutouts: Number(document.getElementById("m_cutouts").value),
-    Slabs: Number(document.getElementById("m_slabs").value),
+    if (!customer) {
+      alert("Customer is required");
+      return;
+    }
 
-    WorkflowTemplate: "DEFAULT",
-    ServiceType: detectServiceType(),   // 🔥 IMPORTANTE
-    CreatedDate: new Date().toISOString()
-  };
+    const project = {
+      ProjectID: "PRJ-" + Date.now(),
 
-  await post("CREATE_PROJECT", project);
+      Customer: customer,
 
-  await renderProjects();
-  closeModal();
+      Material: document.getElementById("m_material").value,
+
+      Ft2: Number(document.getElementById("m_ft2").value) || 0,
+
+      Pieces: Number(document.getElementById("m_pieces").value) || 0,
+
+      Complexity: Number(document.getElementById("m_level").value) || 1,
+
+      EdgeType: document.getElementById("m_edge_type").value,
+
+      EdgeLF: Number(document.getElementById("m_edge_ft").value) || 0,
+
+      Cutouts: Number(document.getElementById("m_cutouts").value) || 0,
+
+      Slabs: Number(document.getElementById("m_slabs").value) || 0,
+
+      WorkflowTemplate: "DEFAULT",
+
+      ServiceType: typeof detectServiceType === "function"
+        ? detectServiceType()
+        : "STONE",
+
+      Status: "NEW",
+
+      CreatedDate: new Date().toISOString(),
+
+      CreatedBy: "UI"
+    };
+
+    console.log("PROJECT READY:", project);
+
+    const result = await createProject(project);
+
+    console.log("CREATE PROJECT RESULT:", result);
+
+    if (result?.status !== "OK") {
+
+      alert(result?.message || "Error creating project");
+      return;
+    }
+
+    await renderProjects();
+
+    closeModal();
+
+  } catch (err) {
+
+    console.error("SUBMIT PROJECT ERROR:", err);
+
+    alert("Error creating project: " + err.message);
+  }
 }
-
 /****************************************************
  * 🧠 GROUP BY UTILITY
  ****************************************************/
