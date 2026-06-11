@@ -158,7 +158,7 @@ async function submitProject() {
 
   try {
 
-    const selectedServices = [...document.querySelectorAll(".svc:checked")]
+    const selectedServices = [...document.querySelectorAll(".stage:checked")]
       .map(el => el.value);
 
     const customer = document.getElementById("m_customer").value?.trim();
@@ -286,7 +286,7 @@ function openProjectModal() {
   </label>
 
   <label class="stage-item">
-    <input class="stage svc" type="checkbox" checked value="CARPENTRY">
+     <input class="stage" type="checkbox" value="CARPENTRY">
     <span class="stage-text">Carpentry Fabrication (2.5d)</span>
   </label>
 
@@ -306,7 +306,8 @@ function openProjectModal() {
   </label>
 
   <label class="stage-item">
-    <input class="stage svc" type="checkbox" checked value="STONE">
+     <input class="stage" type="checkbox" value ="STONE">
+   
     <span class="stage-text">Stone Fabrication (3d)</span>
   </label>
 
@@ -413,7 +414,7 @@ function openProjectModal() {
 
   setTimeout(() => {
 
-    document.querySelectorAll(".svc")
+    document.querySelectorAll(".stage")
       .forEach(el => {
 
         el.addEventListener("change", () => {
@@ -432,8 +433,8 @@ function openCreateForm() {
 
 function renderDynamicPanel() {
 
-  const selected = [...document.querySelectorAll(".svc:checked")]
-    .map(el => el.value);
+ const selected = [...document.querySelectorAll(".stage:checked")]
+  .map(el => el.value);
 
   const panel = document.getElementById("dynamic-panel");
 
@@ -575,8 +576,9 @@ function closeModal() {
 
 function calculateSimulation() {
 
-  const selected = [...document.querySelectorAll(".svc:checked")]
-    .map(el => el.value);
+  const selected = [...document.querySelectorAll(".stage:checked")]
+  .map(el => el.value);
+   
 
   let total = 0;
   let breakdown = [];
