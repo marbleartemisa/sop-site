@@ -523,28 +523,29 @@ function renderDynamicPanel() {
         </select>
 
         <select id="m_carpentry_trashcan">
-          <option value="0">No Trashcan</option>
+          <option value="0">0 Trashcan</option>
           <option value="1">1</option>
           <option value="2">2+</option>
         </select>
 
         <select id="m_carpentry_lazy">
-          <option value="0">None</option>
+          <option value="0">0 Lazy</option>
           <option value="1">Lazy Susan</option>
+          <option value="2">2+</option>
         </select>
 
         <select id="m_carpentry_lemans">
-          <option value="0">None</option>
+          <option value="0">0 Lemans</option>
           <option value="1">LeMans II</option>
         </select>
 
         <select id="m_carpentry_pocket_pantry">
-          <option value="0">No</option>
+          <option value="0">0 PocketP</option>
           <option value="1">Yes</option>
         </select>
 
         <select id="m_carpentry_pocket_cabinet">
-          <option value="0">No</option>
+          <option value="0">0 PocketC</option>
           <option value="1">Yes</option>
         </select>
 
