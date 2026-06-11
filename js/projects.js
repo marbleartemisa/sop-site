@@ -350,20 +350,18 @@ function openProjectModal() {
     <!-- ===================== -->
     <!-- COLUMN 2 -->
     <!-- ===================== -->
-    <div>
-
-      <h3>Resources & Parameters</h3>
-
         <div>
-          id="dynamic-panel"
-          style="
-            max-height:70vh;
-            overflow:auto;
-            padding-right:10px;
-          "
+          <h3>Resources & Parameters</h3>
+        
+          <div
+            id="dynamic-panel"
+            style="
+              max-height:70vh;
+              overflow:auto;
+              padding-right:10px;
+            "
+          ></div>
         </div>
-
-    </div>
 
     <!-- ===================== -->
     <!-- COLUMN 3 -->
@@ -467,7 +465,6 @@ document.querySelectorAll(".stage")
 
   });
 
-  }, 100);
 }
 
 
