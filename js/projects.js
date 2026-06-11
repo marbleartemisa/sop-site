@@ -286,7 +286,7 @@ function openProjectModal() {
   </label>
 
   <label class="stage-item">
-     <input class="stage" type="checkbox" value="CARPENTRY">
+    <input class="stage" type="checkbox" checked value="CARPENTRY">
     <span class="stage-text">Carpentry Fabrication (2.5d)</span>
   </label>
 
@@ -306,7 +306,7 @@ function openProjectModal() {
   </label>
 
   <label class="stage-item">
-     <input class="stage" type="checkbox" value ="STONE">
+    <input class="stage" type="checkbox" checked value="STONE">
    
     <span class="stage-text">Stone Fabrication (3d)</span>
   </label>
