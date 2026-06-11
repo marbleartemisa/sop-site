@@ -220,124 +220,153 @@ function safeNumber(id) {
   return Number(document.getElementById(id)?.value || 0);
 }
 
+/**************************************************** 
+* 🪟 MODAL 
+****************************************************/
 
-/****************************************************
- * 🪟 MODAL
- ****************************************************/
 function openProjectModal() {
 
   const container = document.getElementById("modal-container");
 
   container.innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal()"></div>
+  <div class="modal-backdrop" onclick="closeModal()"></div>
 
-    <div class="modal" style="display:flex; gap:20px; width:700px;">
+  <div class="modal"
+       style="
+          width:1400px;
+          max-width:95vw;
+          height:85vh;
+          overflow:auto;
+          display:grid;
+          grid-template-columns: 340px 1fr 340px;
+          gap:20px;
+       ">
 
-      <!-- LEFT: FORM -->
-      <div style="flex:1;">
-        <h2>New Project</h2>
+    <!-- ========================================= -->
+    <!-- COLUMN 1 -->
+    <!-- ========================================= -->
+    <div>
 
-        <input id="m_customer" placeholder="Customer">
+      <h2>New Project</h2>
 
-        <select id="m_material">
-          <option>Caesarstone<option>
-          <option>Cambria<option>
-          <option>Dekton<option>
-          <option>Dolomite<option>
-          <option>Engineered Quartz<option>
-          <option>Granite<option>
-          <option>Infinity<option>
-          <option>Lapitec<option>
-          <option>MSI Quartz<option>
-          <option>Neolith<option>
-          <option>Obsidiana<option>
-          <option>Porcelain<option>
-          <option>Quartz<option>
-          <option>Quartzite<option>
-          <option>Sapienstone<option>
-          <option>Silestone<option>
-          <option>Sintered Stone<option>
-          <option>Soapstone<option>
-          <option>Ultra Compact Surfaces<option>
-        </select>
+      <input
+        id="m_customer"
+        placeholder="Customer"
+        style="width:100%; margin-bottom:10px;"
+      >
 
-        <select id="m_resource">
-          <option value="BRETON">Breton (CNC)</option>
-          <option value="COACH">Coach (CNC)</option>
-          <option value="MANUAL">Fabricación Manual</option>
-        </select>
+      <select
+        id="m_material"
+        style="width:100%; margin-bottom:20px;"
+      >
+        <option>Caesarstone</option>
+        <option>Cambria</option>
+        <option>Dekton</option>
+        <option>Granite</option>
+        <option>Quartz</option>
+        <option>Quartzite</option>
+        <option>Porcelain</option>
+      </select>
 
-        <input id="m_ft2" type="number" placeholder="Total Ft2">
+      <h3>Project Stages</h3>
 
-        <input id="m_pieces" type="number" placeholder="Pieces">
+      <label><input class="stage" type="checkbox" checked value="AGREEMENT"> Agreement (0d)</label><br>
 
-        <select id="m_level">
-          <option value="1">Level 1 (Corte y Pulido)</option>
-          <option value="2">Level 2 (Standard)</option>
-          <option value="3">Level 3 (Luxury)</option>
-        </select>
+      <label><input class="stage" type="checkbox" checked value="MEASURE"> Measure Confirmation (3d)</label><br>
 
-        <select id="m_edge_type">
-          <option>simple</option>
-          <option>45</option>
-          <option>laminated</option>
-          <option>bullnose</option>
-          <option>half bullnose</option>
-          <option>full bullnose</option>
-          <option>ogee</option>
-        </select>
+      <label><input class="stage" type="checkbox" checked value="SCHEDULING"> Scheduling (3d)</label><br>
 
-        <input id="m_edge_ft" type="number" placeholder="Edge Linear Ft">
+      <label><input class="stage" type="checkbox" checked value="MATERIAL"> Material Order (4d)</label><br>
 
-        <input id="m_cutouts" type="number" placeholder="Cutouts">
+      <label><input class="stage" type="checkbox" checked value="APPROVAL"> Final Approval (3d)</label><br>
 
-        <input id="m_slabs" type="number" placeholder="Number of Slabs">
+      <label>
+        <input
+          class="stage svc"
+          type="checkbox"
+          checked
+          value="CARPENTRY"
+        >
+        Cabinet Fabrication (2.5d)
+      </label><br>
 
-        <button onclick="submitProject()">Create</button>
-      </div>
+      <label><input class="stage" type="checkbox" checked value="INSTALL_CAB"> Cabinet Installation (2.5d)</label><br>
 
-      <!-- RIGHT: LIVE SIMULATION -->
-      <div style="flex:1; background:#0f172a; padding:12px; border-radius:10px;">
-        <h3>Simulation</h3>
-        <div id="sim-result">
-          Fill form to see simulation...
-        </div>
+      <label><input class="stage" type="checkbox" checked value="STONE_MEASURE"> Stone Measure (2d)</label><br>
+
+      <label><input class="stage" type="checkbox" checked value="STONE_APPROVAL"> Stone Approval (3d)</label><br>
+
+      <label>
+        <input
+          class="stage svc"
+          type="checkbox"
+          checked
+          value="STONE"
+        >
+        Stone Fabrication (3d)
+      </label><br>
+
+      <label><input class="stage" type="checkbox" checked value="STONE_INSTALL"> Stone Installation (3d)</label><br>
+
+      <label><input class="stage" type="checkbox" checked value="PUNCHOUT"> Punchout (2d)</label><br>
+
+      <br>
+
+      <button onclick="submitProject()">
+        Create Project
+      </button>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- COLUMN 2 -->
+    <!-- ========================================= -->
+    <div>
+
+      <h3>Resources & Parameters</h3>
+
+      <div id="dynamic-panel">
+
       </div>
 
     </div>
+
+    <!-- ========================================= -->
+    <!-- COLUMN 3 -->
+    <!-- ========================================= -->
+    <div>
+
+      <h3>Simulation</h3>
+
+      <div id="sim-result">
+        Select stages and parameters...
+      </div>
+
+    </div>
+
+  </div>
   `;
+
+  renderDynamicPanel();
+
   setTimeout(() => {
 
-  const ids = [
-    "m_ft2",
-    "m_pieces",
-    "m_level",
-    "m_edge_type",
-    "m_edge_ft",
-    "m_cutouts",
-    "m_slabs"
-  ];
+    document.querySelectorAll(".svc")
+      .forEach(el => {
 
-  ids.forEach(id => {
-    const el = document.getElementById(id);
+        el.addEventListener("change", () => {
 
-    if (el) {
-      el.addEventListener("input", calculateSimulation);
-      el.addEventListener("change", calculateSimulation);
-    }
-  });
+          renderDynamicPanel();
 
-}, 200);
+          calculateSimulation();
+
+        });
+
+      });
+
+  }, 100);
+
 }
-
-setTimeout(() => {
-
-  document.querySelectorAll(".svc").forEach(cb => {
-    cb.addEventListener("change", renderDynamicPanel);
-  });
-
-}, 200);
-
 function openCreateForm() {
   openProjectModal();
 }
