@@ -258,69 +258,69 @@ function openProjectModal() {
 
       <h3>Project Stages</h3>
 
-      <div class="stage-list">
+<div class="stage-list">
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="AGREEMENT">
-          Agreement (0d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="AGREEMENT">
+    <span class="stage-text">Agreement (0d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="MEASURE">
-          Measure Confirmation (3d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="MEASURE">
+    <span class="stage-text">Measure Confirmation (3d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="SCHEDULING">
-          Scheduling (3d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="SCHEDULING">
+    <span class="stage-text">Scheduling (3d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="MATERIAL">
-          Material Order (4d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="MATERIAL">
+    <span class="stage-text">Material Order (4d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="APPROVAL">
-          Final Approval (3d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="APPROVAL">
+    <span class="stage-text">Final Approval (3d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage svc" type="checkbox" checked value="CARPENTRY">
-          Cabinet Fabrication (2.5d)
-        </label>
+  <label class="stage-item">
+    <input class="stage svc" type="checkbox" checked value="CARPENTRY">
+    <span class="stage-text">Cabinet Fabrication (2.5d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="INSTALL_CAB">
-          Cabinet Installation (2.5d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="INSTALL_CAB">
+    <span class="stage-text">Cabinet Installation (2.5d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="STONE_MEASURE">
-          Stone Measure (2d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="STONE_MEASURE">
+    <span class="stage-text">Stone Measure (2d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="STONE_APPROVAL">
-          Stone Approval (3d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="STONE_APPROVAL">
+    <span class="stage-text">Stone Approval (3d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage svc" type="checkbox" checked value="STONE">
-          Stone Fabrication (3d)
-        </label>
+  <label class="stage-item">
+    <input class="stage svc" type="checkbox" checked value="STONE">
+    <span class="stage-text">Stone Fabrication (3d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="STONE_INSTALL">
-          Stone Installation (3d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="STONE_INSTALL">
+    <span class="stage-text">Stone Installation (3d)</span>
+  </label>
 
-        <label class="stage-item">
-          <input class="stage" type="checkbox" checked value="PUNCHOUT">
-          Punchout (2d)
-        </label>
+  <label class="stage-item">
+    <input class="stage" type="checkbox" checked value="PUNCHOUT">
+    <span class="stage-text">Punchout (2d)</span>
+  </label>
 
-      </div>
+</div>
 
       <br>
 
@@ -374,24 +374,39 @@ function openProjectModal() {
 
   </div>
 
-  <style>
-    .stage-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+ <style>
+  .stage-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-    .stage-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-    }
+  .stage-item {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    align-items: center;
+    column-gap: 10px;
 
-    .stage-item input {
-      margin: 0;
-    }
-  </style>
+    font-size: 13px;
+    line-height: 1.2;
+
+    /* CLAVE: evita que el texto se rompa raro */
+    white-space: nowrap;
+  }
+
+  .stage-item input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    transform: translateY(1px);
+  }
+
+  /* opcional: si quieres evitar overflow en pantallas pequeñas */
+  .stage-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>
   `;
 
   renderDynamicPanel();
