@@ -24,3 +24,42 @@ export const TIME_RATES = {
     }
   }
 };
+
+export function calcCarpentryTime(p) {
+
+  const t = TIME_RATES.CARPENTRY;
+
+  return {
+
+    cnc: (p.panels || 0) * t.cncCut,
+
+    edge: (p.edgeFt || 0) * t.edgeBand,
+
+    cabinets: (p.cabinets || 0) * t.cabinet,
+
+    drawers: (p.drawers || 0) * t.drawer,
+
+    pantry: (p.pantry || 0) * t.pantry,
+
+    trashcan: (p.trashcan || 0) * t.trashcan,
+
+    lazySusan: (p.lazySusan || 0) * t.lazySusan,
+
+    lemans: (p.lemans || 0) * t.lemans,
+
+    pocketPantry: (p.pocketPantry || 0) * t.pocketPantry,
+
+    pocketCabinet: (p.pocketCabinet || 0) * t.pocketCabinet
+
+  };
+}
+
+export function calcStoneFactor(thickness) {
+
+  return TIME_RATES.STONE.thicknessFactor[thickness] || 1;
+}
+
+const stoneFactor = calcStoneFactor(project.Stone?.thickness || "8mm");
+
+const cncTime = panels * 8 * stoneFactor;
+const edgeTime = edgeFt * 0.5 * stoneFactor;
