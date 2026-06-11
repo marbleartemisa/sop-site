@@ -339,6 +339,74 @@ function openProjectModal() {
 }, 200);
 }
 
+setTimeout(() => {
+
+  document.querySelectorAll(".svc").forEach(cb => {
+    cb.addEventListener("change", renderDynamicPanel);
+  });
+
+}, 200);
+
+function renderDynamicPanel() {
+
+  const selected = [...document.querySelectorAll(".svc:checked")]
+    .map(el => el.value);
+
+  const panel = document.getElementById("dynamic-panel");
+
+  let html = "";
+
+  // 🪨 STONE
+  if (selected.includes("STONE")) {
+
+    html += `
+      <h3>🪨 Stone Parameters</h3>
+
+      <select id="m_resource">
+        <option value="BRETON">Breton</option>
+        <option value="WATERJET">Waterjet</option>
+      </select>
+
+      <input id="m_ft2" type="number" placeholder="Sqft">
+      <select id="m_thickness">
+        <option>6mm</option>
+        <option>8mm</option>
+        <option>12mm</option>
+        <option>2cm</option>
+        <option>3cm</option>
+      </select>
+
+      <select id="m_edge_type">
+        <option>simple</option>
+        <option>bullnose</option>
+        <option>ogee</option>
+      </select>
+
+      <input id="m_edge_ft" type="number" placeholder="Edge LF">
+      <input id="m_cutouts" type="number" placeholder="Cutouts">
+      <input id="m_slabs" type="number" placeholder="Slabs">
+    `;
+  }
+
+  // 🪵 CARPENTRY
+  if (selected.includes("CARPENTRY")) {
+
+    html += `
+      <h3>🪵 Carpentry Parameters</h3>
+
+      <input id="m_cabinets" type="number" placeholder="Cabinets">
+      <input id="m_pantry" type="number" placeholder="Pantry">
+      <input id="m_doors" type="number" placeholder="Doors">
+
+      <input id="m_edgebanding" type="number" placeholder="Edge Banding LF">
+      <input id="m_trashcan" type="number" placeholder="Trashcan units">
+      <input id="m_slides" type="number" placeholder="Drawer Slides">
+    `;
+  }
+
+  panel.innerHTML = html;
+}
+
 /****************************************************
  * ❌ CLOSE MODAL
  ****************************************************/
