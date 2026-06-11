@@ -462,8 +462,6 @@ function closeModal() {
   document.getElementById("modal-container").innerHTML = "";
 }
 
-import { TIME_RATES } from "./timeEngine.js";
-
 function calculateSimulation() {
 
   const selected = [...document.querySelectorAll(".svc:checked")]
