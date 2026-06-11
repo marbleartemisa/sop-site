@@ -287,12 +287,12 @@ function openProjectModal() {
 
   <label class="stage-item">
     <input class="stage svc" type="checkbox" checked value="CARPENTRY">
-    <span class="stage-text">Cabinet Fabrication (2.5d)</span>
+    <span class="stage-text">Carpentry Fabrication (2.5d)</span>
   </label>
 
   <label class="stage-item">
     <input class="stage" type="checkbox" checked value="INSTALL_CAB">
-    <span class="stage-text">Cabinet Installation (2.5d)</span>
+    <span class="stage-text">Carpentry Installation (2.5d)</span>
   </label>
 
   <label class="stage-item">
