@@ -338,24 +338,6 @@ function openProjectModal() {
 
       <h3>Resources & Parameters</h3>
 
-      <!-- AHORA MATERIAL VA AQUÍ -->
-      <div style="margin-bottom:15px;">
-        <label style="display:block; margin-bottom:6px;">Stone Material</label>
-
-        <select
-          id="m_material"
-          style="width:100%; padding:6px;"
-        >
-          <option>Caesarstone</option>
-          <option>Cambria</option>
-          <option>Dekton</option>
-          <option>Granite</option>
-          <option>Quartz</option>
-          <option>Quartzite</option>
-          <option>Porcelain</option>
-        </select>
-      </div>
-
       <div id="dynamic-panel"></div>
 
     </div>
@@ -449,24 +431,9 @@ function renderDynamicPanel() {
       <div class="module">
         <h3>🪨 Stone Production</h3>
 
-        <select id="m_stone_thickness">
-          <option value="6mm">6mm</option>
-          <option value="8mm">8mm</option>
-          <option value="12mm">12mm</option>
-          <option value="2cm">2cm</option>
-          <option value="3cm">3cm</option>
-        </select>
-
         <select id="m_stone_resource">
           <option value="BRETON">Breton CNC</option>
           <option value="COACH">COACH</option>
-        </select>
-
-        <select id="m_stone_edge_type">
-          <option value="simple">Simple</option>
-          <option value="bullnose">Bullnose</option>
-          <option value="ogee">Ogee</option>
-          <option value="laminated">Laminated</option>
         </select>
 
         <!-- FIX: MATERIAL FIELD CORRECTLY BOUND TO STONE -->
@@ -480,6 +447,24 @@ function renderDynamicPanel() {
           <option value="Quartzite">Quartzite</option>
           <option value="Porcelain">Porcelain</option>
         </select>
+        
+        <select id="m_stone_thickness">
+          <option value="6mm">6mm</option>
+          <option value="8mm">8mm</option>
+          <option value="12mm">12mm</option>
+          <option value="2cm">2cm</option>
+          <option value="3cm">3cm</option>
+        </select>
+
+
+        <select id="m_stone_edge_type">
+          <option value="simple">Simple</option>
+          <option value="bullnose">Bullnose</option>
+          <option value="ogee">Ogee</option>
+          <option value="laminated">Laminated</option>
+        </select>
+
+
 
         <input id="m_stone_ft2" type="number" placeholder="Sqft (Stone Panels)">
         <input id="m_stone_edge_ft" type="number" placeholder="Edge Linear Ft">
