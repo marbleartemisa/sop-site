@@ -458,7 +458,7 @@ function renderDynamicPanel() {
 
         <select id="m_stone_resource">
           <option value="BRETON">Breton CNC</option>
-          <option value="WATERJET">Waterjet</option>
+          <option value="COACH">COACH</option>
         </select>
 
         <select id="m_stone_edge_type">
