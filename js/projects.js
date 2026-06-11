@@ -338,6 +338,10 @@ setTimeout(() => {
 
 }, 200);
 
+function openCreateForm() {
+  openProjectModal();
+}
+
 function renderDynamicPanel() {
 
   const selected = [...document.querySelectorAll(".svc:checked")]
@@ -578,6 +582,7 @@ window.openGantt = openGantt;
  * 🌐 GLOBAL EXPORTS (IMPORTANT FOR HTML ONCLICK)
  ****************************************************/
 window.renderProjects = renderProjects
+window.openCreateForm = openCreateForm;
 window.pauseProject = pauseProject;
 window.deleteProject = deleteProject;
 window.submitProject = submitProject;
