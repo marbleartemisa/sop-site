@@ -240,11 +240,12 @@ function openProjectModal() {
           display:grid;
           grid-template-columns: 340px 1fr 340px;
           gap:20px;
+          font-family: Arial;
        ">
 
-    <!-- ========================================= -->
+    <!-- ===================== -->
     <!-- COLUMN 1 -->
-    <!-- ========================================= -->
+    <!-- ===================== -->
     <div>
 
       <h2>New Project</h2>
@@ -255,60 +256,71 @@ function openProjectModal() {
         style="width:100%; margin-bottom:10px;"
       >
 
-      <select
-        id="m_material"
-        style="width:100%; margin-bottom:20px;"
-      >
-        <option>Caesarstone</option>
-        <option>Cambria</option>
-        <option>Dekton</option>
-        <option>Granite</option>
-        <option>Quartz</option>
-        <option>Quartzite</option>
-        <option>Porcelain</option>
-      </select>
-
       <h3>Project Stages</h3>
 
-      <label><input class="stage" type="checkbox" checked value="AGREEMENT"> Agreement (0d)</label><br>
+      <div class="stage-list">
 
-      <label><input class="stage" type="checkbox" checked value="MEASURE"> Measure Confirmation (3d)</label><br>
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="AGREEMENT">
+          Agreement (0d)
+        </label>
 
-      <label><input class="stage" type="checkbox" checked value="SCHEDULING"> Scheduling (3d)</label><br>
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="MEASURE">
+          Measure Confirmation (3d)
+        </label>
 
-      <label><input class="stage" type="checkbox" checked value="MATERIAL"> Material Order (4d)</label><br>
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="SCHEDULING">
+          Scheduling (3d)
+        </label>
 
-      <label><input class="stage" type="checkbox" checked value="APPROVAL"> Final Approval (3d)</label><br>
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="MATERIAL">
+          Material Order (4d)
+        </label>
 
-      <label>
-        <input
-          class="stage svc"
-          type="checkbox"
-          checked
-          value="CARPENTRY"
-        >
-        Cabinet Fabrication (2.5d)
-      </label><br>
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="APPROVAL">
+          Final Approval (3d)
+        </label>
 
-      <label><input class="stage" type="checkbox" checked value="INSTALL_CAB"> Cabinet Installation (2.5d)</label><br>
+        <label class="stage-item">
+          <input class="stage svc" type="checkbox" checked value="CARPENTRY">
+          Cabinet Fabrication (2.5d)
+        </label>
 
-      <label><input class="stage" type="checkbox" checked value="STONE_MEASURE"> Stone Measure (2d)</label><br>
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="INSTALL_CAB">
+          Cabinet Installation (2.5d)
+        </label>
 
-      <label><input class="stage" type="checkbox" checked value="STONE_APPROVAL"> Stone Approval (3d)</label><br>
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="STONE_MEASURE">
+          Stone Measure (2d)
+        </label>
 
-      <label>
-        <input
-          class="stage svc"
-          type="checkbox"
-          checked
-          value="STONE"
-        >
-        Stone Fabrication (3d)
-      </label><br>
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="STONE_APPROVAL">
+          Stone Approval (3d)
+        </label>
 
-      <label><input class="stage" type="checkbox" checked value="STONE_INSTALL"> Stone Installation (3d)</label><br>
+        <label class="stage-item">
+          <input class="stage svc" type="checkbox" checked value="STONE">
+          Stone Fabrication (3d)
+        </label>
 
-      <label><input class="stage" type="checkbox" checked value="PUNCHOUT"> Punchout (2d)</label><br>
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="STONE_INSTALL">
+          Stone Installation (3d)
+        </label>
+
+        <label class="stage-item">
+          <input class="stage" type="checkbox" checked value="PUNCHOUT">
+          Punchout (2d)
+        </label>
+
+      </div>
 
       <br>
 
@@ -318,22 +330,38 @@ function openProjectModal() {
 
     </div>
 
-    <!-- ========================================= -->
+    <!-- ===================== -->
     <!-- COLUMN 2 -->
-    <!-- ========================================= -->
+    <!-- ===================== -->
     <div>
 
       <h3>Resources & Parameters</h3>
 
-      <div id="dynamic-panel">
+      <!-- AHORA MATERIAL VA AQUÍ -->
+      <div style="margin-bottom:15px;">
+        <label style="display:block; margin-bottom:6px;">Stone Material</label>
 
+        <select
+          id="m_material"
+          style="width:100%; padding:6px;"
+        >
+          <option>Caesarstone</option>
+          <option>Cambria</option>
+          <option>Dekton</option>
+          <option>Granite</option>
+          <option>Quartz</option>
+          <option>Quartzite</option>
+          <option>Porcelain</option>
+        </select>
       </div>
+
+      <div id="dynamic-panel"></div>
 
     </div>
 
-    <!-- ========================================= -->
+    <!-- ===================== -->
     <!-- COLUMN 3 -->
-    <!-- ========================================= -->
+    <!-- ===================== -->
     <div>
 
       <h3>Simulation</h3>
@@ -345,6 +373,25 @@ function openProjectModal() {
     </div>
 
   </div>
+
+  <style>
+    .stage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stage-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .stage-item input {
+      margin: 0;
+    }
+  </style>
   `;
 
   renderDynamicPanel();
@@ -355,18 +402,15 @@ function openProjectModal() {
       .forEach(el => {
 
         el.addEventListener("change", () => {
-
           renderDynamicPanel();
-
           calculateSimulation();
-
         });
 
       });
 
   }, 100);
-
 }
+
 function openCreateForm() {
   openProjectModal();
 }
