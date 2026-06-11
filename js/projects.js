@@ -468,6 +468,18 @@ function renderDynamicPanel() {
           <option value="laminated">Laminated</option>
         </select>
 
+        <!-- FIX: MATERIAL FIELD CORRECTLY BOUND TO STONE -->
+        <select id="m_stone_material">
+          <option value="">Select material</option>
+          <option value="Caesarstone">Caesarstone</option>
+          <option value="Cambria">Cambria</option>
+          <option value="Dekton">Dekton</option>
+          <option value="Granite">Granite</option>
+          <option value="Quartz">Quartz</option>
+          <option value="Quartzite">Quartzite</option>
+          <option value="Porcelain">Porcelain</option>
+        </select>
+
         <input id="m_stone_ft2" type="number" placeholder="Sqft (Stone Panels)">
         <input id="m_stone_edge_ft" type="number" placeholder="Edge Linear Ft">
         <input id="m_stone_cutouts" type="number" placeholder="Cutouts">
@@ -540,7 +552,18 @@ function renderDynamicPanel() {
     `;
   }
 
+  /**********************
+   * 🧹 CLEAN RENDER
+   **********************/
   panel.innerHTML = html;
+
+  /**********************
+   * 🧼 RESET STONE MATERIAL IF STONE IS OFF
+   **********************/
+  if (!selected.includes("STONE")) {
+    const material = document.getElementById("m_stone_material");
+    if (material) material.value = "";
+  }
 }
 
 /****************************************************
