@@ -153,12 +153,11 @@ export function renderScheduleView() {
 import { createProject } from "./api.js";
 
 async function submitProject() {
-    
-  ServiceType: selectedServices,
-      const selectedServices = [...document.querySelectorAll(".svc:checked")]
-  .map(el => el.value);
-  
+
   try {
+
+    const selectedServices = [...document.querySelectorAll(".svc:checked")]
+      .map(el => el.value);
 
     const customer = document.getElementById("m_customer").value?.trim();
 
@@ -169,35 +168,21 @@ async function submitProject() {
 
     const project = {
       ProjectID: "PRJ-" + Date.now(),
-
       Customer: customer,
-
       Material: document.getElementById("m_material").value,
-
       Ft2: Number(document.getElementById("m_ft2").value) || 0,
-
       Pieces: Number(document.getElementById("m_pieces").value) || 0,
-
       Complexity: Number(document.getElementById("m_level").value) || 1,
-
       EdgeType: document.getElementById("m_edge_type").value,
-
       EdgeLF: Number(document.getElementById("m_edge_ft").value) || 0,
-
       Cutouts: Number(document.getElementById("m_cutouts").value) || 0,
-
       Slabs: Number(document.getElementById("m_slabs").value) || 0,
 
       WorkflowTemplate: "DEFAULT",
-
-      ServiceType: typeof detectServiceType === "function"
-        ? detectServiceType()
-        : "STONE",
+      ServiceType: selectedServices.length ? selectedServices : ["STONE"],
 
       Status: "NEW",
-
       CreatedDate: new Date().toISOString(),
-
       CreatedBy: "UI"
     };
 
@@ -205,22 +190,16 @@ async function submitProject() {
 
     const result = await createProject(project);
 
-    console.log("CREATE PROJECT RESULT:", result);
-
     if (result?.status !== "OK") {
-
       alert(result?.message || "Error creating project");
       return;
     }
 
     await renderProjects();
-
     closeModal();
 
   } catch (err) {
-
-    console.error("SUBMIT PROJECT ERROR:", err);
-
+    console.error(err);
     alert("Error creating project: " + err.message);
   }
 }
@@ -371,34 +350,36 @@ function renderDynamicPanel() {
    **********************/
   if (selected.includes("STONE")) {
 
-   html += `
-  <h3>🪨 Stone Production</h3>
+    html += `
+      <div class="module">
+        <h3>🪨 Stone Production</h3>
 
-  <select id="m_thickness">
-    <option value="6mm">6mm</option>
-    <option value="8mm">8mm</option>
-    <option value="12mm">12mm</option>
-    <option value="2cm">2cm</option>
-    <option value="3cm">3cm</option>
-  </select>
+        <select id="m_stone_thickness">
+          <option value="6mm">6mm</option>
+          <option value="8mm">8mm</option>
+          <option value="12mm">12mm</option>
+          <option value="2cm">2cm</option>
+          <option value="3cm">3cm</option>
+        </select>
 
-  <select id="m_resource">
-    <option value="BRETON">Breton CNC</option>
-    <option value="WATERJET">Waterjet</option>
-  </select>
+        <select id="m_stone_resource">
+          <option value="BRETON">Breton CNC</option>
+          <option value="WATERJET">Waterjet</option>
+        </select>
 
-  <select id="m_edge_type">
-    <option value="simple">Simple</option>
-    <option value="bullnose">Bullnose</option>
-    <option value="ogee">Ogee</option>
-    <option value="laminated">Laminated</option>
-  </select>
+        <select id="m_stone_edge_type">
+          <option value="simple">Simple</option>
+          <option value="bullnose">Bullnose</option>
+          <option value="ogee">Ogee</option>
+          <option value="laminated">Laminated</option>
+        </select>
 
-  <input id="m_ft2" type="number" placeholder="Sqft (Panels)">
-  <input id="m_edge_ft" type="number" placeholder="Edge Linear Ft">
-  <input id="m_cutouts" type="number" placeholder="Cutouts">
-  <input id="m_slabs" type="number" placeholder="Slabs">
-`;
+        <input id="m_stone_ft2" type="number" placeholder="Sqft (Stone Panels)">
+        <input id="m_stone_edge_ft" type="number" placeholder="Edge Linear Ft">
+        <input id="m_stone_cutouts" type="number" placeholder="Cutouts">
+        <input id="m_stone_slabs" type="number" placeholder="Slabs">
+      </div>
+    `;
   }
 
   /**********************
@@ -406,61 +387,63 @@ function renderDynamicPanel() {
    **********************/
   if (selected.includes("CARPENTRY")) {
 
-  html += `
-  <h3>🪵 Carpentry Production</h3>
+    html += `
+      <div class="module">
+        <h3>🪵 Carpentry Production</h3>
 
-  <input id="m_panels" type="number" placeholder="Panels (CNC)">
+        <input id="m_carpentry_panels" type="number" placeholder="Panels (CNC)">
 
-  <select id="m_cabinets">
-    <option value="0">0 Cabinets</option>
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="5">5+</option>
-  </select>
+        <select id="m_carpentry_cabinets">
+          <option value="0">0 Cabinets</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="5">5+</option>
+        </select>
 
-  <select id="m_drawers">
-    <option value="0">0 Drawers</option>
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="5">5+</option>
-  </select>
+        <select id="m_carpentry_drawers">
+          <option value="0">0 Drawers</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="5">5+</option>
+        </select>
 
-  <select id="m_pantry">
-    <option value="0">No Pantry</option>
-    <option value="1">1 Pantry</option>
-    <option value="2">2+</option>
-  </select>
+        <select id="m_carpentry_pantry">
+          <option value="0">No Pantry</option>
+          <option value="1">1</option>
+          <option value="2">2+</option>
+        </select>
 
-  <select id="m_trashcan">
-    <option value="0">No Trashcan</option>
-    <option value="1">1</option>
-    <option value="2">2+</option>
-  </select>
+        <select id="m_carpentry_trashcan">
+          <option value="0">No Trashcan</option>
+          <option value="1">1</option>
+          <option value="2">2+</option>
+        </select>
 
-  <select id="m_lazy">
-    <option value="0">None</option>
-    <option value="1">Lazy Susan</option>
-  </select>
+        <select id="m_carpentry_lazy">
+          <option value="0">None</option>
+          <option value="1">Lazy Susan</option>
+        </select>
 
-  <select id="m_lemans">
-    <option value="0">None</option>
-    <option value="1">LeMans II</option>
-  </select>
+        <select id="m_carpentry_lemans">
+          <option value="0">None</option>
+          <option value="1">LeMans II</option>
+        </select>
 
-  <select id="m_pocket_pantry">
-    <option value="0">No</option>
-    <option value="1">Yes</option>
-  </select>
+        <select id="m_carpentry_pocket_pantry">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
 
-  <select id="m_pocket_cabinet">
-    <option value="0">No</option>
-    <option value="1">Yes</option>
-  </select>
+        <select id="m_carpentry_pocket_cabinet">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
 
-  <input id="m_edge_ft_carp" type="number" placeholder="Edge Banding LF">
-`;
+        <input id="m_carpentry_edge_ft" type="number" placeholder="Edge Banding LF">
+      </div>
+    `;
   }
 
   panel.innerHTML = html;
@@ -488,24 +471,27 @@ function calculateSimulation() {
    **********************/
   if (selected.includes("STONE")) {
 
-    const thickness = document.getElementById("m_thickness")?.value || "8mm";
+    const thickness =
+      document.getElementById("m_stone_thickness")?.value || "8mm";
 
-    const factor = TIME_RATES.STONE.thicknessFactor[thickness];
+    const factor = TIME_RATES.STONE.thicknessFactor[thickness] || 1;
 
-    const panels = Number(document.getElementById("m_ft2")?.value || 0);
-    const edgeFt = Number(document.getElementById("m_edge_ft")?.value || 0);
-    const cutouts = Number(document.getElementById("m_cutouts")?.value || 0);
-    const slabs = Number(document.getElementById("m_slabs")?.value || 0);
+    const panels = safeNumber("m_stone_ft2");
+    const edgeFt = safeNumber("m_stone_edge_ft");
+    const cutouts = safeNumber("m_stone_cutouts");
+    const slabs = safeNumber("m_stone_slabs");
 
     const cnc = panels * TIME_RATES.STONE.cncCut * factor;
     const edge = edgeFt * TIME_RATES.STONE.edge * factor;
     const cut = panels * TIME_RATES.STONE.panelCut * factor;
 
-    total += cnc + edge + cut + (cutouts * 2) + (slabs * 3);
+    const extras = (cutouts * 2) + (slabs * 3);
+
+    total += cnc + edge + cut + extras;
 
     breakdown.push(`🪨 CNC: ${cnc.toFixed(1)} min`);
     breakdown.push(`Edge: ${edge.toFixed(1)} min`);
-    breakdown.push(`Cut: ${cut.toFixed(1)} min`);
+    breakdown.push(`Panel Cut: ${cut.toFixed(1)} min`);
   }
 
   /**********************
@@ -513,46 +499,51 @@ function calculateSimulation() {
    **********************/
   if (selected.includes("CARPENTRY")) {
 
-    const p = {
-      panels: Number(document.getElementById("m_panels")?.value || 0),
-      cabinets: Number(document.getElementById("m_cabinets")?.value || 0),
-      drawers: Number(document.getElementById("m_drawers")?.value || 0),
-      pantry: Number(document.getElementById("m_pantry")?.value || 0),
-      trashcan: Number(document.getElementById("m_trashcan")?.value || 0),
-      lazy: Number(document.getElementById("m_lazy")?.value || 0),
-      lemans: Number(document.getElementById("m_lemans")?.value || 0),
-      pocketP: Number(document.getElementById("m_pocket_pantry")?.value || 0),
-      pocketC: Number(document.getElementById("m_pocket_cabinet")?.value || 0),
-      edge: Number(document.getElementById("m_edge_ft_carp")?.value || 0)
-    };
+    const panels = safeNumber("m_carpentry_panels");
+    const cabinets = safeNumber("m_carpentry_cabinets");
+    const drawers = safeNumber("m_carpentry_drawers");
+    const pantry = safeNumber("m_carpentry_pantry");
+    const trashcan = safeNumber("m_carpentry_trashcan");
+    const lazy = safeNumber("m_carpentry_lazy");
+    const lemans = safeNumber("m_carpentry_lemans");
+    const pocketP = safeNumber("m_carpentry_pocket_pantry");
+    const pocketC = safeNumber("m_carpentry_pocket_cabinet");
+    const edge = safeNumber("m_carpentry_edge_ft");
 
     const t = TIME_RATES.CARPENTRY;
 
-    const cnc = p.panels * t.cncCut;
-    const edge = p.edge * t.edgeBand;
-    const cabinets = p.cabinets * t.cabinet;
-    const drawers = p.drawers * t.drawer;
-    const pantry = p.pantry * t.pantry;
-    const trash = p.trashcan * t.trashcan;
-    const lazy = p.lazy * t.lazySusan;
-    const lemans = p.lemans * t.lemans;
-    const pp = p.pocketP * t.pocketPantry;
-    const pc = p.pocketC * t.pocketCabinet;
+    const cnc = panels * t.cncCut;
+    const edgeTime = edge * t.edgeBand;
+    const cabinetsTime = cabinets * t.cabinet;
+    const drawersTime = drawers * t.drawer;
+    const pantryTime = pantry * t.pantry;
+    const trashTime = trashcan * t.trashcan;
+    const lazyTime = lazy * t.lazySusan;
+    const lemansTime = lemans * t.lemans;
+    const ppTime = pocketP * t.pocketPantry;
+    const pcTime = pocketC * t.pocketCabinet;
 
-    total += cnc + edge + cabinets + drawers + pantry + trash + lazy + lemans + pp + pc;
+    const carpentryTotal =
+      cnc + edgeTime + cabinetsTime + drawersTime +
+      pantryTime + trashTime + lazyTime + lemansTime +
+      ppTime + pcTime;
+
+    total += carpentryTotal;
 
     breakdown.push(`🪵 CNC: ${cnc.toFixed(1)} min`);
-    breakdown.push(`Edge: ${edge.toFixed(1)} min`);
-    breakdown.push(`Cabinets: ${cabinets.toFixed(1)} min`);
+    breakdown.push(`Edge: ${edgeTime.toFixed(1)} min`);
+    breakdown.push(`Cabinets: ${cabinetsTime.toFixed(1)} min`);
+    breakdown.push(`Drawers: ${drawersTime.toFixed(1)} min`);
   }
 
-  const html = `
+  /**********************
+   * OUTPUT
+   **********************/
+  document.getElementById("sim-result").innerHTML = `
     <p><b>Total Time:</b> ${(total / 60).toFixed(2)} hrs</p>
     <hr>
     ${breakdown.map(b => `<p>${b}</p>`).join("")}
   `;
-
-  document.getElementById("sim-result").innerHTML = html;
 }
 
 import { generateSchedule } from "./scheduler.js";
