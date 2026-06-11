@@ -96,9 +96,11 @@ async function deleteProject(id) {
 /****************************************************
  * ➕ CREATE PROJECT MODAL
  ****************************************************/
-function openCreateForm() {
+import { EventBus } from "./eventBus.js";
+
+EventBus.on("OPEN_CREATE_PROJECT", () => {
   openProjectModal();
-}
+});
 
 /****************************************************
  * 📊 SCHEDULE VIEW
@@ -575,8 +577,7 @@ window.openGantt = openGantt;
 /****************************************************
  * 🌐 GLOBAL EXPORTS (IMPORTANT FOR HTML ONCLICK)
  ****************************************************/
-window.renderProjects = renderProjects;
-window.openCreateForm = openCreateForm;
+window.renderProjects = renderProjects
 window.pauseProject = pauseProject;
 window.deleteProject = deleteProject;
 window.submitProject = submitProject;
