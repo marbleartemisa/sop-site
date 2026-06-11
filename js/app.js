@@ -1,6 +1,7 @@
 import { STATE } from "./state.js";
 import { renderProjects } from "./projects.js";
 import { getProjects, fetchSchedule } from "./api.js";
+import { EventBus } from "./eventBus.js";
 
 /****************************************************
  * 🚀 APP CORE
@@ -21,33 +22,52 @@ export async function init() {
 
   await renderProjects();
 
+  registerEvents();
+
   console.log("✅ ERP READY");
 }
 
 /****************************************************
- * LOAD DATA FROM BACKEND (SOURCE OF TRUTH)
+ * LOAD DATA FROM BACKEND
  ****************************************************/
 async function loadInitialData() {
 
   console.log("📡 Loading backend data...");
 
-  const projects = await getProjects();
-  STATE.projects = projects || [];
+  STATE.projects = await getProjects() || [];
+  STATE.schedule = await fetchSchedule() || [];
 
-  const schedule = await fetchSchedule();
-  STATE.schedule = schedule || [];
-
-  console.log("📦 Projects loaded:", STATE.projects.length);
-  console.log("📅 Schedule loaded:", STATE.schedule.length);
+  console.log("📦 Projects:", STATE.projects.length);
+  console.log("📅 Schedule:", STATE.schedule.length);
 }
 
 /****************************************************
- * GLOBAL INIT (HTML ENTRY POINT)
+ * EVENT BUS REGISTRATION
+ ****************************************************/
+function registerEvents() {
+
+  EventBus.on("OPEN_CREATE_PROJECT", () => {
+    import("./projects.js").then(m => {
+      m.openProjectModal();
+    });
+  });
+
+  EventBus.on("REFRESH_PROJECTS", async () => {
+    await renderProjects();
+  });
+
+  EventBus.on("RUN_SCHEDULER", async () => {
+    console.log("🧠 running scheduler...");
+  });
+}
+
+/****************************************************
+ * GLOBAL INIT ENTRY
  ****************************************************/
 window.initERP = init;
 
 /****************************************************
- * NAVIGATION SIMPLE
+ * NAVIGATION
  ****************************************************/
 window.showView = async function(view) {
 
@@ -60,10 +80,7 @@ window.showView = async function(view) {
       break;
 
     case "schedule":
-      console.log("Schedule view (connect UI here)");
+      console.log("Schedule view TODO");
       break;
-
-    default:
-      console.log("View not implemented:", view);
   }
 };
