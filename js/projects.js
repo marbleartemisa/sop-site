@@ -2,6 +2,8 @@ import { STATE } from "./state.js";
 import { getProjects, post } from "./api.js";
 import { formatDate } from "../utils/schedule.js";
 import { TIME_RATES } from "./timeEngine.js";
+import { generateSchedule } from "./scheduler.js";
+
 
 /****************************************************
  * 📦 PROJECTS VIEW (MAIN PANEL)
@@ -220,6 +222,20 @@ function safeNumber(id) {
   return Number(document.getElementById(id)?.value || 0);
 }
 
+function attachSimulationListeners() {
+
+  document
+    .querySelectorAll(
+      "#dynamic-panel input, #dynamic-panel select"
+    )
+    .forEach(el => {
+
+      el.addEventListener("input", calculateSimulation);
+      el.addEventListener("change", calculateSimulation);
+
+    });
+
+}
 /**************************************************** 
 * 🪟 MODAL 
 ****************************************************/
@@ -238,7 +254,7 @@ function openProjectModal() {
           height:85vh;
           overflow:auto;
           display:grid;
-          grid-template-columns: 340px 1fr 340px;
+          grid-template-columns: 24% 40% 36%;
           gap:20px;
           font-family: Arial;
        ">
@@ -338,7 +354,14 @@ function openProjectModal() {
 
       <h3>Resources & Parameters</h3>
 
-      <div id="dynamic-panel"></div>
+        <div>
+          id="dynamic-panel"
+          style="
+            max-height:70vh;
+            overflow:auto;
+            padding-right:10px;
+          "
+        </div>
 
     </div>
 
@@ -389,25 +412,64 @@ function openProjectModal() {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .module {
+  margin-bottom:20px;
+}
+
+.module h3{
+  margin-bottom:10px;
+}
+
+.module-grid{
+  display:grid;
+  grid-template-columns: 140px 120px;
+  gap:8px 12px;
+  align-items:center;
+}
+
+.sim-module{
+  margin-bottom:16px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;
+  background:rgba(255,255,255,.03);
+}
+
+.sim-module h4{
+  margin:0 0 10px 0;
+}
+
+.sim-module p{
+  margin:4px 0;
+}
+
+.sim-summary{
+  margin-bottom:15px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.15);
+}
 </style>
   `;
 
   renderDynamicPanel();
   calculateSimulation();
-  setTimeout(() => {
+  attachSimulationListeners();
+document.querySelectorAll(".stage")
+  .forEach(el => {
 
-    document.querySelectorAll(".stage")
-      .forEach(el => {
+    el.addEventListener("change", () => {
 
-        el.addEventListener("change", () => {
-          renderDynamicPanel();
-          calculateSimulation();
-        });
+      renderDynamicPanel();
+      calculateSimulation();
+      attachSimulationListeners();
 
-      });
+    });
+
+  });
 
   }, 100);
 }
+
 
 function openCreateForm() {
   openProjectModal();
@@ -468,8 +530,14 @@ function renderDynamicPanel() {
 
         <input id="m_stone_ft2" type="number" placeholder="Sqft (Stone Panels)">
         <input id="m_stone_edge_ft" type="number" placeholder="Edge Linear Ft">
-        <input id="m_stone_cutouts" type="number" placeholder="Cutouts">
-        <input id="m_stone_slabs" type="number" placeholder="Slabs">
+         <div class="module-grid">
+        
+          <label>Cutouts</label>
+          <input id="m_stone_cutouts" type="number">
+        
+          <label>Slabs</label>
+          <input id="m_stone_slabs" type="number">
+        </div>
       </div>
     `;
   }
@@ -563,10 +631,10 @@ function closeModal() {
 function calculateSimulation() {
 
   const selected = [...document.querySelectorAll(".stage:checked")]
-  .map(el => el.value);
-   
+    .map(el => el.value);
 
   let total = 0;
+
   let stoneHTML = "";
   let carpentryHTML = "";
 
@@ -578,7 +646,14 @@ function calculateSimulation() {
     const thickness =
       document.getElementById("m_stone_thickness")?.value || "8mm";
 
-    const factor = TIME_RATES.STONE.thicknessFactor[thickness] || 1;
+    const material =
+      document.getElementById("m_stone_material")?.value || "N/A";
+
+    const resource =
+      document.getElementById("m_stone_resource")?.value || "BRETON";
+
+    const factor =
+      TIME_RATES.STONE.thicknessFactor[thickness] || 1;
 
     const panels = safeNumber("m_stone_ft2");
     const edgeFt = safeNumber("m_stone_edge_ft");
@@ -588,19 +663,37 @@ function calculateSimulation() {
     const cnc = panels * TIME_RATES.STONE.cncCut * factor;
     const edge = edgeFt * TIME_RATES.STONE.edge * factor;
     const cut = panels * TIME_RATES.STONE.panelCut * factor;
-
     const extras = (cutouts * 2) + (slabs * 3);
 
-    total += cnc + edge + cut + extras;
+    const stoneTotal =
+      cnc + edge + cut + extras;
 
-      stoneHTML += `
+    total += stoneTotal;
+
+    stoneHTML = `
       <div class="sim-module">
+
         <h4>🪨 Stone Production</h4>
+
+        <p><b>Machine:</b> ${resource}</p>
+        <p><b>Material:</b> ${material}</p>
+        <p><b>Thickness:</b> ${thickness}</p>
+
+        <hr>
+
         <p>CNC: ${cnc.toFixed(1)} min</p>
         <p>Edge: ${edge.toFixed(1)} min</p>
         <p>Panel Cut: ${cut.toFixed(1)} min</p>
+        <p>Cutouts: ${(cutouts * 2).toFixed(1)} min</p>
+        <p>Slabs: ${(slabs * 3).toFixed(1)} min</p>
+
+        <p>
+          <b>Total:</b>
+          ${(stoneTotal / 60).toFixed(2)} hrs
+        </p>
+
       </div>
-      `;
+    `;
   }
 
   /**********************
@@ -633,35 +726,70 @@ function calculateSimulation() {
     const pcTime = pocketC * t.pocketCabinet;
 
     const carpentryTotal =
-      cnc + edgeTime + cabinetsTime + drawersTime +
-      pantryTime + trashTime + lazyTime + lemansTime +
-      ppTime + pcTime;
+      cnc +
+      edgeTime +
+      cabinetsTime +
+      drawersTime +
+      pantryTime +
+      trashTime +
+      lazyTime +
+      lemansTime +
+      ppTime +
+      pcTime;
 
     total += carpentryTotal;
 
-      carpentryHTML += `
+    carpentryHTML = `
       <div class="sim-module">
+
         <h4>🪵 Carpentry Production</h4>
+
         <p>CNC: ${cnc.toFixed(1)} min</p>
         <p>Edge: ${edgeTime.toFixed(1)} min</p>
         <p>Cabinets: ${cabinetsTime.toFixed(1)} min</p>
         <p>Drawers: ${drawersTime.toFixed(1)} min</p>
+        <p>Pantry: ${pantryTime.toFixed(1)} min</p>
+        <p>Trashcan: ${trashTime.toFixed(1)} min</p>
+        <p>Lazy Susan: ${lazyTime.toFixed(1)} min</p>
+        <p>LeMans: ${lemansTime.toFixed(1)} min</p>
+        <p>Pocket Pantry: ${ppTime.toFixed(1)} min</p>
+        <p>Pocket Cabinet: ${pcTime.toFixed(1)} min</p>
+
+        <p>
+          <b>Total:</b>
+          ${(carpentryTotal / 60).toFixed(2)} hrs
+        </p>
+
       </div>
-      `;
+    `;
+  }
+
+  /**********************
+   * EMPTY STATE
+   **********************/
+  if (!stoneHTML && !carpentryHTML) {
+
+    document.getElementById("sim-result").innerHTML = `
+      <p>Select production modules...</p>
+    `;
+
+    return;
   }
 
   /**********************
    * OUTPUT
    **********************/
   document.getElementById("sim-result").innerHTML = `
-    <p><b>Total Time:</b> ${(total / 60).toFixed(2)} hrs</p>
-    <hr>
+    <div class="sim-summary">
+      <h3>Total Simulation</h3>
+      <p><b>Total Time:</b> ${(total / 60).toFixed(2)} hrs</p>
+    </div>
+
     ${stoneHTML}
+
     ${carpentryHTML}
   `;
 }
-
-import { generateSchedule } from "./scheduler.js";
 
 function runScheduleAll() {
   const projects = STATE.projects;
