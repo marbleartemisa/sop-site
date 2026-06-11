@@ -393,7 +393,7 @@ function openProjectModal() {
   `;
 
   renderDynamicPanel();
-
+  calculateSimulation();
   setTimeout(() => {
 
     document.querySelectorAll(".stage")
@@ -567,7 +567,8 @@ function calculateSimulation() {
    
 
   let total = 0;
-  let breakdown = [];
+  let stoneHTML = "";
+  let carpentryHTML = "";
 
   /**********************
    * 🪨 STONE CALC
@@ -592,9 +593,14 @@ function calculateSimulation() {
 
     total += cnc + edge + cut + extras;
 
-    breakdown.push(`🪨 CNC: ${cnc.toFixed(1)} min`);
-    breakdown.push(`Edge: ${edge.toFixed(1)} min`);
-    breakdown.push(`Panel Cut: ${cut.toFixed(1)} min`);
+      stoneHTML += `
+      <div class="sim-module">
+        <h4>🪨 Stone Production</h4>
+        <p>CNC: ${cnc.toFixed(1)} min</p>
+        <p>Edge: ${edge.toFixed(1)} min</p>
+        <p>Panel Cut: ${cut.toFixed(1)} min</p>
+      </div>
+      `;
   }
 
   /**********************
@@ -633,10 +639,15 @@ function calculateSimulation() {
 
     total += carpentryTotal;
 
-    breakdown.push(`🪵 CNC: ${cnc.toFixed(1)} min`);
-    breakdown.push(`Edge: ${edgeTime.toFixed(1)} min`);
-    breakdown.push(`Cabinets: ${cabinetsTime.toFixed(1)} min`);
-    breakdown.push(`Drawers: ${drawersTime.toFixed(1)} min`);
+      carpentryHTML += `
+      <div class="sim-module">
+        <h4>🪵 Carpentry Production</h4>
+        <p>CNC: ${cnc.toFixed(1)} min</p>
+        <p>Edge: ${edgeTime.toFixed(1)} min</p>
+        <p>Cabinets: ${cabinetsTime.toFixed(1)} min</p>
+        <p>Drawers: ${drawersTime.toFixed(1)} min</p>
+      </div>
+      `;
   }
 
   /**********************
@@ -645,7 +656,8 @@ function calculateSimulation() {
   document.getElementById("sim-result").innerHTML = `
     <p><b>Total Time:</b> ${(total / 60).toFixed(2)} hrs</p>
     <hr>
-    ${breakdown.map(b => `<p>${b}</p>`).join("")}
+    ${stoneHTML}
+    ${carpentryHTML}
   `;
 }
 
