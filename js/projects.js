@@ -153,7 +153,11 @@ export function renderScheduleView() {
 import { createProject } from "./api.js";
 
 async function submitProject() {
-
+    
+  ServiceType: selectedServices,
+      const selectedServices = [...document.querySelectorAll(".svc:checked")]
+  .map(el => el.value);
+  
   try {
 
     const customer = document.getElementById("m_customer").value?.trim();
@@ -230,6 +234,11 @@ function groupByProject(data) {
     return acc;
   }, {});
 }
+
+function safeNumber(id) {
+  return Number(document.getElementById(id)?.value || 0);
+}
+
 
 /****************************************************
  * 🪟 MODAL
@@ -357,52 +366,101 @@ function renderDynamicPanel() {
 
   let html = "";
 
-  // 🪨 STONE
+  /**********************
+   * 🪨 STONE MODULE
+   **********************/
   if (selected.includes("STONE")) {
 
-    html += `
-      <h3>🪨 Stone Parameters</h3>
+   html += `
+  <h3>🪨 Stone Production</h3>
 
-      <select id="m_resource">
-        <option value="BRETON">Breton</option>
-        <option value="WATERJET">Waterjet</option>
-      </select>
+  <select id="m_thickness">
+    <option value="6mm">6mm</option>
+    <option value="8mm">8mm</option>
+    <option value="12mm">12mm</option>
+    <option value="2cm">2cm</option>
+    <option value="3cm">3cm</option>
+  </select>
 
-      <input id="m_ft2" type="number" placeholder="Sqft">
-      <select id="m_thickness">
-        <option>6mm</option>
-        <option>8mm</option>
-        <option>12mm</option>
-        <option>2cm</option>
-        <option>3cm</option>
-      </select>
+  <select id="m_resource">
+    <option value="BRETON">Breton CNC</option>
+    <option value="WATERJET">Waterjet</option>
+  </select>
 
-      <select id="m_edge_type">
-        <option>simple</option>
-        <option>bullnose</option>
-        <option>ogee</option>
-      </select>
+  <select id="m_edge_type">
+    <option value="simple">Simple</option>
+    <option value="bullnose">Bullnose</option>
+    <option value="ogee">Ogee</option>
+    <option value="laminated">Laminated</option>
+  </select>
 
-      <input id="m_edge_ft" type="number" placeholder="Edge LF">
-      <input id="m_cutouts" type="number" placeholder="Cutouts">
-      <input id="m_slabs" type="number" placeholder="Slabs">
-    `;
+  <input id="m_ft2" type="number" placeholder="Sqft (Panels)">
+  <input id="m_edge_ft" type="number" placeholder="Edge Linear Ft">
+  <input id="m_cutouts" type="number" placeholder="Cutouts">
+  <input id="m_slabs" type="number" placeholder="Slabs">
+`;
   }
 
-  // 🪵 CARPENTRY
+  /**********************
+   * 🪵 CARPENTRY MODULE
+   **********************/
   if (selected.includes("CARPENTRY")) {
 
-    html += `
-      <h3>🪵 Carpentry Parameters</h3>
+  html += `
+  <h3>🪵 Carpentry Production</h3>
 
-      <input id="m_cabinets" type="number" placeholder="Cabinets">
-      <input id="m_pantry" type="number" placeholder="Pantry">
-      <input id="m_doors" type="number" placeholder="Doors">
+  <input id="m_panels" type="number" placeholder="Panels (CNC)">
 
-      <input id="m_edgebanding" type="number" placeholder="Edge Banding LF">
-      <input id="m_trashcan" type="number" placeholder="Trashcan units">
-      <input id="m_slides" type="number" placeholder="Drawer Slides">
-    `;
+  <select id="m_cabinets">
+    <option value="0">0 Cabinets</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="5">5+</option>
+  </select>
+
+  <select id="m_drawers">
+    <option value="0">0 Drawers</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="5">5+</option>
+  </select>
+
+  <select id="m_pantry">
+    <option value="0">No Pantry</option>
+    <option value="1">1 Pantry</option>
+    <option value="2">2+</option>
+  </select>
+
+  <select id="m_trashcan">
+    <option value="0">No Trashcan</option>
+    <option value="1">1</option>
+    <option value="2">2+</option>
+  </select>
+
+  <select id="m_lazy">
+    <option value="0">None</option>
+    <option value="1">Lazy Susan</option>
+  </select>
+
+  <select id="m_lemans">
+    <option value="0">None</option>
+    <option value="1">LeMans II</option>
+  </select>
+
+  <select id="m_pocket_pantry">
+    <option value="0">No</option>
+    <option value="1">Yes</option>
+  </select>
+
+  <select id="m_pocket_cabinet">
+    <option value="0">No</option>
+    <option value="1">Yes</option>
+  </select>
+
+  <input id="m_edge_ft_carp" type="number" placeholder="Edge Banding LF">
+`;
   }
 
   panel.innerHTML = html;
@@ -415,47 +473,86 @@ function closeModal() {
   document.getElementById("modal-container").innerHTML = "";
 }
 
+import { TIME_RATES } from "./timeEngine.js";
+
 function calculateSimulation() {
 
-  const p = {
-    ft2: Number(document.getElementById("m_ft2")?.value || 0),
-    pieces: Number(document.getElementById("m_pieces")?.value || 0),
-    level: Number(document.getElementById("m_level")?.value || 1),
-    edgeType: document.getElementById("m_edge_type")?.value,
-    edgeFt: Number(document.getElementById("m_edge_ft")?.value || 0),
-    cutouts: Number(document.getElementById("m_cutouts")?.value || 0),
-    slabs: Number(document.getElementById("m_slabs")?.value || 0)
-  };
+  const selected = [...document.querySelectorAll(".svc:checked")]
+    .map(el => el.value);
 
-  const levelFactor = { 1: 1.0, 2: 1.3, 3: 1.7 }[p.level] || 1;
+  let total = 0;
+  let breakdown = [];
 
-  const edgeFactor = {
-    simple: 1.0,
-    45: 1.2,
-    laminated: 1.3,
-    bullnose: 1.8,
-    ogee: 1.8
-  }[p.edgeType] || 1;
+  /**********************
+   * 🪨 STONE CALC
+   **********************/
+  if (selected.includes("STONE")) {
 
-  const cut = p.ft2 * 0.08;
-  const fab = p.pieces * 0.5;
-  const edge = p.edgeFt * 0.15 * edgeFactor;
-  const cutout = p.cutouts * 0.6;
-  const slabs = p.slabs * 0.4;
+    const thickness = document.getElementById("m_thickness")?.value || "8mm";
 
-  const total = (cut + fab + edge + cutout + slabs) * levelFactor;
+    const factor = TIME_RATES.STONE.thicknessFactor[thickness];
+
+    const panels = Number(document.getElementById("m_ft2")?.value || 0);
+    const edgeFt = Number(document.getElementById("m_edge_ft")?.value || 0);
+    const cutouts = Number(document.getElementById("m_cutouts")?.value || 0);
+    const slabs = Number(document.getElementById("m_slabs")?.value || 0);
+
+    const cnc = panels * TIME_RATES.STONE.cncCut * factor;
+    const edge = edgeFt * TIME_RATES.STONE.edge * factor;
+    const cut = panels * TIME_RATES.STONE.panelCut * factor;
+
+    total += cnc + edge + cut + (cutouts * 2) + (slabs * 3);
+
+    breakdown.push(`🪨 CNC: ${cnc.toFixed(1)} min`);
+    breakdown.push(`Edge: ${edge.toFixed(1)} min`);
+    breakdown.push(`Cut: ${cut.toFixed(1)} min`);
+  }
+
+  /**********************
+   * 🪵 CARPENTRY CALC
+   **********************/
+  if (selected.includes("CARPENTRY")) {
+
+    const p = {
+      panels: Number(document.getElementById("m_panels")?.value || 0),
+      cabinets: Number(document.getElementById("m_cabinets")?.value || 0),
+      drawers: Number(document.getElementById("m_drawers")?.value || 0),
+      pantry: Number(document.getElementById("m_pantry")?.value || 0),
+      trashcan: Number(document.getElementById("m_trashcan")?.value || 0),
+      lazy: Number(document.getElementById("m_lazy")?.value || 0),
+      lemans: Number(document.getElementById("m_lemans")?.value || 0),
+      pocketP: Number(document.getElementById("m_pocket_pantry")?.value || 0),
+      pocketC: Number(document.getElementById("m_pocket_cabinet")?.value || 0),
+      edge: Number(document.getElementById("m_edge_ft_carp")?.value || 0)
+    };
+
+    const t = TIME_RATES.CARPENTRY;
+
+    const cnc = p.panels * t.cncCut;
+    const edge = p.edge * t.edgeBand;
+    const cabinets = p.cabinets * t.cabinet;
+    const drawers = p.drawers * t.drawer;
+    const pantry = p.pantry * t.pantry;
+    const trash = p.trashcan * t.trashcan;
+    const lazy = p.lazy * t.lazySusan;
+    const lemans = p.lemans * t.lemans;
+    const pp = p.pocketP * t.pocketPantry;
+    const pc = p.pocketC * t.pocketCabinet;
+
+    total += cnc + edge + cabinets + drawers + pantry + trash + lazy + lemans + pp + pc;
+
+    breakdown.push(`🪵 CNC: ${cnc.toFixed(1)} min`);
+    breakdown.push(`Edge: ${edge.toFixed(1)} min`);
+    breakdown.push(`Cabinets: ${cabinets.toFixed(1)} min`);
+  }
 
   const html = `
-    <p><b>Total Hours:</b> ${total.toFixed(2)}</p>
-    <p>Cut: ${cut.toFixed(2)}</p>
-    <p>Fabrication: ${fab.toFixed(2)}</p>
-    <p>Edge: ${edge.toFixed(2)}</p>
-    <p>Cutouts: ${cutout.toFixed(2)}</p>
-    <p>Slabs: ${slabs.toFixed(2)}</p>
+    <p><b>Total Time:</b> ${(total / 60).toFixed(2)} hrs</p>
+    <hr>
+    ${breakdown.map(b => `<p>${b}</p>`).join("")}
   `;
 
-  const el = document.getElementById("sim-result");
-  if (el) el.innerHTML = html;
+  document.getElementById("sim-result").innerHTML = html;
 }
 
 import { generateSchedule } from "./scheduler.js";
