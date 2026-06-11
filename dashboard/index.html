@@ -4,68 +4,38 @@
   <meta charset="UTF-8">
   <title>Artemisa ERP - Production Control Center</title>
 
-  <!-- ================= CORE UI (GLOBAL DESIGN SYSTEM) ================= -->
   <link rel="stylesheet" href="/sop-site/core/ui-core.css">
-
-  <!-- ================= DASHBOARD LAYOUT ================= -->
   <link rel="stylesheet" href="/sop-site/css/dashboard.css">
 
-  <!-- ICONS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
 
-<!-- =========================================================
- NAVBAR (GLOBAL SYSTEM - SOP + ERP UNIFIED)
-========================================================= -->
+<!-- ================= NAVBAR ================= -->
 <div class="navbar">
 
-  <!-- LOGO -->
   <div class="logo">
     <img src="/sop-site/assets/logo.png" alt="Artemisa Logo">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
 
-  <!-- MOBILE TOGGLE -->
   <div class="menu-toggle" onclick="toggleMenu()">
     <i class="fa-solid fa-bars"></i>
   </div>
 
-  <!-- MENU -->
   <div class="menu">
-
     <a href="/sop-site/">SOP Library</a>
-
-    <a href="/sop-site/dashboard/" class="active">
-      Production ERP
-    </a>
-
-    <a href="/sop-site/dashboard/#projects">
-      Projects
-    </a>
-
-    <a href="/sop-site/dashboard/#gantt">
-      Gantt
-    </a>
-
-    <a href="/sop-site/dashboard/#resources">
-      Resources
-    </a>
-
-  </div>
-
-  <!-- USER INFO -->
-  <div class="user-info" id="userInfo" style="display:none;">
-    <span id="userName"></span>
-    <button onclick="logout()" title="Logout">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </button>
+    <a href="/sop-site/dashboard/" class="active">Production ERP</a>
+    <a href="/sop-site/dashboard/#projects">Projects</a>
+    <a href="/sop-site/dashboard/#gantt">Gantt</a>
+    <a href="/sop-site/dashboard/#resources">Resources</a>
   </div>
 
 </div>
 
-  <div class="app">
+<div class="app">
+
   <aside class="sidebar">
     <div class="logo">⚙️ SOP ERP</div>
 
@@ -78,23 +48,22 @@
   </aside>
 
   <main class="main">
+
     <header class="topbar">
       <h1>Production Control Center</h1>
 
-        <button class="primary" onclick="openCreateForm()">
-          + Create Project
-        </button>
+      <!-- ✅ FIX PRINCIPAL -->
+      <button class="primary" onclick="openCreateForm()">
+        + Create Project
+      </button>
     </header>
 
-    <section class="content">
-      <!-- aquí tu tabla o cards -->
-    </section>
+    <section class="content"></section>
+
   </main>
 </div>
 
-<!-- =========================================================
- ERP HEADER (CONTROL CENTER)
-========================================================= -->
+<!-- ================= ERP HEADER ================= -->
 <header class="erp-header">
 
   <div class="erp-title">
@@ -105,42 +74,29 @@
   <div class="actions">
     <button onclick="refreshData()">Refresh</button>
     <button onclick="runScheduler()">Recalculate</button>
+
+    <!-- ❌ FIX: antes openNewProject -->
     <button onclick="openCreateForm()">New Project</button>
   </div>
 
 </header>
 
-<!-- =========================================================
- KPI / SUMMARY SECTION
-========================================================= -->
+<!-- ================= MAIN VIEW ================= -->
 <section id="summary" class="summary-grid"></section>
-
-<!-- =========================================================
- MAIN ERP VIEW (DYNAMIC RENDERING SYSTEM)
-========================================================= -->
 <section id="view-container"></section>
 
-<!-- =========================================================
- MODAL SYSTEM (CREATE / EDIT / DETAILS)
-========================================================= -->
+<!-- ================= MODAL ================= -->
 <div id="modal-container"></div>
 
-<!-- =========================================================
- FOOTER
-========================================================= -->
+<!-- ================= FOOTER ================= -->
 <footer class="footer">
   ARTEMISA ERP © 2026 · Production System
 </footer>
 
-<!-- =========================================================
- CORE ERP SCRIPTS (MODULAR ARCHITECTURE)
-========================================================= -->
-
+<!-- ================= CORE ================= -->
 <script src="/sop-site/core/ui-core.js"></script>
 
-<!-- INIT SYSTEM -->
 <script>
-
 document.addEventListener("DOMContentLoaded", () => {
   if (typeof initERP === "function") {
     initERP();
@@ -150,9 +106,10 @@ document.addEventListener("DOMContentLoaded", () => {
 function closeModal() {
   document.getElementById("modal-container").innerHTML = "";
 }
-
 window.closeModal = closeModal;
 </script>
+
 <script type="module" src="/sop-site/js/app.js"></script>
+
 </body>
 </html>
