@@ -4,6 +4,33 @@ const DEFAULT_STATE = {
   RESOURCES: []
 };
 
+export const EDGE_FACTORS = {
+  MITER_45: {
+    factor: 1.8,
+    label: "Miter 45° (Glue + Recut + Polish)"
+  },
+  LAMINATED: {
+    factor: 2.2,
+    label: "Laminated (Build + Recut + Polish)"
+  },
+  BULLNOSE: {
+    factor: 1.3,
+    label: "Bullnose (Diarex)"
+  },
+  HALF_BULLNOSE: {
+    factor: 1.35,
+    label: "Half Bullnose (Diarex)"
+  },
+  FULL_BULLNOSE: {
+    factor: 1.4,
+    label: "Full Bullnose (Diarex)"
+  },
+  OGEE: {
+    factor: 1.6,
+    label: "Ogee (Diarex complex)"
+  }
+};
+
 export const STATE = structuredClone(DEFAULT_STATE);
 
 let isLoaded = false;
