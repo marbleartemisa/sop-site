@@ -24,7 +24,7 @@ export function simulateResourceLoad(existingSchedule, newOps, startDate = new D
 
     if (!resources[resource]) resources[resource] = [];
 
-    const durationDays = op.time || 1;
+    const durationDays = op.totalHours / 8;
 
     const start = findNextFreeSlot(resources[resource], currentDate);
     const end = addDays(start, durationDays);
