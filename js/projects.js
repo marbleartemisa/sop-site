@@ -486,57 +486,56 @@ function renderDynamicPanel() {
    **********************/
   if (selected.includes("STONE")) {
 
-    html += `
-      <div class="module">
-        <h3>🪨 Stone Production</h3>
+html += `
+  <div class="module">
+    <div class="section-title">🪨 Stone Production</div>
 
-        <select id="m_stone_resource">
-          <option value="BRETON">Breton CNC</option>
-          <option value="COACH">COACH</option>
-        </select>
+    <select id="m_stone_resource">
+      <option value="BRETON">Breton CNC</option>
+      <option value="COACH">COACH</option>
+    </select>
 
-        <!-- FIX: MATERIAL FIELD CORRECTLY BOUND TO STONE -->
-        <select id="m_stone_material">
-          <option value="">Select material</option>
-          <option value="Caesarstone">Caesarstone</option>
-          <option value="Cambria">Cambria</option>
-          <option value="Dekton">Dekton</option>
-          <option value="Granite">Granite</option>
-          <option value="Quartz">Quartz</option>
-          <option value="Quartzite">Quartzite</option>
-          <option value="Porcelain">Porcelain</option>
-        </select>
-        
-        <select id="m_stone_thickness">
-          <option value="6mm">6mm</option>
-          <option value="8mm">8mm</option>
-          <option value="12mm">12mm</option>
-          <option value="2cm">2cm</option>
-          <option value="3cm">3cm</option>
-        </select>
+    <select id="m_stone_material">
+      <option value="">Select material</option>
+      <option value="Caesarstone">Caesarstone</option>
+      <option value="Cambria">Cambria</option>
+      <option value="Dekton">Dekton</option>
+      <option value="Granite">Granite</option>
+      <option value="Quartz">Quartz</option>
+      <option value="Quartzite">Quartzite</option>
+      <option value="Porcelain">Porcelain</option>
+    </select>
 
+    <select id="m_stone_thickness">
+      <option value="6mm">6mm</option>
+      <option value="8mm">8mm</option>
+      <option value="12mm">12mm</option>
+      <option value="2cm">2cm</option>
+      <option value="3cm">3cm</option>
+    </select>
 
-        <select id="m_stone_edge_type">
-          <option value="simple">Simple</option>
-          <option value="bullnose">Bullnose</option>
-          <option value="ogee">Ogee</option>
-          <option value="laminated">Laminated</option>
-        </select>
+    <select id="m_stone_complexity">
+      <option value="LOW">Low</option>
+      <option value="MED">Medium</option>
+      <option value="HIGH">High</option>
+    </select>
 
+    <input id="m_stone_ft2" type="number" placeholder="Sqft (Stone Panels)" />
 
+    <!-- EDGE SYSTEM -->
+    <select id="m_stone_edge_type">
+      <option value="simple">Simple</option>
+      <option value="bullnose">Bullnose</option>
+      <option value="ogee">Ogee</option>
+      <option value="laminated">Laminated</option>
+    </select>
 
-        <input id="m_stone_ft2" type="number" placeholder="Sqft (Stone Panels)">
-        <input id="m_stone_edge_ft" type="number" placeholder="Edge Linear Ft">
-         <div class="module-grid">
-        
-          <label>Cutouts</label>
-          <input id="m_stone_cutouts" type="number">
-        
-          <label>Slabs</label>
-          <input id="m_stone_slabs" type="number">
-        </div>
-      </div>
-    `;
+    <input id="m_stone_edge_ft" type="number" placeholder="Edge Linear Ft" />
+
+    <input id="m_stone_cutouts" type="number" placeholder="Cutouts" />
+    <input id="m_stone_slabs" type="number" placeholder="Slabs" />
+  </div>
+`;
   }
 
   /**********************
