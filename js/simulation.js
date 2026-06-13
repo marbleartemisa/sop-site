@@ -1,3 +1,5 @@
+import { EDGE_FACTORS } from "./state.js";
+
 export function simulateProject(p) {
 
   const levelFactor = {
@@ -6,13 +8,7 @@ export function simulateProject(p) {
     3: 1.7
   }[p.level] || 1;
 
-  const edgeFactor = {
-    simple: 1.0,
-    45: 1.2,
-    laminated: 1.3,
-    bullnose: 1.8,
-    ogee: 1.8
-  }[p.edgeType] || 1;
+  const edgeFactor = EDGE_FACTORS[p.edgeType]?.factor || 1;
 
   const cutTime = p.ft2 * 0.08;
   const fabTime = p.pieces * 0.5;
