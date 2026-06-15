@@ -4,7 +4,17 @@ import { formatDate } from "../utils/schedule.js";
 import { TIME_RATES } from "./timeEngine.js";
 import { generateSchedule } from "./scheduler.js";
 
+const STAGE_ENGINE_MAP = {
+  STONE: "STONE_PIPELINE",
+  CARPENTRY: "CARPENTRY_PIPELINE",
 
+  // futuros
+  CUTTING: "CUTTING",
+  CUTOUTS: "CUTOUTS",
+  EDGES: "EDGES",
+  POLISH: "POLISH",
+  FRAME: "FRAME"
+};
 /****************************************************
  * 📦 PROJECTS VIEW (MAIN PANEL)
  ****************************************************/
@@ -625,10 +635,24 @@ function closeModal() {
 }
 
 import { calculateProjectTime } from "./productionEngine.js";
+
 function calculateSimulation() {
 
   const selected = [...document.querySelectorAll(".stage:checked")]
     .map(el => el.value);
+
+  const USE_ENGINE = true;
+
+  let project = {
+    group: document.getElementById("m_stone_material_group")?.value || "G2",
+    ft2: safeNumber("m_stone_ft2"),
+    edgesLF: safeNumber("m_stone_edge_ft"),
+    cutouts: safeNumber("m_stone_cutouts"),
+    sinks: safeNumber("m_sink_qty"),
+    frameQty: safeNumber("m_frame_qty"),
+    machine: document.getElementById("m_stone_resource")?.value || "BRETON",
+    stages: selected
+  };
 
   let total = 0;
 
@@ -773,6 +797,72 @@ function calculateSimulation() {
     return;
   }
 
+if (USE_ENGINE) {
+
+  const selected = [...document.querySelectorAll(".stage:checked")]
+    .map(el => el.value);
+
+  const project = {
+    group: document.getElementById("m_material_group")?.value || "G2",
+    ft2: safeNumber("m_stone_ft2"),
+    edgesLF: safeNumber("m_stone_edge_ft"),
+    edgeType: document.getElementById("m_edge_type")?.value || "MITER_45",
+    cutouts: {
+      qty: safeNumber("m_stone_cutouts"),
+      type: "UNDERMOUNT"
+    },
+    sinks: safeNumber("m_sink_qty"),
+    frameQty: safeNumber("m_frame_qty"),
+    machine: document.getElementById("m_stone_resource")?.value || "BRETON",
+    stages: selected
+  };
+
+  const breakdown = calculateProjectTime(project);
+
+  let html = `
+    <div class="sim-summary">
+      <h3>🧠 ENGINE PIPELINE</h3>
+  `;
+
+  let total = 0;
+
+  // 🪨 STONE
+  if (selected.includes("STONE")) {
+
+    html += `
+      <p><b>Cutting:</b> ${breakdown.cutting.toFixed(1)} min</p>
+      <p><b>Cutouts:</b> ${breakdown.cutouts.toFixed(1)} min</p>
+      <p><b>Edges:</b> ${breakdown.edges.toFixed(1)} min</p>
+      <p><b>Polish:</b> ${breakdown.polish.toFixed(1)} min</p>
+    `;
+
+    total +=
+      breakdown.cutting +
+      breakdown.cutouts +
+      breakdown.edges +
+      breakdown.polish;
+  }
+
+  // 🪵 CARPENTRY / FRAME
+  if (selected.includes("CARPENTRY")) {
+
+    html += `
+      <p><b>Frame:</b> ${breakdown.frame.toFixed(1)} min</p>
+    `;
+
+    total += breakdown.frame;
+  }
+
+  html += `
+      <hr/>
+      <p><b>Total:</b> ${total.toFixed(1)} min</p>
+    </div>
+  `;
+
+  document.getElementById("sim-result").innerHTML = html;
+
+  return;
+}
   /**********************
    * OUTPUT
    **********************/
