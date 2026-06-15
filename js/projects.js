@@ -624,6 +624,7 @@ function closeModal() {
   document.getElementById("modal-container").innerHTML = "";
 }
 
+import { calculateProjectTime } from "./productionEngine.js";
 function calculateSimulation() {
 
   const selected = [...document.querySelectorAll(".stage:checked")]
