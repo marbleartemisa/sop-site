@@ -1,7 +1,6 @@
 import { STATE, EDGE_FACTORS } from "./state.js";
 import { getProjects, post } from "./api.js";
 import { formatDate } from "../utils/schedule.js";
-import { TIME_RATES } from "./timeEngine.js";
 import { generateSchedule } from "./scheduler.js";
 
 
@@ -688,17 +687,13 @@ function calculateSimulation() {
     const resource =
       document.getElementById("m_stone_resource")?.value || "BRETON";
 
-    const factor =
-      TIME_RATES.STONE.thicknessFactor[thickness] || 1;
+ 
 
     const panels = safeNumber("m_stone_ft2");
     const edgeFt = safeNumber("m_stone_edge_ft");
     const cutouts = safeNumber("m_stone_cutouts");
     const slabs = safeNumber("m_stone_slabs");
 
-    const cnc = panels * TIME_RATES.STONE.cncCut * factor;
-    const edge = edgeFt * TIME_RATES.STONE.edge * factor;
-    const cut = panels * TIME_RATES.STONE.panelCut * factor;
     const extras = (cutouts * 2) + (slabs * 3);
 
     const stoneTotal =
@@ -747,8 +742,6 @@ function calculateSimulation() {
     const pocketP = safeNumber("m_carpentry_pocket_pantry");
     const pocketC = safeNumber("m_carpentry_pocket_cabinet");
     const edge = safeNumber("m_carpentry_edge_ft");
-
-    const t = TIME_RATES.CARPENTRY;
 
     const cnc = panels * t.cncCut;
     const edgeTime = edge * t.edgeBand;
