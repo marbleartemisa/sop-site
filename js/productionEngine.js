@@ -48,6 +48,42 @@ export function calcFrame({ qty, group }) {
   return PRODUCTION_TIME_MATRIX.FRAME.EA[group] * qty;
 }
 
+export function calculateProjectTime(project) {
+
+  const stages = project.stages || [];
+
+  let result = {
+    cutting: 0,
+    cutouts: 0,
+    edges: 0,
+    polish: 0,
+    sink: 0,
+    frame: 0
+  };
+
+  if (stages.includes("STONE")) {
+
+    result.cutting =
+      calcCutting(project);
+
+    result.cutouts =
+      calcCutouts(project);
+
+    result.edges =
+      calcEdges(project);
+
+    result.polish =
+      calcPolish(project);
+  }
+
+  if (stages.includes("CARPENTRY")) {
+    result.frame =
+      calcFrame(project);
+  }
+
+  return result;
+}
+
 export function calculateProjectTime(input) {
   const {
     ft2,
