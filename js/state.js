@@ -93,6 +93,84 @@ export function getResources() {
   return STATE.RESOURCES;
 }
 
+export const PRODUCTION_TIME_MATRIX = {
+  CUT_CNC: {
+    LF: {
+      G1: 0.8,
+      G2: 1.2,
+      G3: 3.0,
+      G4: 1.0,
+      G5: 4.0
+    },
+    COACH: {
+      G1: 1.5,
+      G2: 2.5,
+      G3: 5.0,
+      G4: 2.0,
+      G5: 6.5
+    }
+  },
+
+  CUTOUTS: {
+    EA: {
+      UNDERMOUNT: {
+        G1: 45,
+        G2: 60,
+        G3: 120,
+        G4: 50,
+        G5: 150
+      },
+      FAUCET: {
+        G1: 5,
+        G2: 8,
+        G3: 20,
+        G4: 7,
+        G5: 15
+      }
+    }
+  },
+
+  EDGES: {
+    LF: {
+      G1: 10,
+      G2: 15,
+      G3: 30,
+      G4: 12,
+      G5: 45
+    }
+  },
+
+  SINK: {
+    EA: {
+      G1: 240,
+      G2: 300,
+      G3: 480,
+      G4: 240,
+      G5: 400
+    }
+  },
+
+  POLISH: {
+    LF: {
+      G1: 15,
+      G2: 20,
+      G3: 40,
+      G4: 15,
+      G5: 60
+    }
+  },
+
+  FRAME: {
+    EA: {
+      G1: 120,
+      G2: 120,
+      G3: 150,
+      G4: 120,
+      G5: 150
+    }
+  }
+};
+
 // ======================
 // INIT
 // ======================
