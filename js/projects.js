@@ -4,16 +4,31 @@ import { formatDate } from "../utils/schedule.js";
 import { TIME_RATES } from "./timeEngine.js";
 import { generateSchedule } from "./scheduler.js";
 
-const STAGE_ENGINE_MAP = {
-  STONE: "STONE_PIPELINE",
-  CARPENTRY: "CARPENTRY_PIPELINE",
 
-  // futuros
-  CUTTING: "CUTTING",
-  CUTOUTS: "CUTOUTS",
-  EDGES: "EDGES",
-  POLISH: "POLISH",
-  FRAME: "FRAME"
+const STAGE_CONFIG = {
+
+  STONE: {
+    CUTTING: { required: true },
+    CUTOUTS: { required: true },
+    EDGES: { required: true },
+    POLISH: { required: true },
+
+    // opcionales
+    SINK: { required: false },
+    FRAME: { required: false }
+  },
+
+  CARPENTRY: {
+    PRE_MICA: { required: false },
+    CNC: { required: true },
+    EDGEBAND: { required: true },
+    ASSEMBLY: { required: true },
+
+    // opcionales
+    POST_MICA: { required: false },
+    HARDWARE: { required: false }
+  }
+
 };
 /****************************************************
  * 📦 PROJECTS VIEW (MAIN PANEL)
