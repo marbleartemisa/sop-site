@@ -98,5 +98,7 @@ export function getResources() {
 // ======================
 loadState();
 
-// DEBUG
+
+// DEBUG GLOBAL ACCESS (solo dev)
 window.STATE = STATE;
+window.EDGE_FACTORS = EDGE_FACTORS;
