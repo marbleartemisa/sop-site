@@ -239,41 +239,56 @@ th:nth-child(6), td:nth-child(6){
   padding:20px;
   box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
-#canvas-wrapper{ position:relative; width:100%; }
-canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.2);}
 
-  .comentario {
-  position: absolute;
-  background: rgba(255,255,100,0.9);
-  border: 1px solid #ffaa00;
-  padding: 6px 8px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #000;
-  max-width: 200px;
-  word-wrap: break-word;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 4px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+#canvas-wrapper{
+    position:relative;
+    width:100%;
+}
+
+canvas{
+    display:block;
+    width:100%;
+    border-radius:8px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.2);
 }
   
-  .comentario.editable {
-    pointer-events: auto;
-    outline: 2px dashed #00aaff;
+.comentario{
+    position:absolute;
+    background:rgba(255,255,100,0.9);
+    border:1px solid #ffaa00;
+    padding:6px 8px;
+    border-radius:6px;
+
+    font-size:13px;
+    font-weight:600;
+    color:#000;
+
+    max-width:250px;
+    min-width:120px;
+    word-wrap:break-word;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:4px;
+
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+
+    cursor:move;
+    user-select:none;
+
+    z-index:100;
 }
-  .comentario{
-  cursor:move;
-  user-select:none;
+
+.comentario.editable{
+    pointer-events:auto;
+    outline:2px dashed #00aaff;
 }
 
 .comentario.dragging{
-  opacity:0.8;
-  z-index:9999;
+    opacity:0.8;
+    z-index:9999;
 }
-
 /* BOTÓN CERRAR SOP */
 #btnCerrarSOP{ 
   position:fixed; 
@@ -824,72 +839,106 @@ function activarComentario(e){
 
 function hacerArrastrable(div, comentario, idx){
 
-  let moviendo = false;
-  let offsetX = 0;
-  let offsetY = 0;
+    let moviendo = false;
+    let offsetX = 0;
+    let offsetY = 0;
 
-div.addEventListener("mousedown",(e)=>{
+    div.addEventListener("mousedown",(e)=>{
 
-    if(e.target.classList.contains("fa-xmark")){
-        return;
-    }
+        if(e.target.classList.contains("fa-xmark")){
+            return;
+        }
 
-    moviendo = true;
+        moviendo = true;
 
-    offsetX = e.clientX - div.offsetLeft;
-    offsetY = e.clientY - div.offsetTop;
+        const rect = div.getBoundingClientRect();
 
-});
+        offsetX = e.offsetX;
+        offsetY = e.offsetY;
 
-  document.addEventListener("mousemove",(e)=>{
-      console.log("MOVIENDO", moviendo);
-      if(!moviendo) return;
+        div.classList.add("dragging");
 
-      const wrapper = document.getElementById("canvas-wrapper");
+        e.preventDefault();
+        e.stopPropagation();
 
-      const wrapperRect =
-      document.getElementById("canvas-wrapper")
-              .getBoundingClientRect();
-      
-      const x =
-      e.clientX - wrapperRect.left - offsetX;
-      
-      const y =
-      e.clientY - wrapperRect.top - offsetY;
+    });
 
-      div.style.left = x + "px";
-      div.style.top = y + "px";
-  });
+    document.addEventListener("mousemove",(e)=>{
 
-  document.addEventListener("mouseup",async ()=>{
+        if(!moviendo) return;
 
-      if(!moviendo) return;
+        const wrapper =
+            document.getElementById("canvas-wrapper");
 
-      moviendo = false;
+        const wrapperRect =
+            wrapper.getBoundingClientRect();
 
-      div.classList.remove("dragging");
+        let x =
+            e.clientX -
+            wrapperRect.left -
+            offsetX;
 
-      comentario.x = parseInt(div.style.left);
-      comentario.y = parseInt(div.style.top);
+        let y =
+            e.clientY -
+            wrapperRect.top -
+            offsetY;
 
-      try{
+        // límites del viewer
+        x = Math.max(
+            0,
+            Math.min(
+                x,
+                wrapper.clientWidth - div.offsetWidth
+            )
+        );
 
-          await fetch(SHEET_API,{
-              method:"POST",
-              body:JSON.stringify({
-                  tipo:"mover",
-                  id_sop:ID_SOP,
-                  comentario_idx:idx,
-                  x:comentario.x,
-                  y:comentario.y
-              })
+        y = Math.max(
+            0,
+            Math.min(
+                y,
+                wrapper.clientHeight - div.offsetHeight
+            )
+        );
+          console.log({
+             x,
+             y,
+             offsetX,
+             offsetY
           });
+        div.style.left = x + "px";
+        div.style.top  = y + "px";
 
-      }catch(err){
-          console.error(err);
-      }
+    });
 
-  });
+    document.addEventListener("mouseup", async ()=>{
+
+        if(!moviendo) return;
+
+        moviendo = false;
+
+        div.classList.remove("dragging");
+
+        comentario.x = parseInt(div.style.left);
+        comentario.y = parseInt(div.style.top);
+
+        try{
+
+            await fetch(SHEET_API,{
+                method:"POST",
+                body:JSON.stringify({
+                    tipo:"mover",
+                    id_sop:ID_SOP,
+                    comentario_idx:idx,
+                    x:comentario.x,
+                    y:comentario.y
+                })
+            });
+
+        }catch(err){
+            console.error(err);
+        }
+
+    });
 
 }
 
