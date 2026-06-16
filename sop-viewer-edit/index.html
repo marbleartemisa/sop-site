@@ -264,6 +264,15 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
     pointer-events: auto;
     outline: 2px dashed #00aaff;
 }
+  .comentario{
+  cursor:move;
+  user-select:none;
+}
+
+.comentario.dragging{
+  opacity:0.8;
+  z-index:9999;
+}
 
 /* BOTÓN CERRAR SOP */
 #btnCerrarSOP{ 
@@ -801,7 +810,75 @@ function activarComentario(e){
     });
 }
 
+function hacerArrastrable(div, comentario, idx){
 
+  let moviendo = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  div.addEventListener("mousedown",(e)=>{
+
+      if(
+        e.target.classList.contains("fa-xmark") ||
+        e.target.tagName === "SPAN"
+      ){
+        return;
+      }
+
+      moviendo = true;
+
+      div.classList.add("dragging");
+
+      offsetX = e.clientX - div.offsetLeft;
+      offsetY = e.clientY - div.offsetTop;
+
+      e.preventDefault();
+  });
+
+  document.addEventListener("mousemove",(e)=>{
+
+      if(!moviendo) return;
+
+      const wrapper = document.getElementById("canvas-wrapper");
+
+      const x = e.clientX - offsetX;
+      const y = e.clientY - offsetY;
+
+      div.style.left = x + "px";
+      div.style.top = y + "px";
+  });
+
+  document.addEventListener("mouseup",async ()=>{
+
+      if(!moviendo) return;
+
+      moviendo = false;
+
+      div.classList.remove("dragging");
+
+      comentario.x = parseInt(div.style.left);
+      comentario.y = parseInt(div.style.top);
+
+      try{
+
+          await fetch(SHEET_API,{
+              method:"POST",
+              body:JSON.stringify({
+                  tipo:"mover",
+                  id_sop:ID_SOP,
+                  comentario_idx:idx,
+                  x:comentario.x,
+                  y:comentario.y
+              })
+          });
+
+      }catch(err){
+          console.error(err);
+      }
+
+  });
+
+}
 
 // DIBUJAR COMENTARIOS
 function dibujarComentarios(){
@@ -887,6 +964,7 @@ function dibujarComentarios(){
 
     div.appendChild(spanText);
     div.appendChild(btnClose);
+    hacerArrastrable(div, c, idx);
     wrapper.appendChild(div);
   });
 }  
