@@ -304,6 +304,30 @@ canvas{
   font-weight:bold;
   box-shadow:0 3px 8px rgba(0,0,0,0.3);
 }
+
+  #btnNuevoComentario{
+  position:fixed;
+  top:70px;
+  right:180px;
+
+  width:50px;
+  height:50px;
+
+  border:none;
+  border-radius:50%;
+
+  background:#00aaff;
+  color:white;
+
+  font-size:24px;
+  font-weight:bold;
+
+  cursor:pointer;
+
+  z-index:9999;
+
+  box-shadow:0 3px 8px rgba(0,0,0,.3);
+}
   #loader{
   display:none;
   position:fixed;
@@ -468,11 +492,21 @@ canvas{
 <!-- Canvas flotante -->
 <div id="canvas-overlay">
   <div id="sop-container">
-    <button id="btnCerrarSOP" onclick="cerrarCanvas()">Cerrar SOP</button>
+    <button id="btnCerrarSOP"
+    onclick="cerrarCanvas()">
+    Cerrar SOP
+    </button>
+    
+    <button id="btnNuevoComentario"
+    onclick="activarModoComentario()">
+    +
+    </button>
     <div id="canvas-wrapper"></div>
   </div>
-</div>
 
+
+
+  
 <!-- Modal comentarios -->
 <div id="modal">
   <div id="modal-content">
@@ -528,6 +562,7 @@ const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcT
 
 // VARIABLES
 let comentarios=[], clickX=0, clickY=0, SOP_URL="", ID_SOP="";
+let modoComentario = false;
 const USUARIO = localStorage.getItem("usuario") || "";
 const CORREO = localStorage.getItem("correo") || "";
   
@@ -728,7 +763,7 @@ async function abrirSOP(url,id){
     const canvas = await html2canvas(tempDiv,{useCORS:true, scale:1});
     canvas.id="sop-canvas";
     wrapper.innerHTML=""; wrapper.appendChild(canvas);
-    canvas.addEventListener("click", activarComentario);
+//  canvas.addEventListener("click", activarComentario);
     cargarComentariosExistentes();
   }catch(err){
     console.error(err);
@@ -740,6 +775,40 @@ async function abrirSOP(url,id){
 function cerrarCanvas(){
   document.getElementById("canvas-overlay").style.display="none";
   document.getElementById("canvas-wrapper").innerHTML="";
+}
+
+  function activarModoComentario(){
+
+    modoComentario = true;
+    alert(
+      "Haz clic en el lugar del SOP donde deseas colocar el comentario"
+    );
+    const canvas =
+      document.getElementById("sop-canvas");
+    if(canvas){
+        canvas.addEventListener(
+          "click",
+          seleccionarPosicionComentario,
+          { once:true }
+        );
+    }
+}
+
+  function seleccionarPosicionComentario(e){
+
+    modoComentario = false;
+
+    const rect = e.target.getBoundingClientRect();
+
+    clickX = e.clientX - rect.left;
+
+    clickY = e.clientY - rect.top;
+
+    document.getElementById("comentario-text").value = "";
+
+    document.getElementById("modal").style.display =
+      "flex";
+
 }
 
   // 🔹 Destacar opción de menú según URL
@@ -1019,15 +1088,12 @@ function dibujarComentarios(){
 
     
     // Botón X para eliminar
-   
     const btnClose = document.createElement("i");
     btnClose.className = "fa-solid fa-trash";
-    btnClose.title = "Eliminar comentario";
     btnClose.style.cursor = "pointer";
     btnClose.style.marginLeft = "6px";
     btnClose.style.color = "#c00";
-
-    const btnClose = document.createElement("i");
+    btnClose.title = "Eliminar comentario";
 
     btnClose.addEventListener("click", (e) => {
       e.stopPropagation(); 
