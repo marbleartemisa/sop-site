@@ -772,8 +772,13 @@ function activarComentario(e){
     btnX.style.cursor = "pointer";
     btnX.style.marginLeft = "6px";
     btnX.style.float = "right";
-    btnX.addEventListener("click", ()=>{
-        editDiv.remove();
+    btnX.addEventListener("mousedown",(e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+    
+        if(editDiv.parentNode){
+            editDiv.parentNode.removeChild(editDiv);
+        }
     });
     editDiv.appendChild(btnX);
 
@@ -783,7 +788,14 @@ function activarComentario(e){
     // Guardar cuando se pierde el foco
     editDiv.addEventListener("blur", async ()=>{
         const texto = editDiv.innerText.replace("✖","").trim();
-        if(!texto){ editDiv.remove(); return; }
+        if(!texto){
+        
+            if(editDiv.parentNode){
+                editDiv.parentNode.removeChild(editDiv);
+            }
+        
+            return;
+        }
 
         comentarios.push({x:clickX, y:clickY, comentario:texto});
         editDiv.classList.remove("editable");
@@ -841,8 +853,15 @@ function hacerArrastrable(div, comentario, idx){
 
       const wrapper = document.getElementById("canvas-wrapper");
 
-      const x = e.clientX - offsetX;
-      const y = e.clientY - offsetY;
+      const wrapperRect =
+      document.getElementById("canvas-wrapper")
+              .getBoundingClientRect();
+      
+      const x =
+      e.clientX - wrapperRect.left - offsetX;
+      
+      const y =
+      e.clientY - wrapperRect.top - offsetY;
 
       div.style.left = x + "px";
       div.style.top = y + "px";
@@ -885,7 +904,13 @@ function dibujarComentarios(){
   const wrapper = document.getElementById("canvas-wrapper");
 
   // Limpiar comentarios anteriores
-  wrapper.querySelectorAll(".comentario").forEach(el => el.remove());
+  wrapper.querySelectorAll(".comentario").forEach(el => {
+
+    if(el.parentNode){
+        el.parentNode.removeChild(el);
+    }
+
+});
 
   comentarios.forEach((c, idx) => {
     // Contenedor del comentario
