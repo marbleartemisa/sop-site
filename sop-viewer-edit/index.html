@@ -1098,19 +1098,32 @@ function dibujarComentarios(){
     btnClose.style.color = "#c00";
     btnClose.title = "Eliminar comentario";
 
-    btnClose.addEventListener("click", (e) => {
-      e.stopPropagation(); 
-      comentarios.splice(idx, 1); 
-      dibujarComentarios();      
-      fetch(SHEET_API, {
-        method: "POST",
-        body: JSON.stringify({
-          tipo: "eliminar",
-          id_sop: ID_SOP,
-          comentario_idx: idx
-        })
-      }).catch(err => console.error(err));
-    });
+btnClose.addEventListener("click", (e) => {
+
+  console.log("DELETE CLICK");
+  console.log("IDX:", idx);
+  console.log("ANTES:", comentarios.length);
+
+  e.stopPropagation();
+
+  comentarios.splice(idx,1);
+
+  console.log("DESPUES:", comentarios.length);
+
+  dibujarComentarios();
+
+  fetch(SHEET_API,{
+      method:"POST",
+      body:JSON.stringify({
+          tipo:"eliminar",
+          id_sop:ID_SOP,
+          comentario_idx:idx
+      })
+  }).catch(err=>console.error(err));
+
+});
+    
+
 
     div.appendChild(spanText);
     div.appendChild(btnEdit);
