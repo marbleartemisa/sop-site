@@ -264,15 +264,6 @@ canvas{ display:block; width:100%; border-radius:8px; box-shadow:0 4px 15px rgba
     pointer-events: auto;
     outline: 2px dashed #00aaff;
 }
-  .comentario{
-  cursor:move;
-  user-select:none;
-}
-
-.comentario.dragging{
-  opacity:0.8;
-  z-index:9999;
-}
 
 /* BOTÓN CERRAR SOP */
 #btnCerrarSOP{ 
@@ -772,13 +763,8 @@ function activarComentario(e){
     btnX.style.cursor = "pointer";
     btnX.style.marginLeft = "6px";
     btnX.style.float = "right";
-    btnX.addEventListener("mousedown",(e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-    
-        if(editDiv.parentNode){
-            editDiv.parentNode.removeChild(editDiv);
-        }
+    btnX.addEventListener("click", ()=>{
+        editDiv.remove();
     });
     editDiv.appendChild(btnX);
 
@@ -788,14 +774,7 @@ function activarComentario(e){
     // Guardar cuando se pierde el foco
     editDiv.addEventListener("blur", async ()=>{
         const texto = editDiv.innerText.replace("✖","").trim();
-        if(!texto){
-        
-            if(editDiv.parentNode){
-                editDiv.parentNode.removeChild(editDiv);
-            }
-        
-            return;
-        }
+        if(!texto){ editDiv.remove(); return; }
 
         comentarios.push({x:clickX, y:clickY, comentario:texto});
         editDiv.classList.remove("editable");
@@ -822,95 +801,14 @@ function activarComentario(e){
     });
 }
 
-function hacerArrastrable(div, comentario, idx){
 
-  let moviendo = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  div.addEventListener("mousedown",(e)=>{
-
-      if(
-        e.target.classList.contains("fa-xmark") ||
-        e.target.tagName === "SPAN"
-      ){
-        return;
-      }
-
-      moviendo = true;
-
-      div.classList.add("dragging");
-
-      offsetX = e.clientX - div.offsetLeft;
-      offsetY = e.clientY - div.offsetTop;
-
-      e.preventDefault();
-  });
-
-  document.addEventListener("mousemove",(e)=>{
-
-      if(!moviendo) return;
-
-      const wrapper = document.getElementById("canvas-wrapper");
-
-      const wrapperRect =
-      document.getElementById("canvas-wrapper")
-              .getBoundingClientRect();
-      
-      const x =
-      e.clientX - wrapperRect.left - offsetX;
-      
-      const y =
-      e.clientY - wrapperRect.top - offsetY;
-
-      div.style.left = x + "px";
-      div.style.top = y + "px";
-  });
-
-  document.addEventListener("mouseup",async ()=>{
-
-      if(!moviendo) return;
-
-      moviendo = false;
-
-      div.classList.remove("dragging");
-
-      comentario.x = parseInt(div.style.left);
-      comentario.y = parseInt(div.style.top);
-
-      try{
-
-          await fetch(SHEET_API,{
-              method:"POST",
-              body:JSON.stringify({
-                  tipo:"mover",
-                  id_sop:ID_SOP,
-                  comentario_idx:idx,
-                  x:comentario.x,
-                  y:comentario.y
-              })
-          });
-
-      }catch(err){
-          console.error(err);
-      }
-
-  });
-
-}
 
 // DIBUJAR COMENTARIOS
 function dibujarComentarios(){
   const wrapper = document.getElementById("canvas-wrapper");
 
   // Limpiar comentarios anteriores
-  wrapper.querySelectorAll(".comentario").forEach(el => {
-
-    if(el.parentNode){
-        el.parentNode.removeChild(el);
-    }
-
-});
+  wrapper.querySelectorAll(".comentario").forEach(el => el.remove());
 
   comentarios.forEach((c, idx) => {
     // Contenedor del comentario
@@ -989,10 +887,6 @@ function dibujarComentarios(){
 
     div.appendChild(spanText);
     div.appendChild(btnClose);
-    hacerArrastrable(div, c, idx);
-    div.addEventListener("mousedown",()=>{
-   console.log("CLICK EN COMENTARIO");
-      });
     wrapper.appendChild(div);
   });
 }  
