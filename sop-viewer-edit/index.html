@@ -506,12 +506,6 @@ let cacheSOP = [];
 let renderToken = 0;
 let timeout = null;
 let currentUser = null;
-let clickX = 0;
-let clickY = 0;
-let comentarios = [];
-
-let comentarioEditando = null;
-let modoComentario = "nuevo";
 
   const usuarios = [
   {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
@@ -764,135 +758,83 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // COMENTARIOS
-async function guardarComentario(){
-
-    const modal = document.getElementById("modal");
-    const texto = document.getElementById("comentario-text").value.trim();
-
-    if(!texto) return;
-
-    const x = modal.dataset.x;
-    const y = modal.dataset.y;
-
-    // =========================
-    // NUEVO COMENTARIO
-    // =========================
-    if(modoComentario === "nuevo"){
-
-        const nuevo = {
-            id: Date.now(),
-            x,
-            y,
-            comentario: texto
-        };
-
-        comentarios.push(nuevo);
-
-        try{
-            await fetch(SHEET_API, {
-                method:"POST",
-                body: JSON.stringify({
-                    tipo:"comentario",
-                    id_comentario: nuevo.id,
-                    id_sop: ID_SOP,
-                    comentario: texto,
-                    x,
-                    y,
-                    page:1
-                })
-            });
-        }catch(err){
-            console.error(err);
-        }
-
-    }
-
-    // =========================
-    // EDITAR COMENTARIO
-    // =========================
-    else if(modoComentario === "editar"){
-
-        const target = comentarios.find(c => c.id === comentarioEditando.id);
-
-        if(target){
-            target.comentario = texto;
-        }
-
-        try{
-            await fetch(SHEET_API, {
-                method:"POST",
-                body: JSON.stringify({
-                    tipo:"editar",
-                    id_comentario: comentarioEditando.id,
-                    comentario: texto,
-                    id_sop: ID_SOP
-                })
-            });
-        }catch(err){
-            console.error(err);
-        }
-    }
-
-    // =========================
-    // LIMPIEZA + RESET ESTADO
-    // =========================
-    modal.style.display = "none";
-    document.getElementById("comentario-text").value = "";
-
-    comentarioEditando = null;
-    modoComentario = "nuevo";
-
-    // 🔥 IMPORTANTE: re-render SIEMPRE
-    dibujarComentarios();
-}
-
-async function eliminarComentario(id){
-
-    // 1. eliminar de memoria primero (UI responsiva)
-    comentarios = comentarios.filter(c => c.id !== id);
-
-    // 2. re-render inmediato
-    dibujarComentarios();
-
-    // 3. sincronizar con backend
-    try{
-        await fetch(SHEET_API, {
-            method:"POST",
-            body: JSON.stringify({
-                tipo:"eliminar",
-                id_comentario: id,
-                id_sop: ID_SOP
-            })
-        });
-    }catch(err){
-        console.error("Error eliminando comentario:", err);
-    }
-}
-  
-  function openComentarioModal(x, y){
-    const modal = document.getElementById("modal");
-
-    modal.style.display = "flex";
-
-    modal.dataset.x = x;
-    modal.dataset.y = y;
-
-    document.getElementById("comentario-text").value = "";
-    modoComentario = "nuevo";
-    comentarioEditando = null;
-}
-  
 
 function activarComentario(e){
-    e.preventDefault();
-    e.stopPropagation();
-
     const rect = e.target.getBoundingClientRect();
     clickX = e.clientX - rect.left;
     clickY = e.clientY - rect.top;
 
-    // SOLO abrir modal
-    openComentarioModal(clickX, clickY);
+    // Crear un div editable
+    const wrapper = document.getElementById("canvas-wrapper");
+    const editDiv = document.createElement("div");
+    editDiv.contentEditable = "true";
+    editDiv.className = "comentario editable";
+    editDiv.style.left = clickX + "px";
+    editDiv.style.top = clickY + "px";
+    editDiv.style.pointerEvents = "auto"; // para que se pueda escribir
+    editDiv.style.background = "rgba(255,255,100,0.9)";
+    editDiv.style.border = "1px solid #ffaa00";
+    editDiv.style.padding = "6px 8px";
+    editDiv.style.borderRadius = "6px";
+    editDiv.style.maxWidth = "200px";
+    editDiv.style.wordWrap = "break-word";
+    editDiv.style.fontWeight = "600";
+    editDiv.style.color = "#000";
+    
+    // Agregar la X para eliminar
+    const btnX = document.createElement("span");
+    btnX.innerHTML = "✖";
+    btnX.style.cursor = "pointer";
+    btnX.style.marginLeft = "6px";
+    btnX.style.float = "right";
+    btnX.addEventListener("mousedown",(e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+    
+        if(editDiv.parentNode){
+            editDiv.parentNode.removeChild(editDiv);
+        }
+    });
+    editDiv.appendChild(btnX);
+
+    wrapper.appendChild(editDiv);
+    editDiv.focus();
+
+    // Guardar cuando se pierde el foco
+    editDiv.addEventListener("blur", async ()=>{
+        const texto = editDiv.innerText.replace("✖","").trim();
+        if(!texto){
+        
+            if(editDiv.parentNode){
+                editDiv.parentNode.removeChild(editDiv);
+            }
+        
+            return;
+        }
+
+        comentarios.push({x:clickX, y:clickY, comentario:texto});
+        editDiv.classList.remove("editable");
+        editDiv.innerHTML = texto + `<span style="float:right; cursor:pointer;">✖</span>`;
+        
+        // Guardar en Sheet
+        try{
+           await fetch(SHEET_API, {
+                  method:"POST",
+                  body: JSON.stringify({
+                      tipo:"comentario",
+                      id_sop: ID_SOP,
+                      usuario: currentUser ? currentUser.usuario : "Anonimo",
+                      correo: currentUser ? currentUser.correo : "",
+                      comentario: texto,
+                      x: clickX,
+                      y: clickY,
+                      page:1,
+                      url_doc: SOP_URL
+                  })
+              });
+            console.log("Comentario guardado");
+        }catch(err){ console.error(err); }
+    });
 }
 
 function hacerArrastrable(div, comentario, idx){
@@ -1000,111 +942,103 @@ function hacerArrastrable(div, comentario, idx){
 
 }
 
-  document.getElementById("btn-cancel").addEventListener("click", () => {
-
-    document.getElementById("modal").style.display = "none";
-
-    document.getElementById("comentario-text").value = "";
-
-    comentarioEditando = null;
-    modoComentario = "nuevo";
-});
-  
 // DIBUJAR COMENTARIOS
 function dibujarComentarios(){
-
   const wrapper = document.getElementById("canvas-wrapper");
 
-  // limpiar comentarios anteriores
+  // Limpiar comentarios anteriores
   wrapper.querySelectorAll(".comentario").forEach(el => {
-    el.remove();
-  });
 
-  comentarios.forEach((c) => {
+    if(el.parentNode){
+        el.parentNode.removeChild(el);
+    }
 
+});
+
+  comentarios.forEach((c, idx) => {
+    // Contenedor del comentario
     const div = document.createElement("div");
     div.className = "comentario";
     div.style.left = c.x + "px";
     div.style.top = c.y + "px";
 
-    // texto
+    // Texto del comentario
     const spanText = document.createElement("span");
     spanText.textContent = c.comentario;
 
-    // 🟢 EDITAR
+    // Evento para editar comentario
     spanText.addEventListener("click", (e) => {
-      e.stopPropagation();
-
+      e.stopPropagation(); // evita abrir un nuevo comentario
+      clickX = c.x;
+      clickY = c.y;
       const txt = document.getElementById("comentario-text");
       txt.value = c.comentario;
+      document.getElementById("modal").style.display = "flex";
 
-      const modal = document.getElementById("modal");
-      modal.style.display = "flex";
-
-      comentarioEditando = c;
-      modoComentario = "editar";
-
+      // Guardar cambios: sobreescribimos el comentario actual
       const btnSave = document.getElementById("btn-save");
-
-      // evitar duplicar listeners
-      const newBtnSave = btnSave.cloneNode(true);
-      btnSave.parentNode.replaceChild(newBtnSave, btnSave);
+      
+      // Desvincular posibles listeners anteriores
+      btnSave.replaceWith(btnSave.cloneNode(true));
+      const newBtnSave = document.getElementById("btn-save");
 
       newBtnSave.addEventListener("click", async () => {
-
         const nuevoTexto = document.getElementById("comentario-text").value.trim();
         if(!nuevoTexto) return alert("Escribe algo antes de guardar");
-
-        // actualizar en memoria por ID
-        const target = comentarios.find(x => x.id === c.id);
-        if(target){
-          target.comentario = nuevoTexto;
-        }
-
+        comentarios[idx].comentario = nuevoTexto;
         dibujarComentarios();
-
-        modal.style.display = "none";
+        document.getElementById("modal").style.display = "none";
         document.getElementById("comentario-text").value = "";
 
+        // Guardar edición en Sheet
         try{
-          await fetch(SHEET_API,{
-            method:"POST",
-            body: JSON.stringify({
-              tipo:"editar",
-              id_sop: ID_SOP,
-              id_comentario: c.id,
-              comentario: nuevoTexto,
-              usuario: currentUser ? currentUser.usuario : "Anonimo",
-              correo: currentUser ? currentUser.correo : ""
-            })
-          });
-        }catch(err){
-          console.error(err);
-        }
-
+           await fetch(SHEET_API,{
+                method:"POST",
+                body: JSON.stringify({
+                  tipo:"editar",
+                  id_sop: ID_SOP,
+                  comentario_idx: idx,
+                  comentario: nuevoTexto,
+                  usuario: currentUser ? currentUser.usuario : "Anonimo",
+                  correo: currentUser ? currentUser.correo : ""
+                })
+            });
+          console.log("Comentario editado en Sheet");
+        }catch(err){ console.error(err); }
       });
     });
 
-    // ❌ ELIMINAR (CORREGIDO)
+    
+    // Botón X para eliminar
     const btnClose = document.createElement("i");
     btnClose.className = "fa-solid fa-xmark";
     btnClose.style.cursor = "pointer";
     btnClose.style.marginLeft = "6px";
     btnClose.style.color = "#c00";
 
-  btnClose.addEventListener("click", (e) => {
-  e.stopPropagation();
-  eliminarComentario(c.id);
-  });
+    btnClose.addEventListener("click", (e) => {
+      e.stopPropagation(); 
+      comentarios.splice(idx, 1); 
+      dibujarComentarios();      
+      fetch(SHEET_API, {
+        method: "POST",
+        body: JSON.stringify({
+          tipo: "eliminar",
+          id_sop: ID_SOP,
+          comentario_idx: idx
+        })
+      }).catch(err => console.error(err));
+    });
 
     div.appendChild(spanText);
     div.appendChild(btnClose);
-
-    hacerArrastrable(div, c, comentarios.findIndex(x => x.id === c.id));
-
+    hacerArrastrable(div, c, idx);
+    div.addEventListener("mousedown",()=>{
+   console.log("CLICK EN COMENTARIO");
+      });
     wrapper.appendChild(div);
   });
-} 
+}  
   
 // CARGAR COMENTARIOS EXISTENTES
 async function cargarComentariosExistentes(){
@@ -1181,8 +1115,6 @@ function logout(){
 window.location.href = "https://marbleartemisa.github.io/sop-site/";
 }
 
-
-
 // Al cargar la página, mostrar usuario si está guardado
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -1206,3 +1138,4 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
