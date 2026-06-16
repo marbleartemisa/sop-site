@@ -1169,39 +1169,31 @@ async function guardarComentario(){
 
     if (!texto) return;
 
-    // 🔥 guardar en memoria local
     comentarios.push({
         x: clickX || 0,
         y: clickY || 0,
         comentario: texto
     });
 
-    // 🔥 cerrar modal y limpiar input
     document.getElementById("modal").style.display = "none";
     input.value = "";
 
     dibujarComentarios();
 
-    // 🔥 payload limpio
     const payload = {
         tipo: "comentario",
         id_sop: ID_SOP || "",
         usuario: currentUser?.usuario || "Anonimo",
         correo: currentUser?.correo || "",
         comentario: texto,
-
         x: clickX || 0,
         y: clickY || 0,
-
         url_doc: SOP_URL || ""
     };
 
     try {
         await fetch(SHEET_API, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
             body: JSON.stringify(payload)
         });
     } catch (err) {
