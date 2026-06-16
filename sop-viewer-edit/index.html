@@ -965,6 +965,9 @@ function dibujarComentarios(){
     div.appendChild(spanText);
     div.appendChild(btnClose);
     hacerArrastrable(div, c, idx);
+    div.addEventListener("mousedown",()=>{
+   console.log("CLICK EN COMENTARIO");
+      });
     wrapper.appendChild(div);
   });
 }  
