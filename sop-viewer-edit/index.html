@@ -506,6 +506,12 @@ let cacheSOP = [];
 let renderToken = 0;
 let timeout = null;
 let currentUser = null;
+let clickX = 0;
+let clickY = 0;
+let comentarios = [];
+
+let comentarioEditando = null;
+let modoComentario = "nuevo";
 
   const usuarios = [
   {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
@@ -758,83 +764,98 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // COMENTARIOS
+async function guardarComentario(){
+
+    const modal = document.getElementById("modal");
+    const texto = document.getElementById("comentario-text").value.trim();
+
+    if(!texto) return;
+
+    const x = modal.dataset.x;
+    const y = modal.dataset.y;
+
+    if(modoComentario === "nuevo"){
+
+        const nuevo = {
+            id: Date.now(),
+            x,
+            y,
+            comentario: texto
+        };
+
+        comentarios.push(nuevo);
+
+        await fetch(SHEET_API, {
+            method:"POST",
+            body: JSON.stringify({
+                tipo:"comentario",
+                id_comentario: nuevo.id,
+                id_sop: ID_SOP,
+                comentario: texto,
+                x,
+                y,
+                page:1
+            })
+        });
+
+    } else if(modoComentario === "editar") {
+
+        const idx = comentarios.findIndex(c => c.id === comentarioEditando.id);
+
+        if(idx !== -1){
+            comentarios[idx].comentario = texto;
+        }
+
+        await fetch(SHEET_API, {
+            method:"POST",
+            body: JSON.stringify({
+                tipo:"editar",
+                id_comentario: comentarioEditando.id,
+                comentario: texto
+            })
+        });
+    }
+
+    modal.style.display = "none";
+}
+
+  function eliminarComentario(id){
+
+    comentarios = comentarios.filter(c => c.id !== id);
+
+    fetch(SHEET_API, {
+        method:"POST",
+        body: JSON.stringify({
+            tipo:"eliminar",
+            id_comentario: id
+        })
+    });
+}
+  
+  function openComentarioModal(x, y){
+    const modal = document.getElementById("modal");
+
+    modal.style.display = "flex";
+
+    modal.dataset.x = x;
+    modal.dataset.y = y;
+
+    document.getElementById("comentario-text").value = "";
+    modoComentario = "nuevo";
+    comentarioEditando = null;
+}
+  
 
 function activarComentario(e){
+    e.preventDefault();
+    e.stopPropagation();
+
     const rect = e.target.getBoundingClientRect();
     clickX = e.clientX - rect.left;
     clickY = e.clientY - rect.top;
 
-    // Crear un div editable
-    const wrapper = document.getElementById("canvas-wrapper");
-    const editDiv = document.createElement("div");
-    editDiv.contentEditable = "true";
-    editDiv.className = "comentario editable";
-    editDiv.style.left = clickX + "px";
-    editDiv.style.top = clickY + "px";
-    editDiv.style.pointerEvents = "auto"; // para que se pueda escribir
-    editDiv.style.background = "rgba(255,255,100,0.9)";
-    editDiv.style.border = "1px solid #ffaa00";
-    editDiv.style.padding = "6px 8px";
-    editDiv.style.borderRadius = "6px";
-    editDiv.style.maxWidth = "200px";
-    editDiv.style.wordWrap = "break-word";
-    editDiv.style.fontWeight = "600";
-    editDiv.style.color = "#000";
-    
-    // Agregar la X para eliminar
-    const btnX = document.createElement("span");
-    btnX.innerHTML = "✖";
-    btnX.style.cursor = "pointer";
-    btnX.style.marginLeft = "6px";
-    btnX.style.float = "right";
-    btnX.addEventListener("mousedown",(e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-    
-        if(editDiv.parentNode){
-            editDiv.parentNode.removeChild(editDiv);
-        }
-    });
-    editDiv.appendChild(btnX);
-
-    wrapper.appendChild(editDiv);
-    editDiv.focus();
-
-    // Guardar cuando se pierde el foco
-    editDiv.addEventListener("blur", async ()=>{
-        const texto = editDiv.innerText.replace("✖","").trim();
-        if(!texto){
-        
-            if(editDiv.parentNode){
-                editDiv.parentNode.removeChild(editDiv);
-            }
-        
-            return;
-        }
-
-        comentarios.push({x:clickX, y:clickY, comentario:texto});
-        editDiv.classList.remove("editable");
-        editDiv.innerHTML = texto + `<span style="float:right; cursor:pointer;">✖</span>`;
-        
-        // Guardar en Sheet
-        try{
-           await fetch(SHEET_API, {
-                  method:"POST",
-                  body: JSON.stringify({
-                      tipo:"comentario",
-                      id_sop: ID_SOP,
-                      usuario: currentUser ? currentUser.usuario : "Anonimo",
-                      correo: currentUser ? currentUser.correo : "",
-                      comentario: texto,
-                      x: clickX,
-                      y: clickY,
-                      page:1,
-                      url_doc: SOP_URL
-                  })
-              });
-            console.log("Comentario guardado");
-        }catch(err){ console.error(err); }
-    });
+    // SOLO abrir modal
+    openComentarioModal(clickX, clickY);
 }
 
 function hacerArrastrable(div, comentario, idx){
@@ -909,6 +930,16 @@ function hacerArrastrable(div, comentario, idx){
         div.style.top  = y + "px";
 
     });
+
+  document.getElementById("btn-cancel").addEventListener("click", () => {
+
+    document.getElementById("modal").style.display = "none";
+
+    document.getElementById("comentario-text").value = "";
+
+    comentarioEditando = null;
+    modoComentario = "nuevo";
+});
 
     document.addEventListener("mouseup", async ()=>{
 
