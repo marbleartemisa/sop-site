@@ -41,7 +41,14 @@ function showSOP(){
 
   title.innerText = sop.title;
   info.innerText = sop.department;
+  viewer.style.opacity = 0;
 
+  setTimeout(()=>{
+   viewer.src = sop.url;
+   viewer.onload = ()=>{
+    viewer.style.opacity = 1;
+   };
+},300);
   viewer.src = "/sop-site/" + sop.url;
 
   counter.innerText = `${index+1} / ${sops.length}`;
