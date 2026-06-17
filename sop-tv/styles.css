@@ -33,13 +33,7 @@ body{
     padding:0 25px;
 }
 
-/* HEADER SOP */
-.tv-header{
-  background:#001f3f;
-  color:white;
-  text-align:center;
-  padding:10px;
-}
+
 
 /* NAVBAR IGUAL AMC */
 
@@ -131,16 +125,6 @@ iframe{
   height:100%;
   border:none;
   background:white;
-}
-
-/* FOOTER */
-.tv-footer{
-  background:#003366;
-  color:white;
-  display:flex;
-  justify-content:space-between;
-  padding:8px 20px;
-  font-size:14px;
 }
 
    #loginModal button{
