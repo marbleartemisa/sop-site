@@ -285,21 +285,23 @@ iframe{
       }
 
 .presentation-footer{
-
   height:45px;
-
   background:#0f172a;
-
   color:white;
-
   display:flex;
-
   justify-content:space-between;
-
   align-items:center;
-
   padding:0 20px;
-
   font-size:14px;
 }
 
+.dept-badge{
+  display:inline-block;
+  margin-top:8px;
+  padding:6px 14px;
+  border-radius:999px;
+  background:#003366;
+  color:white;
+  font-size:13px;
+  font-weight:600;
+}
