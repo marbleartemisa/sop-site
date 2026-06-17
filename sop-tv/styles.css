@@ -112,3 +112,14 @@ iframe{
   padding:8px 20px;
   font-size:14px;
 }
+
+   #loginModal button{
+        width:100%;
+        padding:10px;
+        background:#ffcc00;
+        border:none;
+        border-radius:8px;
+        font-weight:bold;
+        cursor:pointer;
+      }
+
