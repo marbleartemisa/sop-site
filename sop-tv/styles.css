@@ -250,9 +250,7 @@ iframe{
 
   color:#64748b;
 }
-
-
-      
+  
       /* ===== BANNER ===== */
       .banner{
         text-align:center;
@@ -288,4 +286,23 @@ iframe{
       .cta-btn:hover{
         transform:scale(1.05);
       }
+
+.presentation-footer{
+
+  height:45px;
+
+  background:#0f172a;
+
+  color:white;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  padding:0 20px;
+
+  font-size:14px;
+}
 
