@@ -1,64 +1,72 @@
 const CHANGE_TIME = 30000;
 
+
 let sops = [];
-let currentIndex = 0;
+let index = 0;
 
 const viewer = document.getElementById("viewer");
-const sopTitle = document.getElementById("sopTitle");
+const title = document.getElementById("sopTitle");
+const info = document.getElementById("sopInfo");
 const counter = document.getElementById("counter");
+const timer = document.getElementById("timer");
 
-async function loadIndex(){
+let countdown = TIME_PER_SOP / 1000;
 
-    try{
+async function loadSOPs(){
 
-        const response =
-            await fetch("../SOP_INDEX.json");
+  try {
 
-        sops = await response.json();
+    const res = await fetch("/sop-site/SOP_INDEX.json?v=" + Date.now());
+    sops = await res.json();
 
-        if(!sops.length){
-
-            sopTitle.textContent =
-                "No se encontraron SOPs";
-
-            return;
-        }
-
-        showCurrentSOP();
-
-        setInterval(() => {
-
-            currentIndex++;
-
-            if(currentIndex >= sops.length){
-                currentIndex = 0;
-            }
-
-            showCurrentSOP();
-
-        }, CHANGE_TIME);
-
+    if(!sops.length){
+      title.innerText = "No SOPs encontrados";
+      return;
     }
-    catch(error){
 
-        console.error(error);
+    showSOP();
 
-        sopTitle.textContent =
-            "Error cargando SOP_INDEX";
-    }
+    setInterval(nextSOP, TIME_PER_SOP);
+    setInterval(updateTimer, 1000);
+
+  } catch(err){
+    console.error(err);
+    title.innerText = "Error cargando SOP_INDEX.json";
+  }
 }
 
-function showCurrentSOP(){
+function showSOP(){
 
-    const sop = sops[currentIndex];
+  const sop = sops[index];
 
-    sopTitle.textContent =
-        sop.title;
+  title.innerText = sop.title;
+  info.innerText = sop.department;
 
-    counter.textContent =
-        `SOP ${currentIndex + 1} / ${sops.length}`;
+  viewer.src = "/sop-site/" + sop.url;
 
-    viewer.src = "../" + sop.url;
+  counter.innerText = `${index+1} / ${sops.length}`;
+
+  countdown = TIME_PER_SOP / 1000;
 }
 
-loadIndex();
+function nextSOP(){
+
+  index++;
+
+  if(index >= sops.length){
+    index = 0;
+  }
+
+  showSOP();
+}
+
+function updateTimer(){
+  countdown--;
+  timer.innerText = `Siguiente en ${countdown}s`;
+
+  if(countdown <= 0){
+    countdown = TIME_PER_SOP / 1000;
+  }
+}
+
+loadSOPs();
