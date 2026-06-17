@@ -2,22 +2,22 @@
 <html lang="es">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SOP TV - AMC</title>
+  <title>SOP TV - AMC</title>
 
-<link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
 
 <!-- NAVBAR AMC REAL -->
-
 <div class="navbar">
+
   <div class="logo">
-    <img src="/sop-site/logo.png">
+    <img src="/sop-site/logo.png" alt="AMC Logo">
     <span>ARTEMISA MARBLE & CABINETS</span>
   </div>
 
@@ -25,65 +25,65 @@
     <i class="fa-solid fa-bars"></i>
   </div>
 
-<div class="menu">
+  <div class="menu">
 
-  <a href="/sop-site/">Inicio</a>
+    <a href="/sop-site/">Inicio</a>
 
-  <!-- SOP DROPDOWN -->
-  <div class="dropdown">
-    <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
-      SOP <i class="fa-solid fa-chevron-down"></i>
-    </button>
+    <!-- SOP DROPDOWN -->
+    <div class="dropdown">
+      <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
+        SOP <i class="fa-solid fa-chevron-down"></i>
+      </button>
 
-    <div class="dropdown-content">
-      <a href="/sop-site/registrar-sop/">Registrar SOP</a>
-      <a href="/sop-site/Aportes/">Aportes SOP</a>
-      <a href="/sop-site/analisis/">Análisis SOP</a>
-      <a href="#" onclick="editSOP()">Editar SOP</a>
-      <a href="/sop-site/admin/">Admin</a>
+      <div class="dropdown-content">
+        <a href="/sop-site/registrar-sop/">Registrar SOP</a>
+        <a href="/sop-site/Aportes/">Aportes SOP</a>
+        <a href="/sop-site/analisis/">Análisis SOP</a>
+        <a href="#" onclick="editSOP()">Editar SOP</a>
+        <a href="/sop-site/admin/">Admin</a>
+      </div>
     </div>
+
+    <!-- HELPERS DROPDOWN -->
+    <div class="dropdown">
+      <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
+        Helpers <i class="fa-solid fa-chevron-down"></i>
+      </button>
+
+      <div class="dropdown-content">
+        <a href="/sop-site/hardware-seller/">List of items</a>
+        <a href="/sop-site/dashboard/">Production Schedule (Stone)</a>
+      </div>
+    </div>
+
+    <!-- ADMIN DROPDOWN -->
+    <div class="dropdown">
+      <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
+        DB-Admin <i class="fa-solid fa-chevron-down"></i>
+      </button>
+
+      <div class="dropdown-content">
+        <a href="/sop-site/hardware-admin/">Load Data</a>
+        <a href="/sop-site/admin/">Admin</a>
+      </div>
+    </div>
+
+    <a href="https://marbleartemisa.github.io/artemisa/index.html">
+      Portal Web
+    </a>
+
   </div>
 
-  <!-- HELPERS DROPDOWN -->
-  <div class="dropdown">
-    <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
-      Helpers <i class="fa-solid fa-chevron-down"></i>
-    </button>
-
-    <div class="dropdown-content">
-      <a href="/sop-site/hardware-seller/">List of items</a>
-      <a href="/sop-site/dashboard/">Production Schedule (Stone)</a>
-    </div>
-  </div>
-
-        <!-- ADMIN DROPDOWN -->
-  <div class="dropdown">
-    <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
-      DB-Admin <i class="fa-solid fa-chevron-down"></i>
-    </button>
-
-    <div class="dropdown-content">
-      <a href="/sop-site/hardware-admin/">Load Data</a>
-      <a href="/sop-site/admin/">Admin</a>
-    </div>
-  </div>
-
-  <a href="https://marbleartemisa.github.io/artemisa/index.html">
-    Portal Web
-  </a>
-
-</div>
-
-  <!-- ✅ Mover user-info fuera de menu -->
+  <!-- USER INFO -->
   <div class="user-info" id="userInfo" style="display:none;">
     <span id="userName"></span>
-    <button onclick="logout()" title="Cerrar sesión" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
+    <button onclick="logout()" title="Cerrar sesión"
+      style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">
       <i class="fa-solid fa-right-from-bracket"></i>
     </button>
   </div>
 
 </div>
-
 
 <!-- HEADER TV -->
 <div class="tv-header">
@@ -102,11 +102,7 @@
   <div id="timer">--</div>
 </div>
 
-<script src="app.js"></script>
-
-</body>
-</html>
-
+<!-- JS SOLO UNA VEZ -->
 <script src="app.js"></script>
 
 </body>
