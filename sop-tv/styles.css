@@ -1,22 +1,24 @@
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
+
 
 html,
 body{
     width:100%;
     height:100%;
     overflow:hidden;
-    font-family:Segoe UI, Arial, sans-serif;
+    font-family:'Inter', sans-serif;
 }
 
 body{
     display:flex;
     flex-direction:column;
-    background:#111;
+    background:#000;
 }
+
 
 #header{
     height:70px;
@@ -30,9 +32,51 @@ body{
     padding:0 25px;
 }
 
+/* HEADER SOP */
+.tv-header{
+  background:#001f3f;
+  color:white;
+  text-align:center;
+  padding:10px;
+}
+
+/* NAVBAR IGUAL AMC */
+.navbar{
+  background:#003366;
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 20px;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo img{
+  height:35px;
+}
+
+.menu{
+  display:flex;
+  gap:20px;
+}
+
+.menu a{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+}
+
 #sopTitle{
-    font-size:24px;
-    font-weight:700;
+  font-size:22px;
+  font-weight:700;
+}
+#sopInfo{
+  font-size:13px;
+  opacity:0.8;
 }
 
 #counter{
@@ -44,4 +88,27 @@ body{
     width:100%;
     border:none;
     background:white;
+}
+
+
+/* VIEWER */
+.tv-body{
+  height:calc(100vh - 140px);
+}
+
+iframe{
+  width:100%;
+  height:100%;
+  border:none;
+  background:white;
+}
+
+/* FOOTER */
+.tv-footer{
+  background:#003366;
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  padding:8px 20px;
+  font-size:14px;
 }
