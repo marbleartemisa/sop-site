@@ -205,31 +205,8 @@ iframe{
   transition: 0.3s;
 }
 
-@media (min-width: 901px) {
-  .dropdown:hover .dropdown-content {
-    display: flex;
-  }
-}      
-/* MOBILE */
-@media (max-width: 900px) {
 
-  .dropdown {
-    width: 100%;
-    justify-content: center;
-  }
 
-  .dropdown-content {
-    position: static;
-    width: 100%;
-    border-radius: 0;
-  }
-
-  .drop-btn {
-    width: 100%;
-    justify-content: center;
-    padding: 10px;
-  }
-}
 
       
       /* ===== BANNER ===== */
