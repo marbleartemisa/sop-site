@@ -123,3 +123,148 @@ iframe{
         cursor:pointer;
       }
 
+/* ===== DROPDOWN SIMPLE Y ESTABLE ===== */
+
+.dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+      z-index: 999999;
+}
+
+
+.drop-btn {
+  background: none;
+  border: none;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.dropdown-content{
+
+  position:absolute;
+
+  top:100%;
+  left:0;
+
+  display:none;
+  flex-direction:column;
+
+  min-width:240px;
+
+  padding:10px 0;
+
+  border-radius:12px;
+
+  background:#0f172a;
+
+  box-shadow:0 15px 40px rgba(0,0,0,0.45);
+
+  z-index:9999999;
+
+  overflow:hidden;
+}
+
+
+.dropdown-content a{
+
+  display:block;
+
+  padding:14px 18px;
+
+  color:white;
+
+  text-decoration:none;
+
+  white-space:nowrap;
+
+  position:relative;
+
+  z-index:9999999;
+}
+      
+.dropdown-content a:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.dropdown.open .dropdown-content {
+  display: flex;
+}
+
+/* ICON ROTATION */
+.dropdown.open i {
+  transform: rotate(180deg);
+  transition: 0.3s;
+}
+
+@media (min-width: 901px) {
+  .dropdown:hover .dropdown-content {
+    display: flex;
+  }
+}      
+/* MOBILE */
+@media (max-width: 900px) {
+
+  .dropdown {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dropdown-content {
+    position: static;
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .drop-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+  }
+}
+
+      
+      /* ===== BANNER ===== */
+      .banner{
+        text-align:center;
+        padding:40px 20px 20px;
+        color:white;
+      }
+      .banner{
+        position:relative;
+        z-index:1;
+      }
+      .banner h1{
+        margin:0;
+        font-size:2.2rem;
+      }
+      
+      .banner p{
+        margin:4px 0;
+        opacity:0.9;
+      }
+      
+      .cta-btn{
+        display:inline-block;
+        margin-top:15px;
+        padding:10px 25px;
+        border-radius:30px;
+        background:linear-gradient(135deg,#0072C6,#005a9e);
+        color:white;
+        text-decoration:none;
+        font-weight:bold;
+        transition:.3s;
+      }
+      
+      .cta-btn:hover{
+        transform:scale(1.05);
+      }
+
