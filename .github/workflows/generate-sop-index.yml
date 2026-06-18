@@ -58,6 +58,12 @@ jobs:
 
               url="$dir/index.html"
               department="$area"
+              
+              # Fecha de revisión (último commit del SOP)
+              revision=$(git log -1 --format="%ad" --date=format:"%Y-%m-%d" -- "$dir/index.html" 2>/dev/null)
+              
+              # fallback si no existe historial
+              [ -z "$revision" ] && revision=$(date +"%Y-%m-%d")
 
               # leer contenido HTML limpio
               content=$(cat "$dir/index.html" \
@@ -76,19 +82,21 @@ jobs:
                  --arg keywords "$keywords" \
                  --arg content "$content" \
                  --arg url "$url" \
+                 --arg revision "$revision" \
                  '
                  . += [{
-                    "title": $title,
-                    "department": $department,
-                    "keywords": $keywords,
-                    "search_text": (
-                      ($title // "") + " " +
-                      ($department // "") + " " +
-                      ($keywords // "") + " " +
-                      ($content // "")
-                    ),
-                    "url": $url
-                 }]
+                      "title": $title,
+                      "department": $department,
+                      "keywords": $keywords,
+                      "revision": $revision,
+                      "search_text": (
+                          ($title // "") + " " +
+                          ($department // "") + " " +
+                          ($keywords // "") + " " +
+                          ($content // "")
+                      ),
+                      "url": $url
+                    }]
                  ' SOP_INDEX.json > tmp.json && mv tmp.json SOP_INDEX.json
 
             done
