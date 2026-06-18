@@ -62,8 +62,16 @@ jobs:
               department="$area"
               
               # Fecha de revisión (último commit del SOP)
-              revision=$(git log -1 --format="%ad" --date=format:"%Y-%m-%d" -- "$dir/index.html" 2>/dev/null)
-              
+             
+              revision=$(git log --follow -1 \
+                --format="%ad" \
+                --date=format:"%Y-%m-%d" \
+                -- "$dir/index.html" 2>/dev/null)
+            echo "SOP: $title"
+            echo "FILE: $dir/index.html"
+            echo "REVISION: $revision"
+            echo "---------------------"
+                
               # fallback si no existe historial
               [ -z "$revision" ] && revision=$(date +"%Y-%m-%d")
 
