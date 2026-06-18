@@ -1,7 +1,13 @@
 const DEFAULT_STATE = {
   PROJECTS: [],
   PROJECT_TASKS: [],
-  RESOURCES: []
+  RESOURCES: [
+    { id: "CNC", capacity: 1 },
+    { id: "BRETON", capacity: 1 },
+    { id: "COACH", capacity: 1 },
+    { id: "MANUAL", capacity: 1 }
+  ],
+  schedule: [] // 👈 IMPORTANTE (te faltaba esto)
 };
 
 export const EDGE_FACTORS = {
