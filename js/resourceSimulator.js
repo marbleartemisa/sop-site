@@ -1,6 +1,9 @@
+import { getResources } from "./state.js";
+
 export function simulateResourceLoad(existingSchedule, newOps, startDate = new Date()) {
 
   const resources = {};
+  const resourceList = getResources();
 
   // 1. construir timeline actual
   existingSchedule.forEach(op => {
@@ -20,7 +23,7 @@ export function simulateResourceLoad(existingSchedule, newOps, startDate = new D
 
   newOps.forEach(op => {
 
-    const resource = op.Resource;
+    const resource = op.Resource?.toUpperCase();
 
     if (!resources[resource]) resources[resource] = [];
 
@@ -55,7 +58,7 @@ function findNextFreeSlot(calendar, date) {
   while (true) {
 
     const conflict = calendar.find(slot =>
-      current >= slot.start && current <= slot.end
+      current < slot.end && current >= slot.start
     );
 
     if (!conflict) return current;
