@@ -3,7 +3,7 @@ import { STATE } from "./state.js";
 function renderResources() {
   const container = document.getElementById("view-container");
 
-  const load = STATE.schedule.reduce((acc, s) => {
+ const load = (STATE.schedule || []).reduce((acc, s) => {
     acc[s.Resource] = (acc[s.Resource] || 0) + Number(s.PF);
     return acc;
   }, {});
