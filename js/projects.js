@@ -657,159 +657,9 @@ function calculateSimulation() {
 
   const USE_ENGINE = true;
 
-  let project = {
-    group: document.getElementById("m_stone_material_group")?.value || "G2",
-    ft2: safeNumber("m_stone_ft2"),
-    edgesLF: safeNumber("m_stone_edge_ft"),
-    cutouts: safeNumber("m_stone_cutouts"),
-    sinks: safeNumber("m_sink_qty"),
-    frameQty: safeNumber("m_frame_qty"),
-    machine: document.getElementById("m_stone_resource")?.value || "BRETON",
-    stages: selected
-  };
-
-  let total = 0;
-
-  let stoneHTML = "";
-  let carpentryHTML = "";
-
-  /**********************
-   * 🪨 STONE CALC
-   **********************/
-  if (selected.includes("STONE")) {
-
-    const thickness =
-      document.getElementById("m_stone_thickness")?.value || "8mm";
-
-    const material =
-      document.getElementById("m_stone_material")?.value || "N/A";
-
-    const resource =
-      document.getElementById("m_stone_resource")?.value || "BRETON";
-
- 
-
-    const panels = safeNumber("m_stone_ft2");
-    const edgeFt = safeNumber("m_stone_edge_ft");
-    const cutouts = safeNumber("m_stone_cutouts");
-    const slabs = safeNumber("m_stone_slabs");
-
-    const extras = (cutouts * 2) + (slabs * 3);
-
-    const stoneTotal =
-      cnc + edge + cut + extras;
-
-    total += stoneTotal;
-
-    stoneHTML = `
-      <div class="sim-module">
-
-        <h4>🪨 Stone Production</h4>
-
-        <p><b>Machine:</b> ${resource}</p>
-        <p><b>Material:</b> ${material}</p>
-        <p><b>Thickness:</b> ${thickness}</p>
-
-        <hr>
-
-        <p>CNC: ${cnc.toFixed(1)} min</p>
-        <p>Edge: ${edge.toFixed(1)} min</p>
-        <p>Panel Cut: ${cut.toFixed(1)} min</p>
-        <p>Cutouts: ${(cutouts * 2).toFixed(1)} min</p>
-        <p>Slabs: ${(slabs * 3).toFixed(1)} min</p>
-
-        <p>
-          <b>Total:</b>
-          ${(stoneTotal / 60).toFixed(2)} hrs
-        </p>
-
-      </div>
-    `;
-  }
-
-  /**********************
-   * 🪵 CARPENTRY CALC
-   **********************/
-  if (selected.includes("CARPENTRY")) {
-
-    const panels = safeNumber("m_carpentry_panels");
-    const cabinets = safeNumber("m_carpentry_cabinets");
-    const drawers = safeNumber("m_carpentry_drawers");
-    const pantry = safeNumber("m_carpentry_pantry");
-    const trashcan = safeNumber("m_carpentry_trashcan");
-    const lazy = safeNumber("m_carpentry_lazy");
-    const lemans = safeNumber("m_carpentry_lemans");
-    const pocketP = safeNumber("m_carpentry_pocket_pantry");
-    const pocketC = safeNumber("m_carpentry_pocket_cabinet");
-    const edge = safeNumber("m_carpentry_edge_ft");
-
-    const cnc = panels * t.cncCut;
-    const edgeTime = edge * t.edgeBand;
-    const cabinetsTime = cabinets * t.cabinet;
-    const drawersTime = drawers * t.drawer;
-    const pantryTime = pantry * t.pantry;
-    const trashTime = trashcan * t.trashcan;
-    const lazyTime = lazy * t.lazySusan;
-    const lemansTime = lemans * t.lemans;
-    const ppTime = pocketP * t.pocketPantry;
-    const pcTime = pocketC * t.pocketCabinet;
-
-    const carpentryTotal =
-      cnc +
-      edgeTime +
-      cabinetsTime +
-      drawersTime +
-      pantryTime +
-      trashTime +
-      lazyTime +
-      lemansTime +
-      ppTime +
-      pcTime;
-
-    total += carpentryTotal;
-
-    carpentryHTML = `
-      <div class="sim-module">
-
-        <h4>🪵 Carpentry Production</h4>
-
-        <p>CNC: ${cnc.toFixed(1)} min</p>
-        <p>Edge: ${edgeTime.toFixed(1)} min</p>
-        <p>Cabinets: ${cabinetsTime.toFixed(1)} min</p>
-        <p>Drawers: ${drawersTime.toFixed(1)} min</p>
-        <p>Pantry: ${pantryTime.toFixed(1)} min</p>
-        <p>Trashcan: ${trashTime.toFixed(1)} min</p>
-        <p>Lazy Susan: ${lazyTime.toFixed(1)} min</p>
-        <p>LeMans: ${lemansTime.toFixed(1)} min</p>
-        <p>Pocket Pantry: ${ppTime.toFixed(1)} min</p>
-        <p>Pocket Cabinet: ${pcTime.toFixed(1)} min</p>
-
-        <p>
-          <b>Total:</b>
-          ${(carpentryTotal / 60).toFixed(2)} hrs
-        </p>
-
-      </div>
-    `;
-  }
-
-  /**********************
-   * EMPTY STATE
-   **********************/
-  if (!stoneHTML && !carpentryHTML) {
-
-    document.getElementById("sim-result").innerHTML = `
-      <p>Select production modules...</p>
-    `;
-
-    return;
-  }
-
-if (USE_ENGINE) {
-
-  const selected = [...document.querySelectorAll(".stage:checked")]
-    .map(el => el.value);
-
+  // =========================
+  // PROJECT OBJECT (ENGINE)
+  // =========================
   const project = {
     group: document.getElementById("m_material_group")?.value || "G2",
     ft2: safeNumber("m_stone_ft2"),
@@ -825,64 +675,70 @@ if (USE_ENGINE) {
     stages: selected
   };
 
-  const breakdown = calculateProjectTime(project);
+  // =========================
+  // ENGINE MODE (ONLY SOURCE)
+  // =========================
+  if (USE_ENGINE) {
 
-  let html = `
-    <div class="sim-summary">
-      <h3>🧠 ENGINE PIPELINE</h3>
-  `;
+    const breakdown = calculateProjectTime(project);
 
-  let total = 0;
+    let total = 0;
 
-  // 🪨 STONE
-  if (selected.includes("STONE")) {
-
-    html += `
-      <p><b>Cutting:</b> ${breakdown.cutting.toFixed(1)} min</p>
-      <p><b>Cutouts:</b> ${breakdown.cutouts.toFixed(1)} min</p>
-      <p><b>Edges:</b> ${breakdown.edges.toFixed(1)} min</p>
-      <p><b>Polish:</b> ${breakdown.polish.toFixed(1)} min</p>
+    let html = `
+      <div class="sim-summary">
+        <h3>🧠 ENGINE PIPELINE</h3>
     `;
 
-    total +=
-      breakdown.cutting +
-      breakdown.cutouts +
-      breakdown.edges +
-      breakdown.polish;
-  }
+    // 🪨 STONE
+    if (selected.includes("STONE")) {
 
-  // 🪵 CARPENTRY / FRAME
-  if (selected.includes("CARPENTRY")) {
+      const stoneTotal =
+        breakdown.cutting +
+        breakdown.cutouts +
+        breakdown.edges +
+        breakdown.polish +
+        (breakdown.sink || 0);
+
+      total += stoneTotal;
+
+      html += `
+        <p><b>Cutting:</b> ${breakdown.cutting.toFixed(1)} min</p>
+        <p><b>Cutouts:</b> ${breakdown.cutouts.toFixed(1)} min</p>
+        <p><b>Edges:</b> ${breakdown.edges.toFixed(1)} min</p>
+        <p><b>Polish:</b> ${breakdown.polish.toFixed(1)} min</p>
+      `;
+
+      if (breakdown.sink > 0) {
+        html += `<p><b>Sink:</b> ${breakdown.sink.toFixed(1)} min</p>`;
+      }
+    }
+
+    // 🪵 CARPENTRY / FRAME
+    if (selected.includes("CARPENTRY")) {
+
+      total += (breakdown.frame || 0);
+
+      html += `
+        <p><b>Frame:</b> ${(breakdown.frame || 0).toFixed(1)} min</p>
+      `;
+    }
 
     html += `
-      <p><b>Frame:</b> ${breakdown.frame.toFixed(1)} min</p>
+        <hr/>
+        <p><b>Total:</b> ${total.toFixed(1)} min</p>
+      </div>
     `;
 
-    total += breakdown.frame;
+    document.getElementById("sim-result").innerHTML = html;
+
+    return;
   }
 
-  html += `
-      <hr/>
-      <p><b>Total:</b> ${total.toFixed(1)} min</p>
-    </div>
-  `;
-
-  document.getElementById("sim-result").innerHTML = html;
-
-  return;
-}
-  /**********************
-   * OUTPUT
-   **********************/
+  // =========================
+  // FALLBACK (EMPTY STATE)
+  // =========================
   document.getElementById("sim-result").innerHTML = `
-    <div class="sim-summary">
-      <h3>Total Simulation</h3>
-      <p><b>Total Time:</b> ${(total / 60).toFixed(2)} hrs</p>
-    </div>
-
-    ${stoneHTML}
-
-    ${carpentryHTML}
+    <p>Select production modules...</p>
   `;
 }
 
