@@ -169,7 +169,7 @@
 
             @media (max-width: 900px){
               .sop-table th,
-              .sop-table td{
+              d{
                 font-size:0.75rem;
                 padding:10px 8px;
               }
@@ -353,7 +353,20 @@
           background: rgba(255, 255, 255, 0.8); /* más visible al pasar el mouse */
       }
 
-      
+      .sop-table th:nth-child(3),
+      .sop-table td:nth-child(3){
+        width:140px;
+        text-align:center;
+        white-space:nowrap;
+      }
+
+      .sop-table td[data-label="Revision"]{
+        font-size:.85rem;
+        color:#64748b;
+        text-align:center;
+        white-space:nowrap;
+      }
+
 
       /* ===== NOMBRE SOP (COLUMNA PROCEDIMIENTO) ===== */
 .sop-nombre {
@@ -764,6 +777,20 @@ const usuarios = [
 let currentUser = null;
 let SOP_INDEX = [];
 
+function formatDate(dateStr){
+
+  if(!dateStr) return "-";
+
+  const d = new Date(dateStr);
+
+  return d.toLocaleDateString("en-US",{
+    year:"numeric",
+    month:"short",
+    day:"2-digit"
+  });
+
+}
+
 /* ===== MENU ===== */
 function toggleMenu(){
   document.querySelector('.menu').classList.toggle('show');
@@ -880,31 +907,44 @@ function renderSOP(filtered){
   </div>
 
   <table class="sop-table">
-  <thead>
-  <tr>
-  <th onclick="sortTable('department')">Departamento</th>
-  <th onclick="sortTable('title')">Procedimiento</th>
-  <th>Acción</th>
-  </tr>
-  </thead>
+            <thead>
+            <tr>
+            <th onclick="sortTable('department')">Departamento</th>
+            <th onclick="sortTable('title')">Procedimiento</th>
+            <th onclick="sortTable('revision')">Revisión</th>
+            <th>Acción</th>
+            </tr>
+            </thead>
   <tbody>
   `;
 
-  list.forEach(sop=>{
-    html += `
-            <tr onclick="openSOP('${sop.url}')" style="cursor:pointer;">
-              <td data-label="Departamento">${getDepartmentBadge(sop.department)}</td>
-              <td data-label="Procedimiento" class="sop-nombre">${sop.title}</td>
-              <td>
-                <a class="sop-btn" 
-                   href="/sop-site/viewer.html?doc=${sop.url}"
-                   onclick="event.stopPropagation()">
-                Ver
-                </a>
-              </td>
-            </tr>
-    `;
-  });
+            list.forEach(sop=>{
+              html += `
+                <tr onclick="openSOP('${sop.url}')" style="cursor:pointer;">
+            
+                  <td data-label="Departamento">
+                    ${getDepartmentBadge(sop.department)}
+                  </td>
+            
+                  <td data-label="Procedimiento" class="sop-nombre">
+                    ${sop.title}
+                  </td>
+            
+                  <td data-label="Revision">
+                    ${formatDate(sop.revision)}
+                  </td>
+            
+                  <td>
+                    <a class="sop-btn"
+                       href="/sop-site/viewer.html?doc=${sop.url}"
+                       onclick="event.stopPropagation()">
+                      Ver
+                    </a>
+                  </td>
+            
+                </tr>
+              `;
+            });
 
       
   html += `</tbody></table>`;
@@ -1096,10 +1136,24 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ===== SORT ===== */
+
 function sortTable(field){
+
   SOP_INDEX.sort((a,b)=>{
-    return (a[field]||"").localeCompare(b[field]||"");
+
+    if(field === "revision"){
+
+      const dateA = new Date(a.revision || "1900-01-01");
+      const dateB = new Date(b.revision || "1900-01-01");
+
+      return dateB - dateA;
+    }
+
+    return (a[field] || "")
+      .localeCompare(b[field] || "");
+
   });
+
   renderSOP();
 }
 
