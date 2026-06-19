@@ -217,35 +217,6 @@ th:nth-child(6), td:nth-child(6){
   white-space:nowrap;
 }
 
-/* CANVAS */
-#canvas-overlay{
-  display:none;
-  position:fixed;
-  top:50px;
-  left:0;
-  width:100%;
-  height:calc(100% - 50px);
-  background:rgba(0,0,0,0.35);
-  z-index:1000;
-  overflow:auto;
-}
-
-#sop-container{
-  position:relative;
-  margin:30px auto;
-  width:90%;
-  max-width:1200px;
-  background:white;
-  border-radius:14px;
-  padding:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-}
-
-#canvas-wrapper{
-  position:relative;
-  width:100%;
-}
-
 canvas{
     display:block;
     width:100%;
@@ -282,6 +253,21 @@ canvas{
     box-shadow:none;
 }
 
+/* CANVAS DEL SOP */
+#sop-canvas{
+    display:block;
+
+    background:white;
+
+    border-radius:6px;
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.18);
+
+    max-width:none;
+}
+
+/* SCROLL MODERNO */
 /* ÁREA DEL DOCUMENTO */
 #canvas-wrapper{
     position:absolute;
@@ -298,22 +284,6 @@ canvas{
 
     padding:20px;
 }
-
-/* CANVAS DEL SOP */
-#sop-canvas{
-    display:block;
-
-    background:white;
-
-    border-radius:6px;
-
-    box-shadow:
-        0 8px 30px rgba(0,0,0,.18);
-
-    max-width:none;
-}
-
-/* SCROLL MODERNO */
 #canvas-wrapper::-webkit-scrollbar{
     width:12px;
     height:12px;
@@ -640,6 +610,7 @@ const SHEET_API = "https://script.google.com/macros/s/AKfycbz6X0bRN4Ma6kIZoUkwcT
 // VARIABLES
 let comentarios=[], clickX=0, clickY=0, SOP_URL="", ID_SOP="";
 let modoComentario = false;
+let zoomSOP = 1;
 const USUARIO = localStorage.getItem("usuario") || "";
 const CORREO = localStorage.getItem("correo") || "";
   
@@ -824,7 +795,12 @@ cargarDatos();
 
 // ABRIR SOP
 async function abrirSOP(url,id){
-  SOP_URL=url; ID_SOP=id; comentarios=[];
+  SOP_URL=url; 
+  ID_SOP=id; 
+  comentarios=[];
+  
+  zoomSOP = 1;
+  
   const wrapper=document.getElementById("canvas-wrapper");
   document.getElementById("canvas-overlay").style.display="block";
   wrapper.innerHTML="Cargando SOP...";
@@ -868,6 +844,8 @@ async function abrirSOP(url,id){
     canvas.style.transform = `scale(${zoomSOP})`;
     canvas.style.transformOrigin = "top center";
 
+    dibujarComentarios();
+
 },{ passive:false });
 //  canvas.addEventListener("click", activarComentario);
     cargarComentariosExistentes();
@@ -902,20 +880,27 @@ function activarModoComentario(){
 }
   
 
-  function seleccionarPosicionComentario(e){
+function seleccionarPosicionComentario(e){
 
     const wrapper = document.getElementById("canvas-wrapper");
     const rect = wrapper.getBoundingClientRect();
 
-    clickX = e.clientX - rect.left;
-    clickY = e.clientY - rect.top;
+    clickX =
+      (e.clientX - rect.left + wrapper.scrollLeft) / zoomSOP;
+
+    clickY =
+      (e.clientY - rect.top + wrapper.scrollTop) / zoomSOP;
 
     modoComentario = false;
 
     const canvas = document.getElementById("sop-canvas");
+
     if(canvas){
         canvas.style.cursor = "default";
-        canvas.removeEventListener("click", seleccionarPosicionComentario);
+        canvas.removeEventListener(
+            "click",
+            seleccionarPosicionComentario
+        );
     }
 
     document.getElementById("modal").style.display = "flex";
@@ -1153,9 +1138,9 @@ function dibujarComentarios(){
 
     const div = document.createElement("div");
     div.className = "comentario";
-    div.style.left = c.x + "px";
-    div.style.top = c.y + "px";
-
+    div.style.left = (c.x * zoomSOP) + "px";
+    div.style.top = (c.y * zoomSOP) + "px";
+    
     // TEXTO
     const spanText = document.createElement("span");
     spanText.textContent = c.comentario;
