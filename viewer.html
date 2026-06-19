@@ -279,14 +279,16 @@ frame.onload = function () {
             }
 
             body{
-            
+
                 margin:40px auto !important;
             
                 padding:20px !important;
             
                 background:white !important;
             
-                max-width:max-content !important;
+                width:fit-content !important;
+            
+                max-width:none !important;
             
                 box-shadow:
                     0 10px 30px rgba(0,0,0,.15);
@@ -342,14 +344,11 @@ frame.onload = function () {
 
         docFrame.head.appendChild(style);
 
-        applyZoom();
-
-               requestAnimationFrame(() => {
+            applyZoom();
             
-                const body = docFrame.body;
+            requestAnimationFrame(() => {
             
-                body.style.marginLeft = "auto";
-                body.style.marginRight = "auto";
+                adjustPageLayout(docFrame);
             
             });
 
@@ -403,7 +402,47 @@ if(doc){
 // ======================
 // ZOOM
 // ======================
+function adjustPageLayout(docFrame){
 
+    const body = docFrame.body;
+    const html = docFrame.documentElement;
+
+    // Esperar a que imágenes y tablas terminen de renderizar
+    setTimeout(() => {
+
+        const pageWidth = Math.max(
+            body.scrollWidth,
+            html.scrollWidth
+        );
+
+        const pageHeight = Math.max(
+            body.scrollHeight,
+            html.scrollHeight
+        );
+
+        const isLandscape = pageWidth > pageHeight;
+
+        body.style.marginLeft = "auto";
+        body.style.marginRight = "auto";
+
+        body.style.width = "fit-content";
+        body.style.maxWidth = "none";
+
+        if(isLandscape){
+
+            // SOP horizontales
+            body.style.width = "95%";
+
+        } else {
+
+            // SOP verticales
+            body.style.width = "850px";
+
+        }
+
+    }, 300);
+}
+    
 function applyZoom(){
 
     try{
