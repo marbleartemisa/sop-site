@@ -32,6 +32,21 @@ body {
     box-sizing: border-box;
 }
 
+#readingProgress{
+    position:fixed;
+
+    top:58px;
+    left:0;
+
+    height:3px;
+
+    width:0%;
+
+    background:#2563eb;
+
+    z-index:2000;
+}
+
 .brand {
     font-weight: 600;
     letter-spacing: .4px;
@@ -47,66 +62,123 @@ body {
     font-size: 13px;
 }
 
+
 .doc-header {
-    max-width: 1100px;
-    margin: 80px auto 10px auto;
-    padding: 0 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    position: sticky;
+    top: 60px;
+
+    z-index: 900;
+
+    width: calc(100vw - 40px);
+    max-width: 1800px;
+
+    margin: 70px auto 15px auto;
+
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(12px);
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    padding: 12px 18px;
+
+    box-shadow: 0 8px 30px rgba(0,0,0,.08);
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.doc-header .tool {
-    background: white;
-    border: 1px solid #e2e8f0;
-    padding: 7px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    transition: .2s;
+
+.doc-header .tool{
+    background:white;
+
+    border:1px solid #d1d5db;
+
+    height:38px;
+
+    min-width:38px;
+
+    padding:0 14px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    font-weight:500;
+
+    transition:.2s;
 }
 
-.doc-header .tool:hover {
-    background: #2563eb;
-    color: white;
+.doc-header .tool:hover{
+    background:#2563eb;
+    color:white;
+    border-color:#2563eb;
+    transform:translateY(-1px);
 }
 
-.doc-area {
-    display: flex;
-    justify-content: center;
-    padding: 10px 20px 40px;
-}
+.doc-area{
+    display:flex;
+    justify-content:center;
 
+    padding:15px 20px 50px;
+
+    min-height:calc(100vh - 130px);
+}    
+    
 .doc-frame {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1800px;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0,0,0,.15);
+    border-radius: 18px;
+    box-shadow:
+      0 30px 60px rgba(15,23,42,.12),
+      0 10px 20px rgba(15,23,42,.08);
     overflow: hidden;
     position: relative;
 }
 
+
 iframe {
     width: 100%;
-    height: 95vh;
+     height:calc(100vh - 150px);
     border: none;
     background: white;
 }
 
-#prevDocBtn, #nextDocBtn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 50%;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 500;
-    transition: background 0.3s;
+
+    #prevDocBtn,
+    #nextDocBtn{
+    position:fixed;
+    top:50%;
+    transform:translateY(-50%);
+    width:58px;
+    height:58px;
+    border:none;
+    border-radius:50%;
+    background:rgba(15,23,42,.75);
+    backdrop-filter:blur(10px);
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+    transition:.25s;
+    z-index:999;
+}
+
+#prevDocBtn:hover,
+#nextDocBtn:hover{
+    transform:translateY(-50%) scale(1.08);
+}
+
+#prevDocBtn{
+    left:20px;
+}
+
+#nextDocBtn{
+    right:20px;
 }
 
 #prevDocBtn:hover, #nextDocBtn:hover {
@@ -156,7 +228,7 @@ iframe {
 </div>
 </div>
 
-
+<div id="readingProgress"></div>
 
     
 <div class="doc-area">
@@ -166,6 +238,8 @@ iframe {
     <button id="nextDocBtn" onclick="nextSOP()">➡</button>
   </div>
 </div>
+
+    
 
 <script>
 let params = new URLSearchParams(window.location.search);
@@ -179,101 +253,57 @@ const frame = document.getElementById("frame");
 
     
 frame.onload = function () {
+
     try {
-        const docFrame = frame.contentDocument || frame.contentWindow.document;
+
+        const docFrame =
+            frame.contentDocument ||
+            frame.contentWindow.document;
 
         const style = docFrame.createElement("style");
-       
 
-style.innerHTML = `
-    * {
-        font-family: inherit !important;
-    }
+        style.innerHTML = `
+            ...
+        `;
 
-    body {
-        max-width: 900px !important;
-        margin: 80px auto 60px auto !important; /* 👈 AUMENTA margen superior */
-        padding-top: 20px !important; /* 👈 ESTO LO ARREGLA VISUALMENTE */
-        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
-
-        line-height: 1.6 !important;
-        font-size: 16px !important;
-        letter-spacing: 0.2px !important;
-        color: #1f2937 !important;
-
-        -webkit-font-smoothing: antialiased !important;
-        -moz-osx-font-smoothing: grayscale !important;
-        text-rendering: optimizeLegibility !important;
-    }
-
-    
-
-    h1, h2, h3, h4 {
-        font-weight: 600 !important;
-        letter-spacing: 0.2px !important;
-        color: #0f172a !important;
-    }
-
-    p {
-        margin: 10px 0 !important;
-        line-height: 1.65 !important;
-    }
-
-    ul, ol {
-        padding-left: 20px !important;
-    }
-
-    li {
-        margin-bottom: 6px !important;
-    }
-
-    strong {
-        font-weight: 600 !important;
-    }
-    a {
-    color: #1d4ed8 !important;
-    text-decoration: none !important;
-    font-weight: 500;
-    }
-    
-    a:hover {
-        text-decoration: underline !important;
-    }
-    
-    a[href^="#"] {
-        color: #0f172a !important;
-        font-weight: 600;
-    }
-    /* =========================
-   FIX HEADER PRIMERA PAGINA
-   ========================= */
-
-/* Empuja el encabezado superior (línea + texto) */
-
-body {
-    padding-top: 60px !important; /* empuja TODO sin romper el layout */
-}
-
-/* Mejora título principal */
-h1 {
-    text-align: center !important;
-    margin-top: 40px !important;
-    margin-bottom: 40px !important;
-}
-
-/* Control de línea horizontal del encabezado */
-hr {
-     margin: 20px 0 !important;
-    margin-bottom: 30px !important;
-    position: static !important;
-}
-
-`;        
         docFrame.head.appendChild(style);
+
         applyZoom();
+
+        // ==================================
+        // BARRA DE PROGRESO DE LECTURA
+        // ==================================
+
+        frame.contentWindow.addEventListener("scroll", () => {
+
+            const doc = frame.contentWindow.document.documentElement;
+
+            const total =
+                doc.scrollHeight - doc.clientHeight;
+
+            const current =
+                doc.scrollTop ||
+                frame.contentWindow.pageYOffset;
+
+            const percent =
+                total > 0
+                ? (current / total) * 100
+                : 0;
+
+            document.getElementById("readingProgress")
+                .style.width = percent + "%";
+
+        });
+
     } catch (e) {
-        console.log("No se pudo modificar el iframe:", e);
+
+        console.log(
+            "No se pudo modificar el iframe:",
+            e
+        );
+
     }
+
 };
 if(doc) frame.src = doc;
 
@@ -379,6 +409,16 @@ fetch('SOP_INDEX.json')
         window.location.href = `viewer.html?doc=${next.url}&id=${next.id}`;
       }
     };
+
+document.addEventListener('wheel', function(e){
+    if(!e.ctrlKey) return;
+    e.preventDefault();
+    if(e.deltaY < 0){
+        zoomIn();
+    }else{
+        zoomOut();
+    }
+},{ passive:false });
 
     // deshabilitar botones si estamos en límites
     document.getElementById("prevDoc").classList.toggle("disabled", currentIndex === 0);
