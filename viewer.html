@@ -55,22 +55,29 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
 }
-   
 
+   
 .doc-header .tool {
-    background: white;
-    border: 1px solid #e2e8f0;
-    padding: 7px 14px;
-    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    padding: 8px 12px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 13px;
-    transition: .2s;
+    transition: all .2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .doc-header .tool:hover {
     background: #2563eb;
     color: white;
+    border-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(37,99,235,.25);
 }
 
 .doc-area {
@@ -91,11 +98,26 @@ body {
 
 iframe {
     width: 100%;
-    height: 95vh;
+    height: 92vh;
     border: none;
     background: white;
 }
 
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+.divider {
+    width: 1px;
+    height: 26px;
+    background: #e5e7eb;
+    margin: 0 6px;
+}
+    
 #prevDocBtn, #nextDocBtn {
     position: absolute;
     top: 50%;
@@ -133,17 +155,19 @@ iframe {
 
 <div class="doc-header">
   <div id="title">Documento SOP</div>
-<div>
+
+  <!-- TOOLBAR MODERNA -->
+  <div class="toolbar">
 
     <button class="tool" onclick="zoomOut()">−</button>
 
-    <button class="tool" id="zoomIndicator">
-        100%
-    </button>
+    <button class="tool" id="zoomIndicator">100%</button>
 
     <button class="tool" onclick="zoomIn()">+</button>
 
     <button class="tool" onclick="resetZoom()">Reset</button>
+
+    <span class="divider"></span>
 
     <button class="tool" onclick="openNew()">Abrir</button>
 
@@ -151,11 +175,13 @@ iframe {
 
     <button class="tool" onclick="printDoc()">Imprimir</button>
 
+    <span class="divider"></span>
+
     <button class="tool" id="prevDoc" onclick="prevSOP()">← Anterior</button>
 
     <button class="tool" id="nextDoc" onclick="nextSOP()">Siguiente →</button>
 
-</div>
+  </div>
 </div>
 
 
