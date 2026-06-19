@@ -229,6 +229,7 @@ th:nth-child(6), td:nth-child(6){
   z-index:1000;
   overflow:auto;
 }
+
 #sop-container{
   position:relative;
   margin:30px auto;
@@ -241,8 +242,8 @@ th:nth-child(6), td:nth-child(6){
 }
 
 #canvas-wrapper{
-    position:relative;
-    width:100%;
+  position:relative;
+  width:100%;
 }
 
 canvas{
@@ -250,6 +251,85 @@ canvas{
     width:100%;
     border-radius:8px;
     box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+
+  /* ==========================================
+   VISOR SOP PROFESIONAL FULLSCREEN
+========================================== */
+
+#canvas-overlay{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    background:#d9dde3;
+    z-index:9999;
+    overflow:hidden;
+}
+
+/* CONTENEDOR PRINCIPAL */
+#sop-container{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    max-width:none;
+    margin:0;
+    padding:0;
+    border-radius:0;
+    background:#d9dde3;
+    box-shadow:none;
+}
+
+/* ÁREA DEL DOCUMENTO */
+#canvas-wrapper{
+    position:absolute;
+    top:70px;
+    left:0;
+    right:0;
+    bottom:0;
+
+    overflow:auto;
+
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+
+    padding:20px;
+}
+
+/* CANVAS DEL SOP */
+#sop-canvas{
+    display:block;
+
+    background:white;
+
+    border-radius:6px;
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.18);
+
+    max-width:none;
+}
+
+/* SCROLL MODERNO */
+#canvas-wrapper::-webkit-scrollbar{
+    width:12px;
+    height:12px;
+}
+
+#canvas-wrapper::-webkit-scrollbar-track{
+    background:#e5e7eb;
+}
+
+#canvas-wrapper::-webkit-scrollbar-thumb{
+    background:#9ca3af;
+    border-radius:20px;
+}
+
+#canvas-wrapper::-webkit-scrollbar-thumb:hover{
+    background:#6b7280;
 }
   
 .comentario{
@@ -290,47 +370,39 @@ canvas{
     z-index:9999;
 }
 /* BOTÓN CERRAR SOP */
-#btnCerrarSOP{ 
-  position:fixed; 
-  top:70px; 
-  right:20px; 
-  z-index:9999; 
-  padding:10px 16px; 
-  cursor:pointer; 
-  background:#c00; 
-  color:white; 
-  border:none; 
-  border-radius:10px; 
-  font-weight:bold;
-  box-shadow:0 3px 8px rgba(0,0,0,0.3);
+  #btnCerrarSOP{
+    position:fixed;
+    top:12px;
+    right:20px;
+    z-index:10000;
+    padding:10px 18px;
+    background:#dc2626;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.25);
 }
 
 #btnNuevoComentario{
   position:fixed;
-
   top:120px;
   left:20px;
-
   width:50px;
   height:50px;
-
   border:none;
   border-radius:50%;
-
   background:#00aaff;
   color:white;
-
   font-size:30px;
   font-weight:bold;
-
   cursor:pointer;
-
   z-index:99999;
-
   display:block;
-
   box-shadow:0 3px 8px rgba(0,0,0,.3);
 }
+  
   #loader{
   display:none;
   position:fixed;
@@ -545,6 +617,8 @@ let cacheSOP = [];
 let renderToken = 0;
 let timeout = null;
 let currentUser = null;
+let zoomSOP = 1;
+  
 
   const usuarios = [
   {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
@@ -760,12 +834,41 @@ async function abrirSOP(url,id){
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
     tempDiv.querySelectorAll("script").forEach(s=>s.remove());
-    tempDiv.style.width="900px"; tempDiv.style.margin="auto"; tempDiv.style.padding="20px"; tempDiv.style.background="#fff";
+    tempDiv.style.width = "1500px";
+    tempDiv.style.maxWidth = "none";
+    tempDiv.style.margin = "0 auto";
+    tempDiv.style.padding = "20px";
+    tempDiv.style.background = "#fff";
     wrapper.innerHTML=""; wrapper.appendChild(tempDiv);
     await new Promise(r=>setTimeout(r,300));
-    const canvas = await html2canvas(tempDiv,{useCORS:true, scale:1});
+    const canvas = await html2canvas(tempDiv,{
+    useCORS:true,
+    scale:2,
+    backgroundColor:"#ffffff",
+    logging:false
+    });
     canvas.id="sop-canvas";
-    wrapper.innerHTML=""; wrapper.appendChild(canvas);
+    wrapper.innerHTML=""; 
+    wrapper.appendChild(canvas);
+    
+    canvas.addEventListener("wheel",(e)=>{
+
+    if(!e.ctrlKey) return;
+
+    e.preventDefault();
+
+    if(e.deltaY < 0){
+        zoomSOP += 0.1;
+    }else{
+        zoomSOP -= 0.1;
+    }
+
+    zoomSOP = Math.max(0.5, Math.min(3, zoomSOP));
+
+    canvas.style.transform = `scale(${zoomSOP})`;
+    canvas.style.transformOrigin = "top center";
+
+},{ passive:false });
 //  canvas.addEventListener("click", activarComentario);
     cargarComentariosExistentes();
   }catch(err){
