@@ -132,21 +132,24 @@ body {
 .doc-frame {
     width: 100%;
     max-width: 1800px;
-    background: white;
+    background:#bdbdbd;
     border-radius: 18px;
     box-shadow:
       0 30px 60px rgba(15,23,42,.12),
       0 10px 20px rgba(15,23,42,.08);
-    overflow: hidden;
+    overflow:auto;
+    justify-content:center;
+    display:flex;
     position: relative;
 }
-
 
 iframe {
     width: 100%;
      height:calc(100vh - 150px);
     border: none;
     background: white;
+    display:block;
+    margin:auto;
 }
 
 
@@ -260,23 +263,94 @@ frame.onload = function () {
             frame.contentDocument ||
             frame.contentWindow.document;
 
-        const style = docFrame.createElement("style");
+        const style =
+            docFrame.createElement("style");
 
         style.innerHTML = `
-            ...
+
+            *{
+                font-family: inherit !important;
+                box-sizing: border-box !important;
+            }
+
+            html{
+                background:#bdbdbd !important;
+            }
+
+            body{
+
+                width:fit-content !important;
+
+                margin:40px auto !important;
+
+                padding:30px !important;
+
+                background:white !important;
+
+                box-shadow:
+                    0 10px 30px rgba(0,0,0,.15);
+
+                border-radius:6px !important;
+
+                font-family:
+                    "Segoe UI",
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Helvetica Neue",
+                    Arial,
+                    sans-serif !important;
+
+                line-height:1.6 !important;
+
+                color:#1f2937 !important;
+
+                -webkit-font-smoothing:antialiased !important;
+                -moz-osx-font-smoothing:grayscale !important;
+                text-rendering:optimizeLegibility !important;
+            }
+
+            h1,h2,h3,h4{
+                color:#0f172a !important;
+                font-weight:600 !important;
+            }
+
+            p{
+                line-height:1.65 !important;
+            }
+
+            a{
+                color:#2563eb !important;
+                text-decoration:none !important;
+            }
+
+            a:hover{
+                text-decoration:underline !important;
+            }
+
+            table{
+                margin-left:auto !important;
+                margin-right:auto !important;
+            }
+
+            img{
+                max-width:100% !important;
+                height:auto !important;
+            }
+
         `;
 
         docFrame.head.appendChild(style);
 
         applyZoom();
 
-        // ==================================
-        // BARRA DE PROGRESO DE LECTURA
-        // ==================================
+        // ==========================
+        // BARRA DE PROGRESO
+        // ==========================
 
         frame.contentWindow.addEventListener("scroll", () => {
 
-            const doc = frame.contentWindow.document.documentElement;
+            const doc =
+                frame.contentWindow.document.documentElement;
 
             const total =
                 doc.scrollHeight - doc.clientHeight;
@@ -287,17 +361,21 @@ frame.onload = function () {
 
             const percent =
                 total > 0
-                ? (current / total) * 100
-                : 0;
+                    ? (current / total) * 100
+                    : 0;
 
-            document.getElementById("readingProgress")
-                .style.width = percent + "%";
+            const progress =
+                document.getElementById("readingProgress");
+
+            if(progress){
+                progress.style.width = percent + "%";
+            }
 
         });
 
     } catch (e) {
 
-        console.log(
+        console.error(
             "No se pudo modificar el iframe:",
             e
         );
