@@ -32,21 +32,6 @@ body {
     box-sizing: border-box;
 }
 
-#readingProgress{
-    position:fixed;
-
-    top:58px;
-    left:0;
-
-    height:3px;
-
-    width:0%;
-
-    background:#2563eb;
-
-    z-index:2000;
-}
-
 .brand {
     font-weight: 600;
     letter-spacing: .4px;
@@ -62,126 +47,66 @@ body {
     font-size: 13px;
 }
 
-
 .doc-header {
-    position: sticky;
-    top: 60px;
-
-    z-index: 900;
-
-    width: calc(100vw - 40px);
-    max-width: 1800px;
-
-    margin: 70px auto 15px auto;
-
-    background: rgba(255,255,255,.95);
-    backdrop-filter: blur(12px);
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 14px;
-
-    padding: 12px 18px;
-
-    box-shadow: 0 8px 30px rgba(0,0,0,.08);
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    max-width: 1100px;
+    margin: 80px auto 10px auto;
+    padding: 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-
-.doc-header .tool{
-    background:white;
-
-    border:1px solid #d1d5db;
-
-    height:38px;
-
-    min-width:38px;
-
-    padding:0 14px;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
-    font-size:13px;
-
-    font-weight:500;
-
-    transition:.2s;
+.doc-header .tool {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: .2s;
 }
 
-.doc-header .tool:hover{
-    background:#2563eb;
-    color:white;
-    border-color:#2563eb;
-    transform:translateY(-1px);
+.doc-header .tool:hover {
+    background: #2563eb;
+    color: white;
 }
 
-.doc-area{
-    display:flex;
-    justify-content:center;
+.doc-area {
+    display: flex;
+    justify-content: center;
+    padding: 10px 20px 40px;
+}
 
-    padding:15px 20px 50px;
-
-    min-height:calc(100vh - 130px);
-}    
-    
 .doc-frame {
     width: 100%;
-    max-width: 1800px;
-    background:#bdbdbd;
-    border-radius: 18px;
-    box-shadow:
-      0 30px 60px rgba(15,23,42,.12),
-      0 10px 20px rgba(15,23,42,.08);
-    overflow:auto;
-    justify-content:center;
-    display:flex;
+    max-width: 1100px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.15);
+    overflow: hidden;
     position: relative;
 }
 
 iframe {
     width: 100%;
-     height:calc(100vh - 150px);
+    height: 95vh;
     border: none;
     background: white;
-    display:block;
-    margin:auto;
 }
 
-
-    #prevDocBtn,
-    #nextDocBtn{
-    position:fixed;
-    top:50%;
-    transform:translateY(-50%);
-    width:58px;
-    height:58px;
-    border:none;
-    border-radius:50%;
-    background:rgba(15,23,42,.75);
-    backdrop-filter:blur(10px);
-    color:white;
-    font-size:22px;
-    cursor:pointer;
-    transition:.25s;
-    z-index:999;
-}
-
-#prevDocBtn:hover,
-#nextDocBtn:hover{
-    transform:translateY(-50%) scale(1.08);
-}
-
-#prevDocBtn{
-    left:20px;
-}
-
-#nextDocBtn{
-    right:20px;
+#prevDocBtn, #nextDocBtn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 500;
+    transition: background 0.3s;
 }
 
 #prevDocBtn:hover, #nextDocBtn:hover {
@@ -231,7 +156,7 @@ iframe {
 </div>
 </div>
 
-<div id="readingProgress"></div>
+
 
     
 <div class="doc-area">
@@ -241,8 +166,6 @@ iframe {
     <button id="nextDocBtn" onclick="nextSOP()">➡</button>
   </div>
 </div>
-
-    
 
 <script>
 let params = new URLSearchParams(window.location.search);
@@ -256,193 +179,108 @@ const frame = document.getElementById("frame");
 
     
 frame.onload = function () {
-
     try {
+        const docFrame = frame.contentDocument || frame.contentWindow.document;
 
-        const docFrame =
-            frame.contentDocument ||
-            frame.contentWindow.document;
+        const style = docFrame.createElement("style");
+       
 
-        const style =
-            docFrame.createElement("style");
-
-        style.innerHTML = `
-
-            *{
-                font-family: inherit !important;
-                box-sizing: border-box !important;
-            }
-            html{
-                background:#bdbdbd !important;
-                display:flex !important;
-                justify-content:center !important;
-            }
-
-            body{
-
-                margin:40px auto !important;
-            
-                padding:20px !important;
-            
-                background:white !important;
-            
-                width:fit-content !important;
-            
-                max-width:none !important;
-            
-                box-shadow:
-                    0 10px 30px rgba(0,0,0,.15);
-            
-                border-radius:6px !important;
-            
-                font-family:
-                    "Segoe UI",
-                    -apple-system,
-                    BlinkMacSystemFont,
-                    "Helvetica Neue",
-                    Arial,
-                    sans-serif !important;
-            
-                line-height:1.6 !important;
-            
-                color:#1f2937 !important;
-            
-                -webkit-font-smoothing:antialiased !important;
-                -moz-osx-font-smoothing:grayscale !important;
-                text-rendering:optimizeLegibility !important;
-            }
-
-            h1,h2,h3,h4{
-                color:#0f172a !important;
-                font-weight:600 !important;
-            }
-
-            p{
-                line-height:1.65 !important;
-            }
-
-            a{
-                color:#2563eb !important;
-                text-decoration:none !important;
-            }
-
-            a:hover{
-                text-decoration:underline !important;
-            }
-
-            table{
-                margin-left:auto !important;
-                margin-right:auto !important;
-            }
-
-            img{
-                max-width:100% !important;
-                height:auto !important;
-            }
-
-        `;
-
-        docFrame.head.appendChild(style);
-
-            applyZoom();
-            
-            requestAnimationFrame(() => {
-            
-                adjustPageLayout(docFrame);
-            
-            });
-
-
-        // ==================================
-        // BARRA DE PROGRESO
-        // ==================================
-
-        frame.contentWindow.addEventListener("scroll", () => {
-
-            const doc =
-                frame.contentWindow.document.documentElement;
-
-            const total =
-                doc.scrollHeight - doc.clientHeight;
-
-            const current =
-                doc.scrollTop ||
-                frame.contentWindow.pageYOffset;
-
-            const percent =
-                total > 0
-                    ? (current / total) * 100
-                    : 0;
-
-            const progress =
-                document.getElementById("readingProgress");
-
-            if(progress){
-                progress.style.width =
-                    percent + "%";
-            }
-
-        });
-
-    } catch (e) {
-
-        console.error(
-            "No se pudo modificar el iframe:",
-            e
-        );
-
+style.innerHTML = `
+    * {
+        font-family: inherit !important;
     }
 
-};
+    body {
+        max-width: 900px !important;
+        margin: 80px auto 60px auto !important; /* 👈 AUMENTA margen superior */
+        padding-top: 20px !important; /* 👈 ESTO LO ARREGLA VISUALMENTE */
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
 
-if(doc){
-    frame.src = doc;
+        line-height: 1.6 !important;
+        font-size: 16px !important;
+        letter-spacing: 0.2px !important;
+        color: #1f2937 !important;
+
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+    }
+
+    
+
+    h1, h2, h3, h4 {
+        font-weight: 600 !important;
+        letter-spacing: 0.2px !important;
+        color: #0f172a !important;
+    }
+
+    p {
+        margin: 10px 0 !important;
+        line-height: 1.65 !important;
+    }
+
+    ul, ol {
+        padding-left: 20px !important;
+    }
+
+    li {
+        margin-bottom: 6px !important;
+    }
+
+    strong {
+        font-weight: 600 !important;
+    }
+    a {
+    color: #1d4ed8 !important;
+    text-decoration: none !important;
+    font-weight: 500;
+    }
+    
+    a:hover {
+        text-decoration: underline !important;
+    }
+    
+    a[href^="#"] {
+        color: #0f172a !important;
+        font-weight: 600;
+    }
+    /* =========================
+   FIX HEADER PRIMERA PAGINA
+   ========================= */
+
+/* Empuja el encabezado superior (línea + texto) */
+
+body {
+    padding-top: 60px !important; /* empuja TODO sin romper el layout */
 }
+
+/* Mejora título principal */
+h1 {
+    text-align: center !important;
+    margin-top: 40px !important;
+    margin-bottom: 40px !important;
+}
+
+/* Control de línea horizontal del encabezado */
+hr {
+     margin: 20px 0 !important;
+    margin-bottom: 30px !important;
+    position: static !important;
+}
+
+`;        
+        docFrame.head.appendChild(style);
+        applyZoom();
+    } catch (e) {
+        console.log("No se pudo modificar el iframe:", e);
+    }
+};
+if(doc) frame.src = doc;
 
 // ======================
 // ZOOM
 // ======================
-function adjustPageLayout(docFrame){
 
-    const body = docFrame.body;
-    const html = docFrame.documentElement;
-
-    // Esperar a que imágenes y tablas terminen de renderizar
-    setTimeout(() => {
-
-        const pageWidth = Math.max(
-            body.scrollWidth,
-            html.scrollWidth
-        );
-
-        const pageHeight = Math.max(
-            body.scrollHeight,
-            html.scrollHeight
-        );
-
-        const isLandscape = pageWidth > pageHeight;
-
-        body.style.marginLeft = "auto";
-        body.style.marginRight = "auto";
-
-        body.style.width = "fit-content";
-        body.style.maxWidth = "none";
-
-        if(isLandscape){
-
-            // SOP horizontales
-            body.style.width = "95%";
-
-        } else {
-
-            // SOP verticales
-            body.style.width = "850px";
-
-        }
-
-    }, 300);
-}
-    
 function applyZoom(){
 
     try{
@@ -541,16 +379,6 @@ fetch('SOP_INDEX.json')
         window.location.href = `viewer.html?doc=${next.url}&id=${next.id}`;
       }
     };
-
-document.addEventListener('wheel', function(e){
-    if(!e.ctrlKey) return;
-    e.preventDefault();
-    if(e.deltaY < 0){
-        zoomIn();
-    }else{
-        zoomOut();
-    }
-},{ passive:false });
 
     // deshabilitar botones si estamos en límites
     document.getElementById("prevDoc").classList.toggle("disabled", currentIndex === 0);
