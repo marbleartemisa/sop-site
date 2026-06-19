@@ -272,20 +272,21 @@ frame.onload = function () {
                 font-family: inherit !important;
                 box-sizing: border-box !important;
             }
-
             html{
                 background:#bdbdbd !important;
+                display:flex !important;
+                justify-content:center !important;
             }
 
-              body{
-            
-                display:inline-block !important;
+            body{
             
                 margin:40px auto !important;
             
                 padding:20px !important;
             
                 background:white !important;
+            
+                max-width:max-content !important;
             
                 box-shadow:
                     0 10px 30px rgba(0,0,0,.15);
@@ -343,16 +344,14 @@ frame.onload = function () {
 
         applyZoom();
 
-        // ==================================
-        // CENTRAR TABLAS PRINCIPALES
-        // ==================================
-
-        const mainTable = docFrame.querySelector("table");
-
-        if(mainTable){
-            mainTable.style.marginLeft = "auto";
-            mainTable.style.marginRight = "auto";
-        }
+               requestAnimationFrame(() => {
+            
+                const body = docFrame.body;
+            
+                body.style.marginLeft = "auto";
+                body.style.marginRight = "auto";
+            
+            });
 
 
         // ==================================
