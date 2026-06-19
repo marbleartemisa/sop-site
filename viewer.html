@@ -275,11 +275,12 @@ frame.onload = function () {
 
             html{
                 background:#bdbdbd !important;
+                text-align:center !important;
             }
 
             body{
 
-                width:fit-content !important;
+                width:auto !important;
 
                 margin:40px auto !important;
 
@@ -343,9 +344,36 @@ frame.onload = function () {
 
         applyZoom();
 
-        // ==========================
+        // ==================================
+        // CENTRAR TABLAS PRINCIPALES
+        // ==================================
+
+        const mainTable = docFrame.querySelector("table");
+
+        if(mainTable){
+            mainTable.style.marginLeft = "auto";
+            mainTable.style.marginRight = "auto";
+        }
+
+        // ==================================
+        // AJUSTE AUTOMÁTICO DEL ANCHO
+        // ==================================
+
+        setTimeout(() => {
+
+            const realWidth =
+                docFrame.body.scrollWidth;
+
+            if(realWidth > 0){
+                docFrame.body.style.width =
+                    realWidth + "px";
+            }
+
+        }, 300);
+
+        // ==================================
         // BARRA DE PROGRESO
-        // ==========================
+        // ==================================
 
         frame.contentWindow.addEventListener("scroll", () => {
 
@@ -368,7 +396,8 @@ frame.onload = function () {
                 document.getElementById("readingProgress");
 
             if(progress){
-                progress.style.width = percent + "%";
+                progress.style.width =
+                    percent + "%";
             }
 
         });
@@ -383,7 +412,10 @@ frame.onload = function () {
     }
 
 };
-if(doc) frame.src = doc;
+
+if(doc){
+    frame.src = doc;
+}
 
 // ======================
 // ZOOM
