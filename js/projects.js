@@ -625,7 +625,7 @@ function calculateSimulation() {
   // =========================
 
 const project = buildProjectFromUI();
-const breakdown = calculateProjectTime(project);
+
   // =========================
   // 3. ENGINE CALL (ONLY SOURCE OF TRUTH)
   // =========================
