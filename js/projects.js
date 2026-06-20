@@ -2,9 +2,7 @@ import { STATE, EDGE_FACTORS } from "./state.js";
 import { getProjects, post } from "./api.js";
 import { formatDate } from "../utils/schedule.js";
 import { generateSchedule } from "./scheduler.js";
-const UI_STATE = {
-  selectedStages: []
-};
+
 
 const STAGE_CONFIG = {
 
@@ -49,12 +47,7 @@ function updateState() {
   renderDynamicPanel();
   calculateSimulation();
 }
-function updateState() {
 
-  STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
-    .map(el => el.value);
-
-}
 /****************************************************
  * 📦 PROJECTS VIEW (MAIN PANEL)
  ****************************************************/
@@ -418,10 +411,6 @@ function openCreateForm() {
   openProjectModal();
 }
 
-function syncSelectedStages() {
-  UI_STATE.selectedStages = [...document.querySelectorAll(".stage:checked")]
-    .map(el => el.value);
-}
 
 function renderDynamicPanel() {
 
