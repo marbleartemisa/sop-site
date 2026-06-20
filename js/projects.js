@@ -33,12 +33,14 @@ const STAGE_CONFIG = {
 
 
 function initStageListeners() {
-  document.querySelectorAll(".stage").forEach(el => {
-    el.addEventListener("change", updateState);
+  const container = document.getElementById("modal-container");
+
+  container.addEventListener("change", (e) => {
+    if (!e.target.classList.contains("stage")) return;
+
+    updateState();
   });
 }
-
-
 
 function updateState() {
   STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
@@ -47,6 +49,8 @@ function updateState() {
   renderDynamicPanel();
   calculateSimulation();
 }
+
+
 
 /****************************************************
  * 📦 PROJECTS VIEW (MAIN PANEL)
@@ -401,9 +405,11 @@ function openProjectModal() {
   // =========================
   // INITIAL RENDER PIPELINE
   // =========================
-  renderDynamicPanel();
   calculateSimulation();
   initStageListeners();
+  
+  // fuerza estado inicial correcto
+  updateState();
 
 // 👇 ESTO ES CLAVE (estado inicial correcto)
 STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
@@ -573,7 +579,7 @@ function buildProjectFromUI() {
 
   // 👇 AQUÍ ES DONDE VA
   syncSelectedStages();
-  const selected = UI_STATE.selectedStages;
+  const selected = STATE.UI.stages;
 
   const material = document.getElementById("m_stone_material")?.value || "";
   const group = getMaterialGroup(material);
@@ -608,7 +614,7 @@ function calculateSimulation() {
   // 1. READ UI STATE
   // =========================
   syncSelectedStages();
-  const selected = UI_STATE.selectedStages;
+  const selected = STATE.UI.stages;
 
   const material = document.getElementById("m_stone_material")?.value || "";
   const group = getMaterialGroup(material);
