@@ -404,6 +404,10 @@ function openProjectModal() {
   renderDynamicPanel();
   calculateSimulation();
   initStageListeners();
+
+// 👇 ESTO ES CLAVE (estado inicial correcto)
+STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
+  .map(el => el.value);
 }
 
 
