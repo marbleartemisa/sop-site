@@ -289,35 +289,28 @@ function attachSimulationListeners() {
 function openProjectModal() {
   const container = document.getElementById("modal-container");
 
-  container.innerHTML = `...TU HTML...`;
+  // 1. render primero
+  container.innerHTML = `...MODAL...`;
 
-  // =========================
-  // 1. INIT STATE FIRST
-  // =========================
+  // 2. AHORA sí existen los .stage
   STATE.UI = STATE.UI || {};
-
   STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
     .map(el => el.value);
 
-  // =========================
-  // 2. FORCE FIRST RENDER
-  // =========================
+  // 3. render dependientes
   renderDynamicPanel();
   calculateSimulation();
 
-  // =========================
-  // 3. LISTENERS (IMPORTANT)
-  // =========================
-  document.querySelectorAll(".stage")
-    .forEach(el => {
-      el.addEventListener("change", () => {
-        STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
-          .map(el => el.value);
+  // 4. listeners
+  document.querySelectorAll(".stage").forEach(el => {
+    el.addEventListener("change", () => {
+      STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
+        .map(el => el.value);
 
-        renderDynamicPanel();
-        calculateSimulation();
-      });
+      renderDynamicPanel();
+      calculateSimulation();
     });
+  });
 }
 
 
