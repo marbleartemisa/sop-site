@@ -652,34 +652,26 @@ import { calculateProjectTime } from "./productionEngine.js";
 
 function calculateSimulation() {
 
-  const selected = [
-    ...document.querySelectorAll(".stage:checked")
-  ].map(el => el.value);
-
   // =========================
-  // MATERIAL → GROUP
+  // 1. READ UI STATE
   // =========================
+  const selected = [...document.querySelectorAll(".stage:checked")]
+    .map(el => el.value);
 
-  const material =
-    document.getElementById("m_stone_material")?.value || "";
-
+  const material = document.getElementById("m_stone_material")?.value || "";
   const group = getMaterialGroup(material);
 
   // =========================
-  // PROJECT OBJECT
+  // 2. BUILD PROJECT MODEL (SINGLE SOURCE OF TRUTH)
   // =========================
-
   const project = {
     material,
     group,
 
     ft2: safeNumber("m_stone_ft2"),
-
     edgesLF: safeNumber("m_stone_edge_ft"),
 
-    edgeType:
-      document.getElementById("m_stone_edge_type")?.value ||
-      "MITER_45",
+    edgeType: document.getElementById("m_stone_edge_type")?.value || "MITER_45",
 
     cutouts: {
       qty: safeNumber("m_stone_cutouts"),
@@ -687,112 +679,82 @@ function calculateSimulation() {
     },
 
     sinks: 0,
-
     frameQty: 0,
 
     machine: "BRETON",
-
     stages: selected
   };
 
-  console.log("PROJECT", project);
-
   // =========================
-  // ENGINE
+  // 3. ENGINE CALL (ONLY SOURCE OF TRUTH)
   // =========================
-
   const breakdown = calculateProjectTime(project);
 
-  console.log("BREAKDOWN", breakdown);
-
+  // =========================
+  // 4. ACCUMULATE RESULT
+  // =========================
   let total = 0;
-
-  let html = `
-    <div class="sim-summary">
-      <h3>🧠 ENGINE PIPELINE</h3>
-      <p>
-        <b>Material:</b> ${material || "-"} |
-        <b>Group:</b> ${group}
-      </p>
-  `;
+  let lines = [];
 
   // =========================
-  // STONE
+  // 5. STONE PIPELINE
   // =========================
-
   if (selected.includes("STONE")) {
 
-    const stoneTotal =
-      (breakdown.cutting || 0) +
-      (breakdown.cutouts || 0) +
-      (breakdown.edges || 0) +
-      (breakdown.polish || 0) +
-      (breakdown.sink || 0);
+    const stoneParts = [
+      { label: "Cutting", value: breakdown.cutting },
+      { label: "Cutouts", value: breakdown.cutouts },
+      { label: "Edges", value: breakdown.edges },
+      { label: "Polish", value: breakdown.polish }
+    ];
 
-    total += stoneTotal;
+    stoneParts.forEach(p => {
+      total += p.value || 0;
+      lines.push(`<p><b>${p.label}:</b> ${(p.value || 0).toFixed(1)} min</p>`);
+    });
 
-    html += `
-      <p><b>Cutting:</b> ${(breakdown.cutting || 0).toFixed(1)} min</p>
-
-      <p><b>Cutouts:</b> ${(breakdown.cutouts || 0).toFixed(1)} min</p>
-
-      <p><b>Edges:</b> ${(breakdown.edges || 0).toFixed(1)} min</p>
-
-      <p><b>Polish:</b> ${(breakdown.polish || 0).toFixed(1)} min</p>
-    `;
-
-    if ((breakdown.sink || 0) > 0) {
-
-      html += `
-        <p>
-          <b>Integrated Sink:</b>
-          ${breakdown.sink.toFixed(1)} min
-        </p>
-      `;
+    if (breakdown.sink > 0) {
+      total += breakdown.sink;
+      lines.push(`<p><b>Integrated Sink:</b> ${breakdown.sink.toFixed(1)} min</p>`);
     }
   }
 
   // =========================
-  // CARPENTRY
+  // 6. CARPENTRY PIPELINE
   // =========================
-
   if (selected.includes("CARPENTRY")) {
 
-    total += (breakdown.frame || 0);
+    const frame = breakdown.frame || 0;
+    total += frame;
 
-    html += `
-      <p>
-        <b>Frame:</b>
-        ${(breakdown.frame || 0).toFixed(1)} min
-      </p>
-    `;
+    lines.push(`<p><b>Frame:</b> ${frame.toFixed(1)} min</p>`);
   }
 
   // =========================
-  // TOTAL
+  // 7. RENDER OUTPUT
   // =========================
+  const html = `
+    <div class="sim-summary">
 
-  html += `
+      <h3>🧠 Engine Simulation</h3>
+
+      <p>
+        <b>Material:</b> ${material || "-"} |
+        <b>Group:</b> ${group}
+      </p>
+
+      ${lines.join("")}
+
       <hr>
 
-      <p>
-        <b>Total Minutes:</b>
-        ${total.toFixed(1)}
-      </p>
+      <p><b>Total Minutes:</b> ${total.toFixed(1)}</p>
+      <p><b>Total Hours:</b> ${(total / 60).toFixed(2)}</p>
 
-      <p>
-        <b>Total Hours:</b>
-        ${(total / 60).toFixed(2)}
-      </p>
     </div>
   `;
 
-  const result =
-    document.getElementById("sim-result");
-
-  if (result) {
-    result.innerHTML = html;
-  }
+  const result = document.getElementById("sim-result");
+  if (result) result.innerHTML = html;
 }
 
 function runScheduleAll() {
