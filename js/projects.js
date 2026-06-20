@@ -31,6 +31,30 @@ const STAGE_CONFIG = {
   }
 
 };
+
+
+
+function initStageListeners() {
+  document.querySelectorAll(".stage").forEach(el => {
+    el.addEventListener("change", updateState);
+  });
+}
+
+
+
+function updateState() {
+  STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
+    .map(el => el.value);
+
+  renderDynamicPanel();
+  calculateSimulation();
+}
+function updateState() {
+
+  STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
+    .map(el => el.value);
+
+}
 /****************************************************
  * 📦 PROJECTS VIEW (MAIN PANEL)
  ****************************************************/
@@ -267,230 +291,126 @@ function attachSimulationListeners() {
 ****************************************************/
 
 function openProjectModal() {
-
   const container = document.getElementById("modal-container");
 
   container.innerHTML = `
-  <div class="modal-backdrop" onclick="closeModal()"></div>
+    <div class="modal-backdrop" onclick="closeModal()"></div>
 
-  <div class="modal"
-       style="
-          width:1400px;
-          max-width:95vw;
-          height:85vh;
-          overflow:auto;
-          display:grid;
-          grid-template-columns: 24% 40% 36%;
-          gap:20px;
-          font-family: Arial;
-       ">
+    <div class="modal"
+      style="
+        width:1400px;
+        max-width:95vw;
+        height:85vh;
+        overflow:auto;
+        display:grid;
+        grid-template-columns: 24% 40% 36%;
+        gap:20px;
+        font-family: Arial;
+      ">
 
-    <!-- ===================== -->
-    <!-- COLUMN 1 -->
-    <!-- ===================== -->
-    <div>
+      <!-- ===================== -->
+      <!-- COLUMN 1 -->
+      <!-- ===================== -->
+      <div>
 
-      <h2>New Project</h2>
+        <h2>New Project</h2>
 
-      <input
-        id="m_customer"
-        placeholder="Customer"
-        style="width:100%; margin-bottom:10px;"
-      >
+        <input
+          id="m_customer"
+          placeholder="Customer"
+          style="width:100%; margin-bottom:10px;"
+        >
 
-      <h3>Project Stages</h3>
+        <h3>Project Stages</h3>
 
-<div class="stage-list">
+        <div class="stage-list">
+          <!-- STAGES (igual que antes) -->
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="AGREEMENT">
+            <span class="stage-text">Agreement (0d)</span>
+          </label>
 
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="AGREEMENT">
-    <span class="stage-text">Agreement (0d)</span>
-  </label>
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="MEASURE">
+            <span class="stage-text">Measure Confirmation (3d)</span>
+          </label>
 
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="MEASURE">
-    <span class="stage-text">Measure Confirmation (3d)</span>
-  </label>
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="SCHEDULING">
+            <span class="stage-text">Scheduling (3d)</span>
+          </label>
 
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="SCHEDULING">
-    <span class="stage-text">Scheduling (3d)</span>
-  </label>
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="MATERIAL">
+            <span class="stage-text">Material Order (4d)</span>
+          </label>
 
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="MATERIAL">
-    <span class="stage-text">Material Order (4d)</span>
-  </label>
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="APPROVAL">
+            <span class="stage-text">Final Approval (3d)</span>
+          </label>
 
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="APPROVAL">
-    <span class="stage-text">Final Approval (3d)</span>
-  </label>
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="CARPENTRY">
+            <span class="stage-text">Carpentry Fabrication (2.5d)</span>
+          </label>
 
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="CARPENTRY">
-    <span class="stage-text">Carpentry Fabrication (2.5d)</span>
-  </label>
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="INSTALL_CAB">
+            <span class="stage-text">Carpentry Installation (2.5d)</span>
+          </label>
 
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="INSTALL_CAB">
-    <span class="stage-text">Carpentry Installation (2.5d)</span>
-  </label>
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="STONE">
+            <span class="stage-text">Stone Fabrication (3d)</span>
+          </label>
 
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="STONE_MEASURE">
-    <span class="stage-text">Stone Measure (2d)</span>
-  </label>
-
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="STONE_APPROVAL">
-    <span class="stage-text">Stone Approval (3d)</span>
-  </label>
-
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="STONE">
-   
-    <span class="stage-text">Stone Fabrication (3d)</span>
-  </label>
-
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="STONE_INSTALL">
-    <span class="stage-text">Stone Installation (3d)</span>
-  </label>
-
-  <label class="stage-item">
-    <input class="stage" type="checkbox" checked value="PUNCHOUT">
-    <span class="stage-text">Punchout (2d)</span>
-  </label>
-
-</div>
-
-      <br>
-
-      <button onclick="submitProject()">
-        Create Project
-      </button>
-
-    </div>
-
-    <!-- ===================== -->
-    <!-- COLUMN 2 -->
-    <!-- ===================== -->
-        <div>
-          <h3>Resources & Parameters</h3>
-        
-          <div
-            id="dynamic-panel"
-            style="
-              max-height:70vh;
-              overflow:auto;
-              padding-right:10px;
-            "
-          ></div>
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="STONE_INSTALL">
+            <span class="stage-text">Stone Installation (3d)</span>
+          </label>
         </div>
 
-    <!-- ===================== -->
-    <!-- COLUMN 3 -->
-    <!-- ===================== -->
-    <div>
+        <br>
 
-      <h3>Simulation</h3>
+        <button onclick="submitProject()">
+          Create Project
+        </button>
 
-      <div id="sim-result">
-        Select stages and parameters...
+      </div>
+
+      <!-- ===================== -->
+      <!-- COLUMN 2 -->
+      <!-- ===================== -->
+      <div>
+        <h3>Resources & Parameters</h3>
+
+        <div
+          id="dynamic-panel"
+          style="max-height:70vh; overflow:auto; padding-right:10px;"
+        ></div>
+      </div>
+
+      <!-- ===================== -->
+      <!-- COLUMN 3 -->
+      <!-- ===================== -->
+      <div>
+        <h3>Simulation</h3>
+
+        <div id="sim-result">
+          Select stages and parameters...
+        </div>
       </div>
 
     </div>
-
-  </div>
-
- <style>
-  .stage-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .stage-item {
-    display: grid;
-    grid-template-columns: 18px 1fr;
-    align-items: center;
-    column-gap: 10px;
-
-    font-size: 13px;
-    line-height: 1.2;
-
-    /* CLAVE: evita que el texto se rompa raro */
-    white-space: nowrap;
-  }
-
-  .stage-item input {
-    width: 16px;
-    height: 16px;
-    margin: 0;
-    transform: translateY(1px);
-  }
-
-  /* opcional: si quieres evitar overflow en pantallas pequeñas */
-  .stage-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .module {
-  margin-bottom:20px;
-}
-
-.module h3{
-  margin-bottom:10px;
-}
-
-.module-grid{
-  display:grid;
-  grid-template-columns: 140px 120px;
-  gap:8px 12px;
-  align-items:center;
-}
-
-.sim-module{
-  margin-bottom:16px;
-  padding:12px;
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:10px;
-  background:rgba(255,255,255,.03);
-}
-
-.sim-module h4{
-  margin:0 0 10px 0;
-}
-
-.sim-module p{
-  margin:4px 0;
-}
-
-.sim-summary{
-  margin-bottom:15px;
-  padding-bottom:10px;
-  border-bottom:1px solid rgba(255,255,255,.15);
-}
-</style>
   `;
 
+  // =========================
+  // INITIAL RENDER PIPELINE
+  // =========================
   renderDynamicPanel();
   calculateSimulation();
-  attachSimulationListeners();
-document.querySelectorAll(".stage")
-  .forEach(el => {
-
-    el.addEventListener("change", () => {
-
-      renderDynamicPanel();
-      calculateSimulation();
-      attachSimulationListeners();
-
-    });
-
-  });
-
+  initStageListeners();
 }
 
 
@@ -505,8 +425,7 @@ function syncSelectedStages() {
 
 function renderDynamicPanel() {
 
-  syncSelectedStages();
-  const selected = UI_STATE.selectedStages;
+   const selected = STATE.UI.stages;
 
   const panel = document.getElementById("dynamic-panel");
 
