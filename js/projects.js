@@ -2,7 +2,9 @@ import { STATE, EDGE_FACTORS } from "./state.js";
 import { getProjects, post } from "./api.js";
 import { formatDate } from "../utils/schedule.js";
 import { generateSchedule } from "./scheduler.js";
-
+const UI_STATE = {
+  selectedStages: []
+};
 
 const STAGE_CONFIG = {
 
@@ -496,10 +498,15 @@ function openCreateForm() {
   openProjectModal();
 }
 
+function syncSelectedStages() {
+  UI_STATE.selectedStages = [...document.querySelectorAll(".stage:checked")]
+    .map(el => el.value);
+}
+
 function renderDynamicPanel() {
 
- const selected = [...document.querySelectorAll(".stage:checked")]
-  .map(el => el.value);
+  syncSelectedStages();
+  const selected = UI_STATE.selectedStages;
 
   const panel = document.getElementById("dynamic-panel");
 
@@ -650,28 +657,24 @@ function closeModal() {
 
 import { calculateProjectTime } from "./productionEngine.js";
 
-function calculateSimulation() {
+function buildProjectFromUI() {
 
-  // =========================
-  // 1. READ UI STATE
-  // =========================
-  const selected = [...document.querySelectorAll(".stage:checked")]
-    .map(el => el.value);
+  // 👇 AQUÍ ES DONDE VA
+  syncSelectedStages();
+  const selected = UI_STATE.selectedStages;
 
   const material = document.getElementById("m_stone_material")?.value || "";
   const group = getMaterialGroup(material);
 
-  // =========================
-  // 2. BUILD PROJECT MODEL (SINGLE SOURCE OF TRUTH)
-  // =========================
-  const project = {
+  return {
     material,
     group,
 
     ft2: safeNumber("m_stone_ft2"),
     edgesLF: safeNumber("m_stone_edge_ft"),
 
-    edgeType: document.getElementById("m_stone_edge_type")?.value || "MITER_45",
+    edgeType:
+      document.getElementById("m_stone_edge_type")?.value || "MITER_45",
 
     cutouts: {
       qty: safeNumber("m_stone_cutouts"),
@@ -682,9 +685,28 @@ function calculateSimulation() {
     frameQty: 0,
 
     machine: "BRETON",
+
+    // 👇 IMPORTANTE: aquí se incluye en el modelo
     stages: selected
   };
+}
+function calculateSimulation() {
 
+  // =========================
+  // 1. READ UI STATE
+  // =========================
+  syncSelectedStages();
+  const selected = UI_STATE.selectedStages;
+
+  const material = document.getElementById("m_stone_material")?.value || "";
+  const group = getMaterialGroup(material);
+
+  // =========================
+  // 2. BUILD PROJECT MODEL (SINGLE SOURCE OF TRUTH)
+  // =========================
+
+const project = buildProjectFromUI();
+const breakdown = calculateProjectTime(project);
   // =========================
   // 3. ENGINE CALL (ONLY SOURCE OF TRUTH)
   // =========================
