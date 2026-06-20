@@ -623,7 +623,11 @@ function calculateSimulation() {
   // 2. BUILD PROJECT MODEL (SINGLE SOURCE OF TRUTH)
   // =========================
 
-const project = buildProjectFromUI();
+const project = document.getElementById("m_stone_material")
+  ? buildProjectFromUI()
+  : null;
+
+if (!project) return;
 
   // =========================
   // 3. ENGINE CALL (ONLY SOURCE OF TRUTH)
