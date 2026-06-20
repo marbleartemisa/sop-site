@@ -12,86 +12,86 @@
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
-<div class="navbar">
+<div id="erp-app">
 
-  <div class="logo">
-    <img src="/sop-site/assets/logo.png" alt="Artemisa Logo">
-    <span>ARTEMISA MARBLE & CABINETS</span>
+  <!-- ================= NAVBAR ================= -->
+  <div class="navbar">
+    <div class="logo">
+      <img src="/sop-site/assets/logo.png" alt="Artemisa Logo">
+      <span>ARTEMISA MARBLE & CABINETS</span>
+    </div>
+
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+
+    <div class="menu">
+      <a href="/sop-site/">SOP Library</a>
+      <a href="/sop-site/dashboard/" class="active">Production ERP</a>
+      <a href="/sop-site/dashboard/#projects">Projects</a>
+      <a href="/sop-site/dashboard/#gantt">Gantt</a>
+      <a href="/sop-site/dashboard/#resources">Resources</a>
+    </div>
   </div>
 
-  <div class="menu-toggle" onclick="toggleMenu()">
-    <i class="fa-solid fa-bars"></i>
+  <!-- ================= LAYOUT ================= -->
+  <div class="app">
+
+    <aside class="sidebar">
+      <div class="logo">⚙️ SOP ERP</div>
+
+      <nav>
+        <a class="active">📦 Projects</a>
+        <a>📊 Dashboard</a>
+        <a>🧠 Planning</a>
+        <a>⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+
+      <header class="topbar">
+        <h1>Production Control Center</h1>
+
+        <button class="primary" onclick="openCreateForm()">
+          + Create Project
+        </button>
+      </header>
+
+      <section class="content"></section>
+
+    </main>
   </div>
 
-  <div class="menu">
-    <a href="/sop-site/">SOP Library</a>
-    <a href="/sop-site/dashboard/" class="active">Production ERP</a>
-    <a href="/sop-site/dashboard/#projects">Projects</a>
-    <a href="/sop-site/dashboard/#gantt">Gantt</a>
-    <a href="/sop-site/dashboard/#resources">Resources</a>
-  </div>
+  <!-- ================= ERP HEADER ================= -->
+  <header class="erp-header">
 
-</div>
-
-<div class="app">
-
-  <aside class="sidebar">
-    <div class="logo">⚙️ SOP ERP</div>
-
-    <nav>
-      <a class="active">📦 Projects</a>
-      <a>📊 Dashboard</a>
-      <a>🧠 Planning</a>
-      <a>⚙️ Settings</a>
-    </nav>
-  </aside>
-
-  <main class="main">
-
-    <header class="topbar">
+    <div class="erp-title">
       <h1>Production Control Center</h1>
+      <p>Live scheduling · Resource queues · Project tracking</p>
+    </div>
 
-      <!-- ✅ FIX PRINCIPAL -->
-      <button class="primary" onclick="openCreateForm()">
-        + Create Project
-      </button>
-    </header>
+    <div class="actions">
+      <button onclick="refreshData()">Refresh</button>
+      <button onclick="runScheduler()">Recalculate</button>
+      <button onclick="openCreateForm()">New Project</button>
+    </div>
 
-    <section class="content"></section>
+  </header>
 
-  </main>
-</div>
+  <!-- ================= MAIN VIEW ================= -->
+  <section id="summary" class="summary-grid"></section>
+  <section id="view-container"></section>
 
-<!-- ================= ERP HEADER ================= -->
-<header class="erp-header">
+  <!-- ================= MODAL ================= -->
+  <div id="modal-container"></div>
 
-  <div class="erp-title">
-    <h1>Production Control Center</h1>
-    <p>Live scheduling · Resource queues · Project tracking</p>
-  </div>
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    ARTEMISA ERP © 2026 · Production System
+  </footer>
 
-  <div class="actions">
-    <button onclick="refreshData()">Refresh</button>
-    <button onclick="runScheduler()">Recalculate</button>
-
-    <!-- ❌ FIX: antes openNewProject -->
-    <button onclick="openCreateForm()">New Project</button>
-  </div>
-
-</header>
-
-<!-- ================= MAIN VIEW ================= -->
-<section id="summary" class="summary-grid"></section>
-<section id="view-container"></section>
-
-<!-- ================= MODAL ================= -->
-<div id="modal-container"></div>
-
-<!-- ================= FOOTER ================= -->
-<footer class="footer">
-  ARTEMISA ERP © 2026 · Production System
-</footer>
+</div> <!-- ✅ ERP APP END -->
 
 <!-- ================= CORE ================= -->
 <script src="/sop-site/core/ui-core.js"></script>
