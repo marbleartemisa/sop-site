@@ -7,7 +7,12 @@ const DEFAULT_STATE = {
     { id: "COACH", capacity: 1 },
     { id: "MANUAL", capacity: 1 }
   ],
-  schedule: [] // 👈 IMPORTANTE (te faltaba esto)
+
+  schedule: [],
+
+  UI: {
+    stages: []
+  }
 };
 
 export const EDGE_FACTORS = {
