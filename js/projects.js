@@ -286,134 +286,38 @@ function attachSimulationListeners() {
 /**************************************************** 
 * 🪟 MODAL 
 ****************************************************/
-
 function openProjectModal() {
   const container = document.getElementById("modal-container");
 
-  container.innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal()"></div>
-
-    <div class="modal"
-      style="
-        width:1400px;
-        max-width:95vw;
-        height:85vh;
-        overflow:auto;
-        display:grid;
-        grid-template-columns: 24% 40% 36%;
-        gap:20px;
-        font-family: Arial;
-      ">
-
-      <!-- ===================== -->
-      <!-- COLUMN 1 -->
-      <!-- ===================== -->
-      <div>
-
-        <h2>New Project</h2>
-
-        <input
-          id="m_customer"
-          placeholder="Customer"
-          style="width:100%; margin-bottom:10px;"
-        >
-
-        <h3>Project Stages</h3>
-
-        <div class="stage-list">
-          <!-- STAGES (igual que antes) -->
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="AGREEMENT">
-            <span class="stage-text">Agreement (0d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="MEASURE">
-            <span class="stage-text">Measure Confirmation (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="SCHEDULING">
-            <span class="stage-text">Scheduling (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="MATERIAL">
-            <span class="stage-text">Material Order (4d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="APPROVAL">
-            <span class="stage-text">Final Approval (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="CARPENTRY">
-            <span class="stage-text">Carpentry Fabrication (2.5d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="INSTALL_CAB">
-            <span class="stage-text">Carpentry Installation (2.5d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="STONE">
-            <span class="stage-text">Stone Fabrication (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="STONE_INSTALL">
-            <span class="stage-text">Stone Installation (3d)</span>
-          </label>
-        </div>
-
-        <br>
-
-        <button onclick="submitProject()">
-          Create Project
-        </button>
-
-      </div>
-
-      <!-- ===================== -->
-      <!-- COLUMN 2 -->
-      <!-- ===================== -->
-      <div>
-        <h3>Resources & Parameters</h3>
-
-        <div
-          id="dynamic-panel"
-          style="max-height:70vh; overflow:auto; padding-right:10px;"
-        ></div>
-      </div>
-
-      <!-- ===================== -->
-      <!-- COLUMN 3 -->
-      <!-- ===================== -->
-      <div>
-        <h3>Simulation</h3>
-
-        <div id="sim-result">
-          Select stages and parameters...
-        </div>
-      </div>
-
-    </div>
-  `;
+  container.innerHTML = `...TU HTML...`;
 
   // =========================
-  // INITIAL RENDER PIPELINE
+  // 1. INIT STATE FIRST
   // =========================
+  STATE.UI = STATE.UI || {};
+
+  STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
+    .map(el => el.value);
+
+  // =========================
+  // 2. FORCE FIRST RENDER
+  // =========================
+  renderDynamicPanel();
   calculateSimulation();
-  initStageListeners();
-  
-  // fuerza estado inicial correcto
-  updateState();
 
-// 👇 ESTO ES CLAVE (estado inicial correcto)
-STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
-  .map(el => el.value);
+  // =========================
+  // 3. LISTENERS (IMPORTANT)
+  // =========================
+  document.querySelectorAll(".stage")
+    .forEach(el => {
+      el.addEventListener("change", () => {
+        STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
+          .map(el => el.value);
+
+        renderDynamicPanel();
+        calculateSimulation();
+      });
+    });
 }
 
 
