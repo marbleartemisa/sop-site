@@ -660,21 +660,30 @@ function calculateSimulation() {
   // =========================
   // PROJECT OBJECT (ENGINE)
   // =========================
-  const project = {
-    group: document.getElementById("m_material_group")?.value || "G2",
-    ft2: safeNumber("m_stone_ft2"),
-    edgesLF: safeNumber("m_stone_edge_ft"),
-    edgeType: document.getElementById("m_edge_type")?.value || "MITER_45",
-    cutouts: {
-      qty: safeNumber("m_stone_cutouts"),
-      type: "UNDERMOUNT"
-    },
-    sinks: safeNumber("m_sink_qty"),
-    frameQty: safeNumber("m_frame_qty"),
-    machine: document.getElementById("m_stone_resource")?.value || "BRETON",
-    stages: selected
-  };
+const project = {
+  group: "G2",
 
+  ft2: safeNumber("m_stone_ft2"),
+
+  edgesLF: safeNumber("m_stone_edge_ft"),
+
+  edgeType:
+    document.getElementById("m_stone_edge_type")?.value || "MITER_45",
+
+  cutouts: {
+    qty: safeNumber("m_stone_cutouts"),
+    type: "UNDERMOUNT"
+  },
+
+  sinks: 0,
+
+  frameQty: 0,
+
+  machine:
+    document.getElementById("m_stone_resource")?.value || "BRETON",
+
+  stages: selected
+};
   // =========================
   // ENGINE MODE (ONLY SOURCE)
   // =========================
