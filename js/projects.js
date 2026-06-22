@@ -661,12 +661,21 @@ html += `
   /**********************
    * 🧹 CLEAN RENDER
    **********************/
-  panel.innerHTML = html;
+  panel.innerHTML = `
+  <div class="modules-wrapper">
+    ${html || `
+      <div class="module empty-state">
+        <p>Select STONE or CARPENTRY to start</p>
+      </div>
+    `}
+  </div>
+`;
 
-     requestAnimationFrame(() => {
-      restoreState();
-      attachListeners();
-    });
+     queueMicrotask(() => {
+    restoreState();
+    attachListeners();
+    calculateSimulation();
+  });
 }
 
 
