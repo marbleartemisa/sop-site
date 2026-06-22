@@ -632,80 +632,125 @@ function buildProjectFromUI() {
 function calculateSimulation() {
 
   // =========================
-  // 1. READ UI STATE
+  // 1. SYNC STATE SAFE
   // =========================
-  syncSelectedStages();
-  const selected = STATE.UI.stages;
+  try {
+    syncSelectedStages();
+  } catch (err) {
+    console.error("syncSelectedStages error:", err);
+  }
 
-  const material = document.getElementById("m_stone_material")?.value || "";
+  const selected = STATE.UI.stages || [];
+
+  // =========================
+  // 2. READ UI SAFE
+  // =========================
+  const materialEl = document.getElementById("m_stone_material");
+  const material = materialEl?.value || "";
   const group = getMaterialGroup(material);
 
   // =========================
-  // 2. BUILD PROJECT MODEL (SINGLE SOURCE OF TRUTH)
+  // 3. BUILD PROJECT SAFE
   // =========================
+  let project = null;
 
-const project = document.getElementById("m_stone_material")
-  ? buildProjectFromUI()
-  : null;
+  try {
+    if (materialEl) {
+      project = buildProjectFromUI();
+    }
+  } catch (err) {
+    console.error("buildProjectFromUI error:", err);
+  }
 
-if (!project) return;
+  const resultBox = document.getElementById("sim-result");
+  if (!resultBox) return;
+
+  // si no hay proyecto, NO cortar UI
+  if (!project) {
+    resultBox.innerHTML = `
+      <div class="sim-summary">
+        <h3>🧠 Engine Simulation</h3>
+        <p style="color:red;">
+          No se pudo construir el proyecto (check inputs / buildProjectFromUI)
+        </p>
+      </div>
+    `;
+    return;
+  }
 
   // =========================
-  // 3. ENGINE CALL (ONLY SOURCE OF TRUTH)
+  // 4. ENGINE CALL SAFE
   // =========================
-  const breakdown = calculateProjectTime(project);
+  let breakdown;
+
+  try {
+    breakdown = calculateProjectTime(project);
+  } catch (err) {
+    console.error("calculateProjectTime error:", err);
+    resultBox.innerHTML = `
+      <div class="sim-summary">
+        <h3>🧠 Engine Simulation</h3>
+        <p style="color:red;">
+          Engine error calculating project time
+        </p>
+      </div>
+    `;
+    return;
+  }
 
   // =========================
-  // 4. ACCUMULATE RESULT
+  // 5. BUILD OUTPUT
   // =========================
   let total = 0;
   let lines = [];
 
   // =========================
-  // 5. STONE PIPELINE
+  // STONE PIPELINE
   // =========================
   if (selected.includes("STONE")) {
 
     const stoneParts = [
-      { label: "Cutting", value: breakdown.cutting },
-      { label: "Cutouts", value: breakdown.cutouts },
-      { label: "Edges", value: breakdown.edges },
-      { label: "Polish", value: breakdown.polish }
+      { label: "Cutting", value: breakdown?.cutting },
+      { label: "Cutouts", value: breakdown?.cutouts },
+      { label: "Edges", value: breakdown?.edges },
+      { label: "Polish", value: breakdown?.polish }
     ];
 
     stoneParts.forEach(p => {
-      total += p.value || 0;
-      lines.push(`<p><b>${p.label}:</b> ${(p.value || 0).toFixed(1)} min</p>`);
+      const val = Number(p.value) || 0;
+      total += val;
+      lines.push(`<p><b>${p.label}:</b> ${val.toFixed(1)} min</p>`);
     });
 
-    if (breakdown.sink > 0) {
-      total += breakdown.sink;
-      lines.push(`<p><b>Integrated Sink:</b> ${breakdown.sink.toFixed(1)} min</p>`);
+    const sink = Number(breakdown?.sink) || 0;
+    if (sink > 0) {
+      total += sink;
+      lines.push(`<p><b>Integrated Sink:</b> ${sink.toFixed(1)} min</p>`);
     }
   }
 
   // =========================
-  // 6. CARPENTRY PIPELINE
+  // CARPENTRY PIPELINE
   // =========================
   if (selected.includes("CARPENTRY")) {
 
-    const frame = breakdown.frame || 0;
+    const frame = Number(breakdown?.frame) || 0;
     total += frame;
 
     lines.push(`<p><b>Frame:</b> ${frame.toFixed(1)} min</p>`);
   }
 
   // =========================
-  // 7. RENDER OUTPUT
+  // 6. FINAL RENDER
   // =========================
-  const html = `
+  resultBox.innerHTML = `
     <div class="sim-summary">
 
       <h3>🧠 Engine Simulation</h3>
 
       <p>
         <b>Material:</b> ${material || "-"} |
-        <b>Group:</b> ${group}
+        <b>Group:</b> ${group || "-"}
       </p>
 
       ${lines.join("")}
@@ -717,9 +762,6 @@ if (!project) return;
 
     </div>
   `;
-
-  const result = document.getElementById("sim-result");
-  if (result) result.innerHTML = html;
 }
 
 function runScheduleAll() {
