@@ -796,114 +796,74 @@ function buildProjectFromUI() {
 function calculateSimulation() {
 
   // =========================
-  // 1. SYNC STATE
+  // 1. STATE (UN SOLO SISTEMA)
   // =========================
-  try {
-    syncSelectedStages();
-  } catch (err) {
-    console.error("syncSelectedStages error:", err);
-  }
+  const stage = STATE.stage; // "stone" | "carpentry"
 
-  const selected = (STATE.UI.stages || []).map(
-    s => (s || "").toUpperCase()
-  );
-
-  const showStone =
-    selected.some(s => s.startsWith("STONE"));
-
-  const showCarpentry =
-    selected.some(s => s.startsWith("CARPENTRY"));
+  const showStone = stage === "stone";
+  const showCarpentry = stage === "carpentry";
 
   // =========================
-  // 2. UI DATA
+  // 2. UI ELEMENTS
   // =========================
-  const materialEl =
-    document.getElementById("m_stone_material");
+  const materialEl = document.getElementById("m_stone_material");
+  const material = materialEl?.value || "";
 
-  const material =
-    materialEl?.value || "";
+  const group = getMaterialGroup(material);
 
-  const group =
-    getMaterialGroup(material);
-
-  const resultBox =
-    document.getElementById("sim-result");
-
+  const resultBox = document.getElementById("sim-result");
   if (!resultBox) return;
 
   // =========================
   // 3. BUILD PROJECT
   // =========================
-  let project = null;
+  let project;
 
   try {
-
     project = buildProjectFromUI();
-
   } catch (err) {
-
-    console.error(
-      "buildProjectFromUI error:",
-      err
-    );
+    console.error("buildProjectFromUI error:", err);
 
     resultBox.innerHTML = `
       <div class="sim-summary">
         <h3>🧠 Engine Simulation</h3>
-        <p style="color:red;">
-          Error building project
-        </p>
+        <p style="color:red;">Error building project</p>
       </div>
     `;
-
     return;
   }
 
   if (!project) {
-
     resultBox.innerHTML = `
       <div class="sim-summary">
         <h3>🧠 Engine Simulation</h3>
-        <p style="color:red;">
-          Project is null
-        </p>
+        <p style="color:red;">Project is null</p>
       </div>
     `;
-
     return;
   }
 
   // =========================
-  // 4. ENGINE
+  // 4. ENGINE CALCULATION
   // =========================
-  let breakdown = {};
+  let breakdown;
 
   try {
-
-    breakdown =
-      calculateProjectTime(project);
-
+    breakdown = calculateProjectTime(project);
   } catch (err) {
-
-    console.error(
-      "calculateProjectTime error:",
-      err
-    );
+    console.error("calculateProjectTime error:", err);
 
     resultBox.innerHTML = `
       <div class="sim-summary">
         <h3>🧠 Engine Simulation</h3>
-        <p style="color:red;">
-          Engine calculation error
-        </p>
+        <p style="color:red;">Engine calculation error</p>
       </div>
     `;
-
     return;
   }
 
   // =========================
-  // 5. BUILD OUTPUT
+  // 5. OUTPUT
   // =========================
   let total = 0;
 
@@ -913,14 +873,13 @@ function calculateSimulation() {
       <h3>🧠 Engine Simulation</h3>
 
       <p>
-        <b>Material:</b> ${material || "-"}
-        |
+        <b>Material:</b> ${material || "-"} |
         <b>Group:</b> ${group || "-"}
       </p>
   `;
 
   // =========================
-  // STONE
+  // 🪨 STONE
   // =========================
   if (showStone && project.stone) {
 
@@ -930,47 +889,35 @@ function calculateSimulation() {
     `;
 
     const stoneItems = [
-
       ["Cutting", breakdown.cutting],
       ["Cutouts", breakdown.cutouts],
       ["Edges", breakdown.edges],
       ["Polish", breakdown.polish],
       ["Slabs", breakdown.slabs]
-
     ];
 
     stoneItems.forEach(([label, value]) => {
-
       const v = Number(value) || 0;
-
       total += v;
 
       html += `
-        <p>
-          <b>${label}:</b>
-          ${v.toFixed(1)} min
-        </p>
+        <p><b>${label}:</b> ${v.toFixed(1)} min</p>
       `;
     });
 
-    const sink =
-      Number(breakdown.sink) || 0;
+    const sink = Number(breakdown.sink) || 0;
 
     if (sink > 0) {
-
       total += sink;
 
       html += `
-        <p>
-          <b>Integrated Sink:</b>
-          ${sink.toFixed(1)} min
-        </p>
+        <p><b>Integrated Sink:</b> ${sink.toFixed(1)} min</p>
       `;
     }
   }
 
   // =========================
-  // CARPENTRY
+  // 🪵 CARPENTRY
   // =========================
   if (showCarpentry && project.carpentry) {
 
@@ -980,7 +927,6 @@ function calculateSimulation() {
     `;
 
     const carpItems = [
-
       ["CNC", breakdown.cnc],
       ["Edge", breakdown.edge],
       ["Cabinets", breakdown.cabinets],
@@ -991,39 +937,26 @@ function calculateSimulation() {
       ["LeMans", breakdown.lemans],
       ["Pocket Pantry", breakdown.pocketPantry],
       ["Pocket Cabinet", breakdown.pocketCabinet]
-
     ];
 
     carpItems.forEach(([label, value]) => {
-
       const v = Number(value) || 0;
-
       total += v;
 
       html += `
-        <p>
-          <b>${label}:</b>
-          ${v.toFixed(1)} min
-        </p>
+        <p><b>${label}:</b> ${v.toFixed(1)} min</p>
       `;
     });
   }
 
   // =========================
-  // TOTAL
+  // 6. TOTAL
   // =========================
   html += `
       <hr>
 
-      <p>
-        <b>Total Minutes:</b>
-        ${total.toFixed(1)}
-      </p>
-
-      <p>
-        <b>Total Hours:</b>
-        ${(total / 60).toFixed(2)}
-      </p>
+      <p><b>Total Minutes:</b> ${total.toFixed(1)}</p>
+      <p><b>Total Hours:</b> ${(total / 60).toFixed(2)}</p>
 
     </div>
   `;
