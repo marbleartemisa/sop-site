@@ -166,11 +166,16 @@ function openProjectModal() {
     // =========================
     STATE.UI.stages = Array.from(checkboxes)
       .filter(el => el.checked)
-      .map(el => el.value);
+      .map(el => (el.value || "").toUpperCase().trim());
+
+    console.log("STAGES FINAL:", STATE.UI.stages);
+    console.log("WORKFLOW VALUES:", Array.from(checkboxes).map(x => x.value));
 
     // =========================
     // 5. INITIAL RENDER
     // =========================
+    STATE.UI.stages = ["STONE", "CARPENTRY"];
+    
     renderDynamicPanel();
     calculateSimulation();
 
@@ -448,7 +453,7 @@ function renderDynamicPanel() {
       console.warn("dynamic-panel aún no existe");
       return;
     }
-   const selected = STATE.UI.stages;
+   const selected = (STATE.UI.stages || []).map(s => (s || "").toUpperCase());
   let html = "";
 
   /**********************
