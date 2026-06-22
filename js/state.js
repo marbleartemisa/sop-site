@@ -10,9 +10,13 @@ const DEFAULT_STATE = {
 
   schedule: [],
 
-  UI: {
-    stages: []
+UI: {
+  stages: [],
+  modules: {
+    STONE: true,
+    CARPENTRY: true
   }
+}
 };
 
 export const EDGE_FACTORS = {
@@ -291,6 +295,32 @@ export const MATERIAL_GROUPS = {
   LAMINATE: "G6"
 };
 
+export const WORKFLOW = [
+  { id: "AGREEMENT", label: "Agreement", days: 0 },
+
+  { id: "MEASURE", label: "Measure Confirmation", days: 3 },
+
+  { id: "SCHEDULING", label: "Scheduling", days: 3 },
+
+  { id: "MATERIAL", label: "Material Order", days: 4 },
+
+  { id: "APPROVAL", label: "Final Approval", days: 3 },
+
+  // CARPENTRY
+  { id: "CARPENTRY_FAB", label: "Carpentry Fabrication", days: 2.5, module: "CARPENTRY" },
+  { id: "CARPENTRY_INSTALL", label: "Carpentry Installation", days: 2.5, module: "CARPENTRY" },
+
+  // STONE
+  { id: "STONE_MEASURE", label: "Stone Measure", days: 2, module: "STONE" },
+  { id: "STONE_APPROVAL", label: "Stone Approval", days: 3, module: "STONE" },
+  { id: "STONE_FAB", label: "Stone Fabrication", days: 3, module: "STONE" },
+  { id: "STONE_INSTALL", label: "Stone Installation", days: 3, module: "STONE" },
+
+  // FINAL
+  { id: "PUNCHOUT", label: "Punchout", days: 2 },
+
+  { id: "CLOSE", label: "Final Payment", days: 0 }
+];
 
 export const MATERIAL_OPTIONS = [
   "Granite",
@@ -310,13 +340,19 @@ export const MATERIAL_OPTIONS = [
   "Corian"
 ];
 
+
 export function getMaterialGroup(material) {
 
-  if (!material) return "G2";
+  if (!material) return "G3";
 
-  return MATERIAL_GROUPS[
-    material.toUpperCase()
-  ] || "G2";
+  const key = material
+    .toString()
+    .trim()
+    .toUpperCase();
+
+  const map = MATERIAL_GROUPS;
+
+  return map[key] || "G3";
 }
 // ======================
 // INIT
