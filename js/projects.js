@@ -57,11 +57,184 @@ function syncSelectedStages() {
 }
 
 /****************************************************
+* 🪟 MODAL LIMPIO - PRODUCTION ERP
+****************************************************/
+
+function openProjectModal() {
+
+  const container = document.getElementById("modal-container");
+  if (!container) return;
+
+  // =========================
+  // 1. STATE SAFE INIT
+  // =========================
+  STATE.UI = STATE.UI || {};
+  STATE.UI.stages = [];
+
+  // =========================
+  // 2. RENDER MODAL
+  // =========================
+  container.innerHTML = `
+    <div class="modal-backdrop" onclick="closeModal()"></div>
+
+    <div class="modal"
+      style="
+        width:1400px;
+        max-width:95vw;
+        height:85vh;
+        overflow:auto;
+        display:grid;
+        grid-template-columns: 24% 40% 36%;
+        gap:20px;
+        font-family: Arial;
+      ">
+
+      <!-- ================= COLUMN 1 ================= -->
+      <div>
+        <h2>New Project</h2>
+
+        <input id="m_customer"
+          placeholder="Customer"
+          style="width:100%; margin-bottom:10px;" />
+
+        <h3>Project Stages</h3>
+
+        <div class="stage-list">
+
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="AGREEMENT">
+            <span class="stage-text">Agreement (0d)</span>
+          </label>
+
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="MEASURE">
+            <span class="stage-text">Measure Confirmation (3d)</span>
+          </label>
+
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="SCHEDULING">
+            <span class="stage-text">Scheduling (3d)</span>
+          </label>
+
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="MATERIAL">
+            <span class="stage-text">Material Order (4d)</span>
+          </label>
+
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="APPROVAL">
+            <span class="stage-text">Final Approval (3d)</span>
+          </label>
+
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="CARPENTRY">
+            <span class="stage-text">Carpentry Fabrication (2.5d)</span>
+          </label>
+
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="INSTALL_CAB">
+            <span class="stage-text">Carpentry Installation (2.5d)</span>
+          </label>
+
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="STONE">
+            <span class="stage-text">Stone Fabrication (3d)</span>
+          </label>
+
+          <label class="stage-item">
+            <input class="stage" type="checkbox" checked value="STONE_INSTALL">
+            <span class="stage-text">Stone Installation (3d)</span>
+          </label>
+
+        </div>
+
+        <br>
+
+        <button onclick="submitProject()">
+          Create Project
+        </button>
+      </div>
+
+      <!-- ================= COLUMN 2 ================= -->
+      <div>
+        <h3>Resources & Parameters</h3>
+
+        <div id="dynamic-panel"
+          style="max-height:70vh; overflow:auto; padding-right:10px;">
+        </div>
+      </div>
+
+      <!-- ================= COLUMN 3 ================= -->
+      <div>
+        <h3>Simulation</h3>
+
+        <div id="sim-result">
+          Select stages and parameters...
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  // =========================
+  // 3. WAIT FOR DOM PAINT
+  // =========================
+  requestAnimationFrame(() => {
+
+    // =========================
+    // 4. READ INITIAL STAGES
+    // =========================
+    STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
+      .map(el => el.value);
+
+    // =========================
+    // 5. INITIAL RENDER ENGINE
+    // =========================
+    renderDynamicPanel();
+    calculateSimulation();
+
+    // =========================
+    // 6. STAGE LISTENERS
+    // =========================
+    document.querySelectorAll(".stage").forEach(el => {
+
+      el.addEventListener("change", () => {
+
+        STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
+          .map(el => el.value);
+
+        renderDynamicPanel();
+        calculateSimulation();
+
+      });
+
+    });
+
+  });
+}
+
+/****************************************************
+ * ❌ CLOSE MODAL
+ ****************************************************/
+function closeModal() {
+  document.getElementById("modal-container")?.remove();
+}
+
+window.closeModal = closeModal;
+
+function openCreateForm() {
+  openProjectModal();
+}
+
+
+
+/****************************************************
  * 📦 PROJECTS VIEW (MAIN PANEL)
  ****************************************************/
 export async function renderProjects() {
 
   const container = document.getElementById("view-container");
+  if (!container) return;
 
   const projects = await getProjects();
 
@@ -71,17 +244,17 @@ export async function renderProjects() {
   let html = `
     <div class="panel">
 
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h2>📦 Projects Control Center</h2>
-    
-      <div style="display:flex; gap:10px;">
-        <button onclick="openCreateForm()">➕ New Project</button>
-    
-        <button onclick="runScheduleAll()" style="background:#1e40af; color:white;">
-          🧠 Run Schedule
-        </button>
+      <!-- HEADER ACTIONS -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h2>📦 Projects Control Center</h2>
+
+        <div style="display:flex; gap:10px;">
+          <button data-action="create-project">➕ New Project</button>
+          <button data-action="run-schedule" style="background:#1e40af; color:white;">
+            🧠 Run Schedule
+          </button>
+        </div>
       </div>
-    </div>
 
       <hr/>
 
@@ -97,6 +270,7 @@ export async function renderProjects() {
             <th>Actions</th>
           </tr>
         </thead>
+
         <tbody>
   `;
 
@@ -112,10 +286,10 @@ export async function renderProjects() {
         <td>${p.Priority}</td>
 
         <td style="display:flex; gap:6px;">
-          <button onclick="editProject('${p.ProjectID}')">✏️</button>
-          <button onclick="pauseProject('${p.ProjectID}')">⛔</button>
-          <button onclick="deleteProject('${p.ProjectID}')">🗑</button>
-          <button onclick="openGantt('${p.ProjectID}')">📊 SAP Gantt</button>
+          <button data-action="edit-project" data-id="${p.ProjectID}">✏️</button>
+          <button data-action="pause-project" data-id="${p.ProjectID}">⛔</button>
+          <button data-action="delete-project" data-id="${p.ProjectID}">🗑</button>
+          <button data-action="open-gantt" data-id="${p.ProjectID}">📊 Gantt</button>
         </td>
       </tr>
     `;
@@ -129,7 +303,6 @@ export async function renderProjects() {
 
   container.innerHTML = html;
 }
-
 /****************************************************
  * ⛔ PAUSE PROJECT
  ****************************************************/
@@ -287,169 +460,6 @@ function attachSimulationListeners() {
     });
 
 }
-
-/****************************************************
-* 🪟 MODAL LIMPIO - PRODUCTION ERP
-****************************************************/
-
-function openProjectModal() {
-
-  const container = document.getElementById("modal-container");
-  if (!container) return;
-
-  // =========================
-  // 1. STATE SAFE INIT
-  // =========================
-  STATE.UI = STATE.UI || {};
-  STATE.UI.stages = [];
-
-  // =========================
-  // 2. RENDER MODAL
-  // =========================
-  container.innerHTML = `
-    <div class="modal-backdrop" onclick="closeModal()"></div>
-
-    <div class="modal"
-      style="
-        width:1400px;
-        max-width:95vw;
-        height:85vh;
-        overflow:auto;
-        display:grid;
-        grid-template-columns: 24% 40% 36%;
-        gap:20px;
-        font-family: Arial;
-      ">
-
-      <!-- ================= COLUMN 1 ================= -->
-      <div>
-        <h2>New Project</h2>
-
-        <input id="m_customer"
-          placeholder="Customer"
-          style="width:100%; margin-bottom:10px;" />
-
-        <h3>Project Stages</h3>
-
-        <div class="stage-list">
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="AGREEMENT">
-            <span class="stage-text">Agreement (0d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="MEASURE">
-            <span class="stage-text">Measure Confirmation (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="SCHEDULING">
-            <span class="stage-text">Scheduling (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="MATERIAL">
-            <span class="stage-text">Material Order (4d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="APPROVAL">
-            <span class="stage-text">Final Approval (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="CARPENTRY">
-            <span class="stage-text">Carpentry Fabrication (2.5d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="INSTALL_CAB">
-            <span class="stage-text">Carpentry Installation (2.5d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="STONE">
-            <span class="stage-text">Stone Fabrication (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="STONE_INSTALL">
-            <span class="stage-text">Stone Installation (3d)</span>
-          </label>
-
-        </div>
-
-        <br>
-
-        <button onclick="submitProject()">
-          Create Project
-        </button>
-      </div>
-
-      <!-- ================= COLUMN 2 ================= -->
-      <div>
-        <h3>Resources & Parameters</h3>
-
-        <div id="dynamic-panel"
-          style="max-height:70vh; overflow:auto; padding-right:10px;">
-        </div>
-      </div>
-
-      <!-- ================= COLUMN 3 ================= -->
-      <div>
-        <h3>Simulation</h3>
-
-        <div id="sim-result">
-          Select stages and parameters...
-        </div>
-      </div>
-
-    </div>
-  `;
-
-  // =========================
-  // 3. WAIT FOR DOM PAINT
-  // =========================
-  requestAnimationFrame(() => {
-
-    // =========================
-    // 4. READ INITIAL STAGES
-    // =========================
-    STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
-      .map(el => el.value);
-
-    // =========================
-    // 5. INITIAL RENDER ENGINE
-    // =========================
-    renderDynamicPanel();
-    calculateSimulation();
-
-    // =========================
-    // 6. STAGE LISTENERS
-    // =========================
-    document.querySelectorAll(".stage").forEach(el => {
-
-      el.addEventListener("change", () => {
-
-        STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
-          .map(el => el.value);
-
-        renderDynamicPanel();
-        calculateSimulation();
-
-      });
-
-    });
-
-  });
-}
-
-
-
-function openCreateForm() {
-  openProjectModal();
-}
   
 
 function renderDynamicPanel() {
@@ -597,16 +607,6 @@ html += `
     if (material) material.value = "";
   }
 }
-
-
-/****************************************************
- * ❌ CLOSE MODAL
- ****************************************************/
-function closeModal() {
-  document.getElementById("modal-container")?.remove();
-}
-
-window.closeModal = closeModal;
 
 
 /****************************************************
@@ -767,6 +767,16 @@ function openGantt(projectId) {
 
 window.openGantt = openGantt;
 
+
+/****************************************************
+ * 🎯 UI EVENT DELEGATION (NEW ARCHITECTURE)
+ ****************************************************/
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action='create-project']");
+  if (!btn) return;
+
+  openProjectModal();
+});
 /****************************************************
  * 🌐 GLOBAL EXPORTS (IMPORTANT FOR HTML ONCLICK)
  ****************************************************/
@@ -778,5 +788,7 @@ window.renderProjects = renderProjects;
 window.renderDynamicPanel = renderDynamicPanel;
 window.calculateSimulation = calculateSimulation;
 window.runScheduleAll = runScheduleAll;
+
+
 
 
