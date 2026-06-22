@@ -28,7 +28,27 @@ export const DEFAULT_STATE = {
 // ======================
 // ACTIVE STATE (SINGLE SOURCE OF TRUTH)
 // ======================
+export const DEFAULT_STATE = {
+  stage: null, // IMPORTANTE
+
+  modules: {
+    stone: true,
+    carpentry: true
+  },
+
+  PROJECTS: [],
+  PROJECT_TASKS: [],
+  RESOURCES: [],
+  schedule: [],
+  UI: {
+    stages: []
+  }
+};
+
 export const STATE = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+window.STATE = STATE;
+
 
 // ======================
 // EDGE FACTORS
