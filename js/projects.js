@@ -63,6 +63,40 @@ function syncSelectedStages() {
   .map(el => (el.value || "").toUpperCase().trim());
 }
 
+function getColumn2(stage) {
+
+  if (stage === "carpinteria") {
+    return [
+      "Paneles",
+      "Cabinets",
+      "Gavetas",
+      "Pantry",
+      "Trashcan",
+      "Lazy Susan",
+      "Lemans II",
+      "Pocket Door Pantry",
+      "Pocket Door Cabinets",
+      "Pies lineales de edgebanding"
+    ];
+  }
+
+  if (stage === "stone") {
+    return [
+      "Máquina",
+      "Tipo de material",
+      "Ancho del slab",
+      "Complejidad",
+      "Sqft",
+      "Tipo de edge",
+      "Pies lineales de edge",
+      "Cutouts",
+      "Slabs"
+    ];
+  }
+
+  return [];
+}
+
 function syncModules() {
 
   const selected = STATE.UI.stages;
@@ -528,93 +562,81 @@ function attachListeners() {
 
 
 function renderDynamicPanel() {
-  
+
   const panel = document.getElementById("dynamic-panel");
   if (!panel) return;
 
-  const selected = (STATE.UI.stages || []).map(s => (s || "").toUpperCase());
-  
-  const showStone =
-  selected.some(s => s.startsWith("STONE"));
-
-  const showCarpentry =
-  selected.some(s => s.startsWith("CARPENTRY"));
+  const stage = STATE.stage; // 👈 control único (carpentry | stone)
 
   let html = "";
 
   /**********************
    * 🪨 STONE MODULE
    **********************/
-  if (showStone) {
+  if (stage === "stone") {
 
-html += `
-  <div class="module">
-    <div class="section-title">🪨 Stone Production</div>
+    html += `
+      <div class="module">
+        <div class="section-title">🪨 Stone Production</div>
 
-    <select id="m_stone_resource">
-      <option value="BRETON">Breton CNC</option>
-      <option value="COACH">COACH</option>
-    </select>
+        <select id="m_stone_resource">
+          <option value="BRETON">Breton CNC</option>
+          <option value="COACH">Manual Coach</option>
+        </select>
 
-    <select id="m_stone_material">
-      <option value="">Select material</option>
-      <option value="Caesarstone">Caesarstone</option>
-      <option value="Cambria">Cambria</option>
-      <option value="Dekton">Dekton</option>
-      <option value="Granite">Granite</option>
-      <option value="Quartz">Quartz</option>
-      <option value="Quartzite">Quartzite</option>
-      <option value="Porcelain">Porcelain</option>
-    </select>
+        <select id="m_stone_material">
+          <option value="">Select material</option>
+          <option value="Granite">Granite</option>
+          <option value="Quartz">Quartz</option>
+          <option value="Quartzite">Quartzite</option>
+          <option value="Porcelain">Porcelain</option>
+          <option value="Dekton">Dekton</option>
+        </select>
 
-    <select id="m_stone_thickness">
-      <option value="6mm">6mm</option>
-      <option value="8mm">8mm</option>
-      <option value="12mm">12mm</option>
-      <option value="2cm">2cm</option>
-      <option value="3cm">3cm</option>
-    </select>
+        <select id="m_stone_thickness">
+          <option value="6mm">6mm</option>
+          <option value="12mm">12mm</option>
+          <option value="2cm">2cm</option>
+          <option value="3cm">3cm</option>
+        </select>
 
-    <select id="m_stone_complexity">
-      <option value="LOW">Low</option>
-      <option value="MED">Medium</option>
-      <option value="HIGH">High</option>
-    </select>
+        <select id="m_stone_complexity">
+          <option value="LOW">Low</option>
+          <option value="MED">Medium</option>
+          <option value="HIGH">High</option>
+        </select>
 
-    <input id="m_stone_ft2" type="number" placeholder="Sqft (Stone Panels)" />
+        <input id="m_stone_ft2" type="number" placeholder="Sqft">
 
-    <!-- EDGE SYSTEM -->
-    <select id="m_stone_edge_type">
-      <option value="simple">Simple</option>
-      <option value="bullnose">Bullnose</option>
-      <option value="ogee">Ogee</option>
-      <option value="laminated">Laminated</option>
-    </select>
+        <select id="m_stone_edge_type">
+          <option value="simple">Simple</option>
+          <option value="bullnose">Bullnose</option>
+          <option value="ogee">Ogee</option>
+          <option value="laminated">Laminated</option>
+        </select>
 
-    <input id="m_stone_edge_ft" type="number" placeholder="Edge Linear Ft" />
-
-    <input id="m_stone_cutouts" type="number" placeholder="Cutouts" />
-    <input id="m_stone_slabs" type="number" placeholder="Slabs" />
-  </div>
-`;
+        <input id="m_stone_edge_ft" type="number" placeholder="Edge LF">
+        <input id="m_stone_cutouts" type="number" placeholder="Cutouts">
+        <input id="m_stone_slabs" type="number" placeholder="Slabs">
+      </div>
+    `;
   }
 
   /**********************
    * 🪵 CARPENTRY MODULE
    **********************/
- if (showCarpentry) {
+  if (stage === "carpentry") {
 
     html += `
       <div class="module">
-        <h3>🪵 Carpentry Production</h3>
+        <div class="section-title">🪵 Carpentry Production</div>
 
-        <input id="m_carpentry_panels" type="number" placeholder="Panels (CNC)">
+        <input id="m_carpentry_panels" type="number" placeholder="Panels">
 
         <select id="m_carpentry_cabinets">
           <option value="0">0 Cabinets</option>
           <option value="1">1</option>
           <option value="2">2</option>
-          <option value="3">3</option>
           <option value="5">5+</option>
         </select>
 
@@ -622,7 +644,6 @@ html += `
           <option value="0">0 Drawers</option>
           <option value="1">1</option>
           <option value="2">2</option>
-          <option value="3">3</option>
           <option value="5">5+</option>
         </select>
 
@@ -639,9 +660,8 @@ html += `
         </select>
 
         <select id="m_carpentry_lazy">
-          <option value="0">0 Lazy</option>
-          <option value="1">Lazy Susan</option>
-          <option value="2">2+</option>
+          <option value="0">0 Lazy Susan</option>
+          <option value="1">1</option>
         </select>
 
         <select id="m_carpentry_lemans">
@@ -650,12 +670,12 @@ html += `
         </select>
 
         <select id="m_carpentry_pocket_pantry">
-          <option value="0">0 PocketP</option>
+          <option value="0">No</option>
           <option value="1">Yes</option>
         </select>
 
         <select id="m_carpentry_pocket_cabinet">
-          <option value="0">0 PocketC</option>
+          <option value="0">No</option>
           <option value="1">Yes</option>
         </select>
 
@@ -665,19 +685,27 @@ html += `
   }
 
   /**********************
-   * 🧹 CLEAN RENDER
+   * 🧹 EMPTY STATE (CONTROLLED)
+   **********************/
+  if (!html) {
+    html = `
+      <div class="module empty-state">
+        <h3>No Stage Selected</h3>
+        <p>Please select Carpentry or Stone</p>
+      </div>
+    `;
+  }
+
+  /**********************
+   * 🧱 FINAL RENDER
    **********************/
   panel.innerHTML = `
-  <div class="modules-wrapper">
-    ${html || `
-      <div class="module empty-state">
-        <p>Select STONE or CARPENTRY to start</p>
-      </div>
-    `}
-  </div>
-`;
+    <div class="modules-wrapper">
+      ${html}
+    </div>
+  `;
 
-     queueMicrotask(() => {
+  queueMicrotask(() => {
     restoreState();
     attachListeners();
     calculateSimulation();
