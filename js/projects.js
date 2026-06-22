@@ -445,13 +445,6 @@ function openProjectModal() {
   });
 }
 
-/****************************************************
-* ❌ CLOSE MODAL
-****************************************************/
-function closeModal() {
-  const container = document.getElementById("modal-container");
-  if (container) container.innerHTML = "";
-}
 
 
 function openCreateForm() {
@@ -605,18 +598,28 @@ html += `
   }
 }
 
+
 /****************************************************
  * ❌ CLOSE MODAL
  ****************************************************/
 function closeModal() {
-  document.getElementById("modal-container").innerHTML = "";
+  document.getElementById("modal-container")?.innerHTML = "";
 }
 
+window.closeModal = closeModal;
+
+
+/****************************************************
+ * 📦 ENGINE IMPORT
+ ****************************************************/
 import { calculateProjectTime } from "./productionEngine.js";
 
+
+/****************************************************
+ * 🧱 BUILD PROJECT MODEL
+ ****************************************************/
 function buildProjectFromUI() {
 
-  // 👇 AQUÍ ES DONDE VA
   syncSelectedStages();
   const selected = STATE.UI.stages;
 
@@ -630,8 +633,7 @@ function buildProjectFromUI() {
     ft2: safeNumber("m_stone_ft2"),
     edgesLF: safeNumber("m_stone_edge_ft"),
 
-    edgeType:
-      document.getElementById("m_stone_edge_type")?.value || "MITER_45",
+    edgeType: document.getElementById("m_stone_edge_type")?.value || "MITER_45",
 
     cutouts: {
       qty: safeNumber("m_stone_cutouts"),
@@ -643,10 +645,11 @@ function buildProjectFromUI() {
 
     machine: "BRETON",
 
-    // 👇 IMPORTANTE: aquí se incluye en el modelo
     stages: selected
   };
 }
+
+
 function calculateSimulation() {
 
   // =========================
@@ -767,11 +770,13 @@ window.openGantt = openGantt;
 /****************************************************
  * 🌐 GLOBAL EXPORTS (IMPORTANT FOR HTML ONCLICK)
  ****************************************************/
-window.renderProjects = renderProjects
 window.openCreateForm = openCreateForm;
-window.pauseProject = pauseProject;
-window.deleteProject = deleteProject;
-window.submitProject = submitProject;
-window.runScheduleAll = runScheduleAll;
+window.openProjectModal = openProjectModal;
 window.closeModal = closeModal;
+window.submitProject = submitProject;
+window.renderProjects = renderProjects;
+window.renderDynamicPanel = renderDynamicPanel;
+window.calculateSimulation = calculateSimulation;
+window.runScheduleAll = runScheduleAll;
+
 
