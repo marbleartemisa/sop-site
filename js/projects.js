@@ -600,32 +600,57 @@ import { calculateProjectTime } from "./productionEngine.js";
 function buildProjectFromUI() {
 
   syncSelectedStages();
-  const selected = STATE.UI.stages;
+  const selected = STATE.UI.stages || [];
 
-  const material = document.getElementById("m_stone_material")?.value || "";
-  const group = getMaterialGroup(material);
-
-  return {
-    material,
-    group,
-
-    ft2: safeNumber("m_stone_ft2"),
-    edgesLF: safeNumber("m_stone_edge_ft"),
-
-    edgeType: document.getElementById("m_stone_edge_type")?.value || "MITER_45",
-
-    cutouts: {
-      qty: safeNumber("m_stone_cutouts"),
-      type: "UNDERMOUNT"
-    },
-
-    sinks: 0,
-    frameQty: 0,
-
-    machine: "BRETON",
-
+  const project = {
     stages: selected
   };
+
+  // =========================
+  // STONE SAFE BLOCK
+  // =========================
+  if (selected.includes("STONE")) {
+
+    const material = document.getElementById("m_stone_material")?.value || "";
+
+    project.stone = {
+      material,
+      group: material ? getMaterialGroup(material) : "UNKNOWN",
+
+      ft2: safeNumber("m_stone_ft2"),
+      edgesLF: safeNumber("m_stone_edge_ft"),
+
+      edgeType: document.getElementById("m_stone_edge_type")?.value || "simple",
+
+      cutouts: safeNumber("m_stone_cutouts"),
+      slabs: safeNumber("m_stone_slabs"),
+
+      thickness: document.getElementById("m_stone_thickness")?.value || "",
+      complexity: document.getElementById("m_stone_complexity")?.value || "",
+      resource: document.getElementById("m_stone_resource")?.value || "BRETON"
+    };
+  }
+
+  // =========================
+  // CARPENTRY SAFE BLOCK
+  // =========================
+  if (selected.includes("CARPENTRY")) {
+
+    project.carpentry = {
+      panels: safeNumber("m_carpentry_panels"),
+      cabinets: document.getElementById("m_carpentry_cabinets")?.value || "0",
+      drawers: document.getElementById("m_carpentry_drawers")?.value || "0",
+      pantry: document.getElementById("m_carpentry_pantry")?.value || "0",
+      trashcan: document.getElementById("m_carpentry_trashcan")?.value || "0",
+      lazy: document.getElementById("m_carpentry_lazy")?.value || "0",
+      lemans: document.getElementById("m_carpentry_lemans")?.value || "0",
+      pocket_pantry: document.getElementById("m_carpentry_pocket_pantry")?.value || "0",
+      pocket_cabinet: document.getElementById("m_carpentry_pocket_cabinet")?.value || "0",
+      edge_ft: safeNumber("m_carpentry_edge_ft")
+    };
+  }
+
+  return project;
 }
 
 
