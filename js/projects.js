@@ -2,7 +2,8 @@ import { STATE, EDGE_FACTORS } from "./state.js";
 import { getProjects, post } from "./api.js";
 import { formatDate } from "../utils/schedule.js";
 import { generateSchedule } from "./scheduler.js";
-
+import { getMaterialGroup } from "./state.js";
+import { WORKFLOW } from "./state.js";
 
 const STAGE_CONFIG = {
 
@@ -56,6 +57,16 @@ function syncSelectedStages() {
     .map(el => el.value);
 }
 
+function syncModules() {
+
+  const selected = STATE.UI.stages;
+
+  STATE.UI.modules = {
+    STONE: selected.some(s => s.includes("STONE")),
+    CARPENTRY: selected.some(s => s.includes("CARPENTRY"))
+  };
+}
+
 /****************************************************
 * 🪟 MODAL LIMPIO - PRODUCTION ERP
 ****************************************************/
@@ -66,7 +77,7 @@ function openProjectModal() {
   if (!container) return;
 
   // =========================
-  // 1. STATE SAFE INIT
+  // 1. INIT STATE SAFE
   // =========================
   STATE.UI = STATE.UI || {};
   STATE.UI.stages = [];
@@ -100,52 +111,19 @@ function openProjectModal() {
         <h3>Project Stages</h3>
 
         <div class="stage-list">
+          ${WORKFLOW.map(step => `
+            <label class="stage-item">
+              <input class="stage"
+                type="checkbox"
+                value="${step.id}"
+                data-module="${step.module || "GLOBAL"}"
+                checked>
 
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="AGREEMENT">
-            <span class="stage-text">Agreement (0d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="MEASURE">
-            <span class="stage-text">Measure Confirmation (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="SCHEDULING">
-            <span class="stage-text">Scheduling (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="MATERIAL">
-            <span class="stage-text">Material Order (4d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="APPROVAL">
-            <span class="stage-text">Final Approval (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="CARPENTRY">
-            <span class="stage-text">Carpentry Fabrication (2.5d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="INSTALL_CAB">
-            <span class="stage-text">Carpentry Installation (2.5d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="STONE">
-            <span class="stage-text">Stone Fabrication (3d)</span>
-          </label>
-
-          <label class="stage-item">
-            <input class="stage" type="checkbox" checked value="STONE_INSTALL">
-            <span class="stage-text">Stone Installation (3d)</span>
-          </label>
-
+              <span class="stage-text">
+                ${step.label} (${step.days}d)
+              </span>
+            </label>
+          `).join("")}
         </div>
 
         <br>
@@ -177,37 +155,38 @@ function openProjectModal() {
   `;
 
   // =========================
-  // 3. WAIT FOR DOM PAINT
+  // 3. INIT AFTER PAINT
   // =========================
   requestAnimationFrame(() => {
 
+    const checkboxes = container.querySelectorAll(".stage");
+
     // =========================
-    // 4. READ INITIAL STAGES
+    // 4. INITIAL STATE SYNC
     // =========================
-    STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
+    STATE.UI.stages = Array.from(checkboxes)
+      .filter(el => el.checked)
       .map(el => el.value);
 
     // =========================
-    // 5. INITIAL RENDER ENGINE
+    // 5. INITIAL RENDER
     // =========================
     renderDynamicPanel();
     calculateSimulation();
 
     // =========================
-    // 6. STAGE LISTENERS
+    // 6. EVENT LISTENERS (CLEAN + SAFE)
     // =========================
-    document.querySelectorAll(".stage").forEach(el => {
-
+    checkboxes.forEach(el => {
       el.addEventListener("change", () => {
 
-        STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
-          .map(el => el.value);
+        STATE.UI.stages = Array.from(checkboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.value);
 
         renderDynamicPanel();
         calculateSimulation();
-
       });
-
     });
 
   });
