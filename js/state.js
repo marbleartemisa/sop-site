@@ -19,6 +19,13 @@ UI: {
 }
 };
 
+STATE.fabrication = {
+  carpinteria: true,
+  stone: true
+};
+
+STATE.stage = "carpinteria"; // o stone 
+
 export const EDGE_FACTORS = {
   MITER_45: {
     factor: 1.8,
