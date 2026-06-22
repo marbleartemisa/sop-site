@@ -603,7 +603,7 @@ html += `
  * ❌ CLOSE MODAL
  ****************************************************/
 function closeModal() {
-  document.getElementById("modal-container")?.innerHTML = "";
+  document.getElementById("modal-container")?.remove();
 }
 
 window.closeModal = closeModal;
