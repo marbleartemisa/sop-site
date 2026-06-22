@@ -179,7 +179,6 @@ function openProjectModal() {
     // =========================
     // 5. INITIAL RENDER
     // =========================
-    STATE.UI.stages = ["STONE", "CARPENTRY"];
     
     renderDynamicPanel();
     calculateSimulation();
@@ -529,17 +528,24 @@ function attachListeners() {
 
 
 function renderDynamicPanel() {
+  
   const panel = document.getElementById("dynamic-panel");
   if (!panel) return;
 
   const selected = (STATE.UI.stages || []).map(s => (s || "").toUpperCase());
+  
+  const showStone =
+  selected.some(s => s.startsWith("STONE"));
+
+  const showCarpentry =
+  selected.some(s => s.startsWith("CARPENTRY"));
 
   let html = "";
 
   /**********************
    * 🪨 STONE MODULE
    **********************/
-  if (selected.includes("STONE")) {
+  if (showStone) {
 
 html += `
   <div class="module">
@@ -596,7 +602,7 @@ html += `
   /**********************
    * 🪵 CARPENTRY MODULE
    **********************/
-  if (selected.includes("CARPENTRY")) {
+ if (showCarpentry) {
 
     html += `
       <div class="module">
@@ -694,7 +700,17 @@ function buildProjectFromUI() {
 
   syncSelectedStages();
   const selected = STATE.UI.stages || [];
-
+  
+  const hasStone =
+    selected.some(s =>
+      s.toUpperCase().startsWith("STONE")
+    );
+  
+  const hasCarpentry =
+    selected.some(s =>
+      s.toUpperCase().startsWith("CARPENTRY")
+    );
+  
   const project = {
     stages: selected
   };
@@ -702,7 +718,7 @@ function buildProjectFromUI() {
   // =========================
   // STONE SAFE BLOCK
   // =========================
-  if (selected.includes("STONE")) {
+  if (hasStone) {
 
     const material =
     STATE.UI.data?.stone?.material ||
@@ -729,7 +745,7 @@ function buildProjectFromUI() {
   // =========================
   // CARPENTRY SAFE BLOCK
   // =========================
-  if (selected.includes("CARPENTRY")) {
+  if (hasCarpentry) {
 
     project.carpentry = {
       panels: safeNumber("m_carpentry_panels"),
@@ -752,7 +768,7 @@ function buildProjectFromUI() {
 function calculateSimulation() {
 
   // =========================
-  // 1. SYNC STATE SAFE
+  // 1. SYNC STATE
   // =========================
   try {
     syncSelectedStages();
@@ -760,61 +776,101 @@ function calculateSimulation() {
     console.error("syncSelectedStages error:", err);
   }
 
-  const selected = STATE.UI.stages || [];
+  const selected = (STATE.UI.stages || []).map(
+    s => (s || "").toUpperCase()
+  );
+
+  const showStone =
+    selected.some(s => s.startsWith("STONE"));
+
+  const showCarpentry =
+    selected.some(s => s.startsWith("CARPENTRY"));
 
   // =========================
-  // 2. READ UI SAFE
+  // 2. UI DATA
   // =========================
-  const materialEl = document.getElementById("m_stone_material");
-  const material = materialEl?.value || "";
-  const group = getMaterialGroup(material);
+  const materialEl =
+    document.getElementById("m_stone_material");
+
+  const material =
+    materialEl?.value || "";
+
+  const group =
+    getMaterialGroup(material);
+
+  const resultBox =
+    document.getElementById("sim-result");
+
+  if (!resultBox) return;
 
   // =========================
-  // 3. BUILD PROJECT SAFE
+  // 3. BUILD PROJECT
   // =========================
   let project = null;
 
   try {
-    if (materialEl) {
-      project = buildProjectFromUI();
-    }
+
+    project = buildProjectFromUI();
+
   } catch (err) {
-    console.error("buildProjectFromUI error:", err);
-  }
 
-  const resultBox = document.getElementById("sim-result");
-  if (!resultBox) return;
+    console.error(
+      "buildProjectFromUI error:",
+      err
+    );
 
-  // si no hay proyecto, NO cortar UI
-  if (!project) {
     resultBox.innerHTML = `
       <div class="sim-summary">
         <h3>🧠 Engine Simulation</h3>
         <p style="color:red;">
-          No se pudo construir el proyecto (check inputs / buildProjectFromUI)
+          Error building project
         </p>
       </div>
     `;
+
+    return;
+  }
+
+  if (!project) {
+
+    resultBox.innerHTML = `
+      <div class="sim-summary">
+        <h3>🧠 Engine Simulation</h3>
+        <p style="color:red;">
+          Project is null
+        </p>
+      </div>
+    `;
+
     return;
   }
 
   // =========================
-  // 4. ENGINE CALL SAFE
+  // 4. ENGINE
   // =========================
-  let breakdown;
+  let breakdown = {};
 
   try {
-    breakdown = calculateProjectTime(project);
+
+    breakdown =
+      calculateProjectTime(project);
+
   } catch (err) {
-    console.error("calculateProjectTime error:", err);
+
+    console.error(
+      "calculateProjectTime error:",
+      err
+    );
+
     resultBox.innerHTML = `
       <div class="sim-summary">
         <h3>🧠 Engine Simulation</h3>
         <p style="color:red;">
-          Engine error calculating project time
+          Engine calculation error
         </p>
       </div>
     `;
+
     return;
   }
 
@@ -822,66 +878,129 @@ function calculateSimulation() {
   // 5. BUILD OUTPUT
   // =========================
   let total = 0;
-  let lines = [];
 
-  // =========================
-  // STONE PIPELINE
-  // =========================
-  if (selected.includes("STONE")) {
-
-    const stoneParts = [
-      { label: "Cutting", value: breakdown?.cutting },
-      { label: "Cutouts", value: breakdown?.cutouts },
-      { label: "Edges", value: breakdown?.edges },
-      { label: "Polish", value: breakdown?.polish }
-    ];
-
-    stoneParts.forEach(p => {
-      const val = Number(p.value) || 0;
-      total += val;
-      lines.push(`<p><b>${p.label}:</b> ${val.toFixed(1)} min</p>`);
-    });
-
-    const sink = Number(breakdown?.sink) || 0;
-    if (sink > 0) {
-      total += sink;
-      lines.push(`<p><b>Integrated Sink:</b> ${sink.toFixed(1)} min</p>`);
-    }
-  }
-
-  // =========================
-  // CARPENTRY PIPELINE
-  // =========================
-  if (selected.includes("CARPENTRY")) {
-
-    const frame = Number(breakdown?.frame) || 0;
-    total += frame;
-
-    lines.push(`<p><b>Frame:</b> ${frame.toFixed(1)} min</p>`);
-  }
-
-  // =========================
-  // 6. FINAL RENDER
-  // =========================
-  resultBox.innerHTML = `
+  let html = `
     <div class="sim-summary">
 
       <h3>🧠 Engine Simulation</h3>
 
       <p>
-        <b>Material:</b> ${material || "-"} |
+        <b>Material:</b> ${material || "-"}
+        |
         <b>Group:</b> ${group || "-"}
       </p>
+  `;
 
-      ${lines.join("")}
+  // =========================
+  // STONE
+  // =========================
+  if (showStone && project.stone) {
 
+    html += `
+      <hr>
+      <h4>🪨 Stone Production</h4>
+    `;
+
+    const stoneItems = [
+
+      ["Cutting", breakdown.cutting],
+      ["Cutouts", breakdown.cutouts],
+      ["Edges", breakdown.edges],
+      ["Polish", breakdown.polish],
+      ["Slabs", breakdown.slabs]
+
+    ];
+
+    stoneItems.forEach(([label, value]) => {
+
+      const v = Number(value) || 0;
+
+      total += v;
+
+      html += `
+        <p>
+          <b>${label}:</b>
+          ${v.toFixed(1)} min
+        </p>
+      `;
+    });
+
+    const sink =
+      Number(breakdown.sink) || 0;
+
+    if (sink > 0) {
+
+      total += sink;
+
+      html += `
+        <p>
+          <b>Integrated Sink:</b>
+          ${sink.toFixed(1)} min
+        </p>
+      `;
+    }
+  }
+
+  // =========================
+  // CARPENTRY
+  // =========================
+  if (showCarpentry && project.carpentry) {
+
+    html += `
+      <hr>
+      <h4>🪵 Carpentry Production</h4>
+    `;
+
+    const carpItems = [
+
+      ["CNC", breakdown.cnc],
+      ["Edge", breakdown.edge],
+      ["Cabinets", breakdown.cabinets],
+      ["Drawers", breakdown.drawers],
+      ["Pantry", breakdown.pantry],
+      ["Trashcan", breakdown.trashcan],
+      ["Lazy Susan", breakdown.lazy],
+      ["LeMans", breakdown.lemans],
+      ["Pocket Pantry", breakdown.pocketPantry],
+      ["Pocket Cabinet", breakdown.pocketCabinet]
+
+    ];
+
+    carpItems.forEach(([label, value]) => {
+
+      const v = Number(value) || 0;
+
+      total += v;
+
+      html += `
+        <p>
+          <b>${label}:</b>
+          ${v.toFixed(1)} min
+        </p>
+      `;
+    });
+  }
+
+  // =========================
+  // TOTAL
+  // =========================
+  html += `
       <hr>
 
-      <p><b>Total Minutes:</b> ${total.toFixed(1)}</p>
-      <p><b>Total Hours:</b> ${(total / 60).toFixed(2)}</p>
+      <p>
+        <b>Total Minutes:</b>
+        ${total.toFixed(1)}
+      </p>
+
+      <p>
+        <b>Total Hours:</b>
+        ${(total / 60).toFixed(2)}
+      </p>
 
     </div>
   `;
+
+  resultBox.innerHTML = html;
 }
 
 function runScheduleAll() {
