@@ -516,20 +516,14 @@ function attachListeners() {
   const panel = document.getElementById("dynamic-panel");
   if (!panel) return;
 
-  const elements = panel.querySelectorAll("input, select");
-
   const handler = () => {
     saveState();
     calculateSimulation();
   };
 
-  elements.forEach(el => {
-    // evita duplicación real de listeners
-    el.removeEventListener("input", handler);
-    el.removeEventListener("change", handler);
-
-    el.addEventListener("input", handler);
-    el.addEventListener("change", handler);
+  panel.querySelectorAll("input, select").forEach(el => {
+    el.oninput = handler;
+    el.onchange = handler;
   });
 }
 
