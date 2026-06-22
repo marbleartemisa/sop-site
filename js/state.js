@@ -45,9 +45,18 @@ export const DEFAULT_STATE = {
   }
 };
 
-export const STATE = JSON.parse(JSON.stringify(DEFAULT_STATE));
+export const STATE = {
+  stage: null, // "stone" | "carpentry"
+
+  modules: {
+    stone: true,
+    carpentry: true
+  }
+};
 
 window.STATE = STATE;
+
+
 
 
 // ======================
