@@ -31,6 +31,12 @@ const STAGE_CONFIG = {
 
 };
 
+STATE.UI = STATE.UI || {};
+STATE.UI.data = STATE.UI.data || {
+  stone: {},
+  carpentry: {}
+};
+
 
 
 function initStageListeners() {
@@ -53,8 +59,8 @@ function updateState() {
 
 function syncSelectedStages() {
   STATE.UI = STATE.UI || {};
-  STATE.UI.stages = [...document.querySelectorAll(".stage:checked")]
-    .map(el => el.value);
+  STATE.UI.stages = Array.from(document.querySelectorAll(".stage:checked"))
+  .map(el => (el.value || "").toUpperCase().trim());
 }
 
 function syncModules() {
@@ -80,8 +86,7 @@ function openProjectModal() {
   // 1. INIT STATE SAFE
   // =========================
   STATE.UI = STATE.UI || {};
-  STATE.UI.stages = [];
-
+  STATE.UI.stages = STATE.UI.stages || [];
   // =========================
   // 2. RENDER MODAL
   // =========================
@@ -444,16 +449,97 @@ function attachSimulationListeners() {
     });
 
 }
-  
+
+function saveState() {
+  const get = (id) => document.getElementById(id)?.value ?? "";
+
+  STATE.UI.data.stone = {
+    resource: get("m_stone_resource"),
+    material: get("m_stone_material"),
+    thickness: get("m_stone_thickness"),
+    complexity: get("m_stone_complexity"),
+    ft2: get("m_stone_ft2"),
+    edgeType: get("m_stone_edge_type"),
+    edge_ft: get("m_stone_edge_ft"),
+    cutouts: get("m_stone_cutouts"),
+    slabs: get("m_stone_slabs")
+  };
+
+  STATE.UI.data.carpentry = {
+    panels: get("m_carpentry_panels"),
+    cabinets: get("m_carpentry_cabinets"),
+    drawers: get("m_carpentry_drawers"),
+    pantry: get("m_carpentry_pantry"),
+    trashcan: get("m_carpentry_trashcan"),
+    lazy: get("m_carpentry_lazy"),
+    lemans: get("m_carpentry_lemans"),
+    pocket_pantry: get("m_carpentry_pocket_pantry"),
+    pocket_cabinet: get("m_carpentry_pocket_cabinet"),
+    edge_ft: get("m_carpentry_edge_ft")
+  };
+}
+
+function restoreState() {
+  const set = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.value = value ?? "";
+  };
+
+  const s = STATE.UI.data?.stone || {};
+  const c = STATE.UI.data?.carpentry || {};
+
+  // STONE
+  set("m_stone_resource", s.resource);
+  set("m_stone_material", s.material);
+  set("m_stone_thickness", s.thickness);
+  set("m_stone_complexity", s.complexity);
+  set("m_stone_ft2", s.ft2);
+  set("m_stone_edge_type", s.edgeType);
+  set("m_stone_edge_ft", s.edge_ft);
+  set("m_stone_cutouts", s.cutouts);
+  set("m_stone_slabs", s.slabs);
+
+  // CARPENTRY
+  set("m_carpentry_panels", c.panels);
+  set("m_carpentry_cabinets", c.cabinets);
+  set("m_carpentry_drawers", c.drawers);
+  set("m_carpentry_pantry", c.pantry);
+  set("m_carpentry_trashcan", c.trashcan);
+  set("m_carpentry_lazy", c.lazy);
+  set("m_carpentry_lemans", c.lemans);
+  set("m_carpentry_pocket_pantry", c.pocket_pantry);
+  set("m_carpentry_pocket_cabinet", c.pocket_cabinet);
+  set("m_carpentry_edge_ft", c.edge_ft);
+}
+
+function attachListeners() {
+  const panel = document.getElementById("dynamic-panel");
+  if (!panel) return;
+
+  const elements = panel.querySelectorAll("input, select");
+
+  const handler = () => {
+    saveState();
+    calculateSimulation();
+  };
+
+  elements.forEach(el => {
+    // evita duplicación real de listeners
+    el.removeEventListener("input", handler);
+    el.removeEventListener("change", handler);
+
+    el.addEventListener("input", handler);
+    el.addEventListener("change", handler);
+  });
+}
+
 
 function renderDynamicPanel() {
-   const panel = document.getElementById("dynamic-panel");
-  
-    if (!panel) {
-      console.warn("dynamic-panel aún no existe");
-      return;
-    }
-   const selected = (STATE.UI.stages || []).map(s => (s || "").toUpperCase());
+  const panel = document.getElementById("dynamic-panel");
+  if (!panel) return;
+
+  const selected = (STATE.UI.stages || []).map(s => (s || "").toUpperCase());
+
   let html = "";
 
   /**********************
@@ -583,14 +669,13 @@ html += `
    **********************/
   panel.innerHTML = html;
 
-  /**********************
-   * 🧼 RESET STONE MATERIAL IF STONE IS OFF
-   **********************/
-  if (!selected.includes("STONE")) {
-    const material = document.getElementById("m_stone_material");
-    if (material) material.value = "";
-  }
+     requestAnimationFrame(() => {
+      restoreState();
+      attachListeners();
+    });
 }
+
+
 
 
 /****************************************************
@@ -616,8 +701,10 @@ function buildProjectFromUI() {
   // =========================
   if (selected.includes("STONE")) {
 
-    const material = document.getElementById("m_stone_material")?.value || "";
-
+    const material =
+    STATE.UI.data?.stone?.material ||
+    document.getElementById("m_stone_material")?.value ||
+    "";
     project.stone = {
       material,
       group: material ? getMaterialGroup(material) : "UNKNOWN",
