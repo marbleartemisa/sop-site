@@ -20,11 +20,7 @@ UI: {
 };
 
 const STATE = {
-  stage: "carpentry", // default
-  fabrication: {
-    carpentry: true,
-    stone: false
-  }
+  stage: "carpentry"
 };
 
 export const EDGE_FACTORS = {
