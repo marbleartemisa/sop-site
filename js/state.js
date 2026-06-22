@@ -19,7 +19,13 @@ UI: {
 }
 };
 
-STATE.stage = "carpentry" | "stone";
+const STATE = {
+  stage: "carpentry", // default
+  fabrication: {
+    carpentry: true,
+    stone: false
+  }
+};
 
 export const EDGE_FACTORS = {
   MITER_45: {
