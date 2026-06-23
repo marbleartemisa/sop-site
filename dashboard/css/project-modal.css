@@ -1,133 +1,304 @@
-/* =========================
-   MODAL OVERLAY
-========================= */
-#modal-container {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 999999;
-    background: rgba(0,0,0,0.6);
-    align-items: center;
-    justify-content: center;
+import { stages } from './data/stages.js';
+import { simulateProject } from './simulation.js';
+
+/* =========================================================
+   STATE (SOURCE OF TRUTH)
+========================================================= */
+
+let state = {
+    selectedStages: [],
+    carpentryActive: true,
+    stoneActive: true
+};
+
+/* =========================================================
+   ENTRY
+========================================================= */
+
+export function renderProjectSimulationModal() {
+
+    const container = document.getElementById("modal-container");
+    if (!container) return;
+
+    openModal(container);
+
+    container.innerHTML = buildModalHTML();
+
+    initModal();
 }
 
-#modal-container:empty {
-    display: none !important;
-}
-#modal-container:not(:empty) {
-    pointer-events: auto;
-}
+/* =========================================================
+   OPEN / CLOSE
+========================================================= */
 
-/* =========================
-   MODAL BOX
-========================= */
-
-.simulation-modal {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+function openModal(container) {
+    container.style.display = "flex";
 }
 
-/* =========================
-   CONTAINER
-========================= */
+function closeModal() {
+    const container = document.getElementById("modal-container");
+    if (!container) return;
 
-.simulation-container {
-    width: 1200px;
-    height: 85vh;
-    background: #0b1220;
-    border-radius: 12px;
-    display: flex;
-    overflow: hidden;
-    color: #e5e7eb;
-    font-family: Arial, sans-serif;
+    container.innerHTML = "";
+    container.style.display = "none";
 }
 
-/* =========================
-   COLUMNS
-========================= */
+/* =========================================================
+   TEMPLATE
+========================================================= */
 
-.column-left {
-    width: 28%;
-    border-right: 1px solid rgba(255,255,255,0.08);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
+function buildModalHTML() {
+
+    return `
+    <div class="simulation-modal">
+
+        <div class="simulation-container">
+
+            <!-- COLUMN 1 -->
+            <div class="column-left">
+
+                <div class="modal-header">
+                    <h2>Project Simulation</h2>
+                    <button id="btnCloseModal">✕</button>
+                </div>
+
+                <input id="projectName" placeholder="Customer / Project"/>
+
+                <hr/>
+
+                <div id="stagesContainer" class="stages-list"></div>
+
+                <button id="btnSimulate">Run Simulation</button>
+
+            </div>
+
+            <!-- COLUMN 2 -->
+            <div class="column-center">
+
+                <h3>Parameters</h3>
+
+                <div id="carpentrySection"></div>
+                <div id="stoneSection"></div>
+
+            </div>
+
+            <!-- COLUMN 3 -->
+            <div class="column-right">
+
+                <h3>Results</h3>
+
+                <div id="simulationResult">Waiting...</div>
+
+            </div>
+
+        </div>
+    </div>
+    `;
 }
 
-.column-center {
-    width: 42%;
-    border-right: 1px solid rgba(255,255,255,0.08);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
+/* =========================================================
+   INIT
+========================================================= */
+
+function initModal() {
+
+    initState();
+    renderStages();
+    renderParameters();
+    bindEvents();
 }
 
-.column-right {
-    width: 30%;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
+/* =========================================================
+   DEFAULT STATE (IMPORTANT)
+========================================================= */
+
+function initState() {
+
+    state.selectedStages = stages.map(s => s.id); // ALL SELECTED BY DEFAULT
+    state.carpentryActive = true;
+    state.stoneActive = true;
 }
 
-/* =========================
-   STAGES
-========================= */
+/* =========================================================
+   COLUMN 1 - STAGES CLEAN
+========================================================= */
 
-#stagesContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+function renderStages() {
+
+    const container = document.getElementById("stagesContainer");
+
+    container.innerHTML = stages.map(stage => `
+        <label class="stage-item">
+
+            <input type="checkbox"
+                   class="stage-checkbox"
+                   value="${stage.id}"
+                   checked>
+
+            <span>${stage.name} (${stage.days}d)</span>
+
+        </label>
+    `).join("");
 }
 
-.stage-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 0;
+/* =========================================================
+   COLUMN 2 - PARAMETERS
+========================================================= */
+
+function renderParameters() {
+
+    renderCarpentry();
+    renderStone();
 }
 
-/* =========================
-   FORMS
-========================= */
+function renderCarpentry() {
 
-input, select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.15);
-    background: #0f172a;
-    color: white;
+    const container = document.getElementById("carpentrySection");
+
+    container.innerHTML = `
+        <div class="parameter-group">
+            <h4>Carpentry</h4>
+
+            <input id="panels" placeholder="Panels">
+            <input id="cabinets" placeholder="Cabinets">
+            <input id="drawers" placeholder="Drawers">
+            <input id="carpentryEdgeLF" placeholder="Edge LF">
+        </div>
+    `;
 }
 
-/* =========================
-   TEXT
-========================= */
+function renderStone() {
 
-h2, h3, h4, label {
-    color: #e5e7eb;
+    const container = document.getElementById("stoneSection");
+
+    container.innerHTML = `
+        <div class="parameter-group">
+            <h4>Stone</h4>
+
+            <select id="machine">
+                <option value="BRETON">BRETON</option>
+                <option value="COCH">COCH</option>
+            </select>
+
+            <input id="sqft" placeholder="SqFt">
+            <input id="slabs" placeholder="Slabs">
+            <input id="stoneEdgeLF" placeholder="Edge LF">
+        </div>
+    `;
 }
 
-/* =========================
-   RESULTS
-========================= */
+/* =========================================================
+   EVENTS
+========================================================= */
 
-.result-card {
-    background: #0f172a;
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 12px;
-    border-radius: 8px;
+function bindEvents() {
+
+    document.getElementById("btnCloseModal")
+        ?.addEventListener("click", closeModal);
+
+    document.getElementById("btnSimulate")
+        ?.addEventListener("click", runSimulation);
+
+    document.getElementById("stagesContainer")
+        ?.addEventListener("change", onStageChange);
 }
 
-/* =========================
-   HEADER MODAL
-========================= */
+/* =========================================================
+   STAGE LOGIC
+========================================================= */
 
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+function onStageChange() {
+
+    const selected = [...document.querySelectorAll(".stage-checkbox:checked")]
+        .map(cb => Number(cb.value));
+
+    state.selectedStages = selected;
+
+    // LOGIC DE ACTIVACIÓN
+    state.carpentryActive = selected.includes(6);
+    state.stoneActive = selected.includes(10);
+
+    updateUI();
+}
+
+/* =========================================================
+   UI DYNAMIC CONTROL
+========================================================= */
+
+function updateUI() {
+
+    // COLUMN 2
+    const carpentry = document.getElementById("carpentrySection");
+    const stone = document.getElementById("stoneSection");
+
+    if (state.carpentryActive) {
+        renderCarpentry();
+    } else {
+        carpentry.innerHTML = "";
+    }
+
+    if (state.stoneActive) {
+        renderStone();
+    } else {
+        stone.innerHTML = "";
+    }
+
+    // COLUMN 3
+    const result = document.getElementById("simulationResult");
+
+    if (!state.carpentryActive && !state.stoneActive) {
+        result.innerHTML = "No active modules";
+    }
+}
+
+/* =========================================================
+   SIMULATION
+========================================================= */
+
+function runSimulation() {
+
+    const result = simulateProject(buildState());
+
+    document.getElementById("simulationResult").innerHTML = `
+        <div class="result-card">
+            <h3>Total Hours</h3>
+            <div style="font-size:24px;font-weight:bold;">
+                ${result.totalHours}
+            </div>
+        </div>
+    `;
+}
+
+/* =========================================================
+   STATE BUILDER
+========================================================= */
+
+function buildState() {
+
+    return {
+        projectName: document.getElementById("projectName")?.value || "",
+        stages: state.selectedStages,
+
+        carpentry: {
+            panels: getValue("panels"),
+            cabinets: getValue("cabinets"),
+            drawers: getValue("drawers"),
+            edgeLF: getValue("carpentryEdgeLF")
+        },
+
+        stone: {
+            machine: document.getElementById("machine")?.value || "BRETON",
+            sqft: getValue("sqft"),
+            slabs: getValue("slabs"),
+            edgeLF: getValue("stoneEdgeLF")
+        }
+    };
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function getValue(id) {
+    return Number(document.getElementById(id)?.value || 0);
 }
