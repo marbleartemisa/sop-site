@@ -137,3 +137,38 @@ button {
 
     background: #fafafa;
 }
+
+
+.modal-header {
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:15px;
+}
+
+.close-btn {
+
+    border:none;
+
+    background:none;
+
+    font-size:20px;
+
+    cursor:pointer;
+}
+
+.simulate-btn {
+
+    width:100%;
+
+    margin-top:20px;
+}
+
+.form-group {
+
+    margin-bottom:15px;
+}
