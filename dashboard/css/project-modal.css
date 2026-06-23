@@ -1,42 +1,29 @@
+body {
+    outline: 3px solid red;
+}
 /* ======================================
    MODAL OVERLAY
 ====================================== */
 
 .simulation-modal {
-
-    position: fixed;
-
-    inset: 0;
-
-    background: rgba(0, 0, 0, 0.55);
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    z-index: 99999;
+    all: unset !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
 }
-
-
 /* ======================================
    MODAL WINDOW
 ====================================== */
 
 .simulation-container {
-    width: 1200px;
-    min-height: 700px;
-    max-height: 90vh;
-    background: #08152b;
-    border-radius: 12px;
-    padding: 20px;
-    display: flex;
-    gap: 20px;
-    overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    color: #e5e7eb;
-    font-family: Arial, sans-serif;
+    display: flex !important;
+    flex-direction: row !important;
+    width: 1200px !important;
+    height: 85vh !important;
+    background: #0b1220 !important;
+    color: #e5e7eb !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
 }
 
 /* ======================================
@@ -72,14 +59,12 @@
 ====================================== */
 
 .stage-item {
-
-    display: block;
-
-    margin-bottom: 8px;
-
-    cursor: pointer;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 6px 0 !important;
+    color: #e5e7eb !important;
 }
-
 
 /* ======================================
    FORMS
@@ -172,27 +157,42 @@ button {
     border-radius: 6px;
 }
 
-.stage-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    margin-bottom: 10px;
-
-    color: #222 !important;
-
-    font-size: 14px;
-}
-
 
 .column-left,
 .column-center,
 .column-right {
-
-    border: 2px solid rgba(255,255,255,.1);
-
-    padding: 15px;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 16px !important;
 }
+
+#modal-container {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
+    background: rgba(0,0,0,0.7) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.column-left {
+    width: 28%;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.column-center {
+    width: 42%;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.column-right {
+    width: 30%;
+}
+
+#stagesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
