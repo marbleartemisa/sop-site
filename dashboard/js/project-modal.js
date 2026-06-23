@@ -3,30 +3,148 @@ import { simulateProject } from './simulation.js';
 
 export function renderProjectSimulationModal() {
 
-    console.log('Opening Simulation Modal');
+    console.log("Opening Simulation Modal");
 
     const container =
-        document.getElementById('modal-container');
+        document.getElementById("modal-container");
 
     if (!container) {
-        console.error('modal-container not found');
+
+        console.error(
+            "modal-container not found"
+        );
+
         return;
     }
 
-   container.innerHTML = `
-<div style="
-    position:fixed;
-    inset:0;
-    background:red;
-    z-index:999999;
-">
-    TEST MODAL
-</div>
-`;
+    container.innerHTML = `
+
+        <div
+            id="simulationModal"
+            class="simulation-modal">
+
+            <div
+                class="simulation-container">
+
+                <!-- ===================================== -->
+                <!-- LEFT COLUMN -->
+                <!-- ===================================== -->
+
+                <div class="column-left">
+
+                    <div class="modal-header">
+
+                        <h2>
+                            New Project Simulation
+                        </h2>
+
+                        <button
+                            id="btnCloseModal"
+                            class="close-btn">
+
+                            ✕
+
+                        </button>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Project Name
+                        </label>
+
+                        <input
+                            id="projectName"
+                            type="text"
+                            placeholder="Customer / Project Name">
+
+                    </div>
+
+                    <hr>
+
+                    <h3>
+                        Project Stages
+                    </h3>
+
+                    <div
+                        id="stagesContainer">
+                    </div>
+
+                    <button
+                        id="btnSimulate"
+                        class="simulate-btn">
+
+                        Simulate Project
+
+                    </button>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- CENTER COLUMN -->
+                <!-- ===================================== -->
+
+                <div class="column-center">
+
+                    <h3>
+                        Parameters
+                    </h3>
+
+                    <div
+                        id="carpentrySection">
+                    </div>
+
+                    <div
+                        id="stoneSection">
+                    </div>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- RIGHT COLUMN -->
+                <!-- ===================================== -->
+
+                <div class="column-right">
+
+                    <h3>
+                        Results
+                    </h3>
+
+                    <div
+                        id="simulationResult">
+
+                        Select stages and click
+                        "Simulate Project"
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
     renderStages();
     bindEvents();
-}
 
+    // Close button
+
+    document
+        .getElementById(
+            "btnCloseModal"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                container.innerHTML = "";
+
+            }
+        );
+}
 /* ==========================================
    STAGES
 ========================================== */
@@ -148,22 +266,52 @@ function renderStoneForm() {
 
 function bindEvents() {
 
+    console.log("Binding modal events");
+
+    // Checkboxes de etapas
+
     document
-        .querySelectorAll('.stage-checkbox')
+        .querySelectorAll(".stage-checkbox")
         .forEach(cb => {
 
             cb.addEventListener(
-                'change',
+                "change",
                 onStageChange
             );
+
         });
 
+    // Botón Simulate
+
     document
-        .getElementById('btnSimulate')
+        .getElementById("btnSimulate")
         ?.addEventListener(
-            'click',
+            "click",
             runSimulation
         );
+
+    // Botón Close
+
+    document
+        .getElementById("btnCloseModal")
+        ?.addEventListener(
+            "click",
+            closeSimulationModal
+        );
+}
+
+function closeSimulationModal() {
+
+    const container =
+        document.getElementById(
+            "modal-container"
+        );
+
+    if (container) {
+
+        container.innerHTML = "";
+
+    }
 }
 
 function onStageChange() {
