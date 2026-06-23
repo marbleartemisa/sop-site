@@ -1,5 +1,10 @@
 import { openProjectModal } from "./project-modal.js";
 
+import { renderModal }
+from './project-modal.js';
+
+renderModal();
+
 console.log("ERP App Loaded");
 
 // ==============================
