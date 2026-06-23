@@ -1,118 +1,55 @@
-import { renderSimulation }
-from "./simulation.js";
+export function renderProjectSimulationModal() {
 
-const PROJECT_STAGES = [
-  { id: "agreement", label: "Agreement (0d)" },
-  { id: "measure", label: "Measure Confirmation (3d)" },
-  { id: "scheduling", label: "Scheduling (3d)" },
-  { id: "material_order", label: "Material Order (4d)" },
-  { id: "final_approval", label: "Final Approval (3d)" },
+    const container =
+        document.getElementById("modal-container");
 
-  { id: "carpentry_fab", label: "Carpentry Fabrication (2.5d)" },
-  { id: "carpentry_install", label: "Carpentry Installation (2.5d)" },
+    container.innerHTML = `
 
-  { id: "stone_measure", label: "Stone Measure (2d)" },
-  { id: "stone_approval", label: "Stone Approval (3d)" },
-  { id: "stone_fab", label: "Stone Fabrication (3d)" },
-  { id: "stone_install", label: "Stone Installation (3d)" },
+        <div id="simulationModal"
+             class="simulation-modal">
 
-  { id: "punchout", label: "Punchout (2d)" }
-];
+            <div class="simulation-container">
 
-function renderStages(container) {
-  container.innerHTML = "";
+                <!-- COLUMNA 1 -->
 
-  PROJECT_STAGES.forEach(stage => {
-    const row = document.createElement("label");
+                <div class="column-left">
 
-    row.style.display = "block";
-    row.style.marginBottom = "6px";
+                    <h2>New Project</h2>
 
-    row.innerHTML = `
-      <input type="checkbox" value="${stage.id}" checked />
-      <span>${stage.label}</span>
+                    <input
+                        type="text"
+                        id="projectName"
+                        placeholder="Project Name">
+
+                    <div id="stagesContainer"></div>
+
+                    <button id="btnSimulate">
+                        Simulate
+                    </button>
+
+                </div>
+
+                <!-- COLUMNA 2 -->
+
+                <div class="column-center">
+
+                    <div id="carpentrySection"></div>
+
+                    <div id="stoneSection"></div>
+
+                </div>
+
+                <!-- COLUMNA 3 -->
+
+                <div class="column-right">
+
+                    <div id="simulationResult"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     `;
-
-    container.appendChild(row);
-  });
-}
-
-
-
-
-export function openProjectModal(){
-
-  document.getElementById(
-    "modal-container"
-  ).innerHTML = `
-
-  <div class="modal-overlay">
-
-    <div class="project-modal">
-
-      <div class="modal-header">
-
-        <h2>New Project</h2>
-
-        <button onclick="closeModal()">
-          ✕
-        </button>
-
-      </div>
-
-      <div class="modal-body">
-
-        <div class="column">
-          <h3>Stages</h3>
-          <div id="stagesContainer"></div>
-          </div>
-
-        <div class="column">
-
-          <h3>Parameters</h3>
-
-          Panels
-
-          <input
-             id="panels"
-             type="number"
-             value="0">
-
-          <br>
-
-          Cabinets
-
-          <input
-             id="cabinets"
-             type="number"
-             value="0">
-
-          <br>
-
-          Slabs
-
-          <input
-             id="slabs"
-             type="number"
-             value="0">
-
-        </div>
-
-        <div
-          id="simulation"
-          class="column">
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  `;
-const container = document.getElementById("stagesContainer");
-renderStages(container);
-  renderSimulation();
-
 }
