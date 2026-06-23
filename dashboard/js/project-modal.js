@@ -1,6 +1,45 @@
 import { renderSimulation }
 from "./simulation.js";
 
+const PROJECT_STAGES = [
+  { id: "agreement", label: "Agreement (0d)" },
+  { id: "measure", label: "Measure Confirmation (3d)" },
+  { id: "scheduling", label: "Scheduling (3d)" },
+  { id: "material_order", label: "Material Order (4d)" },
+  { id: "final_approval", label: "Final Approval (3d)" },
+
+  { id: "carpentry_fab", label: "Carpentry Fabrication (2.5d)" },
+  { id: "carpentry_install", label: "Carpentry Installation (2.5d)" },
+
+  { id: "stone_measure", label: "Stone Measure (2d)" },
+  { id: "stone_approval", label: "Stone Approval (3d)" },
+  { id: "stone_fab", label: "Stone Fabrication (3d)" },
+  { id: "stone_install", label: "Stone Installation (3d)" },
+
+  { id: "punchout", label: "Punchout (2d)" }
+];
+
+function renderStages(container) {
+  container.innerHTML = "";
+
+  PROJECT_STAGES.forEach(stage => {
+    const row = document.createElement("label");
+
+    row.style.display = "block";
+    row.style.marginBottom = "6px";
+
+    row.innerHTML = `
+      <input type="checkbox" value="${stage.id}" checked />
+      <span>${stage.label}</span>
+    `;
+
+    container.appendChild(row);
+  });
+}
+
+
+
+
 export function openProjectModal(){
 
   document.getElementById(
@@ -24,32 +63,9 @@ export function openProjectModal(){
       <div class="modal-body">
 
         <div class="column">
-
           <h3>Stages</h3>
-
-          <label>
-
-            <input
-              type="checkbox"
-              checked>
-
-            Carpentry
-
-          </label>
-
-          <br>
-
-          <label>
-
-            <input
-              type="checkbox"
-              checked>
-
-            Stone
-
-          </label>
-
-        </div>
+          <div id="stagesContainer"></div>
+          </div>
 
         <div class="column">
 
@@ -95,7 +111,8 @@ export function openProjectModal(){
   </div>
 
   `;
-
+const container = document.getElementById("stagesContainer");
+renderStages(container);
   renderSimulation();
 
 }
