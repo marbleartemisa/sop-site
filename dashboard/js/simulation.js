@@ -40,3 +40,13 @@ export function simulate(state)
 
     return result;
 }
+
+export function simulateProject(state)
+{
+    console.log(state);
+
+    return {
+        totalMinutes: 0,
+        totalHours: 0
+    };
+}
