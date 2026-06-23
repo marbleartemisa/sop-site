@@ -1,194 +1,74 @@
-body {
-    outline: 3px solid red;
-}
-/* ======================================
+/* =========================
    MODAL OVERLAY
-====================================== */
-
-.simulation-modal {
-    all: unset !important;
-    position: fixed !important;
-    inset: 0 !important;
-    z-index: 999999 !important;
-}
-/* ======================================
-   MODAL WINDOW
-====================================== */
-
-.simulation-container {
-    display: flex !important;
-    flex-direction: row !important;
-    width: 1200px !important;
-    height: 85vh !important;
-    background: #0b1220 !important;
-    color: #e5e7eb !important;
-    border-radius: 12px !important;
-    overflow: hidden !important;
-}
-
-/* ======================================
-   COLUMNS
-====================================== */
-
-.column-left {
-
-    width: 25%;
-
-    border-right: 1px solid #ddd;
-
-    padding-right: 15px;
-}
-
-.column-center {
-
-    width: 40%;
-
-    border-right: 1px solid #ddd;
-
-    padding-right: 15px;
-}
-
-.column-right {
-
-    width: 35%;
-}
-
-
-/* ======================================
-   STAGES
-====================================== */
-
-.stage-item {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    padding: 6px 0 !important;
-    color: #e5e7eb !important;
-}
-
-/* ======================================
-   FORMS
-====================================== */
-
-#projectName,
-input,
-select {
-
-    width: 100%;
-
-    padding: 8px;
-
-    margin-bottom: 10px;
-
-    box-sizing: border-box;
-}
-
-button {
-
-    padding: 10px 16px;
-
-    cursor: pointer;
-}
-
-
-/* ======================================
-   RESULTS
-====================================== */
-
-.parameter-group {
-
-    margin-bottom: 20px;
-}
-
-.result-card {
-    background: #0f172a;
-    border: 1px solid rgba(255,255,255,.1);
-    color: #e5e7eb;
-}
-
-
-.modal-header {
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:15px;
-}
-
-.close-btn {
-
-    border:none;
-
-    background:none;
-
-    font-size:20px;
-
-    cursor:pointer;
-}
-
-.simulate-btn {
-
-    width:100%;
-
-    margin-top:20px;
-}
-
-.form-group {
-
-    margin-bottom:15px;
-}
-
-
-.simulation-container h2,
-.simulation-container h3,
-.simulation-container h4,
-.simulation-container label {
-    color: #e5e7eb;
-}
-
-.simulation-container input,
-.simulation-container select {
-    background: #0f172a;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,.15);
-    border-radius: 6px;
-}
-
-
-.column-left,
-.column-center,
-.column-right {
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 16px !important;
-}
+========================= */
 
 #modal-container {
-    position: fixed !important;
-    inset: 0 !important;
-    z-index: 999999 !important;
-    background: rgba(0,0,0,0.7) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.65);
+    z-index: 99999;
 }
+
+/* =========================
+   MODAL BOX
+========================= */
+
+.simulation-modal {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.simulation-container {
+    width: 1200px;
+    height: 85vh;
+    background: #0b1220;
+    border-radius: 12px;
+    display: flex;
+    overflow: hidden;
+    color: #e5e7eb;
+    font-family: Arial, sans-serif;
+}
+
+/* =========================
+   COLUMNS
+========================= */
 
 .column-left {
     width: 28%;
-    border-right: 1px solid rgba(255,255,255,0.1);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 .column-center {
     width: 42%;
-    border-right: 1px solid rgba(255,255,255,0.1);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 .column-right {
     width: 30%;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
 }
+
+/* =========================
+   STAGES
+========================= */
 
 #stagesContainer {
     display: flex;
@@ -196,3 +76,52 @@ button {
     gap: 6px;
 }
 
+.stage-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+}
+
+/* =========================
+   FORMS
+========================= */
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: #0f172a;
+    color: white;
+}
+
+/* =========================
+   TEXT
+========================= */
+
+h2, h3, h4, label {
+    color: #e5e7eb;
+}
+
+/* =========================
+   RESULTS
+========================= */
+
+.result-card {
+    background: #0f172a;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* =========================
+   HEADER MODAL
+========================= */
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
