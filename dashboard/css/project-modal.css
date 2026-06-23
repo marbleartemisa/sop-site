@@ -1,30 +1,139 @@
-.simulation-container{
-    display:flex;
-    gap:20px;
+/* ======================================
+   MODAL OVERLAY
+====================================== */
+
+.simulation-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 99999;
 }
 
-.column-left{
-    width:25%;
+
+/* ======================================
+   MODAL WINDOW
+====================================== */
+
+.simulation-container {
+
+    width: 1200px;
+
+    min-height: 700px;
+
+    max-height: 90vh;
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    display: flex;
+
+    gap: 20px;
+
+    overflow-y: auto;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.25);
 }
 
-.column-center{
-    width:40%;
+
+/* ======================================
+   COLUMNS
+====================================== */
+
+.column-left {
+
+    width: 25%;
+
+    border-right: 1px solid #ddd;
+
+    padding-right: 15px;
 }
 
-.column-right{
-    width:35%;
+.column-center {
+
+    width: 40%;
+
+    border-right: 1px solid #ddd;
+
+    padding-right: 15px;
 }
 
-.stage-item{
-    margin-bottom:5px;
+.column-right {
+
+    width: 35%;
 }
 
-.parameter-group{
-    margin-bottom:20px;
+
+/* ======================================
+   STAGES
+====================================== */
+
+.stage-item {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    cursor: pointer;
 }
 
-.result-card{
-    border:1px solid #444;
-    padding:15px;
-    margin-bottom:10px;
+
+/* ======================================
+   FORMS
+====================================== */
+
+#projectName,
+input,
+select {
+
+    width: 100%;
+
+    padding: 8px;
+
+    margin-bottom: 10px;
+
+    box-sizing: border-box;
+}
+
+button {
+
+    padding: 10px 16px;
+
+    cursor: pointer;
+}
+
+
+/* ======================================
+   RESULTS
+====================================== */
+
+.parameter-group {
+
+    margin-bottom: 20px;
+}
+
+.result-card {
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    padding: 15px;
+
+    margin-bottom: 12px;
+
+    background: #fafafa;
 }
