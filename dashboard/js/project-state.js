@@ -1,46 +1,71 @@
+// project-state.js
+
 export const projectState = {
 
-  projectName: "",
+    projectName: "",
 
-  stages: {
+    selectedStages: [],
 
-    carpentry:true,
-    stone:true
-  },
+    carpentry: {
 
-  carpentry: {
+        projectType: "Kitchen",
 
-    complexity:3,
+        complexity: 3,
 
-    panels:0,
-    cabinets:0,
-    drawers:0,
-    pantry:0,
+        paintSqft: 0,
 
-    trashcan:0,
-    lazySusan:0,
-    lemans:0,
+        glassSqft: 0,
 
-    edgeLF:0
-  },
+        panels: 0,
 
-  stone: {
+        cabinets: 0,
 
-    machine:"Breton",
+        drawers: 0,
 
-    material:"Quartz",
+        pantry: 0,
 
-    thickness:20,
+        laminateType: "before",
 
-    sqft:0,
+        laminateSqft: 0,
 
-    slabs:0,
+        edgeLF: 0,
 
-    pieces:0,
+        trashcan: 0,
 
-    edgeLF:0,
+        lazySusan: 0,
 
-    cutouts:0
-  }
+        lemans: 0,
 
+        pocketPantry: 0,
+
+        pocketCabinet: 0
+    },
+
+    stone: {
+
+        machine: "BRETON",
+
+        level: 2,
+
+        material: "Quartz",
+
+        thickness: 20,
+
+        sqft: 0,
+
+        slabs: 0,
+
+        edgeType: "Eased",
+
+        edgeLF: 0,
+
+        cutouts: 0,
+
+        led: 0,
+
+        honed: 0,
+
+        metalFrame: 0
+    }
 };
+
