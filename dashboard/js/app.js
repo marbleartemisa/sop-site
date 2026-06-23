@@ -1,13 +1,38 @@
 import { openProjectModal } from "./project-modal.js";
 
-window.openCreateForm = () => {
-  openProjectModal();
-};
+console.log("ERP App Loaded");
 
-window.refreshData = () => {
-  console.log("refresh");
-};
+// ==============================
+// NEW PROJECT MODAL
+// ==============================
+function openCreateForm() {
+  console.log("New Project clicked");
 
-window.runScheduler = () => {
-  console.log("scheduler");
-};
+  try {
+    if (typeof openProjectModal === "function") {
+      openProjectModal();
+    } else {
+      console.error("openProjectModal is not a function");
+    }
+  } catch (err) {
+    console.error("Error opening modal:", err);
+  }
+}
+
+// Exponer global para HTML onclick
+window.openCreateForm = openCreateForm;
+
+// ==============================
+// MOCK FUNCTIONS (TEMP)
+// ==============================
+function refreshData() {
+  console.log("refresh triggered");
+}
+
+function runScheduler() {
+  console.log("scheduler triggered");
+}
+
+// Exponer global
+window.refreshData = refreshData;
+window.runScheduler = runScheduler;
