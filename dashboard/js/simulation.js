@@ -1,55 +1,42 @@
-import { projectState }
-from "./project-state.js";
+// simulation.js
 
 import { calculateCarpentry }
-from "./calculators/carpentry.js";
+from './calculators/carpentry.js';
 
 import { calculateStone }
-from "./calculators/stone.js";
+from './calculators/stone.js';
 
-export function renderSimulation(){
+export function simulate(state)
+{
+    let result = {
 
-  const sim =
-      document.getElementById("simulation");
+        carpentry:null,
+        stone:null,
 
-  if(!sim) return;
+        totalMinutes:0
+    };
 
-  const carp =
-      calculateCarpentry(
-        projectState.carpentry
-      );
+    if(state.selectedStages.includes(6))
+    {
+        result.carpentry =
+            calculateCarpentry(
+                state.carpentry
+            );
 
-  const stone =
-      calculateStone(
-        projectState.stone
-      );
+        result.totalMinutes +=
+            result.carpentry.totalMinutes;
+    }
 
-  sim.innerHTML = `
+    if(state.selectedStages.includes(10))
+    {
+        result.stone =
+            calculateStone(
+                state.stone
+            );
 
-  <h3>CARPENTRY</h3>
+        result.totalMinutes +=
+            result.stone.totalMinutes;
+    }
 
-  <p>CNC:
-     ${(carp.cnc/60).toFixed(1)} hrs</p>
-
-  <p>EDGE:
-     ${(carp.edge/60).toFixed(1)} hrs</p>
-
-  <p>TOTAL:
-     ${(carp.total/60).toFixed(1)} hrs</p>
-
-  <hr>
-
-  <h3>STONE</h3>
-
-  <p>CUT:
-     ${(stone.cut/60).toFixed(1)} hrs</p>
-
-  <p>EDGE:
-     ${(stone.edge/60).toFixed(1)} hrs</p>
-
-  <p>TOTAL:
-     ${(stone.total/60).toFixed(1)} hrs</p>
-
-  `;
-
+    return result;
 }
