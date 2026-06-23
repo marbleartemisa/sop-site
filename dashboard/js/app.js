@@ -1,67 +1,61 @@
-import { openProjectModal } from "./project-modal.js";
-
-import { renderModal }
-from './project-modal.js';
-
-renderModal();
+import {
+renderProjectSimulationModal
+} from "./project-modal.js";
 
 console.log("ERP App Loaded");
 
-// ==============================
-// NEW PROJECT MODAL
-// ==============================
-function openCreateForm() {
-  console.log("New Project clicked");
+document.addEventListener("DOMContentLoaded", () => {
 
-  try {
-    if (typeof openProjectModal === "function") {
-      openProjectModal();
-    } else {
-      console.error("openProjectModal is not a function");
-    }
-  } catch (err) {
-    console.error("Error opening modal:", err);
-  }
+// Inicialización ERP
+if (typeof initERP === "function") {
+    initERP();
 }
 
-// Exponer global para HTML onclick
-window.openCreateForm = openCreateForm;
+// Botón New Project
+const btnNewProject =
+    document.getElementById("btn-new-project");
+
+if (btnNewProject) {
+
+    btnNewProject.addEventListener(
+        "click",
+        renderProjectSimulationModal
+    );
+
+    console.log("New Project button connected");
+}
+else {
+
+    console.warn(
+        "btn-new-project not found"
+    );
+}
+
+});
 
 // ==============================
-// MOCK FUNCTIONS (TEMP)
+// TEMP FUNCTIONS
 // ==============================
+
 function refreshData() {
-  console.log("refresh triggered");
+
+console.log(
+    "Refresh triggered"
+);
+
 }
 
 function runScheduler() {
-  console.log("scheduler triggered");
-}
 
-import {
-    renderProjectSimulationModal
-}
-from './project-modal.js';
-
-document.addEventListener(
-    'DOMContentLoaded',
-    () =>
-    {
-        const btn =
-            document.getElementById(
-                'btn-new-project'
-            );
-
-        if(btn)
-        {
-            btn.addEventListener(
-                'click',
-                renderProjectSimulationModal
-            );
-        }
-    }
+console.log(
+    "Scheduler triggered"
 );
 
-// Exponer global
+}
+
+// ==============================
+// GLOBAL FUNCTIONS
+// ==============================
+
 window.refreshData = refreshData;
 window.runScheduler = runScheduler;
