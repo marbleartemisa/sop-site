@@ -172,3 +172,42 @@ button {
 
     margin-bottom:15px;
 }
+
+.simulation-container {
+
+    color: #222 !important;
+
+    font-family: Arial, sans-serif;
+}
+
+.simulation-container h2,
+.simulation-container h3,
+.simulation-container label,
+.simulation-container div,
+.simulation-container span {
+
+    color: #222 !important;
+}
+
+.simulation-container input,
+.simulation-container select {
+
+    color: #222 !important;
+
+    background: #fff;
+}
+
+.stage-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 10px;
+
+    color: #222 !important;
+
+    font-size: 14px;
+}
