@@ -5,48 +5,44 @@
   <meta charset="UTF-8">
   <title>Artemisa ERP - Production Control Center</title>
 
+  <!-- CORE STYLES -->
   <link rel="stylesheet" href="/sop-site/core/ui-core.css">
   <link rel="stylesheet" href="/sop-site/css/dashboard.css">
-  <link rel="stylesheet"
-      href="/sop-site/dashboard/css/project-modal.css">
+  <link rel="stylesheet" href="/sop-site/dashboard/css/project-modal.css">
 
+  <!-- ICONS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
 
-  <!-- ================= APP ROOT ================= -->
+  <!-- APP ROOT -->
   <div id="erp-app">
 
-    <!-- ================= NAVBAR ================= -->
-    <div class="navbar">
-
+    <!-- NAVBAR -->
+    <header class="navbar">
       <div class="logo">
         <img src="/sop-site/assets/logo.png" alt="Artemisa Logo">
-        <span>ARTEMISA MARBLE & CABINETS</span>
+        <span>ARTEMISA ERP</span>
       </div>
 
-      <div class="menu-toggle" onclick="toggleMenu()">
-        <i class="fa-solid fa-bars"></i>
-      </div>
-
-      <div class="menu">
+      <nav class="menu">
         <a href="/sop-site/">SOP Library</a>
         <a href="/sop-site/dashboard/" class="active">Production ERP</a>
-        <a href="#projects">Projects</a>
-        <a href="#gantt">Gantt</a>
-        <a href="#resources">Resources</a>
-      </div>
+        <a href="#">Projects</a>
+        <a href="#">Gantt</a>
+      </nav>
 
-    </div>
+      <button class="menu-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </header>
 
-    <!-- ================= LAYOUT ================= -->
+    <!-- LAYOUT -->
     <div class="app">
 
       <!-- SIDEBAR -->
       <aside class="sidebar">
-        <div class="logo">⚙️ SOP ERP</div>
-
         <nav>
           <a class="active">📦 Projects</a>
           <a>📊 Dashboard</a>
@@ -65,51 +61,33 @@
           <div class="actions">
             <button onclick="refreshData()">Refresh</button>
             <button onclick="runScheduler()">Recalculate</button>
-            <button id="btn-new-project">
-                  New Project
-              </button>
+            <button id="btn-new-project">New Project</button>
           </div>
         </header>
 
-        <!-- ================= SINGLE RENDER ZONE ================= -->
+        <!-- VIEW -->
         <section id="view-container"></section>
 
-        <!-- ================= SUMMARY (OPTIONAL) ================= -->
-        <section id="summary" class="summary-grid"></section>
+        <section id="summary"></section>
 
       </main>
 
     </div>
 
-    <!-- ================= MODAL ================= -->
+    <!-- MODAL PORTAL (IMPORTANTE: solo este) -->
     <div id="modal-container"></div>
 
-    <!-- ================= FOOTER ================= -->
+    <!-- FOOTER -->
     <footer class="footer">
-      ARTEMISA ERP © 2026 · Production System
+      ARTEMISA ERP © 2026
     </footer>
 
   </div>
 
-  <!-- ================= CORE ================= -->
+  <!-- SCRIPTS -->
   <script src="/sop-site/core/ui-core.js"></script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      if (typeof initERP === "function") {
-        initERP();
-      }
-    });
-
-    function closeModal() {
-      document.getElementById("modal-container").innerHTML = "";
-    }
-
-    window.closeModal = closeModal;
-  </script>
 
   <script type="module" src="/sop-site/dashboard/js/app.js"></script>
 
 </body>
-
 </html>
