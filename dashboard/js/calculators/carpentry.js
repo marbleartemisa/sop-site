@@ -1,3 +1,6 @@
+import { CARPENTRY }
+from '../data/carpentry-times.js';
+
 const complexityFactor = {
 
     1:1.00,
@@ -9,76 +12,38 @@ const complexityFactor = {
 
 export function calculateCarpentry(data)
 {
-    let cnc = data.panels * 9;
+    let total=0;
 
-    let edgeSetup = 15;
+    total += data.panels * CARPENTRY.PANEL_CUT;
 
-    let edgeProcess =
-        data.edgeLF * 0.60;
+    total += CARPENTRY.EDGE_SETUP;
 
-    let cabinets =
-        data.cabinets * 10;
+    total += data.edgeLF * CARPENTRY.EDGE_LF;
 
-    let drawers =
-        data.drawers * 20;
+    total += data.cabinets * CARPENTRY.CABINET;
 
-    let pantry =
-        data.pantry * 20;
+    total += data.drawers * CARPENTRY.DRAWER;
 
-    let trashcan =
-        data.trashcan * 25;
+    total += data.pantry * CARPENTRY.PANTRY;
 
-    let lazy =
-        data.lazySusan * 25;
+    total += data.trashcan * CARPENTRY.TRASHCAN;
 
-    let lemans =
-        data.lemans * 25;
+    total += data.lazySusan * CARPENTRY.LAZY_SUSAN;
 
-    let pocketCab =
-        data.pocketCabinet * 60;
+    total += data.lemans * CARPENTRY.LEMANS;
 
-    let pocketPantry =
-        data.pocketPantry * 90;
+    total += data.pocketCabinet * CARPENTRY.POCKET_CABINET;
 
-    let laminate =
-        data.laminateSqft * 3.5;
+    total += data.pocketPantry * CARPENTRY.POCKET_PANTRY;
 
-    let total =
-        cnc +
-        edgeSetup +
-        edgeProcess +
-        cabinets +
-        drawers +
-        pantry +
-        trashcan +
-        lazy +
-        lemans +
-        pocketCab +
-        pocketPantry +
-        laminate;
+    total += data.laminateSqft * CARPENTRY.LAMINATE_SQFT;
 
-    total =
-        total *
-        complexityFactor[data.complexity];
+    total *= complexityFactor[data.complexity];
 
     return {
 
-        cnc,
-        edgeSetup,
-        edgeProcess,
-        cabinets,
-        drawers,
-        pantry,
-        trashcan,
-        lazy,
-        lemans,
-        pocketCab,
-        pocketPantry,
-        laminate,
+        totalMinutes:total,
 
-        totalMinutes: total,
-
-        totalHours:
-            (total / 60).toFixed(2)
+        totalHours:(total/60).toFixed(2)
     };
 }
