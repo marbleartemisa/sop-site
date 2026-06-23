@@ -211,3 +211,19 @@ button {
 
     font-size: 14px;
 }
+
+.simulation-container {
+
+    background: #08152b;
+
+    color: white;
+}
+
+.column-left,
+.column-center,
+.column-right {
+
+    border: 2px solid rgba(255,255,255,.1);
+
+    padding: 15px;
+}
