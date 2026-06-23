@@ -1,1 +1,26 @@
+export const CARPENTRY = {
 
+    PANEL_CUT:9,
+
+    EDGE_SETUP:15,
+
+    EDGE_LF:0.60,
+
+    CABINET:10,
+
+    DRAWER:20,
+
+    PANTRY:20,
+
+    TRASHCAN:25,
+
+    LAZY_SUSAN:25,
+
+    LEMANS:25,
+
+    POCKET_CABINET:60,
+
+    POCKET_PANTRY:90,
+
+    LAMINATE_SQFT:3.5
+};
