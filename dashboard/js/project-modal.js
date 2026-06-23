@@ -2,10 +2,16 @@ import { stages } from './data/stages.js';
 
 export function renderProjectSimulationModal()
 {
-    const container =
-        document.getElementById("modal-container");
+    console.log(
+        'Modal function executed'
+    );
 
-    container.innerHTML = `
+    const container =
+        document.getElementById(
+            'modal-container'
+        );
+
+   container.innerHTML = `
 
     <div id="simulationModal"
          class="simulation-modal">
@@ -51,6 +57,7 @@ export function renderProjectSimulationModal()
 
     bindEvents();
 }
+
 
 function renderStages()
 {
