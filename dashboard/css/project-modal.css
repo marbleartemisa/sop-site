@@ -5,11 +5,15 @@
 #modal-container {
     position: fixed;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.65);
-    z-index: 99999;
+    z-index: 999999;
+    pointer-events: none;
+}
+
+#modal-container:empty {
+    display: none !important;
+}
+#modal-container:not(:empty) {
+    pointer-events: auto;
 }
 
 /* =========================
