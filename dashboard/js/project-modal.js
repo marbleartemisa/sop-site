@@ -13,59 +13,16 @@ export function renderProjectSimulationModal() {
         return;
     }
 
-    container.innerHTML = `
-
-        <div id="simulationModal" class="simulation-modal">
-
-            <div class="simulation-container">
-
-                <!-- COLUMN 1 -->
-
-                <div class="column-left">
-
-                    <h2>New Project</h2>
-
-                    <input
-                        id="projectName"
-                        type="text"
-                        placeholder="Project Name">
-
-                    <div id="stagesContainer"></div>
-
-                    <button id="btnSimulate">
-                        Simulate
-                    </button>
-
-                </div>
-
-                <!-- COLUMN 2 -->
-
-                <div class="column-center">
-
-                    <div id="carpentrySection"></div>
-
-                    <div id="stoneSection"></div>
-
-                </div>
-
-                <!-- COLUMN 3 -->
-
-                <div class="column-right">
-
-                    <div id="simulationResult">
-
-                        Waiting for simulation...
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    `;
-
+   container.innerHTML = `
+<div style="
+    position:fixed;
+    inset:0;
+    background:red;
+    z-index:999999;
+">
+    TEST MODAL
+</div>
+`;
     renderStages();
     bindEvents();
 }
