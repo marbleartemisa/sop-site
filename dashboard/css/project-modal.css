@@ -25,29 +25,19 @@
 ====================================== */
 
 .simulation-container {
-
     width: 1200px;
-
     min-height: 700px;
-
     max-height: 90vh;
-
-    background: #ffffff;
-
+    background: #08152b;
     border-radius: 12px;
-
     padding: 20px;
-
     display: flex;
-
     gap: 20px;
-
     overflow-y: auto;
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,.25);
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    color: #e5e7eb;
+    font-family: Arial, sans-serif;
 }
-
 
 /* ======================================
    COLUMNS
@@ -126,16 +116,9 @@ button {
 }
 
 .result-card {
-
-    border: 1px solid #ddd;
-
-    border-radius: 8px;
-
-    padding: 15px;
-
-    margin-bottom: 12px;
-
-    background: #fafafa;
+    background: #0f172a;
+    border: 1px solid rgba(255,255,255,.1);
+    color: #e5e7eb;
 }
 
 
@@ -173,28 +156,20 @@ button {
     margin-bottom:15px;
 }
 
-.simulation-container {
-
-    color: #222 !important;
-
-    font-family: Arial, sans-serif;
-}
 
 .simulation-container h2,
 .simulation-container h3,
-.simulation-container label,
-.simulation-container div,
-.simulation-container span {
-
-    color: #222 !important;
+.simulation-container h4,
+.simulation-container label {
+    color: #e5e7eb;
 }
 
 .simulation-container input,
 .simulation-container select {
-
-    color: #222 !important;
-
-    background: #fff;
+    background: #0f172a;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 6px;
 }
 
 .stage-item {
@@ -212,12 +187,6 @@ button {
     font-size: 14px;
 }
 
-.simulation-container {
-
-    background: #08152b;
-
-    color: white;
-}
 
 .column-left,
 .column-center,
