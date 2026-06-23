@@ -1,12 +1,14 @@
 /* =========================
    MODAL OVERLAY
 ========================= */
-
 #modal-container {
+    display: none;
     position: fixed;
     inset: 0;
     z-index: 999999;
-    pointer-events: none;
+    background: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
 }
 
 #modal-container:empty {
