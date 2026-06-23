@@ -9,14 +9,39 @@ export function renderProjectSimulationModal() {
 
     console.log("Opening Simulation Modal");
 
-    const container =
-        document.getElementById("modal-container");
+    const container = document.getElementById("modal-container");
 
-    if (!container) return;
+    if (!container) {
+        console.error("modal-container not found");
+        return;
+    }
+
+    openModal(container);
 
     container.innerHTML = buildModalHTML();
 
     initModal();
+}
+
+/* =========================================================
+   OPEN / CLOSE MODAL STATE
+========================================================= */
+
+function openModal(container) {
+    container.style.display = "flex";
+    container.style.pointerEvents = "auto";
+}
+
+function closeModal() {
+
+    const container = document.getElementById("modal-container");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    container.style.display = "none";
+    container.style.pointerEvents = "none";
 }
 
 /* =========================================================
@@ -26,7 +51,6 @@ export function renderProjectSimulationModal() {
 function buildModalHTML() {
 
     return `
-
         <div id="simulationModal" class="simulation-modal">
 
             <div class="simulation-container">
@@ -79,9 +103,7 @@ function buildModalHTML() {
                 </div>
 
             </div>
-
         </div>
-
     `;
 }
 
@@ -101,8 +123,9 @@ function initModal() {
 
 function renderStages() {
 
-    const container =
-        document.getElementById("stagesContainer");
+    const container = document.getElementById("stagesContainer");
+
+    if (!container) return;
 
     container.innerHTML = stages.map(stage => `
         <label class="stage-item">
@@ -126,37 +149,25 @@ function renderStages() {
 
 function bindEvents() {
 
-    console.log("Binding modal events");
+    const stagesContainer = document.getElementById("stagesContainer");
+    const btnSimulate = document.getElementById("btnSimulate");
+    const btnClose = document.getElementById("btnCloseModal");
 
-    // stages (event delegation - PRO)
-    document
-        .getElementById("stagesContainer")
-        .addEventListener("change", onStageChange);
+    if (stagesContainer) {
+        stagesContainer.addEventListener("change", onStageChange);
+    }
 
-    // simulate
-    document
-        .getElementById("btnSimulate")
-        ?.addEventListener("click", runSimulation);
+    if (btnSimulate) {
+        btnSimulate.addEventListener("click", runSimulation);
+    }
 
-    // close
-    document
-        .getElementById("btnCloseModal")
-        ?.addEventListener("click", closeModal);
+    if (btnClose) {
+        btnClose.addEventListener("click", closeModal);
+    }
 }
 
 /* =========================================================
-   CLOSE
-========================================================= */
-
-function closeModal() {
-
-    document
-        .getElementById("modal-container")
-        .innerHTML = "";
-}
-
-/* =========================================================
-   STAGE CONTROL LOGIC
+   STAGE LOGIC
 ========================================================= */
 
 function getSelectedStages() {
@@ -164,10 +175,6 @@ function getSelectedStages() {
     return [...document.querySelectorAll(".stage-checkbox:checked")]
         .map(cb => Number(cb.value));
 }
-
-/* =========================================================
-   DYNAMIC PARAMETERS
-========================================================= */
 
 function onStageChange() {
 
@@ -177,11 +184,13 @@ function onStageChange() {
     toggleStone(selected.includes(10));
 }
 
+/* =========================================================
+   DYNAMIC PARAMETERS
+========================================================= */
+
 function toggleCarpentry(show) {
 
-    const container =
-        document.getElementById("carpentrySection");
-
+    const container = document.getElementById("carpentrySection");
     if (!container) return;
 
     container.innerHTML = show ? carpentryTemplate() : "";
@@ -189,9 +198,7 @@ function toggleCarpentry(show) {
 
 function toggleStone(show) {
 
-    const container =
-        document.getElementById("stoneSection");
-
+    const container = document.getElementById("stoneSection");
     if (!container) return;
 
     container.innerHTML = show ? stoneTemplate() : "";
@@ -201,14 +208,12 @@ function carpentryTemplate() {
 
     return `
         <div class="parameter-group">
-
             <h4>Carpentry</h4>
 
             <input id="panels" placeholder="Panels">
             <input id="cabinets" placeholder="Cabinets">
             <input id="drawers" placeholder="Drawers">
             <input id="carpentryEdgeLF" placeholder="Edge LF">
-
         </div>
     `;
 }
@@ -217,7 +222,6 @@ function stoneTemplate() {
 
     return `
         <div class="parameter-group">
-
             <h4>Stone</h4>
 
             <select id="machine">
@@ -228,13 +232,12 @@ function stoneTemplate() {
             <input id="sqft" placeholder="SqFt">
             <input id="slabs" placeholder="Slabs">
             <input id="stoneEdgeLF" placeholder="Edge LF">
-
         </div>
     `;
 }
 
 /* =========================================================
-   SIMULATION ENGINE ENTRY
+   SIMULATION
 ========================================================= */
 
 function runSimulation() {
@@ -249,16 +252,13 @@ function runSimulation() {
 }
 
 /* =========================================================
-   STATE BUILDER (KEY FOR REAL ENGINE)
+   STATE BUILDER
 ========================================================= */
 
 function buildState() {
 
     return {
-
-        projectName:
-            document.getElementById("projectName")?.value || "",
-
+        projectName: document.getElementById("projectName")?.value || "",
         stages: getSelectedStages(),
 
         carpentry: {
@@ -291,17 +291,16 @@ function getValue(id) {
 
 function renderResults(result) {
 
-    document.getElementById("simulationResult").innerHTML = `
+    const container = document.getElementById("simulationResult");
 
+    if (!container) return;
+
+    container.innerHTML = `
         <div class="result-card">
-
             <h3>Total Hours</h3>
-
             <div style="font-size:24px;font-weight:bold;">
                 ${result.totalHours}
             </div>
-
         </div>
-
     `;
 }
