@@ -1,13 +1,12 @@
 import { stages } from './data/stages.js';
 import { simulateProject } from './simulation.js';
+import { store } from './store.js';
 
 /* =========================================================
    ENTRY POINT
 ========================================================= */
 
 export function renderProjectSimulationModal() {
-
-    console.log("Opening Simulation Modal");
 
     const container = document.getElementById("modal-container");
 
@@ -20,11 +19,15 @@ export function renderProjectSimulationModal() {
 
     container.innerHTML = buildModalHTML();
 
-    initModal();
+    initState();
+
+    bindEvents();
+
+    store.subscribe(renderUI);
 }
 
 /* =========================================================
-   OPEN / CLOSE MODAL STATE
+   MODAL OPEN / CLOSE
 ========================================================= */
 
 function openModal(container) {
@@ -33,55 +36,69 @@ function openModal(container) {
 }
 
 function closeModal() {
-
     const container = document.getElementById("modal-container");
 
     if (!container) return;
 
     container.innerHTML = "";
-
     container.style.display = "none";
     container.style.pointerEvents = "none";
 }
 
 /* =========================================================
-   UI TEMPLATE
+   INITIAL STATE
+========================================================= */
+
+function initState() {
+
+    store.setState({
+        stages: stages.map(s => s.id), // ALL SELECTED BY DEFAULT
+        carpentryActive: true,
+        stoneActive: true
+    });
+}
+
+/* =========================================================
+   UI RENDER (ROOT)
+========================================================= */
+
+function renderUI(state) {
+
+    renderStages(state);
+    renderParameters(state);
+    renderResults(state);
+}
+
+/* =========================================================
+   TEMPLATE
 ========================================================= */
 
 function buildModalHTML() {
 
     return `
-        <div id="simulationModal" class="simulation-modal">
+        <div class="simulation-modal">
 
             <div class="simulation-container">
 
-                <!-- LEFT -->
+                <!-- COLUMN 1 -->
                 <div class="column-left">
 
                     <div class="modal-header">
-
                         <h2>Project Simulation</h2>
-
                         <button id="btnCloseModal">✕</button>
-
                     </div>
 
-                    <input
-                        id="projectName"
-                        type="text"
-                        placeholder="Customer / Project">
+                    <input id="projectName" placeholder="Customer / Project"/>
 
                     <hr/>
 
                     <div id="stagesContainer"></div>
 
-                    <button id="btnSimulate">
-                        Run Simulation
-                    </button>
+                    <button id="btnSimulate">Run Simulation</button>
 
                 </div>
 
-                <!-- CENTER -->
+                <!-- COLUMN 2 -->
                 <div class="column-center">
 
                     <h3>Parameters</h3>
@@ -91,14 +108,12 @@ function buildModalHTML() {
 
                 </div>
 
-                <!-- RIGHT -->
+                <!-- COLUMN 3 -->
                 <div class="column-right">
 
                     <h3>Results</h3>
 
-                    <div id="simulationResult">
-                        Waiting...
-                    </div>
+                    <div id="simulationResult">Waiting...</div>
 
                 </div>
 
@@ -108,101 +123,119 @@ function buildModalHTML() {
 }
 
 /* =========================================================
-   INIT
+   COLUMN 1 - STAGES
 ========================================================= */
 
-function initModal() {
-
-    renderStages();
-    bindEvents();
-}
-
-/* =========================================================
-   STAGES
-========================================================= */
-
-function renderStages() {
+function renderStages(state) {
 
     const container = document.getElementById("stagesContainer");
-
     if (!container) return;
 
     container.innerHTML = stages.map(stage => `
         <label class="stage-item">
 
-            <input
-                type="checkbox"
-                class="stage-checkbox"
-                value="${stage.id}">
+            <input type="checkbox"
+                   class="stage-checkbox"
+                   value="${stage.id}"
+                   ${state.stages.includes(stage.id) ? "checked" : ""} />
 
-            <span>
-                ${stage.name} (${stage.days}d)
-            </span>
+            <span>${stage.name} (${stage.days}d)</span>
 
         </label>
     `).join("");
 }
 
 /* =========================================================
-   EVENTS
+   COLUMN 2 - PARAMETERS
+========================================================= */
+
+function renderParameters(state) {
+
+    const carpentry = document.getElementById("carpentrySection");
+    const stone = document.getElementById("stoneSection");
+
+    if (!carpentry || !stone) return;
+
+    // CARPENTRY
+    carpentry.innerHTML = state.stages.includes(6)
+        ? carpentryTemplate()
+        : "";
+
+    // STONE
+    stone.innerHTML = state.stages.includes(10)
+        ? stoneTemplate()
+        : "";
+}
+
+/* =========================================================
+   COLUMN 3 - RESULTS
+========================================================= */
+
+function renderResults(state) {
+
+    const container = document.getElementById("simulationResult");
+    if (!container) return;
+
+    const result = simulateProject(state);
+
+    container.innerHTML = `
+        <div class="result-card">
+            <h3>Total Hours</h3>
+            <div style="font-size:26px;font-weight:bold;">
+                ${result.totalHours}
+            </div>
+        </div>
+    `;
+}
+
+/* =========================================================
+   EVENTS (STATE ONLY)
 ========================================================= */
 
 function bindEvents() {
 
-    const stagesContainer = document.getElementById("stagesContainer");
-    const btnSimulate = document.getElementById("btnSimulate");
-    const btnClose = document.getElementById("btnCloseModal");
+    document.addEventListener("change", handleStageChange);
 
-    if (stagesContainer) {
-        stagesContainer.addEventListener("change", onStageChange);
-    }
+    document.getElementById("btnSimulate")
+        ?.addEventListener("click", runSimulation);
 
-    if (btnSimulate) {
-        btnSimulate.addEventListener("click", runSimulation);
-    }
-
-    if (btnClose) {
-        btnClose.addEventListener("click", closeModal);
-    }
+    document.getElementById("btnCloseModal")
+        ?.addEventListener("click", closeModal);
 }
 
 /* =========================================================
-   STAGE LOGIC
+   STATE UPDATE (ONLY SOURCE OF TRUTH)
 ========================================================= */
 
-function getSelectedStages() {
+function handleStageChange(e) {
 
-    return [...document.querySelectorAll(".stage-checkbox:checked")]
-        .map(cb => Number(cb.value));
-}
+    if (!e.target.classList.contains("stage-checkbox")) return;
 
-function onStageChange() {
+    const id = Number(e.target.value);
 
-    const selected = getSelectedStages();
+    let current = store.getState().stages;
 
-    toggleCarpentry(selected.includes(6));
-    toggleStone(selected.includes(10));
+    if (e.target.checked) {
+        current = [...current, id];
+    } else {
+        current = current.filter(s => s !== id);
+    }
+
+    store.setState({ stages: current });
 }
 
 /* =========================================================
-   DYNAMIC PARAMETERS
+   SIMULATION
 ========================================================= */
 
-function toggleCarpentry(show) {
-
-    const container = document.getElementById("carpentrySection");
-    if (!container) return;
-
-    container.innerHTML = show ? carpentryTemplate() : "";
+function runSimulation() {
+    const state = store.getState();
+    console.log("STATE:", state);
 }
 
-function toggleStone(show) {
-
-    const container = document.getElementById("stoneSection");
-    if (!container) return;
-
-    container.innerHTML = show ? stoneTemplate() : "";
-}
+/* =========================================================
+   TEMPLATES
+========================================================= */
 
 function carpentryTemplate() {
 
@@ -232,75 +265,6 @@ function stoneTemplate() {
             <input id="sqft" placeholder="SqFt">
             <input id="slabs" placeholder="Slabs">
             <input id="stoneEdgeLF" placeholder="Edge LF">
-        </div>
-    `;
-}
-
-/* =========================================================
-   SIMULATION
-========================================================= */
-
-function runSimulation() {
-
-    const state = buildState();
-
-    console.log("SIMULATION STATE", state);
-
-    const result = simulateProject(state);
-
-    renderResults(result);
-}
-
-/* =========================================================
-   STATE BUILDER
-========================================================= */
-
-function buildState() {
-
-    return {
-        projectName: document.getElementById("projectName")?.value || "",
-        stages: getSelectedStages(),
-
-        carpentry: {
-            panels: getValue("panels"),
-            cabinets: getValue("cabinets"),
-            drawers: getValue("drawers"),
-            edgeLF: getValue("carpentryEdgeLF")
-        },
-
-        stone: {
-            machine: document.getElementById("machine")?.value || "BRETON",
-            sqft: getValue("sqft"),
-            slabs: getValue("slabs"),
-            edgeLF: getValue("stoneEdgeLF")
-        }
-    };
-}
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function getValue(id) {
-    return Number(document.getElementById(id)?.value || 0);
-}
-
-/* =========================================================
-   RESULTS
-========================================================= */
-
-function renderResults(result) {
-
-    const container = document.getElementById("simulationResult");
-
-    if (!container) return;
-
-    container.innerHTML = `
-        <div class="result-card">
-            <h3>Total Hours</h3>
-            <div style="font-size:24px;font-weight:bold;">
-                ${result.totalHours}
-            </div>
         </div>
     `;
 }
