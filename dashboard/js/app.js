@@ -1,3 +1,5 @@
+console.log("APP LOADED");
+
 import {
 renderProjectSimulationModal
 } from "./project-modal.js";
