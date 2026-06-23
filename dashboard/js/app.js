@@ -38,6 +38,30 @@ function runScheduler() {
   console.log("scheduler triggered");
 }
 
+import {
+    renderProjectSimulationModal
+}
+from './project-modal.js';
+
+document.addEventListener(
+    'DOMContentLoaded',
+    () =>
+    {
+        const btn =
+            document.getElementById(
+                'btn-new-project'
+            );
+
+        if(btn)
+        {
+            btn.addEventListener(
+                'click',
+                renderProjectSimulationModal
+            );
+        }
+    }
+);
+
 // Exponer global
 window.refreshData = refreshData;
 window.runScheduler = runScheduler;
