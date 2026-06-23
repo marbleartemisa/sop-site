@@ -1,95 +1,119 @@
 import { stages } from './data/stages.js';
+import { simulateProject } from './simulation.js';
 
-export function renderProjectSimulationModal()
-{
-    console.log(
-        'Modal function executed'
-    );
+export function renderProjectSimulationModal() {
+
+    console.log('Opening Simulation Modal');
 
     const container =
-        document.getElementById(
-            'modal-container'
-        );
+        document.getElementById('modal-container');
 
-   container.innerHTML = `
+    if (!container) {
+        console.error('modal-container not found');
+        return;
+    }
 
-    <div id="simulationModal"
-         class="simulation-modal">
+    container.innerHTML = `
 
-        <div class="simulation-container">
+        <div id="simulationModal" class="simulation-modal">
 
-            <div class="column-left">
+            <div class="simulation-container">
 
-                <h2>New Project</h2>
+                <!-- COLUMN 1 -->
 
-                <input
-                    id="projectName"
-                    placeholder="Project Name">
+                <div class="column-left">
 
-                <div id="stagesContainer"></div>
+                    <h2>New Project</h2>
 
-                <button id="btnSimulate">
-                    Simulate
-                </button>
+                    <input
+                        id="projectName"
+                        type="text"
+                        placeholder="Project Name">
 
-            </div>
+                    <div id="stagesContainer"></div>
 
-            <div class="column-center">
+                    <button id="btnSimulate">
+                        Simulate
+                    </button>
 
-                <div id="carpentrySection"></div>
+                </div>
 
-                <div id="stoneSection"></div>
+                <!-- COLUMN 2 -->
 
-            </div>
+                <div class="column-center">
 
-            <div class="column-right">
+                    <div id="carpentrySection"></div>
 
-                <div id="simulationResult"></div>
+                    <div id="stoneSection"></div>
+
+                </div>
+
+                <!-- COLUMN 3 -->
+
+                <div class="column-right">
+
+                    <div id="simulationResult">
+
+                        Waiting for simulation...
+
+                    </div>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
     `;
 
     renderStages();
-
     bindEvents();
 }
 
+/* ==========================================
+   STAGES
+========================================== */
 
-function renderStages()
-{
+function renderStages() {
+
     const container =
-        document.getElementById("stagesContainer");
+        document.getElementById('stagesContainer');
+
+    if (!container) return;
 
     container.innerHTML = '';
 
-    stages.forEach(stage =>
-    {
+    stages.forEach(stage => {
+
         container.innerHTML += `
 
-        <label class="stage-item">
+            <label class="stage-item">
 
-            <input
-                type="checkbox"
-                class="stage-checkbox"
-                value="${stage.id}">
+                <input
+                    type="checkbox"
+                    class="stage-checkbox"
+                    value="${stage.id}">
 
-            ${stage.name}
+                ${stage.name}
 
-        </label>
+            </label>
 
         `;
     });
 }
 
-function renderCarpentryForm()
-{
-    document.getElementById(
-        "carpentrySection"
-    ).innerHTML = `
+/* ==========================================
+   CARPENTRY FORM
+========================================== */
+
+function renderCarpentryForm() {
+
+    const container =
+        document.getElementById('carpentrySection');
+
+    if (!container) return;
+
+    container.innerHTML = `
 
         <h3>Carpentry Production</h3>
 
@@ -109,18 +133,25 @@ function renderCarpentryForm()
             placeholder="Drawers">
 
         <input
-            id="edgeLF"
+            id="carpentryEdgeLF"
             type="number"
             placeholder="Edge LF">
 
     `;
 }
 
-function renderStoneForm()
-{
-    document.getElementById(
-        "stoneSection"
-    ).innerHTML = `
+/* ==========================================
+   STONE FORM
+========================================== */
+
+function renderStoneForm() {
+
+    const container =
+        document.getElementById('stoneSection');
+
+    if (!container) return;
+
+    container.innerHTML = `
 
         <h3>Stone Production</h3>
 
@@ -147,129 +178,153 @@ function renderStoneForm()
             placeholder="Slabs">
 
         <input
-            id="edgeLF"
+            id="stoneEdgeLF"
             type="number"
             placeholder="Edge LF">
 
     `;
 }
 
-function bindEvents()
-{
-    document
-    .querySelectorAll(".stage-checkbox")
-    .forEach(cb =>
-    {
-        cb.addEventListener(
-            "change",
-            onStageChange
-        );
-    });
+/* ==========================================
+   EVENTS
+========================================== */
+
+function bindEvents() {
 
     document
-    .getElementById("btnSimulate")
-    .addEventListener(
-        "click",
-        runSimulation
-    );
+        .querySelectorAll('.stage-checkbox')
+        .forEach(cb => {
+
+            cb.addEventListener(
+                'change',
+                onStageChange
+            );
+        });
+
+    document
+        .getElementById('btnSimulate')
+        ?.addEventListener(
+            'click',
+            runSimulation
+        );
 }
 
-function onStageChange()
-{
-    const selected = [...document
-        .querySelectorAll(
-            ".stage-checkbox:checked"
+function onStageChange() {
+
+    const selectedStages =
+
+        [...document.querySelectorAll(
+            '.stage-checkbox:checked'
         )]
-        .map(cb =>
-            Number(cb.value)
-        );
 
-    if(selected.includes(6))
-    {
+        .map(cb => Number(cb.value));
+
+    // Carpentry
+
+    if (selectedStages.includes(6)) {
+
         renderCarpentryForm();
-    }
-    else
-    {
-        document
-        .getElementById(
-            "carpentrySection"
+
+    } else {
+
+        document.getElementById(
+            'carpentrySection'
         ).innerHTML = '';
     }
 
-    if(selected.includes(10))
-    {
+    // Stone
+
+    if (selectedStages.includes(10)) {
+
         renderStoneForm();
-    }
-    else
-    {
-        document
-        .getElementById(
-            "stoneSection"
+
+    } else {
+
+        document.getElementById(
+            'stoneSection'
         ).innerHTML = '';
     }
 }
 
+/* ==========================================
+   SIMULATION
+========================================== */
 
-import { simulateProject }
-from './simulation.js';
+function runSimulation() {
 
-function runSimulation()
-{
-    const state =
-    {
-        selectedStages:[6,10],
+    const selectedStages =
 
-        carpentry:{
+        [...document.querySelectorAll(
+            '.stage-checkbox:checked'
+        )]
+
+        .map(cb => Number(cb.value));
+
+    const state = {
+
+        projectName:
+
+            document.getElementById(
+                'projectName'
+            )?.value || '',
+
+        selectedStages,
+
+        carpentry: {
+
             panels:
                 Number(
-                    document
-                    .getElementById("panels")
-                    ?.value || 0
+                    document.getElementById(
+                        'panels'
+                    )?.value || 0
                 ),
 
             cabinets:
                 Number(
-                    document
-                    .getElementById("cabinets")
-                    ?.value || 0
+                    document.getElementById(
+                        'cabinets'
+                    )?.value || 0
                 ),
 
             drawers:
                 Number(
-                    document
-                    .getElementById("drawers")
-                    ?.value || 0
+                    document.getElementById(
+                        'drawers'
+                    )?.value || 0
                 ),
 
             edgeLF:
                 Number(
-                    document
-                    .getElementById("edgeLF")
-                    ?.value || 0
+                    document.getElementById(
+                        'carpentryEdgeLF'
+                    )?.value || 0
                 )
         },
 
-        stone:{
+        stone: {
+
             machine:
-                document
-                .getElementById("machine")
-                ?.value,
+                document.getElementById(
+                    'machine'
+                )?.value || 'BRETON',
 
             slabs:
                 Number(
-                    document
-                    .getElementById("slabs")
-                    ?.value || 0
+                    document.getElementById(
+                        'slabs'
+                    )?.value || 0
                 ),
 
             edgeLF:
                 Number(
-                    document
-                    .getElementById("stoneEdgeLF")
-                    ?.value || 0
+                    document.getElementById(
+                        'stoneEdgeLF'
+                    )?.value || 0
                 )
         }
     };
+
+    console.log('Simulation State', state);
 
     const result =
         simulateProject(state);
@@ -277,28 +332,24 @@ function runSimulation()
     renderResults(result);
 }
 
-function renderResults(result)
-{
+/* ==========================================
+   RESULTS
+========================================== */
+
+function renderResults(result) {
+
     document.getElementById(
-        "simulationResult"
+        'simulationResult'
     ).innerHTML = `
 
-        <h3>
-            Simulation
-        </h3>
+        <h3>Simulation Results</h3>
 
         <div>
 
             Total Hours:
-
-            ${result.totalHours}
+            <strong>${result.totalHours}</strong>
 
         </div>
 
     `;
 }
-
-
-
-
-
