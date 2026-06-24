@@ -1,52 +1,55 @@
-// simulation.js
+import { calculateCarpentry } from './calculators/carpentry.js';
+import { calculateStone } from './calculators/stone.js';
 
-import { calculateCarpentry }
-from './calculators/carpentry.js';
+export function simulate(state) {
 
-import { calculateStone }
-from './calculators/stone.js';
-
-export function simulate(state)
-{
     let result = {
-
-        carpentry:null,
-        stone:null,
-
-        totalMinutes:0
+        carpentry: null,
+        stone: null,
+        totalMinutes: 0
     };
 
-    if(state.selectedStages.includes(6))
-    {
-        result.carpentry =
-            calculateCarpentry(
-                state.carpentry
-            );
+    const stages = state.stages || [];
 
-        result.totalMinutes +=
-            result.carpentry.totalMinutes;
+    // =========================
+    // CARPENTRY
+    // =========================
+    if (stages.includes("carpentry")) {
+
+        result.carpentry = calculateCarpentry(
+            state.carpentry || {}
+        );
+
+        result.totalMinutes += result.carpentry.totalMinutes || 0;
     }
 
-    if(state.selectedStages.includes(10))
-    {
-        result.stone =
-            calculateStone(
-                state.stone
-            );
+    // =========================
+    // STONE
+    // =========================
+    if (stages.includes("stone")) {
 
-        result.totalMinutes +=
-            result.stone.totalMinutes;
+        result.stone = calculateStone(
+            state.stone || {}
+        );
+
+        result.totalMinutes += result.stone.totalMinutes || 0;
     }
 
     return result;
 }
 
-export function simulateProject(state)
-{
-    console.log(state);
+// =======================================================
+// MAIN ENTRY POINT (used by modal)
+// =======================================================
+
+export function simulateProject(state) {
+
+    console.log("SIMULATION INPUT:", state);
+
+    const result = simulate(state);
 
     return {
-        totalMinutes: 0,
-        totalHours: 0
+        ...result,
+        totalHours: +(result.totalMinutes / 60).toFixed(2)
     };
 }
