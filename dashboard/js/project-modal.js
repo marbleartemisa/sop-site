@@ -281,79 +281,54 @@ function getValue(id) {
    TEMPLATES
 ========================= */
 function carpentryTemplate() {
+  return `
+  <div class="parameter-card">
 
-return `
-<div class="parameter-group">
+    <h4>🪵 Carpentry Production</h4>
 
-  <h4>🪵 Carpentry Production</h4>
+    <div class="form-grid">
 
-  <input
-    id="panels"
-    placeholder="Panels (CNC)"
-  >
+      <select id="projectType">
+        <option>Kitchen</option>
+        <option>Pantry</option>
+        <option>Closet</option>
+        <option>Wall Unit</option>
+        <option>Office Furniture</option>
+        <option>Custom Furniture</option>
+      </select>
 
-  <div class="form-row">
+      <select id="complexityLevel">
+        <option value="1">Level 1</option>
+        <option value="2">Level 2</option>
+        <option value="3" selected>Level 3</option>
+        <option value="4">Level 4</option>
+        <option value="5">Level 5</option>
+      </select>
 
-    <input
-      id="cabinets"
-      placeholder="Cabinets"
-    >
+      <input id="paintSqFt" placeholder="Paint SqFt">
+      <input id="glassSqFt" placeholder="Glass SqFt">
 
-    <input
-      id="drawers"
-      placeholder="Drawers"
-    >
+      <input id="panels" placeholder="Panels">
+      <input id="cabinets" placeholder="Cabinets">
+      <input id="drawers" placeholder="Drawers">
+      <input id="pantry" placeholder="Pantry">
 
-    <input
-      id="pantry"
-      placeholder="Pantry"
-    >
+      <input id="trashcan" placeholder="Trashcan">
+      <input id="lazySusan" placeholder="Lazy Susan">
+      <input id="lemans" placeholder="LeMans II">
 
-  </div>
+      <input id="pocketPantry" placeholder="Pocket Pantry">
+      <input id="pocketCabinet" placeholder="Pocket Cabinet">
 
-  <div class="form-row">
+      <input id="edgeLF" placeholder="Edge LF">
 
-    <input
-      id="trashcan"
-      placeholder="Trashcan"
-    >
+      <input id="laminateSqFt" placeholder="Laminate SqFt">
 
-    <input
-      id="lazySusan"
-      placeholder="Lazy Susan"
-    >
-
-    <input
-      id="lemans"
-      placeholder="LeMans"
-    >
+    </div>
 
   </div>
-
-  <div class="form-row">
-
-    <input
-      id="pocketPantry"
-      placeholder="Pocket Pantry"
-    >
-
-    <input
-      id="pocketCabinet"
-      placeholder="Pocket Cabinet"
-    >
-
-  </div>
-
-  <input
-    id="carpentryEdgeLF"
-    placeholder="Edge Banding LF"
-  >
-
-</div>
-
-`;
+  `;
 }
-
 
 function stoneTemplate() {
 
