@@ -1,63 +1,91 @@
+// ========================================
+// APP
+// ========================================
+
 console.log("APP LOADED");
 
+// ========================================
+// IMPORTS
+// ========================================
+
 import {
-renderProjectSimulationModal
+  renderProjectSimulationModal
 } from "./project-modal.js";
 
-console.log("ERP App Loaded");
+// ========================================
+// ERP INIT
+// ========================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
 
-// Inicialización ERP
-if (typeof initERP === "function") {
-    initERP();
-}
+    console.log("DOM READY");
 
-// Botón New Project
-const btnNewProject =
-    document.getElementById("btn-new-project");
+    if (
+      typeof initERP === "function"
+    ) {
+      initERP();
+    }
 
-if (btnNewProject) {
+  }
+);
 
-    btnNewProject.addEventListener(
-        "click",
-        renderProjectSimulationModal
+// ========================================
+// NEW PROJECT
+// ========================================
+
+function openCreateForm() {
+
+  console.log(
+    "NEW PROJECT CLICKED"
+  );
+
+  try {
+
+    renderProjectSimulationModal();
+
+  }
+  catch(error) {
+
+    console.error(
+      "MODAL ERROR:",
+      error
     );
 
-    console.log("New Project button connected");
-}
-else {
+  }
 
-    console.warn(
-        "btn-new-project not found"
-    );
 }
 
-});
-
-// ==============================
-// TEMP FUNCTIONS
-// ==============================
+// ========================================
+// TEMP ACTIONS
+// ========================================
 
 function refreshData() {
 
-console.log(
-    "Refresh triggered"
-);
+  console.log(
+    "REFRESH"
+  );
 
 }
 
 function runScheduler() {
 
-console.log(
-    "Scheduler triggered"
-);
+  console.log(
+    "SCHEDULER"
+  );
 
 }
 
-// ==============================
-// GLOBAL FUNCTIONS
-// ==============================
+// ========================================
+// GLOBAL EXPORTS
+// ========================================
 
-window.refreshData = refreshData;
-window.runScheduler = runScheduler;
+window.openCreateForm =
+  openCreateForm;
+
+window.refreshData =
+  refreshData;
+
+window.runScheduler =
+  runScheduler;
