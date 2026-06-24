@@ -1,78 +1,80 @@
-const levelFactor = {
-
-    1:0.85,
-    2:1.00,
-    3:1.30
-};
-
 const edgeTimes = {
-
-    Eased:2,
-    Pencil:3,
-    HalfBullnose:4,
-    FullBullnose:5,
-    Ogee:8,
-    Miter:10,
-    Laminated:12
+  Eased: 2,
+  Pencil: 3,
+  HalfBullnose: 4,
+  FullBullnose: 5,
+  Ogee: 8,
+  Miter: 10,
+  Laminated: 12
 };
 
-function setupMachine(machine, slabs)
-{
-    if(machine==="BRETON")
-    {
-        return slabs * 25;
-    }
+// =========================
+// MACHINE SETUP
+// =========================
+function setupMachine(machine, slabs) {
 
-    return slabs * 30;
+  const s = slabs || 0;
+
+  if (machine === "BRETON") {
+    return s * 25;
+  }
+
+  return s * 30;
 }
 
-export function calculateStone(data)
-{
-    let setup =
-        setupMachine(
-            data.machine,
-            data.slabs
-        );
+// =========================
+// MAIN CALCULATOR
+// =========================
+export function calculateStone(data) {
 
-    let edge =
-        data.edgeLF *
-        edgeTimes[data.edgeType];
+  const f = data.complexityFactor || 1;
 
-    let cutouts =
-        data.cutouts * 20;
+  // =========================
+  // SETUP / MACHINE
+  // =========================
+  const setup = setupMachine(
+    data.machine,
+    data.slabs
+  );
 
-    let led =
-        data.led * 60;
+  // =========================
+  // EDGE WORK
+  // =========================
+  const edge =
+    (data.edgeLF || 0) *
+    (edgeTimes[data.edgeType] || 4);
 
-    let frame =
-        data.metalFrame * 120;
+  // =========================
+  // CUTOUTS
+  // =========================
+  const cutouts =
+    (data.cutouts || 0) * 20;
 
-    let total =
-        setup +
-        edge +
-        cutouts +
-        led +
-        frame;
+  // =========================
+  // LED WORK
+  // =========================
+  const led =
+    (data.led || 0) * 60;
 
-    total =
-        total *
-        levelFactor[data.level];
+  // =========================
+  // METAL FRAME
+  // =========================
+  const frame =
+    (data.metalFrame || 0) * 120;
 
-    return {
+  // =========================
+  // TOTAL
+  // =========================
+  const totalMinutes =
+    (setup + edge + cutouts + led + frame) * f;
 
-        setup,
-
-        edge,
-
-        cutouts,
-
-        led,
-
-        frame,
-
-        totalMinutes: total,
-
-        totalHours:
-            (total / 60).toFixed(2)
-    };
+  return {
+    setup,
+    edge,
+    cutouts,
+    led,
+    frame,
+    totalMinutes,
+    totalHours: +(totalMinutes / 60).toFixed(2)
+  };
 }
