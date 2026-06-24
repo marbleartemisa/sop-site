@@ -52,14 +52,20 @@ function closeModal() {
 /* =========================================================
    INITIAL STATE
 ========================================================= */
-
 function initState() {
 
-    store.setState({
-        stages: stages.map(s => s.id), // ALL SELECTED BY DEFAULT
-        carpentryActive: true,
-        stoneActive: true
-    });
+  const stages = [
+    { id: "agreement" },
+    { id: "measure" },
+    { id: "programming" }
+  ];
+
+  store.setState({
+    stages: stages.map(s => s.id),
+    carpentryActive: true,
+    stoneActive: true
+  });
+
 }
 
 /* =========================================================
