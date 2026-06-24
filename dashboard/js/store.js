@@ -4,6 +4,28 @@
 
 let projects = [];
 
+// SIMPLE GLOBAL STORE (MVP ERP)
+
+const state = {
+  projects: [],
+  stages: [],
+  carpentryActive: true,
+  stoneActive: true
+};
+
+export const store = {
+
+  getState() {
+    return state;
+  },
+
+  setState(newState) {
+    Object.assign(state, newState);
+    console.log("STORE UPDATED:", state);
+  }
+
+};
+
 // ---------------------
 // ADD PROJECT
 // ---------------------
