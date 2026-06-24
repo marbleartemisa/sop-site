@@ -1,26 +1,38 @@
-export const CARPENTRY = {
+export const carpentryTimes = {
 
-    PANEL_CUT:9,
+  cnc: {
+    panel: 9
+  },
 
-    EDGE_SETUP:15,
+  edgebanding: {
+    setup: 15,
+    lf: 0.6
+  },
 
-    EDGE_LF:0.60,
+  laminate: {
+    sqft: 3.5
+  },
 
-    CABINET:10,
+  assembly: {
+    cabinet: 10,
+    drawer: 20,
+    pantry: 20
+  },
 
-    DRAWER:20,
+  hardware: {
+    trashcan: 25,
+    lazySusan: 25,
+    lemans: 25
+  },
 
-    PANTRY:20,
+  pocket: {
+    cabinet: 60,
+    pantry: 90
+  },
 
-    TRASHCAN:25,
-
-    LAZY_SUSAN:25,
-
-    LEMANS:25,
-
-    POCKET_CABINET:60,
-
-    POCKET_PANTRY:90,
-
-    LAMINATE_SQFT:3.5
+  qc: {
+    cabinet: 5,
+    pantry: 10,
+    project: 15
+  }
 };
