@@ -281,29 +281,130 @@ function getValue(id) {
    TEMPLATES
 ========================= */
 function carpentryTemplate() {
-  return `
-    <div class="parameter-group">
-      <h4>Carpentry</h4>
-      <input id="panels" placeholder="Panels">
-      <input id="cabinets" placeholder="Cabinets">
-      <input id="drawers" placeholder="Drawers">
-      <input id="carpentryEdgeLF" placeholder="Edge LF">
-    </div>
-  `;
+
+return `
+<div class="parameter-group">
+
+  <h4>🪵 Carpentry Production</h4>
+
+  <input
+    id="panels"
+    placeholder="Panels (CNC)"
+  >
+
+  <div class="form-row">
+
+    <input
+      id="cabinets"
+      placeholder="Cabinets"
+    >
+
+    <input
+      id="drawers"
+      placeholder="Drawers"
+    >
+
+    <input
+      id="pantry"
+      placeholder="Pantry"
+    >
+
+  </div>
+
+  <div class="form-row">
+
+    <input
+      id="trashcan"
+      placeholder="Trashcan"
+    >
+
+    <input
+      id="lazySusan"
+      placeholder="Lazy Susan"
+    >
+
+    <input
+      id="lemans"
+      placeholder="LeMans"
+    >
+
+  </div>
+
+  <div class="form-row">
+
+    <input
+      id="pocketPantry"
+      placeholder="Pocket Pantry"
+    >
+
+    <input
+      id="pocketCabinet"
+      placeholder="Pocket Cabinet"
+    >
+
+  </div>
+
+  <input
+    id="carpentryEdgeLF"
+    placeholder="Edge Banding LF"
+  >
+
+</div>
+
+`;
 }
 
+
 function stoneTemplate() {
+
   return `
     <div class="parameter-group">
-      <h4>Stone</h4>
-      <select id="machine">
-        <option value="BRETON">BRETON</option>
-        <option value="COCH">COCH</option>
-      </select>
 
-      <input id="sqft" placeholder="SqFt">
-      <input id="slabs" placeholder="Slabs">
-      <input id="stoneEdgeLF" placeholder="Edge LF">
+      <h4>🪨 Stone Production</h4>
+
+      <div class="form-row">
+
+        <select id="machine">
+          <option>Breton CNC</option>
+          <option>Coch CNC</option>
+        </select>
+
+        <select id="material">
+          <option>Select Material</option>
+        </select>
+
+        <select id="thickness">
+          <option>6mm</option>
+          <option>12mm</option>
+          <option>20mm</option>
+        </select>
+
+      </div>
+
+      <input
+        id="sqft"
+        placeholder="SqFt (Stone Panels)"
+      >
+
+      <input
+        id="stoneEdgeLF"
+        placeholder="Edge Linear Ft"
+      >
+
+      <div class="form-row">
+
+        <input
+          id="cutouts"
+          placeholder="Cutouts"
+        >
+
+        <input
+          id="slabs"
+          placeholder="Slabs"
+        >
+
+      </div>
+
     </div>
   `;
 }
