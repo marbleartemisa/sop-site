@@ -1,49 +1,45 @@
-import { CARPENTRY }
-from '../data/carpentry-times.js';
+import { carpentryTimes } from "../data/carpentry-times.js";
 
-const complexityFactor = {
+export function calculateCarpentry(input, stageFactor = 1) {
 
-    1:1.00,
-    2:1.15,
-    3:1.30,
-    4:1.50,
-    5:2.00
-};
+  const cnc = input.panels * carpentryTimes.cnc.panel;
 
-export function calculateCarpentry(data)
-{
-    let total=0;
+  const edge = carpentryTimes.edgebanding.setup +
+               (input.edgeLF * carpentryTimes.edgebanding.lf);
 
-    total += data.panels * CARPENTRY.PANEL_CUT;
+  const laminate = input.laminateSqFt * carpentryTimes.laminate.sqft;
 
-    total += CARPENTRY.EDGE_SETUP;
+  const assembly =
+      (input.cabinets * carpentryTimes.assembly.cabinet) +
+      (input.drawers * carpentryTimes.assembly.drawer) +
+      (input.pantry * carpentryTimes.assembly.pantry);
 
-    total += data.edgeLF * CARPENTRY.EDGE_LF;
+  const hardware =
+      (input.trashcan * carpentryTimes.hardware.trashcan) +
+      (input.lazySusan * carpentryTimes.hardware.lazySusan) +
+      (input.lemans * carpentryTimes.hardware.lemans);
 
-    total += data.cabinets * CARPENTRY.CABINET;
+  const pocket =
+      (input.pocketCabinet * carpentryTimes.pocket.cabinet) +
+      (input.pocketPantry * carpentryTimes.pocket.pantry);
 
-    total += data.drawers * CARPENTRY.DRAWER;
+  const qc =
+      (input.cabinets * carpentryTimes.qc.cabinet) +
+      (input.pantry * carpentryTimes.qc.pantry) +
+      carpentryTimes.qc.project;
 
-    total += data.pantry * CARPENTRY.PANTRY;
+  const total =
+    (cnc + edge + laminate + assembly + hardware + pocket + qc)
+    * stageFactor;
 
-    total += data.trashcan * CARPENTRY.TRASHCAN;
-
-    total += data.lazySusan * CARPENTRY.LAZY_SUSAN;
-
-    total += data.lemans * CARPENTRY.LEMANS;
-
-    total += data.pocketCabinet * CARPENTRY.POCKET_CABINET;
-
-    total += data.pocketPantry * CARPENTRY.POCKET_PANTRY;
-
-    total += data.laminateSqft * CARPENTRY.LAMINATE_SQFT;
-
-    total *= complexityFactor[data.complexity];
-
-    return {
-
-        totalMinutes:total,
-
-        totalHours:(total/60).toFixed(2)
-    };
+  return {
+    cnc,
+    edge,
+    laminate,
+    assembly,
+    hardware,
+    pocket,
+    qc,
+    total
+  };
 }
