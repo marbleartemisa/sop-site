@@ -54,39 +54,62 @@ function render() {
 ========================= */
 function buildModalHTML() {
   return `
-  <div class="simulation-modal">
-    <div class="simulation-container">
+    <div class="simulation-modal">
+      <div class="simulation-container">
 
-      <div class="column-left">
+        <!-- COLUMN 1 -->
+        <div class="column-left">
 
-        <div class="modal-header">
-          <h2>Project Simulation</h2>
-          <button id="btnCloseModal">✕</button>
+          <div class="modal-header">
+            <h2>New Project</h2>
+            <button id="btnCloseModal">✕</button>
+          </div>
+
+          <input
+            id="projectName"
+            type="text"
+            placeholder="Customer"
+          />
+
+          <div class="section-title">
+            Project Stages
+          </div>
+
+          <div id="stagesContainer"></div>
+
+          <button id="btnSimulate">
+            Create Project
+          </button>
+
         </div>
 
-        <input id="projectName" placeholder="Customer / Project"/>
+        <!-- COLUMN 2 -->
+        <div class="column-center">
 
-        <hr/>
+          <div class="section-title">
+            Resources & Parameters
+          </div>
 
-        <div id="stagesContainer"></div>
+          <div id="stoneSection"></div>
 
-        <button id="btnSimulate">Run Simulation</button>
+          <div id="carpentrySection"></div>
+
+        </div>
+
+        <!-- COLUMN 3 -->
+        <div class="column-right">
+
+          <div class="section-title">
+            Simulation
+          </div>
+
+          <div id="simulationResult"></div>
+
+        </div>
 
       </div>
-
-      <div class="column-center">
-        <h3>Parameters</h3>
-        <div id="carpentrySection"></div>
-        <div id="stoneSection"></div>
-      </div>
-
-      <div class="column-right">
-        <h3>Results</h3>
-        <div id="simulationResult">Waiting...</div>
-      </div>
-
     </div>
-  </div>`;
+  `;
 }
 
 /* =========================
