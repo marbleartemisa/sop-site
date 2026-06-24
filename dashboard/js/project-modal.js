@@ -85,17 +85,25 @@ function buildModalHTML() {
         </div>
 
         <!-- COLUMN 2 -->
-        <div class="column-center">
+            <div class="column-center">
+            
+              <div class="section-title">Parameters</div>
+            
+              <!-- CARPENTRY CARD -->
+              <div class="parameter-card">
+                <h4>🪵 Carpentry</h4>
+            
+                <div id="carpentrySection"></div>
+              </div>
 
-          <div class="section-title">
-            Resources & Parameters
-          </div>
-
-          <div id="stoneSection"></div>
-
-          <div id="carpentrySection"></div>
-
-        </div>
+              <!-- STONE CARD -->
+              <div class="parameter-card">
+                <h4>🪨 Stone</h4>
+            
+                <div id="stoneSection"></div>
+              </div>
+            
+            </div>
 
         <!-- COLUMN 3 -->
         <div class="column-right">
@@ -331,9 +339,10 @@ function carpentryTemplate() {
 
       <h4>🪵 Carpentry Production</h4>
 
-      <div class="form-grid">
+      <!-- CORE SETTINGS -->
+      <div class="form-row">
 
-        <!-- Project Type -->
+        <!-- PROJECT TYPE -->
         <select id="projectType">
           <option value="Kitchen">Kitchen</option>
           <option value="Pantry">Pantry</option>
@@ -343,7 +352,7 @@ function carpentryTemplate() {
           <option value="Custom Furniture">Custom Furniture</option>
         </select>
 
-        <!-- Complexity Level (IMPORTANT) -->
+        <!-- COMPLEXITY LEVEL -->
         <select id="carpentryLevel">
           <option value="1">Level 1 (Budget)</option>
           <option value="2">Level 2 (Economy)</option>
@@ -352,30 +361,108 @@ function carpentryTemplate() {
           <option value="5">Level 5 (Luxury)</option>
         </select>
 
-        <!-- External Services -->
-        <input id="paintSqFt" placeholder="Paint SqFt">
-        <input id="glassSqFt" placeholder="Glass SqFt">
+      </div>
 
-        <!-- Production Inputs -->
-        <input id="panels" placeholder="Panels">
-        <input id="cabinets" placeholder="Cabinets">
-        <input id="drawers" placeholder="Drawers">
-        <input id="pantry" placeholder="Pantry">
+      <!-- EXTERNAL WORK -->
+      <div class="section-subtitle">External Services</div>
 
-        <!-- Accessories -->
-        <input id="trashcan" placeholder="Trashcan">
-        <input id="lazySusan" placeholder="Lazy Susan">
-        <input id="lemans" placeholder="LeMans II">
+      <div class="form-grid-2">
 
-        <!-- Pocket Systems -->
-        <input id="pocketPantry" placeholder="Pocket Pantry">
-        <input id="pocketCabinet" placeholder="Pocket Cabinet">
+        <div class="mini-input">
+          <label>Paint SqFt</label>
+          <input id="paintSqFt" type="number">
+        </div>
 
-        <!-- Finishing -->
-        <input id="edgeLF" placeholder="Edge LF">
-        <input id="laminateSqFt" placeholder="Laminate SqFt">
+        <div class="mini-input">
+          <label>Glass SqFt</label>
+          <input id="glassSqFt" type="number">
+        </div>
 
       </div>
+
+      <!-- PRODUCTION CORE -->
+      <div class="section-subtitle">Production</div>
+
+      <div class="form-grid-2">
+
+        <div class="mini-input">
+          <label>Panels</label>
+          <input id="panels" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>Cabinets</label>
+          <input id="cabinets" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>Drawers</label>
+          <input id="drawers" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>Pantry</label>
+          <input id="pantry" type="number">
+        </div>
+
+      </div>
+
+      <!-- HARDWARE -->
+      <div class="section-subtitle">Hardware</div>
+
+      <div class="form-grid-2">
+
+        <div class="mini-input">
+          <label>Trashcan</label>
+          <input id="trashcan" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>Lazy Susan</label>
+          <input id="lazySusan" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>LeMans II</label>
+          <input id="lemans" type="number">
+        </div>
+
+      </div>
+
+      <!-- POCKET SYSTEMS -->
+      <div class="section-subtitle">Pocket Systems</div>
+
+      <div class="form-grid-2">
+
+        <div class="mini-input">
+          <label>Pocket Pantry</label>
+          <input id="pocketPantry" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>Pocket Cabinet</label>
+          <input id="pocketCabinet" type="number">
+        </div>
+
+      </div>
+
+      <!-- FINISHING -->
+      <div class="section-subtitle">Finishing</div>
+
+      <div class="form-grid-2">
+
+        <div class="mini-input">
+          <label>Edge LF</label>
+          <input id="edgeLF" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>Laminate SqFt</label>
+          <input id="laminateSqFt" type="number">
+        </div>
+
+      </div>
+
     </div>
   `;
 }
@@ -386,7 +473,7 @@ function stoneTemplate() {
 
       <h4>🪨 Stone Production</h4>
 
-      <!-- Core Setup -->
+      <!-- CORE SETTINGS -->
       <div class="form-row">
 
         <select id="machine">
@@ -394,7 +481,6 @@ function stoneTemplate() {
           <option value="COCH">Coch CNC</option>
         </select>
 
-        <!-- Complexity Level -->
         <select id="stoneLevel">
           <option value="1">Level 1</option>
           <option value="2" selected>Level 2 (Standard)</option>
@@ -402,7 +488,7 @@ function stoneTemplate() {
         </select>
 
         <select id="material">
-          <option value="">Select Material</option>
+          <option value="">Material</option>
           <option value="Quartz">Quartz</option>
           <option value="Granite">Granite</option>
           <option value="Porcelain">Porcelain</option>
@@ -417,13 +503,31 @@ function stoneTemplate() {
 
       </div>
 
-      <!-- Quantities -->
-      <input id="sqft" placeholder="SqFt (Stone Panels)">
-      <input id="stoneEdgeLF" placeholder="Edge Linear Ft">
+      <!-- PRODUCTION -->
+      <div class="section-subtitle">Production</div>
 
-      <div class="form-row">
-        <input id="cutouts" placeholder="Cutouts">
-        <input id="slabs" placeholder="Slabs">
+      <div class="form-grid-2">
+
+        <div class="mini-input">
+          <label>SqFt</label>
+          <input id="sqft" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>Slabs</label>
+          <input id="slabs" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>Edge LF</label>
+          <input id="stoneEdgeLF" type="number">
+        </div>
+
+        <div class="mini-input">
+          <label>Cutouts</label>
+          <input id="cutouts" type="number">
+        </div>
+
       </div>
 
     </div>
