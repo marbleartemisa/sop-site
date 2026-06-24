@@ -2,21 +2,25 @@ import { stages } from './data/stages.js';
 import { simulateProject } from './simulation.js';
 import { store } from "./store.js";
 
+let unsubscribe = null;
+
 export function renderProjectSimulationModal() {
 
     const container = document.getElementById("modal-container");
     if (!container) return;
 
     container.style.display = "flex";
-
     container.innerHTML = buildModalHTML();
 
     initState();
     bindEvents();
 
-    store.subscribe(renderUI);
+    // evitar múltiples subscriptions
+    if (unsubscribe) unsubscribe();
 
-    renderUI(store.getState()); // IMPORTANT: first render
+    unsubscribe = store.subscribe(renderUI);
+
+    renderUI(store.getState());
 }
 
 // =====================
@@ -26,7 +30,8 @@ function initState() {
     store.setState({
         stages: stages.map(s => s.id),
         carpentryActive: true,
-        stoneActive: true
+        stoneActive: true,
+        simulationResult: null
     });
 }
 
@@ -119,7 +124,18 @@ function renderResults(state) {
     const container = document.getElementById("simulationResult");
     if (!container) return;
 
-    const result = simulateProject(state);
+    // ❌ NO simular automáticamente
+    const result = state.simulationResult;
+
+    if (!result) {
+        container.innerHTML = `
+          <div class="result-card">
+            <h3>Ready</h3>
+            <p>Click Run Simulation</p>
+          </div>
+        `;
+        return;
+    }
 
     container.innerHTML = `
       <div class="result-card">
@@ -139,9 +155,7 @@ function bindEvents() {
         ?.addEventListener("click", closeModal);
 
     document.getElementById("btnSimulate")
-        ?.addEventListener("click", () => {
-            console.log("SIMULATE", store.getState());
-        });
+        ?.addEventListener("click", runSimulation);
 
     document.addEventListener("change", handleStageChange);
 }
@@ -154,25 +168,44 @@ function handleStageChange(e) {
 
     const id = e.target.value;
 
-    let stagesState = store.getState().stages;
+    let current = store.getState().stages;
 
-    if (e.target.checked) {
-        stagesState = [...stagesState, id];
-    } else {
-        stagesState = stagesState.filter(s => s !== id);
-    }
+    current = e.target.checked
+        ? [...current, id]
+        : current.filter(s => s !== id);
 
-    store.setState({ stages: stagesState });
+    store.setState({ stages: current });
+}
+
+// =====================
+
+function runSimulation() {
+
+    const state = store.getState();
+
+    const result = simulateProject(state);
+
+    store.setState({
+        simulationResult: result
+    });
+
+    console.log("SIMULATION RUN:", result);
 }
 
 // =====================
 
 function closeModal() {
+
     const container = document.getElementById("modal-container");
     if (!container) return;
 
     container.innerHTML = "";
     container.style.display = "none";
+
+    // cleanup listener global (IMPORTANTE)
+    document.removeEventListener("change", handleStageChange);
+
+    if (unsubscribe) unsubscribe();
 }
 
 // =====================
