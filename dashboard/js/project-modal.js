@@ -1,6 +1,7 @@
 import { stages } from './data/stages.js';
 import { simulateProject } from './simulation.js';
 
+
 /* =========================
    STATE
 ========================= */
@@ -245,6 +246,35 @@ function closeModal() {
   container.style.display = "none";
 }
 
+function getCarpentryFactor() {
+
+  const level =
+    Number(document.getElementById("carpentryLevel")?.value || 3);
+
+  const map = {
+    1: 0.75,
+    2: 0.90,
+    3: 1.00,
+    4: 1.20,
+    5: 1.40
+  };
+
+  return map[level] || 1;
+}
+
+function getStoneFactor() {
+
+  const level =
+    Number(document.getElementById("stoneLevel")?.value || 2);
+
+  const map = {
+    1: 0.85,
+    2: 1.00,
+    3: 1.25
+  };
+
+  return map[level] || 1;
+}
 /* =========================
    BUILD STATE
 ========================= */
@@ -254,19 +284,34 @@ function buildState() {
     projectName: state.projectName,
     stages: state.selectedStages,
 
-    carpentry: {
-      panels: getValue("panels"),
-      cabinets: getValue("cabinets"),
-      drawers: getValue("drawers"),
-      edgeLF: getValue("carpentryEdgeLF")
-    },
+         carpentry: {
+           level: Number(document.getElementById("carpentryLevel")?.value || 3),
+           complexityFactor: getCarpentryFactor(),
+         
+           panels: getValue("panels"),
+           cabinets: getValue("cabinets"),
+           drawers: getValue("drawers"),
+           pantry: getValue("pantry") || 0,
+           trashcan: getValue("trashcan") || 0,
+           lazySusan: getValue("lazySusan") || 0,
+           lemans: getValue("lemans") || 0,
+           pocketCabinet: getValue("pocketCabinet") || 0,
+           pocketPantry: getValue("pocketPantry") || 0,
+         
+           edgeLF: getValue("carpentryEdgeLF"),
+           laminateSqFt: getValue("laminateSqFt") || 0
+         },
 
-    stone: {
-      machine: document.getElementById("machine")?.value || "BRETON",
-      sqft: getValue("sqft"),
-      slabs: getValue("slabs"),
-      edgeLF: getValue("stoneEdgeLF")
-    }
+          stone: {
+           machine: document.getElementById("machine")?.value || "BRETON",
+         
+           level: Number(document.getElementById("stoneLevel")?.value || 2),
+           complexityFactor: getStoneFactor(),
+         
+           sqft: getValue("sqft"),
+           slabs: getValue("slabs"),
+           edgeLF: getValue("stoneEdgeLF")
+         }
   };
 }
 
@@ -282,102 +327,103 @@ function getValue(id) {
 ========================= */
 function carpentryTemplate() {
   return `
-  <div class="parameter-card">
+    <div class="parameter-card">
 
-    <h4>🪵 Carpentry Production</h4>
+      <h4>🪵 Carpentry Production</h4>
 
-    <div class="form-grid">
+      <div class="form-grid">
 
-      <select id="projectType">
-        <option>Kitchen</option>
-        <option>Pantry</option>
-        <option>Closet</option>
-        <option>Wall Unit</option>
-        <option>Office Furniture</option>
-        <option>Custom Furniture</option>
-      </select>
+        <!-- Project Type -->
+        <select id="projectType">
+          <option value="Kitchen">Kitchen</option>
+          <option value="Pantry">Pantry</option>
+          <option value="Closet">Closet</option>
+          <option value="Wall Unit">Wall Unit</option>
+          <option value="Office Furniture">Office Furniture</option>
+          <option value="Custom Furniture">Custom Furniture</option>
+        </select>
 
-      <select id="complexityLevel">
-        <option value="1">Level 1</option>
-        <option value="2">Level 2</option>
-        <option value="3" selected>Level 3</option>
-        <option value="4">Level 4</option>
-        <option value="5">Level 5</option>
-      </select>
+        <!-- Complexity Level (IMPORTANT) -->
+        <select id="carpentryLevel">
+          <option value="1">Level 1 (Budget)</option>
+          <option value="2">Level 2 (Economy)</option>
+          <option value="3" selected>Level 3 (Standard)</option>
+          <option value="4">Level 4 (Premium)</option>
+          <option value="5">Level 5 (Luxury)</option>
+        </select>
 
-      <input id="paintSqFt" placeholder="Paint SqFt">
-      <input id="glassSqFt" placeholder="Glass SqFt">
+        <!-- External Services -->
+        <input id="paintSqFt" placeholder="Paint SqFt">
+        <input id="glassSqFt" placeholder="Glass SqFt">
 
-      <input id="panels" placeholder="Panels">
-      <input id="cabinets" placeholder="Cabinets">
-      <input id="drawers" placeholder="Drawers">
-      <input id="pantry" placeholder="Pantry">
+        <!-- Production Inputs -->
+        <input id="panels" placeholder="Panels">
+        <input id="cabinets" placeholder="Cabinets">
+        <input id="drawers" placeholder="Drawers">
+        <input id="pantry" placeholder="Pantry">
 
-      <input id="trashcan" placeholder="Trashcan">
-      <input id="lazySusan" placeholder="Lazy Susan">
-      <input id="lemans" placeholder="LeMans II">
+        <!-- Accessories -->
+        <input id="trashcan" placeholder="Trashcan">
+        <input id="lazySusan" placeholder="Lazy Susan">
+        <input id="lemans" placeholder="LeMans II">
 
-      <input id="pocketPantry" placeholder="Pocket Pantry">
-      <input id="pocketCabinet" placeholder="Pocket Cabinet">
+        <!-- Pocket Systems -->
+        <input id="pocketPantry" placeholder="Pocket Pantry">
+        <input id="pocketCabinet" placeholder="Pocket Cabinet">
 
-      <input id="edgeLF" placeholder="Edge LF">
+        <!-- Finishing -->
+        <input id="edgeLF" placeholder="Edge LF">
+        <input id="laminateSqFt" placeholder="Laminate SqFt">
 
-      <input id="laminateSqFt" placeholder="Laminate SqFt">
-
+      </div>
     </div>
-
-  </div>
   `;
 }
 
 function stoneTemplate() {
-
   return `
-    <div class="parameter-group">
+    <div class="parameter-card">
 
       <h4>🪨 Stone Production</h4>
 
+      <!-- Core Setup -->
       <div class="form-row">
 
         <select id="machine">
-          <option>Breton CNC</option>
-          <option>Coch CNC</option>
+          <option value="BRETON">Breton CNC</option>
+          <option value="COCH">Coch CNC</option>
+        </select>
+
+        <!-- Complexity Level -->
+        <select id="stoneLevel">
+          <option value="1">Level 1</option>
+          <option value="2" selected>Level 2 (Standard)</option>
+          <option value="3">Level 3 (Premium)</option>
         </select>
 
         <select id="material">
-          <option>Select Material</option>
+          <option value="">Select Material</option>
+          <option value="Quartz">Quartz</option>
+          <option value="Granite">Granite</option>
+          <option value="Porcelain">Porcelain</option>
+          <option value="Dekton">Dekton</option>
         </select>
 
         <select id="thickness">
-          <option>6mm</option>
-          <option>12mm</option>
-          <option>20mm</option>
+          <option value="6">6mm</option>
+          <option value="12">12mm</option>
+          <option value="20">20mm</option>
         </select>
 
       </div>
 
-      <input
-        id="sqft"
-        placeholder="SqFt (Stone Panels)"
-      >
-
-      <input
-        id="stoneEdgeLF"
-        placeholder="Edge Linear Ft"
-      >
+      <!-- Quantities -->
+      <input id="sqft" placeholder="SqFt (Stone Panels)">
+      <input id="stoneEdgeLF" placeholder="Edge Linear Ft">
 
       <div class="form-row">
-
-        <input
-          id="cutouts"
-          placeholder="Cutouts"
-        >
-
-        <input
-          id="slabs"
-          placeholder="Slabs"
-        >
-
+        <input id="cutouts" placeholder="Cutouts">
+        <input id="slabs" placeholder="Slabs">
       </div>
 
     </div>
