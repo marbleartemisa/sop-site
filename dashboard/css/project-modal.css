@@ -1,311 +1,401 @@
 /* =========================================================
-   BASE APP (SAFE GLOBAL RESET LIGHT)
+PROJECT SIMULATION MODAL
+ARTEMISA ERP
 ========================================================= */
 
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #0f172a;
-  color: #e2e8f0;
-}
-
-/* Evita scroll cuando modal está activo */
-body.modal-open {
-  overflow: hidden;
-}
-
 /* =========================================================
-   MODAL SYSTEM ROOT (ISOLATED LAYER)
+MODAL ROOT
 ========================================================= */
 
 #modal-container {
-  position: fixed;
-  inset: 0;
+position: fixed;
+inset: 0;
 
-  display: none;
-  justify-content: center;
-  align-items: center;
+display: none;
+justify-content: center;
+align-items: center;
 
-  background: rgba(0, 0, 0, 0.65);
+background: rgba(0,0,0,.75);
 
-  z-index: 1000000;
+z-index: 999999;
 
-  isolation: isolate;
-  contain: layout paint style;
 }
 
 /* =========================================================
-   MODAL SHELL (CORE CONTAINER)
+MODAL SHELL
 ========================================================= */
 
-.modal-shell,
 .simulation-modal {
-  background: #ffffff;
-  width: 95%;
-  max-width: 1200px;
-  height: 85vh;
 
-  border-radius: 14px;
-  overflow: hidden;
+width: 95vw;
+max-width: 1500px;
 
-  display: flex;
-  flex-direction: column;
+height: 90vh;
 
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+background: #0f172a;
 
-  color: #111;
+border-radius: 14px;
+
+overflow: hidden;
+
+box-shadow: 0 20px 60px rgba(0,0,0,.45);
+
 }
 
 /* =========================================================
-   MODAL GRID LAYOUT
+MAIN GRID
 ========================================================= */
 
-.simulation-container{
-    display:grid;
-    grid-template-columns: 320px 560px 420px;
-    gap:16px;
+.simulation-container {
 
-    width:100%;
-    height:100%;
-    padding:16px;
+display: grid;
 
-    background:#131b2f;
+grid-template-columns:
+    260px
+    minmax(500px,1fr)
+    380px;
+
+gap: 16px;
+
+height: 100%;
+
+padding: 16px;
+
+background: #0f172a;
+
 }
+
 /* =========================================================
-   COLUMNS SYSTEM
+COLUMNS
 ========================================================= */
+
 .column-left,
 .column-center,
-.column-right{
-    background:#18233d;
+.column-right {
 
-    border:1px solid rgba(255,255,255,.08);
+background: #18233d;
 
-    border-radius:12px;
+border: 1px solid rgba(255,255,255,.08);
 
-    padding:18px;
+border-radius: 12px;
 
-    overflow-y:auto;
+padding: 18px;
 
-    min-height:0;
+overflow-y: auto;
+
 }
 
 /* =========================================================
-   HEADER
+HEADER
 ========================================================= */
 
-.modal-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.modal-header {
 
-    margin-bottom:16px;
+display: flex;
+justify-content: space-between;
+align-items: center;
 
-    border:none;
-    padding:0;
+margin-bottom: 18px;
+
 }
 
-.modal-header h2{
-    color:white;
-    margin:0;
-    font-size:32px;
+.modal-header h2 {
+
+margin: 0;
+
+color: white;
+
+font-size: 24px;
+font-weight: 700;
+
+}
+
+#btnCloseModal {
+
+width: 36px;
+height: 36px;
+
+border: none;
+
+border-radius: 8px;
+
+background: #4f8cff;
+
+color: white;
+
+cursor: pointer;
+
 }
 
 /* =========================================================
-   BUTTON SYSTEM (SCOPED ONLY MODAL)
+SECTION TITLES
+========================================================= */
+
+.section-title {
+
+color: white;
+
+font-size: 22px;
+font-weight: 700;
+
+margin-bottom: 14px;
+
+}
+
+.section-subtitle {
+
+color: #9fb0d8;
+
+font-size: 13px;
+
+margin-bottom: 14px;
+
+}
+
+/* =========================================================
+INPUTS
+========================================================= */
+
+#modal-container input([type="checkbox"]),
+#modal-container select {
+
+width: 100%;
+
+height: 40px;
+
+padding: 0 12px;
+
+border: 1px solid #2d3b63;
+
+border-radius: 6px;
+
+background: white;
+
+font-size: 14px;
+
+margin-bottom: 12px;
+
+box-sizing: border-box;
+
+}
+
+/* =========================================================
+STAGES
+========================================================= */
+
+#stagesContainer {
+
+display: flex;
+flex-direction: column;
+
+gap: 6px;
+
+}
+
+.stage-item {
+
+display: grid;
+
+grid-template-columns: 20px 1fr;
+
+align-items: center;
+
+gap: 10px;
+
+color: white;
+
+font-size: 14px;
+
+cursor: pointer;
+
+}
+
+.stage-item input[type="checkbox"] {
+
+width: 16px;
+height: 16px;
+
+margin: 0;
+
+}
+
+.stage-item span {
+
+white-space: nowrap;
+
+}
+
+/* =========================================================
+BUTTONS
 ========================================================= */
 
 #modal-container button {
-  all: unset;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+border: none;
 
-  padding: 10px 14px;
-  border-radius: 8px;
+cursor: pointer;
 
-  background: #2563eb;
-  color: #fff;
+transition: .2s;
 
-  cursor: pointer;
-  font-size: 14px;
 }
 
-#modal-container button:hover {
-  background: #1d4ed8;
+#btnSimulate {
+
+width: 100%;
+
+margin-top: 20px;
+
+padding: 12px;
+
+background: #4f8cff;
+
+color: white;
+
+border-radius: 10px;
+
+font-weight: 600;
+
+}
+
+#btnSimulate {
+
+background: #3d77ec;
+
 }
 
 /* =========================================================
-   INPUTS / SELECTS
+PARAMETER CARDS
 ========================================================= */
 
-#modal-container input,
-#modal-container select{
+.parameter-card {
 
-    width:100%;
+background: #10182c;
 
-    background:#fff;
+border: 1px solid rgba(255,255,255,.08);
 
-    border:none;
+border-radius: 10px;
 
-    border-radius:6px;
+padding: 14px;
 
-    padding:10px 12px;
+margin-bottom: 18px;
 
-    margin-bottom:12px;
+}
 
-    font-size:14px;
+.parameter-card h4 {
+
+margin: 0 0 14px 0;
+
+color: white;
+
+font-size: 18px;
+
 }
 
 /* =========================================================
-   STAGES LIST
-========================================================= */
-#stagesContainer{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-}
-
-
-.stages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  max-height: 320px;
-  overflow-y: auto;
-
-  padding-right: 5px;
-}
-.stage-item{
-    display:flex;
-    align-items:center;
-    gap:10px;
-
-    color:white;
-
-    cursor:pointer;
-}
-
-.stage-item input{
-    width:18px;
-    height:18px;
-}
-
-.stage-item:hover {
-  background: #f3f4f6;
-}
-
-/* =========================================================
-   PARAMETERS GROUPS
+FORM GRIDS
 ========================================================= */
 
-.parameter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.form-grid {
 
-  margin-bottom: 16px;
+display: grid;
+
+grid-template-columns:
+    repeat(auto-fit,minmax(120px,1fr));
+
+gap: 10px;
+
 }
 
 /* =========================================================
-   RESULTS PANEL
+RESULTS
 ========================================================= */
 
 #simulationResult {
-  padding: 10px;
+
+display: flex;
+flex-direction: column;
+
+gap: 14px;
+
 }
 
-.result-card {
-  background: #f3f4f6;
-  border-radius: 10px;
+.result-panel {
 
-  padding: 16px;
-  text-align: center;
+background: #11192e;
+
+border: 1px solid rgba(255,255,255,.08);
+
+border-radius: 10px;
+
+padding: 16px;
+
+}
+
+.result-title {
+
+color: white;
+
+font-size: 18px;
+font-weight: 700;
+
+margin-bottom: 10px;
+
+}
+
+.metric {
+
+color: #9fb0d8;
+
+margin-bottom: 6px;
+
+font-size: 14px;
+
+}
+
+.metric strong {
+
+color: white;
+
 }
 
 /* =========================================================
-   SAFETY LAYER (KILL OVERLAYS CONFLICTS)
+SCROLLBAR
 ========================================================= */
 
-.modal-overlay,
-.simulation-overlay,
-.backdrop,
-.loading-screen {
-  display: none !important;
-  pointer-events: none !important;
+.column-left::-webkit-scrollbar,
+.column-center::-webkit-scrollbar,
+.column-right::-webkit-scrollbar {
+
+width: 8px;
+
 }
 
+.column-left::-webkit-scrollbar-thumb,
+.column-center::-webkit-scrollbar-thumb,
+.column-right::-webkit-scrollbar-thumb {
 
-.section-title{
-    color:white;
-    font-size:24px;
-    font-weight:700;
-    margin-bottom:12px;
+background: #334155;
+
+border-radius: 20px;
+
 }
 
-.section-subtitle{
-    color:#9fb0d8;
-    font-size:14px;
-    margin-bottom:16px;
+/* =========================================================
+RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+.simulation-container {
+
+    grid-template-columns: 1fr;
 }
 
-#btnSimulate{
+.column-left,
+.column-center,
+.column-right {
 
-    width:100%;
-    margin-top:20px;
-
-    background:#4f8cff;
-    border-radius:10px;
-
-    font-weight:600;
+    min-height: auto;
 }
 
-.parameter-card{
-
-    background:#11192e;
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:10px;
-
-    padding:14px;
-
-    margin-bottom:18px;
-}
-
-.parameter-card h4{
-    color:white;
-    margin-top:0;
-}
-
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:8px;
-}
-
-.result-panel{
-
-    background:#11192e;
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:12px;
-
-    padding:16px;
-
-    margin-bottom:16px;
-}
-
-.result-title{
-    color:white;
-    font-size:24px;
-    font-weight:700;
-}
-
-.metric{
-    color:#9fb0d8;
-    margin:8px 0;
 }
