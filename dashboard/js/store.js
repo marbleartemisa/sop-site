@@ -2,44 +2,43 @@
 // ARTEMISA ERP STORE (CLEAN VERSION)
 // =====================================
 
-// ---------------------
-// SINGLE SOURCE OF TRUTH
-// ---------------------
-const state = {
+let state = {
   projects: [],
   stages: [],
   carpentryActive: true,
   stoneActive: true
 };
 
-// =====================
-// STORE CORE API
-// =====================
+let listeners = [];
+
 export const store = {
 
-  // GET FULL STATE
   getState() {
     return state;
   },
 
-  // UPDATE STATE (MERGE SAFE)
-  setState(partialState) {
-    Object.assign(state, partialState);
+  setState(newState) {
+    state = { ...state, ...newState };
 
-    console.log(
-      "🟢 STORE UPDATED:",
-      JSON.parse(JSON.stringify(state))
-    );
+    console.log("STORE UPDATED:", state);
+
+    listeners.forEach(fn => fn(state));
   },
 
-  // RESET STORE
-  reset() {
-    state.projects = [];
-    state.stages = [];
-    state.carpentryActive = true;
-    state.stoneActive = true;
-
-    console.log("🔄 STORE RESET");
+  subscribe(fn) {
+    listeners.push(fn);
   }
-
 };
+
+// OPTIONAL helpers
+export function addProject(p) {
+  state.projects.push(p);
+}
+
+export function getProjects() {
+  return state.projects;
+}
+
+export function clearProjects() {
+  state.projects = [];
+}
