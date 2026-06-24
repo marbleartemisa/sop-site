@@ -1,91 +1,45 @@
-// ========================================
-// APP
-// ========================================
-
 console.log("APP LOADED");
 
-// ========================================
-// IMPORTS
-// ========================================
+// ===============================
+// IMPORT MODAL
+// ===============================
+import { renderProjectSimulationModal } from "./project-modal.js";
 
-import {
-  renderProjectSimulationModal
-} from "./project-modal.js";
+// ===============================
+// INIT
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
 
-// ========================================
-// ERP INIT
-// ========================================
+  console.log("DOM READY");
 
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
+  const btn = document.getElementById("btn-new-project");
 
-    console.log("DOM READY");
+  if (!btn) {
+    console.error("❌ btn-new-project NOT FOUND");
+    return;
+  }
 
-    if (
-      typeof initERP === "function"
-    ) {
-      initERP();
+  console.log("✅ New Project button connected");
+
+  btn.addEventListener("click", () => {
+    console.log("🟢 New Project clicked");
+
+    if (typeof renderProjectSimulationModal === "function") {
+      renderProjectSimulationModal();
+    } else {
+      console.error("❌ Modal function missing");
     }
+  });
 
-  }
-);
+});
 
-// ========================================
-// NEW PROJECT
-// ========================================
+// ===============================
+// GLOBAL ACTIONS
+// ===============================
+window.refreshData = function () {
+  console.log("Refresh triggered");
+};
 
-function openCreateForm() {
-
-  console.log(
-    "NEW PROJECT CLICKED"
-  );
-
-  try {
-
-    renderProjectSimulationModal();
-
-  }
-  catch(error) {
-
-    console.error(
-      "MODAL ERROR:",
-      error
-    );
-
-  }
-
-}
-
-// ========================================
-// TEMP ACTIONS
-// ========================================
-
-function refreshData() {
-
-  console.log(
-    "REFRESH"
-  );
-
-}
-
-function runScheduler() {
-
-  console.log(
-    "SCHEDULER"
-  );
-
-}
-
-// ========================================
-// GLOBAL EXPORTS
-// ========================================
-
-window.openCreateForm =
-  openCreateForm;
-
-window.refreshData =
-  refreshData;
-
-window.runScheduler =
-  runScheduler;
+window.runScheduler = function () {
+  console.log("Scheduler triggered");
+};
