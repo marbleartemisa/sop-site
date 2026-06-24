@@ -115,26 +115,45 @@ function buildModalHTML() {
 /* =========================
    STAGES
 ========================= */
+
 function renderStages() {
 
-  const container = document.getElementById("stagesContainer");
+  const container =
+    document.getElementById(
+      "stagesContainer"
+    );
+
   if (!container) return;
 
-  container.innerHTML = stages.map(stage => {
+  container.innerHTML =
+    stages.map(stage => {
 
-    const id = String(stage.id);
-    const checked = state.selectedStages.includes(id);
+      const checked =
+        state.selectedStages.includes(
+          String(stage.id)
+        );
 
-    return `
-      <label class="stage-item">
-        <input type="checkbox"
-          class="stage-checkbox"
-          value="${id}"
-          ${checked ? "checked" : ""}>
-        <span>${stage.name} (${stage.days}d)</span>
-      </label>
-    `;
-  }).join("");
+      return `
+        <label class="stage-item">
+
+          <input
+            type="checkbox"
+            class="stage-checkbox"
+            value="${stage.id}"
+            ${checked ? "checked" : ""}
+          >
+
+          <span class="stage-name">
+            ${stage.name}
+          </span>
+
+          <span class="stage-days">
+            (${stage.days}d)
+          </span>
+
+        </label>
+      `;
+    }).join("");
 }
 
 /* =========================
