@@ -66,14 +66,17 @@ function simulate(state) {
 // MAIN ENTRY POINT
 // =========================
 
+
 export function simulateProject(state) {
 
-    console.log("SIMULATION INPUT:", state);
+    console.log("SIMULATION INPUT:", JSON.parse(JSON.stringify(state)));
 
     const result = simulate(state);
 
     return {
-        ...result,
+        carpentry: result.carpentry,
+        stone: result.stone,
+        totalMinutes: result.totalMinutes,
         totalHours: +(result.totalMinutes / 60).toFixed(2)
     };
 }
