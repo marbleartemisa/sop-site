@@ -1,7 +1,28 @@
 import { calculateCarpentry } from './calculators/carpentry.js';
 import { calculateStone } from './calculators/stone.js';
 
-export function simulate(state) {
+// =========================
+// STAGE GROUPING LOGIC
+// =========================
+
+function getStageFlags(stages = []) {
+
+    return {
+        carpentry: stages.some(s =>
+            s.startsWith("carpentry_")
+        ),
+
+        stone: stages.some(s =>
+            s.startsWith("stone_")
+        )
+    };
+}
+
+// =========================
+// CORE SIMULATION
+// =========================
+
+function simulate(state) {
 
     let result = {
         carpentry: null,
@@ -10,37 +31,40 @@ export function simulate(state) {
     };
 
     const stages = state.stages || [];
+    const flags = getStageFlags(stages);
 
     // =========================
     // CARPENTRY
     // =========================
-    if (stages.includes("carpentry")) {
+    if (flags.carpentry) {
 
-        result.carpentry = calculateCarpentry(
+        const carpentryResult = calculateCarpentry(
             state.carpentry || {}
         );
 
-        result.totalMinutes += result.carpentry.totalMinutes || 0;
+        result.carpentry = carpentryResult;
+        result.totalMinutes += carpentryResult.totalMinutes || 0;
     }
 
     // =========================
     // STONE
     // =========================
-    if (stages.includes("stone")) {
+    if (flags.stone) {
 
-        result.stone = calculateStone(
+        const stoneResult = calculateStone(
             state.stone || {}
         );
 
-        result.totalMinutes += result.stone.totalMinutes || 0;
+        result.stone = stoneResult;
+        result.totalMinutes += stoneResult.totalMinutes || 0;
     }
 
     return result;
 }
 
-// =======================================================
-// MAIN ENTRY POINT (used by modal)
-// =======================================================
+// =========================
+// MAIN ENTRY POINT
+// =========================
 
 export function simulateProject(state) {
 
