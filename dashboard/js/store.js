@@ -1,11 +1,10 @@
 // =====================================
-// SIMPLE ERP STORE (TEMP VERSION)
+// ARTEMISA ERP STORE (CLEAN VERSION)
 // =====================================
 
-let projects = [];
-
-// SIMPLE GLOBAL STORE (MVP ERP)
-
+// ---------------------
+// SINGLE SOURCE OF TRUTH
+// ---------------------
 const state = {
   projects: [],
   stages: [],
@@ -13,45 +12,34 @@ const state = {
   stoneActive: true
 };
 
+// =====================
+// STORE CORE API
+// =====================
 export const store = {
 
+  // GET FULL STATE
   getState() {
     return state;
   },
 
-  setState(newState) {
-    Object.assign(state, newState);
-    console.log("STORE UPDATED:", state);
+  // UPDATE STATE (MERGE SAFE)
+  setState(partialState) {
+    Object.assign(state, partialState);
+
+    console.log(
+      "🟢 STORE UPDATED:",
+      JSON.parse(JSON.stringify(state))
+    );
+  },
+
+  // RESET STORE
+  reset() {
+    state.projects = [];
+    state.stages = [];
+    state.carpentryActive = true;
+    state.stoneActive = true;
+
+    console.log("🔄 STORE RESET");
   }
 
 };
-
-// ---------------------
-// ADD PROJECT
-// ---------------------
-export function addProject(project) {
-  projects.push(project);
-
-  console.log(
-    "PROJECT ADDED:",
-    project
-  );
-}
-
-// ---------------------
-// GET PROJECTS
-// ---------------------
-export function getProjects() {
-  return projects;
-}
-
-// ---------------------
-// CLEAR PROJECTS
-// ---------------------
-export function clearProjects() {
-  projects = [];
-
-  console.log(
-    "PROJECTS CLEARED"
-  );
-}
