@@ -1,401 +1,241 @@
 /* =========================================================
-PROJECT SIMULATION MODAL
-ARTEMISA ERP
-========================================================= */
-
-/* =========================================================
-MODAL ROOT
+   MODAL ROOT
 ========================================================= */
 
 #modal-container {
-position: fixed;
-inset: 0;
+    position: fixed;
+    inset: 0;
 
-display: none;
-justify-content: center;
-align-items: center;
+    display: none;
+    justify-content: center;
+    align-items: center;
 
-background: rgba(0,0,0,.75);
+    background: rgba(0,0,0,.75);
 
-z-index: 999999;
-
+    z-index: 999999;
 }
 
 /* =========================================================
-MODAL SHELL
+   MODAL WINDOW
 ========================================================= */
 
 .simulation-modal {
 
-width: 95vw;
-max-width: 1500px;
+    width: 95vw;
+    max-width: 1400px;
 
-height: 90vh;
+    height: 90vh;
 
-background: #0f172a;
+    background: #0f172a;
 
-border-radius: 14px;
+    border-radius: 14px;
 
-overflow: hidden;
+    overflow: hidden;
 
-box-shadow: 0 20px 60px rgba(0,0,0,.45);
-
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
 }
 
 /* =========================================================
-MAIN GRID
+   GRID
 ========================================================= */
 
 .simulation-container {
 
-display: grid;
+    display: grid;
 
-grid-template-columns:
-    260px
-    minmax(500px,1fr)
-    380px;
+    grid-template-columns:
+        260px
+        1fr
+        360px;
 
-gap: 16px;
+    gap: 16px;
 
-height: 100%;
+    height: 100%;
 
-padding: 16px;
+    padding: 16px;
 
-background: #0f172a;
-
+    background: #0f172a;
 }
 
 /* =========================================================
-COLUMNS
+   COLUMNS
 ========================================================= */
 
 .column-left,
 .column-center,
 .column-right {
 
-background: #18233d;
+    background: #18233d;
 
-border: 1px solid rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.08);
 
-border-radius: 12px;
+    border-radius: 10px;
 
-padding: 18px;
+    padding: 16px;
 
-overflow-y: auto;
-
+    overflow-y: auto;
 }
 
 /* =========================================================
-HEADER
+   HEADER
 ========================================================= */
 
 .modal-header {
 
-display: flex;
-justify-content: space-between;
-align-items: center;
+    display: flex;
 
-margin-bottom: 18px;
+    justify-content: space-between;
 
+    align-items: center;
+
+    margin-bottom: 16px;
 }
 
 .modal-header h2 {
 
-margin: 0;
+    color: white;
 
-color: white;
+    margin: 0;
 
-font-size: 24px;
-font-weight: 700;
-
-}
-
-#btnCloseModal {
-
-width: 36px;
-height: 36px;
-
-border: none;
-
-border-radius: 8px;
-
-background: #4f8cff;
-
-color: white;
-
-cursor: pointer;
-
+    font-size: 28px;
 }
 
 /* =========================================================
-SECTION TITLES
+   TITLES
 ========================================================= */
 
 .section-title {
 
-color: white;
+    color: white;
 
-font-size: 22px;
-font-weight: 700;
+    font-size: 22px;
 
-margin-bottom: 14px;
+    font-weight: 700;
 
-}
-
-.section-subtitle {
-
-color: #9fb0d8;
-
-font-size: 13px;
-
-margin-bottom: 14px;
-
+    margin-bottom: 12px;
 }
 
 /* =========================================================
-INPUTS
+   INPUTS
 ========================================================= */
 
-#modal-container input([type="checkbox"]),
+#modal-container input:not([type="checkbox"]),
 #modal-container select {
 
-width: 100%;
+    width: 100%;
 
-height: 40px;
+    box-sizing: border-box;
 
-padding: 0 12px;
+    padding: 10px;
 
-border: 1px solid #2d3b63;
+    margin-bottom: 10px;
 
-border-radius: 6px;
+    border-radius: 6px;
 
-background: white;
-
-font-size: 14px;
-
-margin-bottom: 12px;
-
-box-sizing: border-box;
-
+    border: none;
 }
 
 /* =========================================================
-STAGES
+   STAGES
 ========================================================= */
 
 #stagesContainer {
 
-display: flex;
-flex-direction: column;
+    display: flex;
 
-gap: 6px;
+    flex-direction: column;
 
+    gap: 8px;
 }
 
 .stage-item {
 
-display: grid;
+    display: flex;
 
-grid-template-columns: 20px 1fr;
+    align-items: center;
 
-align-items: center;
+    gap: 10px;
 
-gap: 10px;
+    color: white;
 
-color: white;
-
-font-size: 14px;
-
-cursor: pointer;
-
+    font-size: 14px;
 }
 
 .stage-item input[type="checkbox"] {
 
-width: 16px;
-height: 16px;
+    width: 16px;
 
-margin: 0;
+    height: 16px;
 
-}
-
-.stage-item span {
-
-white-space: nowrap;
-
+    margin: 0;
 }
 
 /* =========================================================
-BUTTONS
+   BUTTONS
 ========================================================= */
 
-#modal-container button {
+#btnCloseModal {
 
-border: none;
+    width: 36px;
 
-cursor: pointer;
+    height: 36px;
 
-transition: .2s;
+    border: none;
 
+    border-radius: 8px;
+
+    background: #4f8cff;
+
+    color: white;
+
+    cursor: pointer;
 }
 
 #btnSimulate {
 
-width: 100%;
+    width: 100%;
 
-margin-top: 20px;
+    margin-top: 20px;
 
-padding: 12px;
+    padding: 12px;
 
-background: #4f8cff;
+    border: none;
 
-color: white;
+    border-radius: 10px;
 
-border-radius: 10px;
+    background: #4f8cff;
 
-font-weight: 600;
+    color: white;
 
-}
-
-#btnSimulate {
-
-background: #3d77ec;
-
+    cursor: pointer;
 }
 
 /* =========================================================
-PARAMETER CARDS
+   PARAMETERS
 ========================================================= */
 
-.parameter-card {
+.parameter-group {
 
-background: #10182c;
+    background: #10182c;
 
-border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
 
-border-radius: 10px;
+    padding: 14px;
 
-padding: 14px;
-
-margin-bottom: 18px;
-
-}
-
-.parameter-card h4 {
-
-margin: 0 0 14px 0;
-
-color: white;
-
-font-size: 18px;
-
+    margin-bottom: 16px;
 }
 
 /* =========================================================
-FORM GRIDS
+   RESULTS
 ========================================================= */
 
-.form-grid {
+.result-card {
 
-display: grid;
+    background: #10182c;
 
-grid-template-columns:
-    repeat(auto-fit,minmax(120px,1fr));
+    border-radius: 10px;
 
-gap: 10px;
+    padding: 14px;
 
-}
-
-/* =========================================================
-RESULTS
-========================================================= */
-
-#simulationResult {
-
-display: flex;
-flex-direction: column;
-
-gap: 14px;
-
-}
-
-.result-panel {
-
-background: #11192e;
-
-border: 1px solid rgba(255,255,255,.08);
-
-border-radius: 10px;
-
-padding: 16px;
-
-}
-
-.result-title {
-
-color: white;
-
-font-size: 18px;
-font-weight: 700;
-
-margin-bottom: 10px;
-
-}
-
-.metric {
-
-color: #9fb0d8;
-
-margin-bottom: 6px;
-
-font-size: 14px;
-
-}
-
-.metric strong {
-
-color: white;
-
-}
-
-/* =========================================================
-SCROLLBAR
-========================================================= */
-
-.column-left::-webkit-scrollbar,
-.column-center::-webkit-scrollbar,
-.column-right::-webkit-scrollbar {
-
-width: 8px;
-
-}
-
-.column-left::-webkit-scrollbar-thumb,
-.column-center::-webkit-scrollbar-thumb,
-.column-right::-webkit-scrollbar-thumb {
-
-background: #334155;
-
-border-radius: 20px;
-
-}
-
-/* =========================================================
-RESPONSIVE
-========================================================= */
-
-@media (max-width: 1200px) {
-
-.simulation-container {
-
-    grid-template-columns: 1fr;
-}
-
-.column-left,
-.column-center,
-.column-right {
-
-    min-height: auto;
-}
-
+    color: white;
 }
