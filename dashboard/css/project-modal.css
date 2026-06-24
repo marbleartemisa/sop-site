@@ -1,325 +1,123 @@
-import { stages } from './data/stages.js';
-import { simulateProject } from './simulation.js';
-
 /* =========================================================
-   STATE (SOURCE OF TRUTH)
+   MODAL BACKDROP
 ========================================================= */
-
-let state = {
-    selectedStages: [],
-    carpentryActive: true,
-    stoneActive: true
-};
-
-/* =========================================================
-   ENTRY
-========================================================= */
-
-export function renderProjectSimulationModal() {
-
-    const container = document.getElementById("modal-container");
-    if (!container) return;
-
-    openModal(container);
-
-    container.innerHTML = buildModalHTML();
-
-    initModal();
-}
-
-/* =========================================================
-   OPEN / CLOSE
-========================================================= */
-
-function openModal(container) {
-    container.style.display = "flex";
-}
-
-function closeModal() {
-    const container = document.getElementById("modal-container");
-    if (!container) return;
-
-    container.innerHTML = "";
-    container.style.display = "none";
-}
-
-/* =========================================================
-   TEMPLATE
-========================================================= */
-
-function buildModalHTML() {
-
-    return `
-    <div class="simulation-modal">
-
-        <div class="simulation-container">
-
-            <!-- COLUMN 1 -->
-            <div class="column-left">
-
-                <div class="modal-header">
-                    <h2>Project Simulation</h2>
-                    <button id="btnCloseModal">✕</button>
-                </div>
-
-                <input id="projectName" placeholder="Customer / Project"/>
-
-                <hr/>
-
-                <div id="stagesContainer" class="stages-list"></div>
-
-                <button id="btnSimulate">Run Simulation</button>
-
-            </div>
-
-            <!-- COLUMN 2 -->
-            <div class="column-center">
-
-                <h3>Parameters</h3>
-
-                <div id="carpentrySection"></div>
-                <div id="stoneSection"></div>
-
-            </div>
-
-            <!-- COLUMN 3 -->
-            <div class="column-right">
-
-                <h3>Results</h3>
-
-                <div id="simulationResult">Waiting...</div>
-
-            </div>
-
-        </div>
-    </div>
-    `;
-}
-
-/* =========================================================
-   INIT
-========================================================= */
-
-function initModal() {
-
-    initState();
-    renderStages();
-    renderParameters();
-    bindEvents();
-}
-
-/* =========================================================
-   DEFAULT STATE (IMPORTANT)
-========================================================= */
-
-function initState() {
-
-    state.selectedStages = stages.map(s => s.id); // ALL SELECTED BY DEFAULT
-    state.carpentryActive = true;
-    state.stoneActive = true;
-}
-
-/* =========================================================
-   COLUMN 1 - STAGES CLEAN
-========================================================= */
-
-function renderStages() {
-
-    const container = document.getElementById("stagesContainer");
-
-    container.innerHTML = stages.map(stage => `
-        <label class="stage-item">
-
-            <input type="checkbox"
-                   class="stage-checkbox"
-                   value="${stage.id}"
-                   checked>
-
-            <span>${stage.name} (${stage.days}d)</span>
-
-        </label>
-    `).join("");
-}
-
-/* =========================================================
-   COLUMN 2 - PARAMETERS
-========================================================= */
-
-function renderParameters() {
-
-    renderCarpentry();
-    renderStone();
-}
-
-function renderCarpentry() {
-
-    const container = document.getElementById("carpentrySection");
-
-    container.innerHTML = `
-        <div class="parameter-group">
-            <h4>Carpentry</h4>
-
-            <input id="panels" placeholder="Panels">
-            <input id="cabinets" placeholder="Cabinets">
-            <input id="drawers" placeholder="Drawers">
-            <input id="carpentryEdgeLF" placeholder="Edge LF">
-        </div>
-    `;
-}
-
-function renderStone() {
-
-    const container = document.getElementById("stoneSection");
-
-    container.innerHTML = `
-        <div class="parameter-group">
-            <h4>Stone</h4>
-
-            <select id="machine">
-                <option value="BRETON">BRETON</option>
-                <option value="COCH">COCH</option>
-            </select>
-
-            <input id="sqft" placeholder="SqFt">
-            <input id="slabs" placeholder="Slabs">
-            <input id="stoneEdgeLF" placeholder="Edge LF">
-        </div>
-    `;
-}
-
-/* =========================================================
-   EVENTS
-========================================================= */
-
-function bindEvents() {
-
-    document.getElementById("btnCloseModal")
-        ?.addEventListener("click", closeModal);
-
-    document.getElementById("btnSimulate")
-        ?.addEventListener("click", runSimulation);
-
-    document.getElementById("stagesContainer")
-        ?.addEventListener("change", onStageChange);
-}
-
-/* =========================================================
-   STAGE LOGIC
-========================================================= */
-
-function onStageChange() {
-
-    const selected = [...document.querySelectorAll(".stage-checkbox:checked")]
-        .map(cb => Number(cb.value));
-
-    state.selectedStages = selected;
-
-    // LOGIC DE ACTIVACIÓN
-    state.carpentryActive = selected.includes(6);
-    state.stoneActive = selected.includes(10);
-
-    updateUI();
-}
-
-/* =========================================================
-   UI DYNAMIC CONTROL
-========================================================= */
-
-function updateUI() {
-
-    // COLUMN 2
-    const carpentry = document.getElementById("carpentrySection");
-    const stone = document.getElementById("stoneSection");
-
-    if (state.carpentryActive) {
-        renderCarpentry();
-    } else {
-        carpentry.innerHTML = "";
-    }
-
-    if (state.stoneActive) {
-        renderStone();
-    } else {
-        stone.innerHTML = "";
-    }
-
-    // COLUMN 3
-    const result = document.getElementById("simulationResult");
-
-    if (!state.carpentryActive && !state.stoneActive) {
-        result.innerHTML = "No active modules";
-    }
-}
-
-/* =========================================================
-   SIMULATION
-========================================================= */
-
-function runSimulation() {
-
-    const result = simulateProject(buildState());
-
-    document.getElementById("simulationResult").innerHTML = `
-        <div class="result-card">
-            <h3>Total Hours</h3>
-            <div style="font-size:24px;font-weight:bold;">
-                ${result.totalHours}
-            </div>
-        </div>
-    `;
-}
-
-/* =========================================================
-   STATE BUILDER
-========================================================= */
-
-function buildState() {
-
-    return {
-        projectName: document.getElementById("projectName")?.value || "",
-        stages: state.selectedStages,
-
-        carpentry: {
-            panels: getValue("panels"),
-            cabinets: getValue("cabinets"),
-            drawers: getValue("drawers"),
-            edgeLF: getValue("carpentryEdgeLF")
-        },
-
-        stone: {
-            machine: document.getElementById("machine")?.value || "BRETON",
-            sqft: getValue("sqft"),
-            slabs: getValue("slabs"),
-            edgeLF: getValue("stoneEdgeLF")
-        }
-    };
-}
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function getValue(id) {
-    return Number(document.getElementById(id)?.value || 0);
-}
 
 #modal-container {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999999;
+  pointer-events: auto;
 }
 
+/* =========================================================
+   MODAL MAIN
+========================================================= */
+
 .simulation-modal {
-  background: #fff;
+  background: #ffffff;
   width: 95%;
   max-width: 1200px;
-  border-radius: 10px;
+  height: 85vh;
+  border-radius: 12px;
   padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+  position: relative;
+  z-index: 1000000;
+}
+
+/* =========================================================
+   CONTAINER GRID/FLEX
+========================================================= */
+
+.simulation-container {
+  display: flex;
+  flex: 1;
+  gap: 15px;
+  overflow: hidden;
+}
+
+/* =========================================================
+   COLUMNS
+========================================================= */
+
+.column-left,
+.column-center,
+.column-right {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* =========================================================
+   STAGES
+========================================================= */
+
+.stages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.stage-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+/* =========================================================
+   PARAMETERS
+========================================================= */
+
+.parameter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+button {
+  cursor: pointer;
+}
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+#simulationResult {
+  padding: 10px;
+}
+
+.result-card {
+  background: #f5f5f5;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
 }
