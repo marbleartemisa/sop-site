@@ -1,10 +1,6 @@
-import { stages } from './data/stages.js';
-import { simulateProject } from './simulation.js';
-import {
-  addProject,
-  getProjects,
-  clearProjects
-} from './store.js';
+import { stages } from "./data/stages.js";
+import { simulateProject } from "./simulation.js";
+import { store } from "./store.js";
 
 /* =========================================================
    ENTRY POINT
@@ -12,22 +8,20 @@ import {
 
 export function renderProjectSimulationModal() {
 
-    const container = document.getElementById("modal-container");
+  const container = document.getElementById("modal-container");
 
-    if (!container) {
-        console.error("modal-container not found");
-        return;
-    }
+  if (!container) {
+    console.error("modal-container not found");
+    return;
+  }
 
-    openModal(container);
+  openModal(container);
 
-    container.innerHTML = buildModalHTML();
+  container.innerHTML = buildModalHTML();
 
-    initState();
-
-    bindEvents();
-
-    store.subscribe(renderUI);
+  initState();
+  bindEvents();
+  renderUI();
 }
 
 /* =========================================================
@@ -35,30 +29,25 @@ export function renderProjectSimulationModal() {
 ========================================================= */
 
 function openModal(container) {
-    container.style.display = "flex";
-    container.style.pointerEvents = "auto";
+  container.style.display = "flex";
+  container.style.pointerEvents = "auto";
 }
 
 function closeModal() {
-    const container = document.getElementById("modal-container");
+  const container = document.getElementById("modal-container");
 
-    if (!container) return;
+  if (!container) return;
 
-    container.innerHTML = "";
-    container.style.display = "none";
-    container.style.pointerEvents = "none";
+  container.innerHTML = "";
+  container.style.display = "none";
+  container.style.pointerEvents = "none";
 }
 
 /* =========================================================
-   INITIAL STATE
+   STATE INIT
 ========================================================= */
-function initState() {
 
-  const stages = [
-    { id: "agreement" },
-    { id: "measure" },
-    { id: "programming" }
-  ];
+function initState() {
 
   store.setState({
     stages: stages.map(s => s.id),
@@ -69,14 +58,15 @@ function initState() {
 }
 
 /* =========================================================
-   UI RENDER (ROOT)
+   UI ROOT RENDER
 ========================================================= */
 
-function renderUI(state) {
+function renderUI() {
+  const state = store.getState();
 
-    renderStages(state);
-    renderParameters(state);
-    renderResults(state);
+  renderStages(state);
+  renderParameters(state);
+  renderResults(state);
 }
 
 /* =========================================================
@@ -85,51 +75,51 @@ function renderUI(state) {
 
 function buildModalHTML() {
 
-    return `
-        <div class="simulation-modal">
+  return `
+    <div class="simulation-modal">
 
-            <div class="simulation-container">
+      <div class="simulation-container">
 
-                <!-- COLUMN 1 -->
-                <div class="column-left">
+        <!-- COLUMN 1 -->
+        <div class="column-left">
 
-                    <div class="modal-header">
-                        <h2>Project Simulation</h2>
-                        <button id="btnCloseModal">✕</button>
-                    </div>
+          <div class="modal-header">
+            <h2>Project Simulation</h2>
+            <button id="btnCloseModal">✕</button>
+          </div>
 
-                    <input id="projectName" placeholder="Customer / Project"/>
+          <input id="projectName" placeholder="Customer / Project"/>
 
-                    <hr/>
+          <hr/>
 
-                    <div id="stagesContainer"></div>
+          <div id="stagesContainer"></div>
 
-                    <button id="btnSimulate">Run Simulation</button>
+          <button id="btnSimulate">Run Simulation</button>
 
-                </div>
-
-                <!-- COLUMN 2 -->
-                <div class="column-center">
-
-                    <h3>Parameters</h3>
-
-                    <div id="carpentrySection"></div>
-                    <div id="stoneSection"></div>
-
-                </div>
-
-                <!-- COLUMN 3 -->
-                <div class="column-right">
-
-                    <h3>Results</h3>
-
-                    <div id="simulationResult">Waiting...</div>
-
-                </div>
-
-            </div>
         </div>
-    `;
+
+        <!-- COLUMN 2 -->
+        <div class="column-center">
+
+          <h3>Parameters</h3>
+
+          <div id="carpentrySection"></div>
+          <div id="stoneSection"></div>
+
+        </div>
+
+        <!-- COLUMN 3 -->
+        <div class="column-right">
+
+          <h3>Results</h3>
+
+          <div id="simulationResult">Waiting...</div>
+
+        </div>
+
+      </div>
+    </div>
+  `;
 }
 
 /* =========================================================
@@ -138,21 +128,19 @@ function buildModalHTML() {
 
 function renderStages(state) {
 
-    const container = document.getElementById("stagesContainer");
-    if (!container) return;
+  const container = document.getElementById("stagesContainer");
+  if (!container) return;
 
-    container.innerHTML = stages.map(stage => `
-        <label class="stage-item">
+  container.innerHTML = stages.map(stage => `
+    <label class="stage-item">
+      <input type="checkbox"
+             class="stage-checkbox"
+             value="${stage.id}"
+             ${state.stages.includes(stage.id) ? "checked" : ""} />
 
-            <input type="checkbox"
-                   class="stage-checkbox"
-                   value="${stage.id}"
-                   ${state.stages.includes(stage.id) ? "checked" : ""} />
-
-            <span>${stage.name} (${stage.days}d)</span>
-
-        </label>
-    `).join("");
+      <span>${stage.name} (${stage.days}d)</span>
+    </label>
+  `).join("");
 }
 
 /* =========================================================
@@ -161,20 +149,13 @@ function renderStages(state) {
 
 function renderParameters(state) {
 
-    const carpentry = document.getElementById("carpentrySection");
-    const stone = document.getElementById("stoneSection");
+  const carpentry = document.getElementById("carpentrySection");
+  const stone = document.getElementById("stoneSection");
 
-    if (!carpentry || !stone) return;
+  if (!carpentry || !stone) return;
 
-    // CARPENTRY
-    carpentry.innerHTML = state.stages.includes(6)
-        ? carpentryTemplate()
-        : "";
-
-    // STONE
-    stone.innerHTML = state.stages.includes(10)
-        ? stoneTemplate()
-        : "";
+  carpentry.innerHTML = state.carpentryActive ? carpentryTemplate() : "";
+  stone.innerHTML = state.stoneActive ? stoneTemplate() : "";
 }
 
 /* =========================================================
@@ -183,55 +164,59 @@ function renderParameters(state) {
 
 function renderResults(state) {
 
-    const container = document.getElementById("simulationResult");
-    if (!container) return;
+  const container = document.getElementById("simulationResult");
+  if (!container) return;
 
-    const result = simulateProject(state);
+  const result = simulateProject(state);
 
-    container.innerHTML = `
-        <div class="result-card">
-            <h3>Total Hours</h3>
-            <div style="font-size:26px;font-weight:bold;">
-                ${result.totalHours}
-            </div>
-        </div>
-    `;
+  container.innerHTML = `
+    <div class="result-card">
+      <h3>Total Hours</h3>
+      <div style="font-size:26px;font-weight:bold;">
+        ${result.totalHours}
+      </div>
+    </div>
+  `;
 }
 
 /* =========================================================
-   EVENTS (STATE ONLY)
+   EVENTS
 ========================================================= */
 
 function bindEvents() {
 
-    document.addEventListener("change", handleStageChange);
+  document.getElementById("btnSimulate")
+    ?.addEventListener("click", runSimulation);
 
-    document.getElementById("btnSimulate")
-        ?.addEventListener("click", runSimulation);
+  document.getElementById("btnCloseModal")
+    ?.addEventListener("click", closeModal);
 
-    document.getElementById("btnCloseModal")
-        ?.addEventListener("click", closeModal);
+  document.querySelectorAll(".stage-checkbox")
+    .forEach(cb => {
+      cb.addEventListener("change", handleStageChange);
+    });
 }
 
 /* =========================================================
-   STATE UPDATE (ONLY SOURCE OF TRUTH)
+   STATE UPDATE
 ========================================================= */
 
 function handleStageChange(e) {
 
-    if (!e.target.classList.contains("stage-checkbox")) return;
+  const id = e.target.value;
 
-    const id = Number(e.target.value);
+  let current = store.getState().stages;
 
-    let current = store.getState().stages;
+  if (e.target.checked) {
+    current = [...current, id];
+  } else {
+    current = current.filter(s => s !== id);
+  }
 
-    if (e.target.checked) {
-        current = [...current, id];
-    } else {
-        current = current.filter(s => s !== id);
-    }
+  store.setState({ stages: current });
 
-    store.setState({ stages: current });
+  // re-render
+  renderUI();
 }
 
 /* =========================================================
@@ -239,8 +224,10 @@ function handleStageChange(e) {
 ========================================================= */
 
 function runSimulation() {
-    const state = store.getState();
-    console.log("STATE:", state);
+  const state = store.getState();
+  console.log("STATE:", state);
+
+  renderResults(state);
 }
 
 /* =========================================================
@@ -248,33 +235,31 @@ function runSimulation() {
 ========================================================= */
 
 function carpentryTemplate() {
+  return `
+    <div class="parameter-group">
+      <h4>Carpentry</h4>
 
-    return `
-        <div class="parameter-group">
-            <h4>Carpentry</h4>
-
-            <input id="panels" placeholder="Panels">
-            <input id="cabinets" placeholder="Cabinets">
-            <input id="drawers" placeholder="Drawers">
-            <input id="carpentryEdgeLF" placeholder="Edge LF">
-        </div>
-    `;
+      <input placeholder="Panels">
+      <input placeholder="Cabinets">
+      <input placeholder="Drawers">
+      <input placeholder="Edge LF">
+    </div>
+  `;
 }
 
 function stoneTemplate() {
+  return `
+    <div class="parameter-group">
+      <h4>Stone</h4>
 
-    return `
-        <div class="parameter-group">
-            <h4>Stone</h4>
+      <select>
+        <option value="BRETON">BRETON</option>
+        <option value="COCH">COCH</option>
+      </select>
 
-            <select id="machine">
-                <option value="BRETON">BRETON</option>
-                <option value="COCH">COCH</option>
-            </select>
-
-            <input id="sqft" placeholder="SqFt">
-            <input id="slabs" placeholder="Slabs">
-            <input id="stoneEdgeLF" placeholder="Edge LF">
-        </div>
-    `;
+      <input placeholder="SqFt">
+      <input placeholder="Slabs">
+      <input placeholder="Edge LF">
+    </div>
+  `;
 }
