@@ -302,3 +302,24 @@ function buildState() {
 function getValue(id) {
     return Number(document.getElementById(id)?.value || 0);
 }
+
+#modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+}
+
+.simulation-modal {
+  background: #fff;
+  width: 95%;
+  max-width: 1200px;
+  border-radius: 10px;
+  padding: 20px;
+}
