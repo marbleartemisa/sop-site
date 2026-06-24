@@ -60,41 +60,55 @@ body.modal-open {
    MODAL GRID LAYOUT
 ========================================================= */
 
-.simulation-container,
-.modal-container {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  gap: 12px;
-  padding: 12px;
-}
+.simulation-container{
+    display:grid;
+    grid-template-columns: 320px 560px 420px;
+    gap:16px;
 
+    width:100%;
+    height:100%;
+    padding:16px;
+
+    background:#131b2f;
+}
 /* =========================================================
    COLUMNS SYSTEM
 ========================================================= */
-
 .column-left,
 .column-center,
-.column-right {
-  flex: 1;
-  min-width: 0;
+.column-right{
+    background:#18233d;
 
-  overflow-y: auto;
-  padding: 10px;
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:12px;
+
+    padding:18px;
+
+    overflow-y:auto;
+
+    min-height:0;
 }
 
 /* =========================================================
    HEADER
 ========================================================= */
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 
-  padding: 10px 0;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 10px;
+    margin-bottom:16px;
+
+    border:none;
+    padding:0;
+}
+
+.modal-header h2{
+    color:white;
+    margin:0;
+    font-size:32px;
 }
 
 /* =========================================================
@@ -127,21 +141,32 @@ body.modal-open {
 ========================================================= */
 
 #modal-container input,
-#modal-container select {
-  width: 100%;
-  padding: 8px 10px;
+#modal-container select{
 
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+    width:100%;
 
-  margin-bottom: 8px;
+    background:#fff;
 
-  font-size: 14px;
+    border:none;
+
+    border-radius:6px;
+
+    padding:10px 12px;
+
+    margin-bottom:12px;
+
+    font-size:14px;
 }
 
 /* =========================================================
    STAGES LIST
 ========================================================= */
+#stagesContainer{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
 
 .stages-list {
   display: flex;
@@ -153,16 +178,19 @@ body.modal-open {
 
   padding-right: 5px;
 }
+.stage-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
 
-.stage-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    color:white;
 
-  padding: 6px 8px;
-  border-radius: 6px;
+    cursor:pointer;
+}
 
-  cursor: pointer;
+.stage-item input{
+    width:18px;
+    height:18px;
 }
 
 .stage-item:hover {
@@ -207,4 +235,77 @@ body.modal-open {
 .loading-screen {
   display: none !important;
   pointer-events: none !important;
+}
+
+
+.section-title{
+    color:white;
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.section-subtitle{
+    color:#9fb0d8;
+    font-size:14px;
+    margin-bottom:16px;
+}
+
+#btnSimulate{
+
+    width:100%;
+    margin-top:20px;
+
+    background:#4f8cff;
+    border-radius:10px;
+
+    font-weight:600;
+}
+
+.parameter-card{
+
+    background:#11192e;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:10px;
+
+    padding:14px;
+
+    margin-bottom:18px;
+}
+
+.parameter-card h4{
+    color:white;
+    margin-top:0;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+}
+
+.result-panel{
+
+    background:#11192e;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:12px;
+
+    padding:16px;
+
+    margin-bottom:16px;
+}
+
+.result-title{
+    color:white;
+    font-size:24px;
+    font-weight:700;
+}
+
+.metric{
+    color:#9fb0d8;
+    margin:8px 0;
 }
