@@ -1,6 +1,10 @@
 import { stages } from './data/stages.js';
 import { simulateProject } from './simulation.js';
-import { store } from './store.js';
+import {
+  addProject,
+  getProjects,
+  clearProjects
+} from './store.js';
 
 /* =========================================================
    ENTRY POINT
