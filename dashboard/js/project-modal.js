@@ -1,16 +1,19 @@
 import { stages } from './data/stages.js';
 import { simulateProject } from './simulation.js';
 
+/* =========================
+   STATE
+========================= */
 let state = {
   projectName: "",
   selectedStages: [],
-  carpentryActive: false,
-  stoneActive: false
+  carpentryActive: true,
+  stoneActive: true
 };
 
-// =========================
-// ENTRY POINT
-// =========================
+/* =========================
+   ENTRY
+========================= */
 export function renderProjectSimulationModal() {
 
   const container = document.getElementById("modal-container");
@@ -22,33 +25,33 @@ export function renderProjectSimulationModal() {
   init();
 }
 
-// =========================
-// INIT
-// =========================
+/* =========================
+   INIT
+========================= */
 function init() {
 
-  // NORMALIZAR IDS COMO STRING (CRÍTICO)
+  // normalizar IDs siempre como STRING
   state.selectedStages = stages.map(s => String(s.id));
 
   state.carpentryActive = true;
   state.stoneActive = true;
 
-  render();
   bindEvents();
+  render();
 }
 
-// =========================
-// RENDER ROOT
-// =========================
+/* =========================
+   RENDER ROOT
+========================= */
 function render() {
   renderStages();
   renderParameters();
   renderResults();
 }
 
-// =========================
-// TEMPLATE
-// =========================
+/* =========================
+   TEMPLATE
+========================= */
 function buildModalHTML() {
   return `
   <div class="simulation-modal">
@@ -86,12 +89,13 @@ function buildModalHTML() {
   </div>`;
 }
 
-// =========================
-// STAGES
-// =========================
+/* =========================
+   STAGES
+========================= */
 function renderStages() {
 
   const container = document.getElementById("stagesContainer");
+  if (!container) return;
 
   container.innerHTML = stages.map(stage => {
 
@@ -110,26 +114,31 @@ function renderStages() {
   }).join("");
 }
 
-// =========================
-// PARAMETERS
-// =========================
+/* =========================
+   PARAMETERS
+========================= */
 function renderParameters() {
 
   const carpentry = document.getElementById("carpentrySection");
   const stone = document.getElementById("stoneSection");
 
+  if (!carpentry || !stone) return;
+
   carpentry.innerHTML = state.carpentryActive ? carpentryTemplate() : "";
   stone.innerHTML = state.stoneActive ? stoneTemplate() : "";
 }
 
-// =========================
-// RESULTS
-// =========================
+/* =========================
+   RESULTS
+========================= */
 function renderResults() {
 
   const container = document.getElementById("simulationResult");
+  if (!container) return;
 
-  const result = simulateProject(buildState());
+  const result = simulateProject(buildState()) || {
+    totalHours: 0
+  };
 
   container.innerHTML = `
     <div class="result-card">
@@ -141,25 +150,28 @@ function renderResults() {
   `;
 }
 
-// =========================
-// EVENTS
-// =========================
+/* =========================
+   EVENTS
+========================= */
 function bindEvents() {
 
   document.getElementById("btnCloseModal")
     ?.addEventListener("click", closeModal);
 
   document.getElementById("btnSimulate")
-    ?.addEventListener("click", () => {
-      renderResults();
-    });
+    ?.addEventListener("click", renderResults);
 
   document.addEventListener("change", onStageChange);
+
+  document.getElementById("projectName")
+    ?.addEventListener("input", (e) => {
+      state.projectName = e.target.value;
+    });
 }
 
-// =========================
-// STAGE CHANGE
-// =========================
+/* =========================
+   STAGE CHANGE
+========================= */
 function onStageChange(e) {
 
   if (!e.target.classList.contains("stage-checkbox")) return;
@@ -180,22 +192,24 @@ function onStageChange(e) {
   render();
 }
 
-// =========================
-// CLOSE
-// =========================
+/* =========================
+   CLOSE
+========================= */
 function closeModal() {
+
   const container = document.getElementById("modal-container");
+
   container.innerHTML = "";
   container.style.display = "none";
 }
 
-// =========================
-// BUILD STATE
-// =========================
+/* =========================
+   BUILD STATE
+========================= */
 function buildState() {
 
   return {
-    projectName: document.getElementById("projectName")?.value || "",
+    projectName: state.projectName,
     stages: state.selectedStages,
 
     carpentry: {
@@ -214,16 +228,16 @@ function buildState() {
   };
 }
 
-// =========================
-// HELPERS
-// =========================
+/* =========================
+   HELPERS
+========================= */
 function getValue(id) {
   return Number(document.getElementById(id)?.value || 0);
 }
 
-// =========================
-// TEMPLATES
-// =========================
+/* =========================
+   TEMPLATES
+========================= */
 function carpentryTemplate() {
   return `
     <div class="parameter-group">
