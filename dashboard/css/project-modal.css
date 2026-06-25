@@ -288,3 +288,80 @@
 }
 
 
+.mini-grid{
+
+  display:grid;
+  grid-template-columns:
+      repeat(auto-fit,minmax(140px,1fr));
+
+  gap:12px;
+
+  margin-bottom:16px;
+}
+
+.form-grid-2{
+
+  display:grid;
+  grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+  gap:12px;
+
+  margin-bottom:16px;
+}
+
+.mini-input{
+
+  display:flex;
+  flex-direction:column;
+}
+
+.mini-input label{
+
+  color:white;
+  font-size:13px;
+  font-weight:600;
+
+  margin-bottom:4px;
+}
+
+.mini-input small{
+
+  color:#8ea2c8;
+  font-size:11px;
+
+  margin-top:4px;
+}
+
+.mini-input input,
+.mini-input select{
+
+  margin:0;
+}
+
+.mini-field{
+
+  display:flex;
+  flex-direction:column;
+}
+
+.mini-field label{
+
+  color:white;
+  font-size:13px;
+  margin-bottom:4px;
+}
+
+.mini-field small{
+
+  color:#8ea2c8;
+  font-size:11px;
+  margin-top:4px;
+}
+
+.mini-field input{
+
+  margin:0;
+}
+
+
