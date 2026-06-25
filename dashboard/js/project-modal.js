@@ -179,104 +179,82 @@ function renderParameters() {
   stone.innerHTML = state.stoneActive ? stoneTemplate() : "";
 }
 
-function renderCarpentryResults(data) {
+export function renderCarpentryResults(data = {}) {
 
   if (!data) return "";
 
+  const {
+    cnc = 0,
+    edge = 0,
+    laminate = 0,
+    assembly = 0,
+    hardware = 0,
+    pocket = 0,
+    qc = 0,
+    totalMinutes = 0,
+    totalHours = 0
+  } = data;
+
   return `
+    <div class="result-panel">
 
-    <div class="simulation-card">
+      <div class="result-title">🪵 Carpentry</div>
 
-      <h4>🪵 Carpentry Production</h4>
-
-      <div class="calc-row">
-        <span>CNC</span>
-        <span>${data.cnc.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>Edgebanding</span>
-        <span>${data.edge.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>Laminate</span>
-        <span>${data.laminate.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>Assembly</span>
-        <span>${data.assembly.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>Hardware</span>
-        <span>${data.hardware.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>Pocket Doors</span>
-        <span>${data.pocket.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>QC</span>
-        <span>${data.qc.toFixed(1)} min</span>
-      </div>
+      <div class="metric">CNC Cutting: <b>${cnc.toFixed(1)} min</b></div>
+      <div class="metric">Edge Banding: <b>${edge.toFixed(1)} min</b></div>
+      <div class="metric">Laminate: <b>${laminate.toFixed(1)} min</b></div>
+      <div class="metric">Assembly: <b>${assembly.toFixed(1)} min</b></div>
+      <div class="metric">Hardware: <b>${hardware.toFixed(1)} min</b></div>
+      <div class="metric">Pocket Systems: <b>${pocket.toFixed(1)} min</b></div>
+      <div class="metric">Quality Control: <b>${qc.toFixed(1)} min</b></div>
 
       <hr>
 
-      <div class="calc-total">
+      <div class="metric">
+        TOTAL: <b>${totalMinutes.toFixed(1)} min</b>
+      </div>
 
-        ${data.totalHours} hrs
-
+      <div class="metric">
+        HOURS: <b>${totalHours} hrs</b>
       </div>
 
     </div>
   `;
 }
 
-function renderStoneResults(data) {
+export function renderStoneResults(data = {}) {
 
   if (!data) return "";
 
+  const {
+    setup = 0,
+    edge = 0,
+    cutouts = 0,
+    led = 0,
+    frame = 0,
+    totalMinutes = 0,
+    totalHours = 0
+  } = data;
+
   return `
+    <div class="result-panel">
 
-    <div class="simulation-card">
+      <div class="result-title">🪨 Stone</div>
 
-      <h4>🪨 Stone Production</h4>
-
-      <div class="calc-row">
-        <span>Machine Setup</span>
-        <span>${data.setup.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>Edge Work</span>
-        <span>${data.edge.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>Cutouts</span>
-        <span>${data.cutouts.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>LED</span>
-        <span>${data.led.toFixed(1)} min</span>
-      </div>
-
-      <div class="calc-row">
-        <span>Metal Frame</span>
-        <span>${data.frame.toFixed(1)} min</span>
-      </div>
+      <div class="metric">Machine Setup: <b>${setup.toFixed(1)} min</b></div>
+      <div class="metric">Edge Work: <b>${edge.toFixed(1)} min</b></div>
+      <div class="metric">Cutouts: <b>${cutouts.toFixed(1)} min</b></div>
+      <div class="metric">LED Work: <b>${led.toFixed(1)} min</b></div>
+      <div class="metric">Metal Frame: <b>${frame.toFixed(1)} min</b></div>
 
       <hr>
 
-      <div class="calc-total">
+      <div class="metric">
+        TOTAL: <b>${totalMinutes.toFixed(1)} min</b>
+      </div>
 
-        ${data.totalHours} hrs
-
+      <div class="metric">
+        HOURS: <b>${totalHours} hrs</b>
       </div>
 
     </div>
@@ -450,7 +428,7 @@ function buildState() {
            pocketCabinet: getValue("pocketCabinet") || 0,
            pocketPantry: getValue("pocketPantry") || 0,
          
-           edgeLF: getValue("carpentryEdgeLF"),
+           edgeLF: getValue("edgeLF"),
            laminateSqFt: getValue("laminateSqFt") || 0
          },
 
