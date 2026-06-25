@@ -295,7 +295,7 @@ function renderResults() {
 
       <div class="hours">
 
-        ${result.totalHours} hrs
+          ${isNaN(result.totalHours) ? "0.0" : Number(result.totalHours).toFixed(1)} hrs
 
       </div>
 
@@ -472,7 +472,7 @@ function carpentryTemplate() {
   return `
     <div class="parameter-card">
 
-      <h4>🪵 Carpentry Production</h4>
+      <h4>⚙️ Carpentry Production</h4>
 
       <!-- SETTINGS -->
       <div class="form-grid-2">
@@ -523,7 +523,7 @@ function carpentryTemplate() {
       </div>
 
       <div class="section-subtitle">
-        Production
+        ⚙️ Production
       </div>
 
       <div class="mini-grid">
@@ -555,7 +555,7 @@ function carpentryTemplate() {
       </div>
 
       <div class="section-subtitle">
-        Hardware
+        🔩 Hardware
       </div>
 
       <div class="mini-grid">
@@ -581,7 +581,7 @@ function carpentryTemplate() {
       </div>
 
       <div class="section-subtitle">
-        Pocket Systems
+        🚪 Pocket Systems
       </div>
 
       <div class="mini-grid">
@@ -601,7 +601,7 @@ function carpentryTemplate() {
       </div>
 
       <div class="section-subtitle">
-        Finishing
+        ✨ Finishing
       </div>
 
       <div class="mini-grid">
@@ -629,7 +629,7 @@ function stoneTemplate() {
   return `
     <div class="parameter-card">
 
-      <h4>🪨 Stone Production</h4>
+    <h4>🔩 Stone Production</h4>
 
       <div class="form-grid-2">
 
