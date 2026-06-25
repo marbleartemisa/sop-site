@@ -414,34 +414,46 @@ function buildState() {
     projectName: state.projectName,
     stages: state.selectedStages,
 
-         carpentry: {
-           level: Number(document.getElementById("carpentryLevel")?.value || 3),
-           complexityFactor: getCarpentryFactor(),
-         
-           panels: getValue("panels"),
-           cabinets: getValue("cabinets"),
-           drawers: getValue("drawers"),
-           pantry: getValue("pantry") || 0,
-           trashcan: getValue("trashcan") || 0,
-           lazySusan: getValue("lazySusan") || 0,
-           lemans: getValue("lemans") || 0,
-           pocketCabinet: getValue("pocketCabinet") || 0,
-           pocketPantry: getValue("pocketPantry") || 0,
-         
-           edgeLF: getValue("edgeLF"),
-           laminateSqFt: getValue("laminateSqFt") || 0
-         },
+    // =========================
+    // CARPENTRY
+    // =========================
+    carpentry: {
+      level: Number(document.getElementById("carpentryLevel")?.value || 3),
 
-          stone: {
-           machine: document.getElementById("machine")?.value || "BRETON",
-         
-           level: Number(document.getElementById("stoneLevel")?.value || 2),
-           complexityFactor: getStoneFactor(),
-         
-           sqft: getValue("sqft"),
-           slabs: getValue("slabs"),
-           edgeLF: getValue("stoneEdgeLF")
-         }
+      panels: getValue("panels"),
+      cabinets: getValue("cabinets"),
+      drawers: getValue("drawers"),
+
+      pantry: getValue("pantry") || 0,
+      trashcan: getValue("trashcan") || 0,
+      lazySusan: getValue("lazySusan") || 0,
+      lemans: getValue("lemans") || 0,
+
+      pocketCabinet: getValue("pocketCabinet") || 0,
+      pocketPantry: getValue("pocketPantry") || 0,
+
+      edgeLF: getValue("edgeLF"),
+      laminateSqFt: getValue("laminateSqFt") || 0
+    },
+
+    // =========================
+    // STONE
+    // =========================
+    stone: {
+      machine: document.getElementById("machine")?.value || "BRETON",
+
+      level: Number(document.getElementById("stoneLevel")?.value || 2),
+
+      sqft: getValue("sqft"),
+      slabs: getValue("slabs"),
+      edgeLF: getValue("stoneEdgeLF"),
+
+      cutouts: getValue("cutouts") || 0,
+      led: getValue("led") || 0,
+      metalFrame: getValue("metalFrame") || 0,
+
+      edgeType: document.getElementById("edgeType")?.value || "Eased"
+    }
   };
 }
 
