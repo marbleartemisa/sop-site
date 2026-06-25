@@ -34,6 +34,6 @@ export const carpentryTimes = {
   qc: {
     cabinet: 5,
     pantry: 10,
-    project: 15
+    project: 0
   }
 };
