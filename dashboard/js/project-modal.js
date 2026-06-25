@@ -179,132 +179,116 @@ function renderParameters() {
   stone.innerHTML = state.stoneActive ? stoneTemplate() : "";
 }
 
-function renderCarpentryResults(data = {}) {
+function renderCarpentryResult(data) {
 
-  if (!data.totalMinutes) return "";
+  if (!data) return "";
 
   return `
+
     <div class="result-panel">
 
-      <h3>🪵 Carpentry Production</h3>
+      <div class="section-title">
+        🪵 Carpentry Production
+      </div>
 
       <div class="metric">
-        CNC:
-        ${data.cnc.toFixed(1)} min
+        CNC Cut:
+        <strong>${data.cnc.toFixed(1)} min</strong>
       </div>
 
       <div class="metric">
         Edgebanding:
-        ${data.edge.toFixed(1)} min
+        <strong>${data.edge.toFixed(1)} min</strong>
       </div>
 
       <div class="metric">
-        Laminate:
-        ${data.laminate.toFixed(1)} min
+        Lamination:
+        <strong>${data.laminate.toFixed(1)} min</strong>
       </div>
 
       <div class="metric">
         Assembly:
-        ${data.assembly.toFixed(1)} min
+        <strong>${data.assembly.toFixed(1)} min</strong>
       </div>
 
       <div class="metric">
         Hardware:
-        ${data.hardware.toFixed(1)} min
+        <strong>${data.hardware.toFixed(1)} min</strong>
       </div>
 
       <div class="metric">
         Pocket Systems:
-        ${data.pocket.toFixed(1)} min
+        <strong>${data.pocket.toFixed(1)} min</strong>
       </div>
 
       <div class="metric">
         QC:
-        ${data.qc.toFixed(1)} min
+        <strong>${data.qc.toFixed(1)} min</strong>
       </div>
 
       <hr>
 
-      <div class="metric">
-        Complexity:
-        x${data.complexityFactor}
-      </div>
-
-      <div class="metric">
-        Project Type:
-        x${data.projectFactor}
-      </div>
-
-      <hr>
-
-      <div class="metric">
-        TOTAL:
-        <strong>
-          ${data.totalHours} hrs
-        </strong>
+      <div class="result-title">
+        ${(data.totalMinutes / 60).toFixed(2)} hrs
       </div>
 
     </div>
+
   `;
 }
 
-function renderStoneResults(data = {}) {
+function renderStoneResult(data) {
 
-  if (!data.totalMinutes) return "";
+  if (!data) return "";
 
   return `
+
     <div class="result-panel">
 
-      <h3>🪨 Stone Production</h3>
-
-      <div class="metric">
-        Setup:
-        ${data.setup.toFixed(1)} min
+      <div class="section-title">
+        🪨 Stone Production
       </div>
 
       <div class="metric">
-        Edge:
-        ${data.edge.toFixed(1)} min
+        Machine Setup:
+        <strong>${data.setup.toFixed(1)} min</strong>
+      </div>
+
+      <div class="metric">
+        Edge Finish:
+        <strong>${data.edge.toFixed(1)} min</strong>
       </div>
 
       <div class="metric">
         Cutouts:
-        ${data.cutouts.toFixed(1)} min
+        <strong>${data.cutouts.toFixed(1)} min</strong>
       </div>
 
       <div class="metric">
         LED:
-        ${data.led.toFixed(1)} min
+        <strong>${data.led.toFixed(1)} min</strong>
       </div>
 
       <div class="metric">
         Metal Frame:
-        ${data.frame.toFixed(1)} min
+        <strong>${data.frame.toFixed(1)} min</strong>
       </div>
 
       <hr>
 
-      <div class="metric">
-        Level Factor:
-        x${data.levelFactor}
-      </div>
-
-      <hr>
-
-      <div class="metric">
-        TOTAL:
-        <strong>
-          ${data.totalHours} hrs
-        </strong>
+      <div class="result-title">
+        ${data.totalHours} hrs
       </div>
 
     </div>
+
   `;
 }
 
 /* =========================
    RESULTS
 ========================= */
+
 function renderResults() {
 
   const container =
@@ -315,42 +299,25 @@ function renderResults() {
   const result =
     simulateProject(buildState());
 
-  const carpentry =
-    result.carpentry || {};
-
-  const stone =
-    result.stone || {};
-
   container.innerHTML = `
 
     <div class="result-panel">
 
       <div class="result-title">
-        Total Project
+        Total Simulation
       </div>
 
       <div class="metric">
-        Carpentry:
-        ${((carpentry.totalMinutes || 0)/60).toFixed(2)} hrs
-      </div>
-
-      <div class="metric">
-        Stone:
-        ${((stone.totalMinutes || 0)/60).toFixed(2)} hrs
-      </div>
-
-      <hr>
-
-      <div class="metric">
-        TOTAL:
+        Total Time:
         <strong>${result.totalHours} hrs</strong>
       </div>
 
     </div>
 
-    ${renderCarpentryResults(carpentry)}
+    ${renderCarpentryResult(result.carpentry)}
 
-    ${renderStoneResults(stone)}
+    ${renderStoneResult(result.stone)}
+
   `;
 }
 
@@ -371,7 +338,17 @@ function bindEvents() {
     ?.addEventListener("input", (e) => {
       state.projectName = e.target.value;
     });
+
+   document.addEventListener("input", () => {
+     renderResults();
+   });
+   
+   document.addEventListener("change", () => {
+     renderResults();
+   });
 }
+
+
 
 /* =========================
    STAGE CHANGE
@@ -487,131 +464,154 @@ function getValue(id) {
    TEMPLATES
 ========================= */
 function carpentryTemplate() {
+
   return `
     <div class="parameter-card">
 
       <h4>🪵 Carpentry Production</h4>
 
-      <!-- CORE SETTINGS -->
-      <div class="form-row">
-
-        <!-- PROJECT TYPE -->
-        <select id="projectType">
-          <option value="Kitchen">Kitchen</option>
-          <option value="Pantry">Pantry</option>
-          <option value="Closet">Closet</option>
-          <option value="Wall Unit">Wall Unit</option>
-          <option value="Office Furniture">Office Furniture</option>
-          <option value="Custom Furniture">Custom Furniture</option>
-        </select>
-
-        <!-- COMPLEXITY LEVEL -->
-        <select id="carpentryLevel">
-          <option value="1">Level 1 (Budget)</option>
-          <option value="2">Level 2 (Economy)</option>
-          <option value="3" selected>Level 3 (Standard)</option>
-          <option value="4">Level 4 (Premium)</option>
-          <option value="5">Level 5 (Luxury)</option>
-        </select>
-
-      </div>
-
-      <!-- EXTERNAL WORK -->
-      <div class="section-subtitle">External Services</div>
-
+      <!-- SETTINGS -->
       <div class="form-grid-2">
 
         <div class="mini-input">
+          <label>Project Type</label>
+          <select id="projectType">
+            <option value="Kitchen">Kitchen</option>
+            <option value="Pantry">Pantry</option>
+            <option value="Closet">Closet</option>
+            <option value="Wall Unit">Wall Unit</option>
+            <option value="Office Furniture">Office Furniture</option>
+            <option value="Custom Furniture">Custom Furniture</option>
+          </select>
+        </div>
+
+        <div class="mini-input">
+          <label>Complexity</label>
+          <select id="carpentryLevel">
+            <option value="1">Level 1 (Budget)</option>
+            <option value="2">Level 2 (Economy)</option>
+            <option value="3" selected>Level 3 (Standard)</option>
+            <option value="4">Level 4 (Premium)</option>
+            <option value="5">Level 5 (Luxury)</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="section-subtitle">
+        External Services
+      </div>
+
+      <div class="mini-grid">
+
+        <div class="mini-input">
           <label>Paint SqFt</label>
-          <input id="paintSqFt" type="number">
+          <input id="paintSqFt" type="number" min="0">
+          <small>External finish service</small>
         </div>
 
         <div class="mini-input">
           <label>Glass SqFt</label>
-          <input id="glassSqFt" type="number">
+          <input id="glassSqFt" type="number" min="0">
+          <small>External glass service</small>
         </div>
 
       </div>
 
-      <!-- PRODUCTION CORE -->
-      <div class="section-subtitle">Production</div>
+      <div class="section-subtitle">
+        Production
+      </div>
 
-      <div class="form-grid-2">
+      <div class="mini-grid">
 
         <div class="mini-input">
           <label>Panels</label>
-          <input id="panels" type="number">
+          <input id="panels" type="number" min="0">
+          <small>9 min / panel</small>
         </div>
 
         <div class="mini-input">
           <label>Cabinets</label>
-          <input id="cabinets" type="number">
+          <input id="cabinets" type="number" min="0">
+          <small>10 min / cabinet</small>
         </div>
 
         <div class="mini-input">
           <label>Drawers</label>
-          <input id="drawers" type="number">
+          <input id="drawers" type="number" min="0">
+          <small>20 min / drawer</small>
         </div>
 
         <div class="mini-input">
           <label>Pantry</label>
-          <input id="pantry" type="number">
+          <input id="pantry" type="number" min="0">
+          <small>20 min / pantry</small>
         </div>
 
       </div>
 
-      <!-- HARDWARE -->
-      <div class="section-subtitle">Hardware</div>
+      <div class="section-subtitle">
+        Hardware
+      </div>
 
-      <div class="form-grid-2">
+      <div class="mini-grid">
 
         <div class="mini-input">
           <label>Trashcan</label>
-          <input id="trashcan" type="number">
+          <input id="trashcan" type="number" min="0">
+          <small>25 min / unit</small>
         </div>
 
         <div class="mini-input">
           <label>Lazy Susan</label>
-          <input id="lazySusan" type="number">
+          <input id="lazySusan" type="number" min="0">
+          <small>25 min / unit</small>
         </div>
 
         <div class="mini-input">
           <label>LeMans II</label>
-          <input id="lemans" type="number">
+          <input id="lemans" type="number" min="0">
+          <small>25 min / unit</small>
         </div>
 
       </div>
 
-      <!-- POCKET SYSTEMS -->
-      <div class="section-subtitle">Pocket Systems</div>
+      <div class="section-subtitle">
+        Pocket Systems
+      </div>
 
-      <div class="form-grid-2">
+      <div class="mini-grid">
 
         <div class="mini-input">
           <label>Pocket Pantry</label>
-          <input id="pocketPantry" type="number">
+          <input id="pocketPantry" type="number" min="0">
+          <small>90 min / unit</small>
         </div>
 
         <div class="mini-input">
           <label>Pocket Cabinet</label>
-          <input id="pocketCabinet" type="number">
+          <input id="pocketCabinet" type="number" min="0">
+          <small>60 min / unit</small>
         </div>
 
       </div>
 
-      <!-- FINISHING -->
-      <div class="section-subtitle">Finishing</div>
+      <div class="section-subtitle">
+        Finishing
+      </div>
 
-      <div class="form-grid-2">
+      <div class="mini-grid">
 
         <div class="mini-input">
           <label>Edge LF</label>
-          <input id="edgeLF" type="number">
+          <input id="edgeLF" type="number" min="0">
+          <small>0.60 min / LF</small>
         </div>
 
         <div class="mini-input">
           <label>Laminate SqFt</label>
-          <input id="laminateSqFt" type="number">
+          <input id="laminateSqFt" type="number" min="0">
+          <small>3.5 min / SqFt</small>
         </div>
 
       </div>
@@ -621,64 +621,83 @@ function carpentryTemplate() {
 }
 
 function stoneTemplate() {
+
   return `
     <div class="parameter-card">
 
       <h4>🪨 Stone Production</h4>
 
-      <!-- CORE SETTINGS -->
-      <div class="form-row">
-
-        <select id="machine">
-          <option value="BRETON">Breton CNC</option>
-          <option value="COCH">Coch CNC</option>
-        </select>
-
-        <select id="stoneLevel">
-          <option value="1">Level 1</option>
-          <option value="2" selected>Level 2 (Standard)</option>
-          <option value="3">Level 3 (Premium)</option>
-        </select>
-
-        <select id="material">
-          <option value="">Material</option>
-          <option value="Quartz">Quartz</option>
-          <option value="Granite">Granite</option>
-          <option value="Porcelain">Porcelain</option>
-          <option value="Dekton">Dekton</option>
-        </select>
-
-        <select id="thickness">
-          <option value="6">6mm</option>
-          <option value="12">12mm</option>
-          <option value="20">20mm</option>
-        </select>
-
-      </div>
-
-      <!-- PRODUCTION -->
-      <div class="section-subtitle">Production</div>
-
       <div class="form-grid-2">
 
         <div class="mini-input">
+          <label>Machine</label>
+          <select id="machine">
+            <option value="BRETON">Breton CNC</option>
+            <option value="COCH">Coch CNC</option>
+          </select>
+        </div>
+
+        <div class="mini-input">
+          <label>Complexity</label>
+          <select id="stoneLevel">
+            <option value="1">Level 1</option>
+            <option value="2" selected>Level 2 Standard</option>
+            <option value="3">Level 3 Luxury</option>
+          </select>
+        </div>
+
+        <div class="mini-input">
+          <label>Material</label>
+          <select id="material">
+            <option value="Quartz">Quartz</option>
+            <option value="Granite">Granite</option>
+            <option value="Marble">Marble</option>
+            <option value="Quartzite">Quartzite</option>
+            <option value="Porcelain">Porcelain</option>
+            <option value="Dekton">Dekton</option>
+          </select>
+        </div>
+
+        <div class="mini-input">
+          <label>Thickness</label>
+          <select id="thickness">
+            <option value="6">6 mm</option>
+            <option value="12">12 mm</option>
+            <option value="20">20 mm</option>
+            <option value="30">30 mm</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="section-subtitle">
+        Fabrication
+      </div>
+
+      <div class="mini-grid">
+
+        <div class="mini-input">
           <label>SqFt</label>
-          <input id="sqft" type="number">
+          <input id="sqft" type="number" min="0">
+          <small>Stone area</small>
         </div>
 
         <div class="mini-input">
           <label>Slabs</label>
-          <input id="slabs" type="number">
+          <input id="slabs" type="number" min="0">
+          <small>Machine setup applies</small>
         </div>
 
         <div class="mini-input">
           <label>Edge LF</label>
-          <input id="stoneEdgeLF" type="number">
+          <input id="stoneEdgeLF" type="number" min="0">
+          <small>Edge finish LF</small>
         </div>
 
         <div class="mini-input">
           <label>Cutouts</label>
-          <input id="cutouts" type="number">
+          <input id="cutouts" type="number" min="0">
+          <small>Sink / Cooktop / Faucet</small>
         </div>
 
       </div>
