@@ -13,139 +13,255 @@
   <!-- ICONS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- =========================
-       FIX LAYOUT (ONLY MENU FIX)
-  ========================== -->
-  <style>
+<style>
 
-    /* APP LAYOUT FIX */
-    .app{
-      display:flex;
-      min-height:calc(100vh - 70px);
-    }
+/* =========================
+   APP LAYOUT
+========================= */
 
-    .sidebar{
-      width:240px;
-      flex-shrink:0;
-    }
+.app{
+  display:flex;
+  min-height:calc(100vh - 70px);
+  background:#0b1220;
+}
 
-    .main{
-      flex:1;
-      padding:24px;
-      min-width:0;
-    }
+.sidebar{
+  width:270px;
+  min-width:270px;
+  background:#151d33;
+  border-right:1px solid rgba(255,255,255,.06);
+  padding:20px 16px;
+}
 
-    /* NAVBAR FIX (CENTER MENU + ALIGN) */
-    .navbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:10px 20px;
-    }
+.main{
+  flex:1;
+  min-width:0;
+  padding:22px;
+}
 
-    .logo{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-shrink:0;
-    }
+/* =========================
+   NAVBAR
+========================= */
 
-    /* 🔥 FIX CLAVE: MENU CENTRADO REAL */
-    .menu{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex:1;
-      gap:20px;
-    }
+.navbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 20px;
+}
 
-    .menu a{
-      text-decoration:none;
-      color:white;
-      font-weight:600;
-      padding:6px 10px;
-      border-radius:8px;
-      transition:0.2s;
-      white-space:nowrap;
-    }
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 
-    .menu a:hover{
-      background:rgba(255,255,255,0.08);
-    }
+.logo img{
+  height:34px;
+  width:auto;
+}
 
-    .menu a.active{
-      background:#1d4ed8;
-      color:white;
-    }
+.logo span{
+  font-size:28px;
+  font-weight:700;
+  color:white;
+}
 
-    /* 🔥 FIX TOPBAR (ESTO ES LO QUE SE ROMPIÓ) */
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:20px;
-      gap:20px;
-    }
+.menu{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex:1;
+  gap:16px;
+}
 
-    .topbar h1{
-      margin:0;
-      font-size:22px;
-    }
+.menu a{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  padding:10px 16px;
+  border-radius:12px;
+  transition:.2s;
+}
 
-    /* 🔥 FIX ACTIONS (BOTONES A LA DERECHA REAL) */
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-left:auto;
-    }
+.menu a:hover{
+  background:rgba(255,255,255,.08);
+}
 
-    .actions button{
-      padding:10px 14px;
-      border:none;
-      border-radius:10px;
-      background:#1d4ed8;
-      color:white;
-      cursor:pointer;
-      font-weight:600;
-      white-space:nowrap;
-      transition:0.2s;
-    }
+.menu a.active{
+  background:#4f83f1;
+  color:white;
+}
 
-    .actions button:hover{
-      background:#2563eb;
-      transform:translateY(-1px);
-    }
+/* =========================
+   SIDEBAR
+========================= */
 
-    /* MOBILE FIX */
-    @media (max-width:900px){
+.sidebar::before{
+  content:"⚙ SOP ERP";
+  display:block;
 
-      .app{
-        flex-direction:column;
-      }
+  font-size:26px;
+  font-weight:700;
 
-      .sidebar{
-        width:100%;
-      }
+  color:white;
 
-      .menu{
-        flex-wrap:wrap;
-        justify-content:center;
-        gap:10px;
-      }
+  margin-bottom:24px;
+}
 
-      .topbar{
-        flex-direction:column;
-        align-items:flex-start;
-      }
+.sidebar nav{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
 
-      .actions{
-        margin-left:0;
-        flex-wrap:wrap;
-      }
-    }
+.sidebar nav a{
+  display:flex;
+  align-items:center;
 
-  </style>
+  gap:12px;
+
+  padding:14px 16px;
+
+  border-radius:10px;
+
+  color:#cfd8ea;
+  text-decoration:none;
+  font-size:18px;
+
+  background:transparent;
+
+  transition:.2s;
+}
+
+.sidebar nav a:hover{
+  background:#223156;
+  color:white;
+}
+
+.sidebar nav a.active{
+  background:#223156;
+  color:white;
+}
+
+/* =========================
+   TOP HEADER
+========================= */
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  background:#151d33;
+
+  padding:20px 28px;
+
+  border-radius:12px;
+
+  margin-bottom:22px;
+
+  box-shadow:
+    0 4px 18px rgba(0,0,0,.25);
+}
+
+.topbar h1{
+  margin:0;
+
+  color:white;
+
+  font-size:42px;
+  font-weight:700;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+.actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.actions button{
+  border:none;
+
+  background:#3366e8;
+
+  color:white;
+
+  padding:12px 18px;
+
+  border-radius:10px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:.2s;
+}
+
+.actions button:hover{
+  background:#4678f0;
+  transform:translateY(-1px);
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+#view-container,
+#summary{
+  background:#0b1220;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+  padding:16px;
+  text-align:center;
+  border-top:1px solid rgba(255,255,255,.05);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width:900px){
+
+  .app{
+    flex-direction:column;
+  }
+
+  .sidebar{
+    width:100%;
+    min-width:100%;
+  }
+
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .actions{
+    flex-wrap:wrap;
+  }
+
+  .topbar h1{
+    font-size:30px;
+  }
+}
+  .sidebar-title{
+  color:white;
+  font-size:24px;
+  font-weight:700;
+  margin-bottom:24px;
+}
+
+</style>
 </head>
 
 <body>
@@ -177,7 +293,10 @@
 
       <!-- SIDEBAR -->
       <aside class="sidebar">
-        <nav>
+          <div class="sidebar-title">
+            ⚙ SOP ERP
+          </div> 
+       <nav>
           <a class="active">📦 Projects</a>
           <a>📊 Dashboard</a>
           <a>🧠 Planning</a>
