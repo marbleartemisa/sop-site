@@ -16,13 +16,23 @@
 <style>
 
 /* =========================
+   BASE
+========================= */
+
+body{
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  margin:0;
+  background:#0b1220;
+  color:#e5e7eb;
+}
+
+/* =========================
    APP LAYOUT
 ========================= */
 
 .app{
   display:flex;
-  min-height:calc(100vh - 70px);
-  background:#0b1220;
+  min-height:calc(100vh - 60px);
 }
 
 .sidebar{
@@ -36,7 +46,8 @@
 .main{
   flex:1;
   min-width:0;
-  padding:22px;
+  padding:20px;
+  background:#0b1220;
 }
 
 /* =========================
@@ -47,7 +58,11 @@
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:10px 20px;
+
+  padding:12px 20px;
+
+  background:#0f172a;
+  border-bottom:1px solid rgba(255,255,255,.06);
 }
 
 .logo{
@@ -62,34 +77,42 @@
 }
 
 .logo span{
-  font-size:20px;
+  font-size:16px;
   font-weight:600;
-  color:white;
+  color:#e5e7eb;
+  letter-spacing:.3px;
 }
+
+/* MENU */
 
 .menu{
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   flex:1;
   gap:16px;
 }
 
 .menu a{
-  color:white;
+  color:#cbd5e1;
   text-decoration:none;
-  font-weight:600;
-  padding:10px 16px;
-  border-radius:12px;
+  font-weight:500;
+
+  padding:8px 12px;
+  border-radius:10px;
+
+  font-size:14px;
+
   transition:.2s;
 }
 
 .menu a:hover{
-  background:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.06);
+  color:white;
 }
 
 .menu a.active{
-  background:#4f83f1;
+  background:#2563eb;
   color:white;
 }
 
@@ -97,54 +120,50 @@
    SIDEBAR
 ========================= */
 
-.sidebar::before{
-  display:block;
-
-  font-size:26px;
-  font-weight:700;
-
-  color:white;
-
-  margin-bottom:24px;
+.sidebar-title{
+  color:#94a3b8;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.12em;
+  margin-bottom:16px;
 }
 
 .sidebar nav{
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:10px;
 }
 
 .sidebar nav a{
   display:flex;
   align-items:center;
+  gap:10px;
 
-  gap:12px;
-
-  padding:14px 16px;
+  padding:10px 12px;
 
   border-radius:10px;
 
-  color:#cfd8ea;
-  text-decoration:none;
-  font-size:16px;
+  color:#cbd5e1;
 
-  background:transparent;
+  text-decoration:none;
+
+  font-size:14px;
 
   transition:.2s;
 }
 
 .sidebar nav a:hover{
-  background:#223156;
+  background:rgba(37,99,235,.12);
   color:white;
 }
 
 .sidebar nav a.active{
-  background:#223156;
+  background:#2563eb;
   color:white;
 }
 
 /* =========================
-   TOP HEADER
+   TOPBAR
 ========================= */
 
 .topbar{
@@ -154,19 +173,17 @@
 
   background:#151d33;
 
-  padding:20px 28px;
+  padding:18px 20px;
 
   border-radius:12px;
 
-  margin-bottom:22px;
+  margin-bottom:20px;
 
-  box-shadow:
-    0 4px 18px rgba(0,0,0,.25);
+  border:1px solid rgba(255,255,255,.06);
 }
 
 .topbar h1{
   margin:0;
-
   color:white;
 
   font-size:24px;
@@ -174,7 +191,7 @@
 }
 
 /* =========================
-   ACTIONS
+   ACTIONS / BUTTONS
 ========================= */
 
 .actions{
@@ -186,24 +203,31 @@
 .actions button{
   border:none;
 
-  background:#3366e8;
-
-  color:white;
-
-  padding:12px 18px;
+  padding:9px 12px;
 
   border-radius:10px;
 
+  font-size:13px;
   font-weight:600;
 
   cursor:pointer;
+
+  background:rgba(255,255,255,.06);
+  color:#e5e7eb;
 
   transition:.2s;
 }
 
 .actions button:hover{
-  background:#4678f0;
   transform:translateY(-1px);
+  background:rgba(255,255,255,.10);
+}
+
+/* PRIMARY BUTTON */
+
+#btn-new-project{
+  background:#2563eb;
+  color:white;
 }
 
 /* =========================
@@ -223,6 +247,7 @@
   padding:16px;
   text-align:center;
   border-top:1px solid rgba(255,255,255,.05);
+  color:#94a3b8;
 }
 
 /* =========================
@@ -238,27 +263,23 @@
   .sidebar{
     width:100%;
     min-width:100%;
-  }
-
-  .topbar{
-    flex-direction:column;
-    align-items:flex-start;
+    padding:14px;
   }
 
   .actions{
     flex-wrap:wrap;
   }
 
-  .topbar h1{
-    font-size:30px;
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
   }
-  
-}
-  .sidebar-title{
-  color:white;
-  font-size:18px;
-  font-weight:200;
-  margin-bottom:24px;
+
+  .topbar h1{
+    font-size:18px;
+    font-weight:600;
+  }
 }
 
 </style>
