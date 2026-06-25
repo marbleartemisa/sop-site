@@ -503,26 +503,6 @@ function carpentryTemplate() {
       </div>
 
       <div class="section-subtitle">
-        External Services
-      </div>
-
-      <div class="mini-grid">
-
-        <div class="mini-input">
-          <label>Paint SqFt</label>
-          <input id="paintSqFt" type="number" min="0">
-          <small>External finish service</small>
-        </div>
-
-        <div class="mini-input">
-          <label>Glass SqFt</label>
-          <input id="glassSqFt" type="number" min="0">
-          <small>External glass service</small>
-        </div>
-
-      </div>
-
-      <div class="section-subtitle">
         ⚙️ Production
       </div>
 
@@ -619,6 +599,27 @@ function carpentryTemplate() {
         </div>
 
       </div>
+
+      <div class="section-subtitle">
+        External Services
+      </div>
+
+      <div class="mini-grid">
+
+        <div class="mini-input">
+          <label>Paint SqFt</label>
+          <input id="paintSqFt" type="number" min="0">
+          <small>External finish service</small>
+        </div>
+
+        <div class="mini-input">
+          <label>Glass SqFt</label>
+          <input id="glassSqFt" type="number" min="0">
+          <small>External glass service</small>
+        </div>
+
+      </div>
+
 
     </div>
   `;
