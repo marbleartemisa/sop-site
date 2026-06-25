@@ -179,109 +179,107 @@ function renderParameters() {
   stone.innerHTML = state.stoneActive ? stoneTemplate() : "";
 }
 
-function renderCarpentryResult(data) {
+function renderCarpentryResults(data) {
 
   if (!data) return "";
 
   return `
 
-    <div class="result-panel">
+    <div class="simulation-card">
 
-      <div class="section-title">
-        🪵 Carpentry Production
+      <h4>🪵 Carpentry Production</h4>
+
+      <div class="calc-row">
+        <span>CNC</span>
+        <span>${data.cnc.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        CNC Cut:
-        <strong>${data.cnc.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>Edgebanding</span>
+        <span>${data.edge.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        Edgebanding:
-        <strong>${data.edge.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>Laminate</span>
+        <span>${data.laminate.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        Lamination:
-        <strong>${data.laminate.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>Assembly</span>
+        <span>${data.assembly.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        Assembly:
-        <strong>${data.assembly.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>Hardware</span>
+        <span>${data.hardware.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        Hardware:
-        <strong>${data.hardware.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>Pocket Doors</span>
+        <span>${data.pocket.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        Pocket Systems:
-        <strong>${data.pocket.toFixed(1)} min</strong>
-      </div>
-
-      <div class="metric">
-        QC:
-        <strong>${data.qc.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>QC</span>
+        <span>${data.qc.toFixed(1)} min</span>
       </div>
 
       <hr>
 
-      <div class="result-title">
-        ${(data.totalMinutes / 60).toFixed(2)} hrs
+      <div class="calc-total">
+
+        ${data.totalHours} hrs
+
       </div>
 
     </div>
-
   `;
 }
 
-function renderStoneResult(data) {
+function renderStoneResults(data) {
 
   if (!data) return "";
 
   return `
 
-    <div class="result-panel">
+    <div class="simulation-card">
 
-      <div class="section-title">
-        🪨 Stone Production
+      <h4>🪨 Stone Production</h4>
+
+      <div class="calc-row">
+        <span>Machine Setup</span>
+        <span>${data.setup.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        Machine Setup:
-        <strong>${data.setup.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>Edge Work</span>
+        <span>${data.edge.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        Edge Finish:
-        <strong>${data.edge.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>Cutouts</span>
+        <span>${data.cutouts.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        Cutouts:
-        <strong>${data.cutouts.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>LED</span>
+        <span>${data.led.toFixed(1)} min</span>
       </div>
 
-      <div class="metric">
-        LED:
-        <strong>${data.led.toFixed(1)} min</strong>
-      </div>
-
-      <div class="metric">
-        Metal Frame:
-        <strong>${data.frame.toFixed(1)} min</strong>
+      <div class="calc-row">
+        <span>Metal Frame</span>
+        <span>${data.frame.toFixed(1)} min</span>
       </div>
 
       <hr>
 
-      <div class="result-title">
+      <div class="calc-total">
+
         ${data.totalHours} hrs
+
       </div>
 
     </div>
-
   `;
 }
 
@@ -292,31 +290,38 @@ function renderStoneResult(data) {
 function renderResults() {
 
   const container =
-    document.getElementById("simulationResult");
+    document.getElementById(
+      "simulationResult"
+    );
 
   if (!container) return;
 
   const result =
-    simulateProject(buildState());
+    simulateProject(
+      buildState()
+    );
 
   container.innerHTML = `
 
-    <div class="result-panel">
+    ${renderCarpentryResults(
+      result.carpentry
+    )}
 
-      <div class="result-title">
-        Total Simulation
-      </div>
+    ${renderStoneResults(
+      result.stone
+    )}
 
-      <div class="metric">
-        Total Time:
-        <strong>${result.totalHours} hrs</strong>
+    <div class="result-total">
+
+      <h3>Total Simulation</h3>
+
+      <div class="hours">
+
+        ${result.totalHours} hrs
+
       </div>
 
     </div>
-
-    ${renderCarpentryResult(result.carpentry)}
-
-    ${renderStoneResult(result.stone)}
 
   `;
 }
@@ -346,6 +351,15 @@ function bindEvents() {
    document.addEventListener("change", () => {
      renderResults();
    });
+      document.addEventListener(
+     "input",
+     () => renderResults()
+   );
+   
+   document.addEventListener(
+     "change",
+     () => renderResults()
+   );
 }
 
 
