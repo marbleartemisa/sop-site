@@ -12,6 +12,140 @@
 
   <!-- ICONS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- =========================
+       FIX LAYOUT (ONLY MENU FIX)
+  ========================== -->
+  <style>
+
+    /* APP LAYOUT FIX */
+    .app{
+      display:flex;
+      min-height:calc(100vh - 70px);
+    }
+
+    .sidebar{
+      width:240px;
+      flex-shrink:0;
+    }
+
+    .main{
+      flex:1;
+      padding:24px;
+      min-width:0;
+    }
+
+    /* NAVBAR FIX (CENTER MENU + ALIGN) */
+    .navbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 20px;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-shrink:0;
+    }
+
+    /* 🔥 FIX CLAVE: MENU CENTRADO REAL */
+    .menu{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex:1;
+      gap:20px;
+    }
+
+    .menu a{
+      text-decoration:none;
+      color:white;
+      font-weight:600;
+      padding:6px 10px;
+      border-radius:8px;
+      transition:0.2s;
+      white-space:nowrap;
+    }
+
+    .menu a:hover{
+      background:rgba(255,255,255,0.08);
+    }
+
+    .menu a.active{
+      background:#1d4ed8;
+      color:white;
+    }
+
+    /* 🔥 FIX TOPBAR (ESTO ES LO QUE SE ROMPIÓ) */
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+      gap:20px;
+    }
+
+    .topbar h1{
+      margin:0;
+      font-size:22px;
+    }
+
+    /* 🔥 FIX ACTIONS (BOTONES A LA DERECHA REAL) */
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-left:auto;
+    }
+
+    .actions button{
+      padding:10px 14px;
+      border:none;
+      border-radius:10px;
+      background:#1d4ed8;
+      color:white;
+      cursor:pointer;
+      font-weight:600;
+      white-space:nowrap;
+      transition:0.2s;
+    }
+
+    .actions button:hover{
+      background:#2563eb;
+      transform:translateY(-1px);
+    }
+
+    /* MOBILE FIX */
+    @media (max-width:900px){
+
+      .app{
+        flex-direction:column;
+      }
+
+      .sidebar{
+        width:100%;
+      }
+
+      .menu{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:10px;
+      }
+
+      .topbar{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .actions{
+        margin-left:0;
+        flex-wrap:wrap;
+      }
+    }
+
+  </style>
 </head>
 
 <body>
@@ -67,26 +201,21 @@
 
         <!-- VIEW -->
         <section id="view-container"></section>
-
         <section id="summary"></section>
 
       </main>
 
     </div>
 
-    <!-- MODAL PORTAL (IMPORTANTE: solo este) -->
     <div id="modal-container"></div>
 
-    <!-- FOOTER -->
     <footer class="footer">
       ARTEMISA ERP © 2026
     </footer>
 
   </div>
 
-  <!-- SCRIPTS -->
   <script src="/sop-site/core/ui-core.js"></script>
-
   <script type="module" src="/sop-site/dashboard/js/app.js"></script>
 
 </body>
