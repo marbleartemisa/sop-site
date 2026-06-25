@@ -61,13 +61,20 @@ export function calculateCarpentry(input) {
     (cnc + edge + laminate + assembly + hardware + pocket + qc) * f;
 
   return {
-    cnc,
-    edge,
-    laminate,
-    assembly,
-    hardware,
-    pocket,
-    qc,
-    total
-  };
+        
+          cnc,
+          edge,
+          laminate,
+          assembly,
+          hardware,
+          pocket,
+          qc,
+        
+          complexityFactor,
+          projectFactor,
+        
+          totalMinutes: total,
+          totalHours: +(total / 60).toFixed(2)
+        };
+
 }
