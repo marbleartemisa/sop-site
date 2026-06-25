@@ -20,50 +20,83 @@ export function calculateCarpentry(input = {}) {
   const factor = carpentryLevelFactor[level] || 1;
 
   // =========================
-  // BASE TIMES
+  // CNC
   // =========================
-  const cnc = (input.panels || 0) * carpentryTimes.cnc.panel;
+  const cnc =
+    (input.panels || 0) * carpentryTimes.cnc.panel;
 
-  const edge =
-    carpentryTimes.edgebanding.setup +
+  // =========================
+  // EDGEBANDING (CORRECTO)
+  // =========================
+  const edgeSetup =
+    carpentryTimes.edgebanding.setup;
+
+  const edgeProduction =
     (input.edgeLF || 0) * carpentryTimes.edgebanding.lf;
 
+  const edgeQC =
+    carpentryTimes.edgebanding.qc;
+
+  const edge =
+    edgeSetup + edgeProduction + edgeQC;
+
+  // =========================
+  // LAMINATE
+  // =========================
   const laminate =
     (input.laminateSqFt || 0) * carpentryTimes.laminate.sqft;
 
+  // =========================
+  // ASSEMBLY
+  // =========================
   const assembly =
     (input.cabinets || 0) * carpentryTimes.assembly.cabinet +
     (input.drawers || 0) * carpentryTimes.assembly.drawer +
     (input.pantry || 0) * carpentryTimes.assembly.pantry;
 
+  // =========================
+  // HARDWARE
+  // =========================
   const hardware =
     (input.trashcan || 0) * carpentryTimes.hardware.trashcan +
     (input.lazySusan || 0) * carpentryTimes.hardware.lazySusan +
     (input.lemans || 0) * carpentryTimes.hardware.lemans;
 
+  // =========================
+  // POCKET
+  // =========================
   const pocket =
     (input.pocketCabinet || 0) * carpentryTimes.pocket.cabinet +
     (input.pocketPantry || 0) * carpentryTimes.pocket.pantry;
 
+  // =========================
+  // QC GLOBAL
+  // =========================
   const qc =
     (input.cabinets || 0) * carpentryTimes.qc.cabinet +
     (input.pantry || 0) * carpentryTimes.qc.pantry +
     carpentryTimes.qc.project;
 
   // =========================
-  // BASE TOTAL
+  // TOTAL
   // =========================
   const baseTotal =
     cnc + edge + laminate + assembly + hardware + pocket + qc;
 
-  const totalMinutes = baseTotal * factor;
+  const totalMinutes =
+    baseTotal * factor;
 
   return {
     level,
     factor,
 
     cnc,
+
+    edgeSetup,
+    edgeProduction,
+    edgeQC,
     edge,
+
     laminate,
     assembly,
     hardware,
