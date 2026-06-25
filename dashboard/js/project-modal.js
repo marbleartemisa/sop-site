@@ -179,25 +179,178 @@ function renderParameters() {
   stone.innerHTML = state.stoneActive ? stoneTemplate() : "";
 }
 
+function renderCarpentryResults(data = {}) {
+
+  if (!data.totalMinutes) return "";
+
+  return `
+    <div class="result-panel">
+
+      <h3>🪵 Carpentry Production</h3>
+
+      <div class="metric">
+        CNC:
+        ${data.cnc.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        Edgebanding:
+        ${data.edge.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        Laminate:
+        ${data.laminate.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        Assembly:
+        ${data.assembly.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        Hardware:
+        ${data.hardware.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        Pocket Systems:
+        ${data.pocket.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        QC:
+        ${data.qc.toFixed(1)} min
+      </div>
+
+      <hr>
+
+      <div class="metric">
+        Complexity:
+        x${data.complexityFactor}
+      </div>
+
+      <div class="metric">
+        Project Type:
+        x${data.projectFactor}
+      </div>
+
+      <hr>
+
+      <div class="metric">
+        TOTAL:
+        <strong>
+          ${data.totalHours} hrs
+        </strong>
+      </div>
+
+    </div>
+  `;
+}
+
+function renderStoneResults(data = {}) {
+
+  if (!data.totalMinutes) return "";
+
+  return `
+    <div class="result-panel">
+
+      <h3>🪨 Stone Production</h3>
+
+      <div class="metric">
+        Setup:
+        ${data.setup.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        Edge:
+        ${data.edge.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        Cutouts:
+        ${data.cutouts.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        LED:
+        ${data.led.toFixed(1)} min
+      </div>
+
+      <div class="metric">
+        Metal Frame:
+        ${data.frame.toFixed(1)} min
+      </div>
+
+      <hr>
+
+      <div class="metric">
+        Level Factor:
+        x${data.levelFactor}
+      </div>
+
+      <hr>
+
+      <div class="metric">
+        TOTAL:
+        <strong>
+          ${data.totalHours} hrs
+        </strong>
+      </div>
+
+    </div>
+  `;
+}
+
 /* =========================
    RESULTS
 ========================= */
 function renderResults() {
 
-  const container = document.getElementById("simulationResult");
+  const container =
+    document.getElementById("simulationResult");
+
   if (!container) return;
 
-  const result = simulateProject(buildState()) || {
-    totalHours: 0
-  };
+  const result =
+    simulateProject(buildState());
+
+  const carpentry =
+    result.carpentry || {};
+
+  const stone =
+    result.stone || {};
 
   container.innerHTML = `
-    <div class="result-card">
-      <h3>Total Hours</h3>
-      <div style="font-size:26px;font-weight:bold;">
-        ${result.totalHours}
+
+    <div class="result-panel">
+
+      <div class="result-title">
+        Total Project
       </div>
+
+      <div class="metric">
+        Carpentry:
+        ${((carpentry.totalMinutes || 0)/60).toFixed(2)} hrs
+      </div>
+
+      <div class="metric">
+        Stone:
+        ${((stone.totalMinutes || 0)/60).toFixed(2)} hrs
+      </div>
+
+      <hr>
+
+      <div class="metric">
+        TOTAL:
+        <strong>${result.totalHours} hrs</strong>
+      </div>
+
     </div>
+
+    ${renderCarpentryResults(carpentry)}
+
+    ${renderStoneResults(stone)}
   `;
 }
 
