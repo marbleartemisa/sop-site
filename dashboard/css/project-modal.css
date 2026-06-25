@@ -364,4 +364,54 @@
   margin:0;
 }
 
+.simulation-card {
+
+  background: #18233f;
+
+  border-radius: 10px;
+
+  padding: 15px;
+
+  margin-bottom: 15px;
+}
+
+.calc-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  margin: 6px 0;
+
+  font-size: 13px;
+}
+
+.calc-total {
+
+  text-align: right;
+
+  font-size: 20px;
+
+  font-weight: bold;
+
+  color: #58a6ff;
+}
+
+.result-total {
+
+  margin-top: 20px;
+
+  padding: 15px;
+
+  background: #10182d;
+
+  border-radius: 10px;
+}
+
+.hours {
+
+  font-size: 24px;
+
+  font-weight: bold;
+}
 
