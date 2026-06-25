@@ -1,69 +1,56 @@
-const edgeTimes = {
+import { STONE } from "../data/stone-times.js";
 
-  Eased: 2,
-  Pencil: 3,
-  HalfBullnose: 4,
-  FullBullnose: 5,
-  Ogee: 8,
-  Miter: 10,
-  Laminated: 12
+// =========================
+// LEVEL FACTOR
+// =========================
+const stoneLevelFactor = {
+  1: 0.85,
+  2: 1.0,
+  3: 1.25
 };
 
-function setupMachine(machine, slabs) {
-
-  const qty = slabs || 0;
-
-  if (machine === "BRETON") {
-    return qty * 25;
-  }
-
-  return qty * 30;
+// =========================
+// MACHINE SETUP
+// =========================
+function setupMachine(machine, slabs = 0) {
+  return machine === "BRETON"
+    ? slabs * STONE.BRETON_SETUP
+    : slabs * STONE.COCH_SETUP;
 }
 
-export function calculateStone(data = {}) {
+// =========================
+// MAIN CALCULATOR
+// =========================
+export function calculateStone(input = {}) {
 
-  const complexityFactor =
-    data.complexityFactor || 1;
+  const level = Number(input.level || 2);
+  const factor = stoneLevelFactor[level] || 1;
 
-  // MACHINE SETUP
-  const setup =
-    setupMachine(
-      data.machine,
-      data.slabs
-    );
+  const edgeType =
+    STONE.EDGE_TYPES[input.edgeType] || 4;
 
-  // EDGE WORK
+  const setup = setupMachine(input.machine, input.slabs);
+
   const edge =
-    (data.edgeLF || 0) *
-    (
-      edgeTimes[data.edgeType]
-      || 4
-    );
+    (input.edgeLF || 0) * edgeType;
 
-  // CUTOUTS
   const cutouts =
-    (data.cutouts || 0) * 20;
+    (input.cutouts || 0) * 20;
 
-  // LED
   const led =
-    (data.led || 0) * 60;
+    (input.led || 0) * 60;
 
-  // METAL FRAME
   const frame =
-    (data.metalFrame || 0) * 120;
+    (input.metalFrame || 0) * 120;
 
-  const subtotal =
-      setup
-    + edge
-    + cutouts
-    + led
-    + frame;
+  const baseTotal =
+    setup + edge + cutouts + led + frame;
 
-  const totalMinutes =
-      subtotal *
-      complexityFactor;
+  const totalMinutes = baseTotal * factor;
 
   return {
+    level,
+    factor,
 
     setup,
     edge,
@@ -71,13 +58,8 @@ export function calculateStone(data = {}) {
     led,
     frame,
 
-    subtotal,
-
-    complexityFactor,
-
+    baseTotal,
     totalMinutes,
-
-    totalHours:
-      +(totalMinutes / 60).toFixed(2)
+    totalHours: +(totalMinutes / 60).toFixed(2)
   };
 }
