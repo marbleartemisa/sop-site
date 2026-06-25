@@ -5,8 +5,9 @@ export const carpentryTimes = {
   },
 
   edgebanding: {
-    setup: 15,
-    lf: 0.6
+    setup: 15,      // setup máquina (fijo)
+    lf: 0.6,        // producción por LF
+    qc: 15          // 👈 AÑADIR (IMPORTANTE)
   },
 
   laminate: {
