@@ -1,86 +1,66 @@
 import { carpentryTimes } from "../data/carpentry-times.js";
 
+// =========================
+// LEVEL FACTOR
+// =========================
+const carpentryLevelFactor = {
+  1: 0.85,
+  2: 0.95,
+  3: 1.0,
+  4: 1.25,
+  5: 1.5
+};
+
+// =========================
+// MAIN CALCULATOR
+// =========================
 export function calculateCarpentry(input = {}) {
 
-  const complexityFactor =
-    input.complexityFactor || 1;
+  const level = Number(input.level || 3);
+  const factor = carpentryLevelFactor[level] || 1;
 
-  const projectFactor =
-    input.projectFactor || 1;
+  // =========================
+  // BASE TIMES
+  // =========================
+  const cnc = (input.panels || 0) * carpentryTimes.cnc.panel;
 
-  // CNC
-  const cnc =
-    (input.panels || 0) *
-    carpentryTimes.cnc.panel;
-
-  // EDGEBANDING
   const edge =
     carpentryTimes.edgebanding.setup +
-    (
-      (input.edgeLF || 0) *
-      carpentryTimes.edgebanding.lf
-    );
+    (input.edgeLF || 0) * carpentryTimes.edgebanding.lf;
 
-  // LAMINATION
   const laminate =
-    (input.laminateSqFt || 0) *
-    carpentryTimes.laminate.sqft;
+    (input.laminateSqFt || 0) * carpentryTimes.laminate.sqft;
 
-  // ASSEMBLY
   const assembly =
-      ((input.cabinets || 0) *
-       carpentryTimes.assembly.cabinet)
+    (input.cabinets || 0) * carpentryTimes.assembly.cabinet +
+    (input.drawers || 0) * carpentryTimes.assembly.drawer +
+    (input.pantry || 0) * carpentryTimes.assembly.pantry;
 
-    + ((input.drawers || 0) *
-       carpentryTimes.assembly.drawer)
-
-    + ((input.pantry || 0) *
-       carpentryTimes.assembly.pantry);
-
-  // HARDWARE
   const hardware =
-      ((input.trashcan || 0) *
-       carpentryTimes.hardware.trashcan)
+    (input.trashcan || 0) * carpentryTimes.hardware.trashcan +
+    (input.lazySusan || 0) * carpentryTimes.hardware.lazySusan +
+    (input.lemans || 0) * carpentryTimes.hardware.lemans;
 
-    + ((input.lazySusan || 0) *
-       carpentryTimes.hardware.lazySusan)
-
-    + ((input.lemans || 0) *
-       carpentryTimes.hardware.lemans);
-
-  // POCKET SYSTEMS
   const pocket =
-      ((input.pocketCabinet || 0) *
-       carpentryTimes.pocket.cabinet)
+    (input.pocketCabinet || 0) * carpentryTimes.pocket.cabinet +
+    (input.pocketPantry || 0) * carpentryTimes.pocket.pantry;
 
-    + ((input.pocketPantry || 0) *
-       carpentryTimes.pocket.pantry);
-
-  // QC
   const qc =
-      ((input.cabinets || 0) *
-       carpentryTimes.qc.cabinet)
+    (input.cabinets || 0) * carpentryTimes.qc.cabinet +
+    (input.pantry || 0) * carpentryTimes.qc.pantry +
+    carpentryTimes.qc.project;
 
-    + ((input.pantry || 0) *
-       carpentryTimes.qc.pantry)
+  // =========================
+  // BASE TOTAL
+  // =========================
+  const baseTotal =
+    cnc + edge + laminate + assembly + hardware + pocket + qc;
 
-    + carpentryTimes.qc.project;
-
-  const subtotal =
-      cnc
-    + edge
-    + laminate
-    + assembly
-    + hardware
-    + pocket
-    + qc;
-
-  const totalMinutes =
-      subtotal
-      * complexityFactor
-      * projectFactor;
+  const totalMinutes = baseTotal * factor;
 
   return {
+    level,
+    factor,
 
     cnc,
     edge,
@@ -90,14 +70,8 @@ export function calculateCarpentry(input = {}) {
     pocket,
     qc,
 
-    subtotal,
-
-    complexityFactor,
-    projectFactor,
-
+    baseTotal,
     totalMinutes,
-
-    totalHours:
-      +(totalMinutes / 60).toFixed(2)
+    totalHours: +(totalMinutes / 60).toFixed(2)
   };
 }
