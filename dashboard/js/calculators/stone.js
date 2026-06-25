@@ -69,12 +69,18 @@ export function calculateStone(data) {
     (setup + edge + cutouts + led + frame) * f;
 
   return {
-    setup,
-    edge,
-    cutouts,
-    led,
-    frame,
-    totalMinutes,
-    totalHours: +(totalMinutes / 60).toFixed(2)
-  };
+
+  setup,
+  edge,
+  cutouts,
+  led,
+  frame,
+
+  levelFactor:
+      levelFactor[data.level],
+
+  totalMinutes: total,
+  totalHours:
+      +(total / 60).toFixed(2)
+};
 }
