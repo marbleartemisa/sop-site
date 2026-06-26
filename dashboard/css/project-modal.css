@@ -73,6 +73,8 @@
     align-items: center;
 
     margin-bottom: 16px;
+    flex-shrink: 0;
+   
 }
 
 .modal-header h2 {
@@ -613,4 +615,41 @@
 
     min-height:0;
 }
+/* =========================================
+   ERP SCROLL SYSTEM (PRO LEVEL)
+========================================= */
 
+.column-left,
+.column-center,
+.column-right{
+
+    display:flex;
+    flex-direction:column;
+
+    height:100%;
+}
+
+/* HEADER NO SE MUEVE */
+.modal-header,
+.section-title{
+
+    flex-shrink:0;
+}
+
+/* BODY SCROLL AREA AUTOMÁTICO */
+.column-left,
+.column-center,
+.column-right{
+
+    overflow:hidden;
+}
+
+/* TODO EL CONTENIDO INTERNO SCROLLEABLE */
+.column-left > div,
+.column-center > div,
+.column-right > div{
+
+    overflow-y:auto;
+    min-height:0;
+    flex:1;
+}
