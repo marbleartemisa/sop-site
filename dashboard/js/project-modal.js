@@ -184,41 +184,189 @@ export function renderCarpentryResults(data = {}) {
   if (!data) return "";
 
   const {
+
     cnc = 0,
+
     edge = 0,
+
     laminate = 0,
+
+    paint = 0,
+
+    glass = 0,
+
+    lighting = 0,
+
     assembly = 0,
+
     hardware = 0,
+
     pocket = 0,
+
     qc = 0,
+
     totalMinutes = 0,
+
     totalHours = 0
+
   } = data;
 
   return `
+
     <div class="result-panel">
 
-      <div class="result-title">🪵 Carpentry</div>
-
-      <div class="metric">CNC Cutting: <b>${cnc.toFixed(1)} min</b></div>
-      <div class="metric">Edge Banding: <b>${edge.toFixed(1)} min</b></div>
-      <div class="metric">Laminate: <b>${laminate.toFixed(1)} min</b></div>
-      <div class="metric">Assembly: <b>${assembly.toFixed(1)} min</b></div>
-      <div class="metric">Hardware: <b>${hardware.toFixed(1)} min</b></div>
-      <div class="metric">Pocket Systems: <b>${pocket.toFixed(1)} min</b></div>
-      <div class="metric">Quality Control: <b>${qc.toFixed(1)} min</b></div>
-
-      <hr>
-
-      <div class="metric">
-        TOTAL: <b>${totalMinutes.toFixed(1)} min</b>
+      <div class="result-title">
+        🪵 Carpentry Simulation
       </div>
 
-      <div class="metric">
-        HOURS: <b>${totalHours} hrs</b>
+      <!-- CNC -->
+
+      <div class="result-group">
+
+        <div class="group-title">
+          ⚙️ CNC
+        </div>
+
+        <div class="metric">
+          <span>Panel Cutting</span>
+          <b>${cnc.toFixed(1)} min</b>
+        </div>
+
+      </div>
+
+      <!-- PANEL PROCESSING -->
+
+      <div class="result-group">
+
+        <div class="group-title">
+          🟦 Panel Processing
+        </div>
+
+        <div class="metric">
+          <span>Edge Banding</span>
+          <b>${edge.toFixed(1)} min</b>
+        </div>
+
+        <div class="metric">
+          <span>Lamination</span>
+          <b>${laminate.toFixed(1)} min</b>
+        </div>
+
+      </div>
+
+      <!-- EXTERNAL SERVICES -->
+
+      <div class="result-group">
+
+        <div class="group-title">
+          🎨 External Services
+        </div>
+
+        <div class="metric">
+          <span>Paint</span>
+          <b>${paint.toFixed(1)} min</b>
+        </div>
+
+        <div class="metric">
+          <span>Glass</span>
+          <b>${glass.toFixed(1)} min</b>
+        </div>
+
+        <div class="metric">
+          <span>LED Lighting</span>
+          <b>${lighting.toFixed(1)} min</b>
+        </div>
+
+      </div>
+
+      <!-- ASSEMBLY -->
+
+      <div class="result-group">
+
+        <div class="group-title">
+          🔨 Assembly
+        </div>
+
+        <div class="metric">
+          <span>Cabinets / Drawers</span>
+          <b>${assembly.toFixed(1)} min</b>
+        </div>
+
+      </div>
+
+      <!-- HARDWARE -->
+
+      <div class="result-group">
+
+        <div class="group-title">
+          🧰 Hardware
+        </div>
+
+        <div class="metric">
+          <span>Hardware Installation</span>
+          <b>${hardware.toFixed(1)} min</b>
+        </div>
+
+      </div>
+
+      <!-- POCKET -->
+
+      <div class="result-group">
+
+        <div class="group-title">
+          🚪 Pocket Systems
+        </div>
+
+        <div class="metric">
+          <span>Pocket Mechanisms</span>
+          <b>${pocket.toFixed(1)} min</b>
+        </div>
+
+      </div>
+
+      <!-- QC -->
+
+      <div class="result-group">
+
+        <div class="group-title">
+          ✔ Quality Control
+        </div>
+
+        <div class="metric">
+          <span>Inspection</span>
+          <b>${qc.toFixed(1)} min</b>
+        </div>
+
+      </div>
+
+      <!-- TOTAL -->
+
+      <div class="result-group total-group">
+
+        <div class="group-title">
+          📊 Project Total
+        </div>
+
+        <div class="metric total-line">
+
+          <span><strong>Total Minutes</strong></span>
+
+          <strong>${totalMinutes.toFixed(1)} min</strong>
+
+        </div>
+
+        <div class="metric total-line">
+
+          <span><strong>Total Hours</strong></span>
+
+          <strong>${totalHours.toFixed(2)} hrs</strong>
+
+        </div>
+
       </div>
 
     </div>
+
   `;
 }
 
@@ -620,6 +768,12 @@ function carpentryTemplate() {
           <input id="glassSqFt" type="number" min="0">
           <small>External glass service</small>
         </div>
+
+        <div class="mini-input">
+          <label>LED Lighting LF</label>
+          <input id="lightingLF" type="number"> 
+          <small> 1.8 min / LF </small>
+      </div>
 
       </div>
 
