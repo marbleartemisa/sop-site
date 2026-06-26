@@ -629,12 +629,6 @@
     height:100%;
 }
 
-/* HEADER NO SE MUEVE */
-.modal-header,
-.section-title{
-
-    flex-shrink:0;
-}
 
 /* BODY SCROLL AREA AUTOMÁTICO */
 .column-left,
