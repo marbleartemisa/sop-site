@@ -537,3 +537,75 @@
   font-weight:800;
   color:#58a6ff;
 }
+
+/*==============================*/
+/* RESULT GROUPS                */
+/*==============================*/
+
+.result-group{
+
+    margin-top:16px;
+
+    padding-top:12px;
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+}
+
+.group-title{
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#5fb3ff;
+
+    margin-bottom:8px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+}
+
+.metric{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:4px 0;
+
+    font-size:13px;
+
+}
+
+.metric span{
+
+    color:#d7dbe3;
+
+}
+
+.metric b{
+
+    color:#ffffff;
+
+}
+
+.total-group{
+
+    margin-top:22px;
+
+    border-top:2px solid rgba(255,255,255,.18);
+
+}
+
+.total-line{
+
+    font-size:15px;
+
+    font-weight:700;
+
+}
