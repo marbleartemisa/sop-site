@@ -5,14 +5,11 @@ import { calculateStone } from "./calculators/stone.js";
 // CORE SIMULATION
 //==================================================
 
-function simulate(state) {
+function simulate(state = {}) {
 
     const result = {
-
         carpentry: null,
-
         stone: null,
-
         totalMinutes: 0
     };
 
@@ -20,30 +17,28 @@ function simulate(state) {
     // CARPENTRY
     //------------------------------------------------
 
-    if (state.carpentry) {
+    if (state.carpentry && Object.keys(state.carpentry).length) {
 
         const carpentryResult =
             calculateCarpentry(state.carpentry);
 
         result.carpentry = carpentryResult;
 
-        result.totalMinutes +=
-            carpentryResult.totalMinutes;
+        result.totalMinutes += (carpentryResult.totalMinutes || 0);
     }
 
     //------------------------------------------------
     // STONE
     //------------------------------------------------
 
-    if (state.stone) {
+    if (state.stone && Object.keys(state.stone).length) {
 
         const stoneResult =
             calculateStone(state.stone);
 
         result.stone = stoneResult;
 
-        result.totalMinutes +=
-            stoneResult.totalMinutes;
+        result.totalMinutes += (stoneResult.totalMinutes || 0);
     }
 
     return result;
@@ -53,15 +48,12 @@ function simulate(state) {
 // PUBLIC
 //==================================================
 
-export function simulateProject(state) {
+export function simulateProject(state = {}) {
 
     const result = simulate(state);
 
     return {
-
         ...result,
-
-        totalHours:
-            +(result.totalMinutes / 60).toFixed(2)
+        totalHours: +(result.totalMinutes / 60).toFixed(2)
     };
 }
