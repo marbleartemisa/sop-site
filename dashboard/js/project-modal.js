@@ -385,30 +385,63 @@ export function renderStoneResults(data = {}) {
   } = data;
 
   return `
-    <div class="result-panel">
+    <div class="result-panel stone-results">
 
       <div class="result-title">🪨 Stone</div>
 
-      <div class="metric">Machine Setup: <b>${setup.toFixed(1)} min</b></div>
-      <div class="metric">Edge Work: <b>${edge.toFixed(1)} min</b></div>
-      <div class="metric">Cutouts: <b>${cutouts.toFixed(1)} min</b></div>
-      <div class="metric">LED Work: <b>${led.toFixed(1)} min</b></div>
-      <div class="metric">Metal Frame: <b>${frame.toFixed(1)} min</b></div>
+      <!-- CORE -->
+      <div class="result-group">
+        <div class="group-title">Production</div>
 
-      <hr>
+        <div class="metric">
+          <span>Machine Setup</span>
+          <b>${setup.toFixed(1)} min</b>
+        </div>
 
-      <div class="metric">
-        TOTAL: <b>${totalMinutes.toFixed(1)} min</b>
+        <div class="metric">
+          <span>Edge Work</span>
+          <b>${edge.toFixed(1)} min</b>
+        </div>
+
+        <div class="metric">
+          <span>Cutouts</span>
+          <b>${cutouts.toFixed(1)} min</b>
+        </div>
       </div>
 
-      <div class="metric">
-        HOURS: <b>${totalHours} hrs</b>
+      <!-- EXTRA -->
+      <div class="result-group">
+        <div class="group-title">Extras</div>
+
+        <div class="metric">
+          <span>LED Work</span>
+          <b>${led.toFixed(1)} min</b>
+        </div>
+
+        <div class="metric">
+          <span>Metal Frame</span>
+          <b>${frame.toFixed(1)} min</b>
+        </div>
+      </div>
+
+      <!-- TOTAL -->
+      <div class="result-group total-block">
+
+        <div class="metric total-line">
+          <span><strong>TOTAL</strong></span>
+          <strong>${totalMinutes.toFixed(1)} min</strong>
+        </div>
+
+        <div class="metric total-line">
+          <span><strong>HOURS</strong></span>
+          <strong>${Number(totalHours).toFixed(2)} hrs</strong>
+        </div>
+
       </div>
 
     </div>
   `;
 }
-
 /* =========================
    RESULTS
 ========================= */
