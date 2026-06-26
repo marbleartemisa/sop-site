@@ -700,8 +700,6 @@ function carpentryTemplate() {
   return `
     <div class="parameter-card">
 
-      <h4>⚙️ Carpentry</h4>
-
       <!-- SETTINGS -->
       <div class="form-grid-2">
 
@@ -862,8 +860,6 @@ function carpentryTemplate() {
 function stoneTemplate() {
 
   return `
-
-    <h4>🪨 Stone </h4>
 
     <!-- =======================================
          PROJECT SETTINGS
