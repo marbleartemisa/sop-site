@@ -402,22 +402,47 @@
   color: #58a6ff;
 }
 
-.result-total {
+.result-total{
 
-  margin-top: 20px;
+    margin-top:22px;
 
-  padding: 15px;
+    padding:22px;
 
-  background: #10182d;
+    background:linear-gradient(
+        180deg,
+        #111b31,
+        #0c1324
+    );
 
-  border-radius: 10px;
+    border:1px solid rgba(88,166,255,.25);
+
+    border-radius:14px;
+
+    text-align:center;
+
 }
 
-.hours {
+.hours{
 
-  font-size: 24px;
+    font-size:34px;
 
-  font-weight: bold;
+    font-weight:800;
+
+    color:#58a6ff;
+
+    margin-top:10px;
+
+}
+.result-total h3{
+
+    font-size:13px;
+
+    letter-spacing:.12em;
+
+    text-transform:uppercase;
+
+    color:#8ea2c8;
+
 }
 
 .column-right{
