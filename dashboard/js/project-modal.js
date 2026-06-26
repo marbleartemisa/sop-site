@@ -700,7 +700,7 @@ function carpentryTemplate() {
   return `
     <div class="parameter-card">
 
-      <h4>⚙️ Carpentry Production</h4>
+      <h4>⚙️ Carpentry</h4>
 
       <!-- SETTINGS -->
       <div class="form-grid-2">
@@ -862,101 +862,171 @@ function carpentryTemplate() {
 function stoneTemplate() {
 
   return `
-    <div class="parameter-card">
 
-    <h4>🔩 Stone Production</h4>
+    <h4>🪨 Stone </h4>
 
-      <div class="form-grid-2">
+    <!-- =======================================
+         PROJECT SETTINGS
+    ======================================== -->
 
-        <div class="mini-input">
-          <label>Machine</label>
-          <select id="machine">
-            <option value="BRETON">Breton CNC</option>
-            <option value="COCH">Coch CNC</option>
-          </select>
-        </div>
+    <div class="form-grid-2">
 
-        <div class="mini-input">
-          <label>Complexity</label>
-          <select id="stoneLevel">
-            <option value="1">Level 1</option>
-            <option value="2" selected>Level 2 Standard</option>
-            <option value="3">Level 3 Luxury</option>
-          </select>
-        </div>
+      <div class="mini-input">
+        <label>Machine</label>
 
-        <div class="mini-input">
-          <label>Material</label>
-          <select id="material">
-            <option value="Quartz">Quartz</option>
-            <option value="Granite">Granite</option>
-            <option value="Marble">Marble</option>
-            <option value="Quartzite">Quartzite</option>
-            <option value="Porcelain">Porcelain</option>
-            <option value="Dekton">Dekton</option>
-          </select>
-        </div>
-
-        <div class="mini-input">
-          <label>Thickness</label>
-          <select id="thickness">
-            <option value="6">6 mm</option>
-            <option value="12">12 mm</option>
-            <option value="20">20 mm</option>
-            <option value="30">30 mm</option>
-          </select>
-        </div>
+        <select id="machine">
+          <option value="BRETON">Breton CNC</option>
+          <option value="COCH">Coch CNC</option>
+        </select>
 
       </div>
 
-      <div class="section-subtitle">
-        Fabrication
+      <div class="mini-input">
+
+        <label>Complexity</label>
+
+        <select id="stoneLevel">
+          <option value="1">Level 1</option>
+          <option value="2" selected>Level 2 Standard</option>
+          <option value="3">Level 3 Luxury</option>
+        </select>
+
       </div>
 
-      <div class="mini-grid">
+      <div class="mini-input">
 
-        <div class="mini-input">
-          <label>SqFt</label>
-          <input id="sqft" type="number" min="0">
-          <small>Stone area</small>
-        </div>
+        <label>Material</label>
 
-        <div class="mini-input">
-          <label>Slabs</label>
-          <input id="slabs" type="number" min="0">
-          <small>Machine setup applies</small>
-        </div>
+        <select id="material">
+          <option value="Quartz">Quartz</option>
+          <option value="Granite">Granite</option>
+          <option value="Marble">Marble</option>
+          <option value="Quartzite">Quartzite</option>
+          <option value="Porcelain">Porcelain</option>
+          <option value="Dekton">Dekton</option>
+        </select>
 
-        <div class="mini-input">
-          <label>Edge LF</label>
-          <input id="stoneEdgeLF" type="number" min="0">
-          <small>Edge finish LF</small>
-        </div>
+      </div>
 
-        <div class="mini-input">
-          <label>Cutouts</label>
-          <input id="cutouts" type="number" min="0">
-          <small>Sink / Cooktop / Faucet</small>
-        </div>
+      <div class="mini-input">
 
-        <div class="section-title">Stone Extras</div>
+        <label>Thickness</label>
 
-            <div class="form-grid-2">
-            
-              <div class="mini-input">
-                <label>LED LF</label>
-                <input id="led" type="number">
-              </div>
-            
-              <div class="mini-input">
-                <label>Metal Frame LF</label>
-                <input id="metalFrame" type="number">
-              </div>
-            
-            </div>
+        <select id="thickness">
+          <option value="6">6 mm</option>
+          <option value="12">12 mm</option>
+          <option value="20">20 mm</option>
+          <option value="30">30 mm</option>
+        </select>
 
       </div>
 
     </div>
+
+
+    <!-- =======================================
+         FABRICATION
+    ======================================== -->
+
+    <div class="section-subtitle">
+      Fabrication
+    </div>
+
+    <div class="mini-grid">
+
+      <div class="mini-input">
+
+        <label>SqFt</label>
+
+        <input
+          id="sqft"
+          type="number"
+          min="0">
+
+        <small>Stone surface area</small>
+
+      </div>
+
+      <div class="mini-input">
+
+        <label>Slabs</label>
+
+        <input
+          id="slabs"
+          type="number"
+          min="0">
+
+        <small>Machine setup quantity</small>
+
+      </div>
+
+      <div class="mini-input">
+
+        <label>Edge LF</label>
+
+        <input
+          id="stoneEdgeLF"
+          type="number"
+          min="0">
+
+        <small>Linear feet of edge</small>
+
+      </div>
+
+      <div class="mini-input">
+
+        <label>Cutouts</label>
+
+        <input
+          id="cutouts"
+          type="number"
+          min="0">
+
+        <small>Sink • Cooktop • Faucet</small>
+
+      </div>
+
+    </div>
+
+
+    <!-- =======================================
+         SPECIAL OPERATIONS
+    ======================================== -->
+
+    <div class="section-subtitle">
+      Special Operations
+    </div>
+
+    <div class="form-grid-2">
+
+      <div class="mini-input">
+
+        <label>LED Lighting LF</label>
+
+        <input
+          id="led"
+          type="number"
+          min="0">
+
+        <small>Linear feet of LED channel</small>
+
+      </div>
+
+      <div class="mini-input">
+
+        <label>Metal Frame LF</label>
+
+        <input
+          id="metalFrame"
+          type="number"
+          min="0">
+
+        <small>Linear feet of metal frame</small>
+
+      </div>
+
+    </div>
+
   `;
+
 }
