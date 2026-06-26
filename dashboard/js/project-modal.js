@@ -486,7 +486,7 @@ function renderResults() {
 
     <div class="result-total">
 
-      <h3>Total Simulation</h3>
+      <h3>Project Total</h3>
 
       <div class="hours">
 
