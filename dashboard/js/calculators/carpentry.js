@@ -46,6 +46,23 @@ export function calculateCarpentry(input = {}) {
   const laminate =
     (input.laminateSqFt || 0) * carpentryTimes.laminate.sqft;
 
+  // PAINT
+
+      const paint =
+          (input.paintSqFt || 0)
+          * carpentryTimes.paint.sqft;
+      
+      // GLASS
+      
+      const glass =
+          (input.glassSqFt || 0)
+          * carpentryTimes.glass.sqft;
+      
+      // LED LIGHTING
+      
+      const lighting =
+          (input.lightingLF || 0)
+          * carpentryTimes.lighting.lf;
   // =========================
   // ASSEMBLY
   // =========================
@@ -81,8 +98,17 @@ export function calculateCarpentry(input = {}) {
   // TOTAL
   // =========================
   const baseTotal =
-    cnc + edge + laminate + assembly + hardware + pocket + qc;
-
+    cnc +
+    edge +
+    laminate +
+    paint +
+    glass +
+    lighting +
+    assembly +
+    hardware +
+    pocket +
+    qc;
+  
   const totalMinutes =
     baseTotal * factor;
 
@@ -97,8 +123,13 @@ export function calculateCarpentry(input = {}) {
     edgeQC,
     edge,
 
+    
     laminate,
+    paint,
+    glass,
+    lighting,
     assembly,
+    
     hardware,
     pocket,
     qc,
