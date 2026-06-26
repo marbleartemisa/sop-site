@@ -421,19 +421,37 @@ export function renderStoneResults(data = {}) {
       </div>
 
       <!-- TOTAL -->
-      <div class="result-group total-block">
-
-        <div class="metric total-line">
-          <span><strong>TOTAL</strong></span>
-          <strong>${totalMinutes.toFixed(1)} min</strong>
-        </div>
-
-        <div class="metric total-line">
-          <span><strong>HOURS</strong></span>
-          <strong>${Number(totalHours).toFixed(2)} hrs</strong>
-        </div>
-
-      </div>
+          <div class="summary-card">
+         
+             <div class="summary-title">
+                 Stone Total
+             </div>
+         
+             <div class="summary-row">
+         
+                 <span class="summary-label">
+                     Minutes
+                 </span>
+         
+                 <span class="summary-value">
+                     ${totalMinutes.toFixed(1)} min
+                 </span>
+         
+             </div>
+         
+             <div class="summary-row">
+         
+                 <span class="summary-label">
+                     Hours
+                 </span>
+         
+                 <span class="summary-value">
+                     ${totalHours.toFixed(2)} hrs
+                 </span>
+         
+             </div>
+         
+         </div>
 
     </div>
   `;
