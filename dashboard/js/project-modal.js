@@ -54,70 +54,100 @@ function render() {
    TEMPLATE
 ========================= */
 function buildModalHTML() {
+
   return `
+
     <div class="simulation-modal">
+
       <div class="simulation-container">
 
-        <!-- COLUMN 1 -->
-        <div class="column-left">
+        <!-- =======================================
+             COLUMN 1
+        ======================================== -->
+        <aside class="column-left">
 
           <div class="modal-header">
+
             <h2>New Project</h2>
+
             <button id="btnCloseModal">✕</button>
+
           </div>
 
           <input
-            id="projectName"
-            type="text"
-            placeholder="Customer"
+              id="projectName"
+              type="text"
+              placeholder="Customer"
           />
 
           <div class="section-title">
-            Project Stages
+              Project Stages
           </div>
 
           <div id="stagesContainer"></div>
 
           <button id="btnSimulate">
-            Create Project
+              Create Project
           </button>
 
-        </div>
+        </aside>
 
-        <!-- COLUMN 2 -->
-            <div class="column-center">
-            
-              <div class="section-title">Parameters</div>
-            
-              <!-- CARPENTRY CARD -->
-              <div class="parameter-card">
-                <h4>🪵 Carpentry</h4>
-            
-                <div id="carpentrySection"></div>
-              </div>
 
-              <!-- STONE CARD -->
-              <div class="parameter-card">
-                <h4>🪨 Stone</h4>
-            
-                <div id="stoneSection"></div>
-              </div>
-            
-            </div>
+        <!-- =======================================
+             COLUMN 2
+        ======================================== -->
 
-        <!-- COLUMN 3 -->
-        <div class="column-right">
+        <main class="column-center">
 
           <div class="section-title">
-            Simulation
+              Parameters
           </div>
 
-          <div id="simulationResult"></div>
+          <div id="parameterContent">
 
-        </div>
+              <!-- Carpentry -->
+
+              <div class="parameter-card">
+
+                  <h4>🪵 Carpentry</h4>
+
+                  <div id="carpentrySection"></div>
+
+              </div>
+
+              <!-- Stone -->
+
+              <div class="parameter-card">
+
+                  <h4>🪨 Stone</h4>
+
+                  <div id="stoneSection"></div>
+
+              </div>
+
+          </div>
+
+        </main>
+
+
+        <!-- =======================================
+             COLUMN 3
+        ======================================== -->
+
+        <aside class="column-right">
+
+            <div class="section-title">
+                Simulation
+            </div>
+
+            <div id="simulationResult"></div>
+
+        </aside>
 
       </div>
+
     </div>
+
   `;
 }
 
