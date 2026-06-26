@@ -895,6 +895,22 @@ function stoneTemplate() {
           <small>Sink / Cooktop / Faucet</small>
         </div>
 
+        <div class="section-title">Stone Extras</div>
+
+            <div class="form-grid-2">
+            
+              <div class="mini-input">
+                <label>LED LF</label>
+                <input id="led" type="number">
+              </div>
+            
+              <div class="mini-input">
+                <label>Metal Frame LF</label>
+                <input id="metalFrame" type="number">
+              </div>
+            
+            </div>
+
       </div>
 
     </div>
