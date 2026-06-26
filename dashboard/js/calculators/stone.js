@@ -13,9 +13,12 @@ const stoneLevelFactor = {
 // MACHINE SETUP
 // =========================
 function setupMachine(machine, slabs = 0) {
+
+  const s = slabs || 0;
+
   return machine === "BRETON"
-    ? slabs * STONE.BRETON_SETUP
-    : slabs * STONE.COCH_SETUP;
+    ? s * STONE.BRETON_SETUP
+    : s * STONE.COCH_SETUP;
 }
 
 // =========================
@@ -29,24 +32,44 @@ export function calculateStone(input = {}) {
   const edgeType =
     STONE.EDGE_TYPES[input.edgeType] || 4;
 
-  const setup = setupMachine(input.machine, input.slabs);
+  // =========================
+  // SETUP
+  // =========================
+  const setup =
+    setupMachine(input.machine, input.slabs);
 
+  // =========================
+  // EDGE WORK
+  // =========================
   const edge =
     (input.edgeLF || 0) * edgeType;
 
+  // =========================
+  // CUTOUTS
+  // =========================
   const cutouts =
     (input.cutouts || 0) * 20;
 
+  // =========================
+  // LED (future input, safe default)
+  // =========================
   const led =
     (input.led || 0) * 60;
 
+  // =========================
+  // METAL FRAME
+  // =========================
   const frame =
     (input.metalFrame || 0) * 120;
 
+  // =========================
+  // BASE TOTAL
+  // =========================
   const baseTotal =
     setup + edge + cutouts + led + frame;
 
-  const totalMinutes = baseTotal * factor;
+  const totalMinutes =
+    baseTotal * factor;
 
   return {
     level,
