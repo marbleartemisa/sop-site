@@ -14,11 +14,22 @@ export const carpentryTimes = {
     sqft: 3.5
   },
 
-  assembly: {
-    cabinet: 10,
-    drawer: 20,
-    pantry: 20
+  paint: {
+    sqft: 2.5
   },
+  
+  glass: {
+      sqft: 2.0
+  },
+  
+  lighting: {
+      lf: 1.8
+  },
+    assembly: {
+      cabinet: 10,
+      drawer: 20,
+      pantry: 20
+    },
 
   hardware: {
     trashcan: 25,
