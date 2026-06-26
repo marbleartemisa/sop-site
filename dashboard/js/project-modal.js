@@ -433,7 +433,10 @@ function buildState() {
       pocketPantry: getValue("pocketPantry") || 0,
 
       edgeLF: getValue("edgeLF"),
-      laminateSqFt: getValue("laminateSqFt") || 0
+      laminateSqFt: getValue("laminateSqFt") || 0, 
+      paintSqFt:getValue("paintSqFt"),
+      glassSqFt:getValue("glassSqFt"),
+      lightingLF:getValue("lightingLF"),
     },
 
     // =========================
