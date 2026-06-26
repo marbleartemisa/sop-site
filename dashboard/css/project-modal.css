@@ -105,14 +105,12 @@
 ========================================================= */
 
 .section-title {
-
-    color: white;
-
-    font-size: 22px;
-
+    font-size: 14px;
     font-weight: 700;
-
-    margin-bottom: 12px;
+    color: #7aa7ff;
+    margin: 10px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 /* =========================================================
@@ -316,14 +314,12 @@
   flex-direction:column;
 }
 
-.mini-input label{
-
-  color:white;
-  font-size:13px;
-  font-weight:600;
-
-  margin-bottom:4px;
+.mini-input label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #cbd5e1;
 }
+
 
 .mini-input small{
 
@@ -442,19 +438,12 @@
     border-color: rgba(79,140,255,.35);
 }
 
-.parameter-card{
-    background:#111c33;
-    border:1px solid rgba(79,140,255,.25);
-    border-radius:12px;
-    padding:20px;
-    margin-bottom:20px;
+.column-right {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.column-right{
-    position:sticky;
-    top:16px;
-    align-self:start;
-}
 
 #modal-container input:not([type="checkbox"]),
 #modal-container select {
@@ -497,14 +486,6 @@
   font-weight:700;
   margin-bottom:10px;
   color:#e5e7eb;
-}
-
-.metric{
-  font-size:13px;
-  display:flex;
-  justify-content:space-between;
-  padding:4px 0;
-  color:#cbd5e1;
 }
 
 .result-panel hr{
@@ -550,6 +531,12 @@
 
     border-top:1px solid rgba(255,255,255,.08);
 
+}
+
+#simulationResult {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .group-title{
