@@ -136,6 +136,12 @@
 
 }
 
+#projectName{
+    height:46px;
+    font-size:15px;
+    margin-bottom:18px;
+}
+
 /* =========================================================
    STAGES
 ========================================================= */
@@ -747,5 +753,73 @@
     padding-right:8px;
 
     min-height:0;
+
+}
+
+/*==================================
+  SUBTOTAL CARD
+==================================*/
+
+.summary-card{
+
+    margin-top:18px;
+
+    padding:16px;
+
+    background:#11192d;
+
+    border:1px solid rgba(88,166,255,.18);
+
+    border-radius:12px;
+
+}
+
+.summary-title{
+
+    text-align:center;
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.10em;
+
+    color:#8ea2c8;
+
+    margin-bottom:12px;
+
+    font-weight:700;
+
+}
+
+.summary-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin:8px 0;
+
+}
+
+.summary-label{
+
+    color:#d6dceb;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.summary-value{
+
+    color:#ffffff;
+
+    font-size:18px;
+
+    font-weight:700;
 
 }
