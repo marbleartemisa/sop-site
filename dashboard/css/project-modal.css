@@ -32,9 +32,7 @@
 
     overflow: hidden;
 
-    box-shadow:
-    0 35px 90px rgba(0,0,0,.65),
-    0 10px 25px rgba(0,0,0,.35);
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
 }
 
 /* =========================================================
@@ -59,6 +57,24 @@
     background: #0f172a;
 }
 
+/* =========================================================
+   COLUMNS
+========================================================= */
+
+.column-left,
+.column-center,
+.column-right {
+
+    background: #18233d;
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    border-radius: 10px;
+
+    padding: 16px;
+
+    overflow-y: auto;
+}
 
 /* =========================================================
    HEADER
@@ -73,8 +89,6 @@
     align-items: center;
 
     margin-bottom: 16px;
-    flex-shrink: 0;
-   
 }
 
 .modal-header h2 {
@@ -130,8 +144,6 @@
     flex-direction: column;
 
     gap: 8px;
-
-    margin-top: 10px;
 }
 
 .stage-item {
@@ -399,18 +411,21 @@
   font-weight: bold;
 }
 
+.column-right{
+    position: sticky;
+    top: 16px;
+    align-self: start;
+    height: fit-content;
+}
+
+
 .parameter-card{
 
-    margin-top:10px;
-
     background:#101a30;
-
     border:1px solid rgba(79,140,255,.20);
-
     border-radius:14px;
 
     padding:16px;
-
     margin-bottom:14px;
 
     box-shadow:0 6px 16px rgba(0,0,0,.25);
@@ -422,6 +437,13 @@
     transform: translateY(-1px);
     border-color: rgba(79,140,255,.35);
 }
+
+.column-right {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 
 #modal-container input:not([type="checkbox"]),
 #modal-container select {
@@ -575,61 +597,3 @@
 
 }
 
-/* ==========================================
-   COLUMN SCROLL AREAS-UNIFICADO
-========================================== */
-
-.column-left,
-.column-center,
-.column-right {
-
-    background: #18233d;
-
-    border: 1px solid rgba(255,255,255,.08);
-
-    border-top: 2px solid rgba(79,140,255,.20);
-
-    border-radius: 10px;
-
-    padding: 22px;
-
-    overflow: hidden;
-
-    display: flex;
-    flex-direction: column;
-}
-
-.column-left > *,
-.column-center > *,
-.column-right > *{
-    flex-shrink: 0;
-}
-
-/* área que hace scroll */
-
-#stagesContainer,
-.column-center > .parameter-card:first-of-type,
-#simulationResult{
-
-    overflow-y:auto;
-
-    min-height:0;
-}
-
-/* ================================
-   SCROLL CONTROL REAL (SAFE)
-================================ */
-
-#stagesContainer{
-    max-height: 100%;
-    overflow-y: auto;
-}
-
-.parameter-card{
-    flex-shrink: 0;
-}
-
-#simulationResult{
-    max-height: 100%;
-    overflow-y: auto;
-}
