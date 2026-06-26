@@ -340,33 +340,29 @@ export function renderCarpentryResults(data = {}) {
       </div>
 
       <!-- TOTAL -->
-
-      <div class="result-group total-group">
-
-        <div class="group-title">
-          📊 Project Total
-        </div>
-
-        <div class="metric total-line">
-
-          <span><strong>Total Minutes</strong></span>
-
-          <strong>${totalMinutes.toFixed(1)} min</strong>
-
-        </div>
-
-        <div class="metric total-line">
-
-          <span><strong>Total Hours</strong></span>
-
-          <strong>${totalHours.toFixed(2)} hrs</strong>
-
-        </div>
-
+      <div class="summary-card">
+       <div class="summary-title">
+         Carpentry Total
+       </div>
+       
+          <div class="summary-row">
+              <span class="summary-label">
+                  Minutes
+              </span>
+              <span class="summary-value">
+                  ${totalMinutes.toFixed(1)} min
+              </span>
+          </div>
+          <div class="summary-row">
+           <span class="summary-label">
+               Hours
+           </span>
+           <span class="summary-value">
+               ${totalHours.toFixed(2)} hrs
+           </span>
+         </div>
       </div>
-
     </div>
-
   `;
 }
 
