@@ -642,6 +642,21 @@
     overflow:hidden;
 }
 
+.column-center{
+
+    background:#18233d;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:14px;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+
+}
+
 /*----------------------------------
  HEADERS FIJOS
 -----------------------------------*/
@@ -729,4 +744,16 @@
 .result-panel{
 
     margin-bottom:18px;
+}
+
+#parameterContent{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    padding-right:8px;
+
+    min-height:0;
+
 }
