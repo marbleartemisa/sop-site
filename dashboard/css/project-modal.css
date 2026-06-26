@@ -667,16 +667,31 @@
 
 .column-center{
 
+    display:flex;
+
+    flex-direction:column;
+
     background:#18233d;
 
     border:1px solid rgba(255,255,255,.08);
 
-    border-radius:14px;
-
-    display:flex;
-    flex-direction:column;
+    border-radius:12px;
 
     overflow:hidden;
+
+}
+
+#parameterContent{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    overflow-x:hidden;
+
+    padding-right:10px;
+
+    min-height:0;
 
 }
 
