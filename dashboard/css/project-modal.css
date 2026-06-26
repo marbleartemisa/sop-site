@@ -615,35 +615,21 @@
 
     min-height:0;
 }
-/* =========================================
-   ERP SCROLL SYSTEM (PRO LEVEL)
-========================================= */
 
-.column-left,
-.column-center,
-.column-right{
+/* ================================
+   SCROLL CONTROL REAL (SAFE)
+================================ */
 
-    display:flex;
-    flex-direction:column;
-
-    height:100%;
+#stagesContainer{
+    max-height: 100%;
+    overflow-y: auto;
 }
 
-
-/* BODY SCROLL AREA AUTOMÁTICO */
-.column-left,
-.column-center,
-.column-right{
-
-    overflow:hidden;
+.parameter-card{
+    flex-shrink: 0;
 }
 
-/* TODO EL CONTENIDO INTERNO SCROLLEABLE */
-.column-left > div,
-.column-center > div,
-.column-right > div{
-
-    overflow-y:auto;
-    min-height:0;
-    flex:1;
+#simulationResult{
+    max-height: 100%;
+    overflow-y: auto;
 }
