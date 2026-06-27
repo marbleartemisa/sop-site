@@ -854,94 +854,42 @@
 
 }
 
+/*========================================
+  GANTT PRO SYSTEM (FINAL CLEAN)
+========================================*/
+
+/* ROOT */
 #ganttView {
   margin-top: 12px;
+  height: 100%;
 }
 
-.gantt-project {
-  margin-bottom: 12px;
-  padding: 10px;
-  background: #0f172a;
-  border-radius: 10px;
-}
-
-.gantt-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: #60a5fa;
-  margin-bottom: 6px;
-}
-
-.gantt-bar {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  padding: 4px 0;
-  color: #cbd5e1;
-}
-.gantt-resource{
-  margin-bottom:16px;
-  padding:12px;
-  border-radius:10px;
-  background:#10182c;
-  border:1px solid rgba(255,255,255,.06);
-}
-
-.gantt-resource-title{
-  font-size:13px;
-  font-weight:700;
-  color:#7aa7ff;
-  margin-bottom:10px;
-}
-
-.gantt-bar{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:6px;
-}
-
-.gantt-label{
-  width:90px;
-  font-size:12px;
-  color:#cbd5e1;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.gantt-timeline{
-  flex:1;
-  height:10px;
-  background:#1f2a44;
-  border-radius:6px;
-  overflow:hidden;
-}
-
-.gantt-fill{
-  height:100%;
-  background:#4f8cff;
-  border-radius:6px;
-}
-
+/* WRAPPER */
 .gantt-pro {
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden;
   background: #0f172a;
   border-radius: 10px;
+  overflow: hidden;
 }
 
+/*========================
+  HEADER (TIMELINE)
+========================*/
 .gantt-header {
   display: grid;
   grid-auto-flow: column;
   gap: 2px;
-  padding: 6px;
+
+  padding: 8px;
   background: #111c33;
+
   position: sticky;
   top: 0;
   z-index: 10;
+
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .gantt-day {
@@ -950,40 +898,83 @@
   color: #94a3b8;
 }
 
+/*========================
+  BODY (SCROLL AREA)
+========================*/
 .gantt-body {
   overflow: auto;
   flex: 1;
 }
 
+/*========================
+  ROW (RESOURCE)
+========================*/
 .gantt-row {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 140px 1fr;
   align-items: center;
+
+  min-height: 44px;
+
   border-bottom: 1px solid rgba(255,255,255,0.05);
-  min-height: 42px;
 }
 
+.gantt-row:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+/* RESOURCE LABEL */
 .gantt-label {
-  padding: 6px;
+  padding: 8px;
   font-size: 12px;
   color: #cbd5e1;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/*========================
+  TRACK (TIMELINE AREA)
+========================*/
 .gantt-track {
   position: relative;
-  height: 28px;
+  height: 30px;
+
   background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+
+  overflow: hidden;
 }
 
+/*========================
+  BAR (TASK BLOCK)
+========================*/
 .gantt-bar {
   position: absolute;
+
   height: 18px;
-  top: 5px;
-  background: linear-gradient(90deg, #4f8cff, #2563eb);
-  border-radius: 6px;
+  top: 6px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 6px;
+
   font-size: 10px;
   color: white;
-  padding: 2px 6px;
+
+  background: linear-gradient(90deg, #4f8cff, #2563eb);
+  border-radius: 6px;
+
   overflow: hidden;
   white-space: nowrap;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* optional hover */
+.gantt-bar:hover {
+  filter: brightness(1.15);
+  cursor: pointer;
 }
