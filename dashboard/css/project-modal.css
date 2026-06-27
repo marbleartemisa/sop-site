@@ -63,17 +63,117 @@
 
 .column-left,
 .column-center,
-.column-right {
+.column-right{
 
-    background: #18233d;
+    display:flex;
+    flex-direction:column;
 
-    border: 1px solid rgba(255,255,255,.08);
+    min-height:0;
 
-    border-radius: 10px;
+    background:#18233d;
 
-    padding: 16px;
+    border:1px solid rgba(255,255,255,.08);
 
-    overflow-y: auto;
+    border-radius:12px;
+}
+
+/* =========================================================
+   LEFT COLUMN
+========================================================= */
+
+.column-left{
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+}
+
+/* =========================================================
+   CENTER COLUMN
+========================================================= */
+
+.column-center{
+
+    overflow:hidden;
+
+}
+
+/* =========================================================
+   RIGHT COLUMN
+========================================================= */
+
+.column-right{
+
+    overflow:hidden;
+
+}
+
+/* =========================================================
+   HEADERS
+========================================================= */
+
+.column-header{
+
+    flex-shrink:0;
+
+    padding-bottom:12px;
+
+    margin-bottom:12px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+    background:#18233d;
+
+    z-index:5;
+
+}
+
+/* =========================================================
+   SCROLL AREA
+========================================================= */
+
+.column-scroll{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow-y:auto;
+
+    overflow-x:hidden;
+
+    padding-right:8px;
+
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.column-scroll::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.column-scroll::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+.column-scroll::-webkit-scrollbar-thumb{
+
+    background:#4f8cff;
+
+    border-radius:20px;
+
+}
+
+.column-scroll::-webkit-scrollbar-thumb:hover{
+
+    background:#66a3ff;
+
 }
 
 /* =========================================================
@@ -230,23 +330,28 @@
     cursor: pointer;
 }
 
-#btnSimulate {
+#btnSimulate{
 
-    width: 100%;
+    width:100%;
 
-    margin-top: 20px;
+    margin-top:auto;
 
-    padding: 12px;
+    margin-bottom:10px;
 
-    border: none;
+    padding:12px;
 
-    border-radius: 10px;
+    border:none;
 
-    background: #4f8cff;
+    border-radius:10px;
 
-    color: white;
+    background:#4f8cff;
 
-    cursor: pointer;
+    color:white;
+
+    cursor:pointer;
+
+    flex-shrink:0;
+
 }
 
 /* =========================================================
@@ -462,19 +567,6 @@
 }
 
 
-
-.column-right{
-    position: sticky;
-    top: 16px;
-    align-self: start;
-    height: fit-content;
-}
-
-.column-right {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
 /* =========================
    SIMULATION UX FIX
 ========================= */
@@ -632,37 +724,6 @@
     min-height:0;
 }
 
-/*----------------------------------
- COLUMNAS
------------------------------------*/
-
-.column-left,
-.column-center,
-.column-right{
-
-    display:flex;
-    flex-direction:column;
-
-    min-height:0;
-
-    overflow:hidden;
-}
-
-.column-center{
-
-    display:flex;
-
-    flex-direction:column;
-
-    background:#18233d;
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:12px;
-
-    overflow:hidden;
-
-}
 
 #parameterContent{
 
@@ -678,60 +739,6 @@
 
 }
 
-/*----------------------------------
- HEADERS FIJOS
------------------------------------*/
-
-.column-header{
-
-    flex-shrink:0;
-
-    padding-bottom:12px;
-
-    margin-bottom:12px;
-
-    border-bottom:1px solid rgba(255,255,255,.08);
-
-    background:#18233d;
-
-    z-index:5;
-}
-
-/*----------------------------------
- AREA CON SCROLL
------------------------------------*/
-
-.column-scroll{
-
-    flex:1;
-
-    min-height:0;
-
-    overflow-y:auto;
-
-    padding-right:8px;
-}
-
-/*----------------------------------
- SCROLL BONITO
------------------------------------*/
-
-.column-scroll::-webkit-scrollbar{
-
-    width:8px;
-}
-
-.column-scroll::-webkit-scrollbar-track{
-
-    background:transparent;
-}
-
-.column-scroll::-webkit-scrollbar-thumb{
-
-    background:#3b82f6;
-
-    border-radius:20px;
-}
 
 /*----------------------------------
  STONE EXTRAS
