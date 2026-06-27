@@ -506,10 +506,8 @@ function renderResults() {
 
   if (!container) return;
 
-  const result =
-    simulateProject(
-      buildState()
-    );
+   const stateData = buildState();
+   const result = simulateProject(stateData);
 
   container.innerHTML = `
 
@@ -601,15 +599,13 @@ function onCreateProject() {
 
   const stateData = buildState();
 
-  const projectData =
-    createProject(stateData);
+  // reutilizamos simulación ya consistente
+  const projectData = createProject(stateData);
 
   console.log("PROJECT");
-
   console.log(projectData.project);
 
   console.log("TASKS");
-
   console.log(projectData.tasks);
 
 }
