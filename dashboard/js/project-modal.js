@@ -503,63 +503,41 @@ export function renderStoneResults(data = {}) {
 
 function renderResults() {
 
-  const container = document.getElementById("simulationResult");
+  const container =
+    document.getElementById("simulationResult");
+
   if (!container) return;
 
-  // =========================
-  // 1. STATE + SIMULATION
-  // =========================
   const state = buildState();
-  const result = simulateProject(state) || {};
+
+  const result = simulateProject(state);
 
   const carpentry = result.carpentry || {};
   const stone = result.stone || {};
 
   const totalHours =
-    Number.isFinite(result.totalHours)
-      ? result.totalHours
-      : 0;
+    Number(result.totalHours || 0);
 
-  // =========================
-  // 2. UI - SIMULATION PANEL
-  // =========================
   container.innerHTML = `
+
     ${renderCarpentryResults(carpentry)}
+
     ${renderStoneResults(stone)}
 
     <div class="result-total">
+
       <h3>Project Total</h3>
+
       <div class="hours">
+
         ${totalHours.toFixed(1)} hrs
+
       </div>
+
     </div>
+
   `;
-
-  // =========================
-  // 3. GANTT HOOK (NO BREAK CHANGE)
-  // =========================
-  const ganttContainer = document.getElementById("ganttView");
-
-  if (ganttContainer) {
-    ganttContainer.innerHTML = renderGantt(result.schedule || []);
-  }
-
-   // =========================
-   // GANTT REAL (BACKEND)
-   // =========================
-      (async () => {
-      
-        const ganttContainer =
-          document.getElementById("ganttView");
-      
-        if (!ganttContainer) return;
-      
-        const schedule = await fetchSchedule();
-      
-        ganttContainer.innerHTML =
-          renderGantt(schedule);
-      })();
-   }
+}
 
 /* =========================
    EVENTS
