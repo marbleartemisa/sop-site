@@ -148,6 +148,7 @@ function buildModalHTML() {
             </div>
 
             <div id="simulationResult"></div>
+            <div id="ganttView"></div>
 
         </aside>
 
@@ -497,41 +498,50 @@ export function renderStoneResults(data = {}) {
    RESULTS
 ========================= */
 
+import { renderGantt } from "./views/gantt-view.js";
+
 function renderResults() {
 
-  const container =
-    document.getElementById(
-      "simulationResult"
-    );
-
+  const container = document.getElementById("simulationResult");
   if (!container) return;
 
-   const stateData = buildState();
-   const result = simulateProject(stateData);
+  // =========================
+  // 1. STATE + SIMULATION
+  // =========================
+  const state = buildState();
+  const result = simulateProject(state) || {};
 
+  const carpentry = result.carpentry || {};
+  const stone = result.stone || {};
+
+  const totalHours =
+    Number.isFinite(result.totalHours)
+      ? result.totalHours
+      : 0;
+
+  // =========================
+  // 2. UI - SIMULATION PANEL
+  // =========================
   container.innerHTML = `
-
-    ${renderCarpentryResults(
-      result.carpentry
-    )}
-
-    ${renderStoneResults(
-      result.stone
-    )}
+    ${renderCarpentryResults(carpentry)}
+    ${renderStoneResults(stone)}
 
     <div class="result-total">
-
       <h3>Project Total</h3>
-
       <div class="hours">
-
-          ${isNaN(result.totalHours) ? "0.0" : Number(result.totalHours).toFixed(1)} hrs
-
+        ${totalHours.toFixed(1)} hrs
       </div>
-
     </div>
-
   `;
+
+  // =========================
+  // 3. GANTT HOOK (NO BREAK CHANGE)
+  // =========================
+  const ganttContainer = document.getElementById("ganttView");
+
+  if (ganttContainer) {
+    ganttContainer.innerHTML = renderGantt(result.schedule || []);
+  }
 }
 
 /* =========================
