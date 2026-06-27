@@ -504,25 +504,26 @@ export function renderStoneResults(data = {}) {
 function renderResults() {
 
   const container =
-    document.getElementById("simulationResult");
+    document.getElementById(
+      "simulationResult"
+    );
 
   if (!container) return;
 
-  const state = buildState();
-
-  const result = simulateProject(state);
-
-  const carpentry = result.carpentry || {};
-  const stone = result.stone || {};
-
-  const totalHours =
-    Number(result.totalHours || 0);
+  const result =
+    simulateProject(
+      buildState()
+    );
 
   container.innerHTML = `
 
-    ${renderCarpentryResults(carpentry)}
+    ${renderCarpentryResults(
+      result.carpentry
+    )}
 
-    ${renderStoneResults(stone)}
+    ${renderStoneResults(
+      result.stone
+    )}
 
     <div class="result-total">
 
@@ -530,7 +531,7 @@ function renderResults() {
 
       <div class="hours">
 
-        ${totalHours.toFixed(1)} hrs
+          ${isNaN(result.totalHours) ? "0.0" : Number(result.totalHours).toFixed(1)} hrs
 
       </div>
 
