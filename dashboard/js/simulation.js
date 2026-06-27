@@ -52,8 +52,9 @@ export function simulateProject(state = {}) {
 
     const result = simulate(state);
 
-    return {
-        ...result,
-        totalHours: +(result.totalMinutes / 60).toFixed(2)
-    };
+        return {
+          ...result,
+          schedule: result.schedule || [],
+          totalHours: +(result.totalMinutes / 60).toFixed(2)
+        };
 }
