@@ -1,6 +1,6 @@
 import { stages } from './data/stages.js';
 import { simulateProject } from './simulation.js';
-
+import { createProject } from "./services/project-service.js";
 
 /* =========================
    STATE
@@ -541,38 +541,78 @@ function renderResults() {
 ========================= */
 function bindEvents() {
 
-  document.getElementById("btnCloseModal")
+  //=====================================
+  // CLOSE MODAL
+  //=====================================
+
+  document
+    .getElementById("btnCloseModal")
     ?.addEventListener("click", closeModal);
 
-  document.getElementById("btnSimulate")
-    ?.addEventListener("click", renderResults);
+  //=====================================
+  // CREATE PROJECT
+  //=====================================
 
-  document.addEventListener("change", onStageChange);
+  document
+    .getElementById("btnSimulate")
+    ?.addEventListener("click", onCreateProject);
 
-  document.getElementById("projectName")
+  //=====================================
+  // STAGES
+  //=====================================
+
+  document.addEventListener(
+    "change",
+    onStageChange
+  );
+
+  //=====================================
+  // PROJECT NAME
+  //=====================================
+
+  document
+    .getElementById("projectName")
     ?.addEventListener("input", (e) => {
+
       state.projectName = e.target.value;
+
     });
 
-   document.addEventListener("input", () => {
-     renderResults();
-   });
-   
-   document.addEventListener("change", () => {
-     renderResults();
-   });
-      document.addEventListener(
-     "input",
-     () => renderResults()
-   );
-   
-   document.addEventListener(
-     "change",
-     () => renderResults()
-   );
+  //=====================================
+  // LIVE SIMULATION
+  //=====================================
+
+  document.addEventListener(
+    "input",
+    renderResults
+  );
+
+  document.addEventListener(
+    "change",
+    renderResults
+  );
 }
 
+//=====================================
+// CREATE PROJECT
+//=====================================
 
+function onCreateProject() {
+
+  const stateData = buildState();
+
+  const projectData =
+    createProject(stateData);
+
+  console.log("PROJECT");
+
+  console.log(projectData.project);
+
+  console.log("TASKS");
+
+  console.log(projectData.tasks);
+
+}
 
 /* =========================
    STAGE CHANGE
