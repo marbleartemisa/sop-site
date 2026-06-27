@@ -151,8 +151,7 @@ function buildModalHTML() {
             </div>
 
             <div id="simulationResult"></div>
-            <div id="ganttView"></div>
-
+           
         </aside>
 
       </div>
