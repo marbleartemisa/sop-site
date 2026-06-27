@@ -1,7 +1,18 @@
-export function renderGantt(schedule = []) {
+export function renderGantt(tasks = []) {
 
-  if (!schedule.length) {
-    return `<div class="gantt-empty">No schedule data</div>`;
+  if (!tasks || !tasks.length) {
+    return `<div class="gantt-empty">No Gantt data</div>`;
+  }
+
+  // =========================
+  // CLEAN + FILTER VALID DATA
+  // =========================
+  const valid = tasks.filter(t =>
+    t.CalculatedStart && t.CalculatedEnd
+  );
+
+  if (!valid.length) {
+    return `<div class="gantt-empty">No calculated schedule</div>`;
   }
 
   // =========================
@@ -9,61 +20,67 @@ export function renderGantt(schedule = []) {
   // =========================
   const grouped = {};
 
-  schedule.forEach(item => {
+  valid.forEach(task => {
 
-    const key = item.Resource || "UNKNOWN";
+    const resource = task.Resource || "UNASSIGNED";
 
-    if (!grouped[key]) grouped[key] = [];
+    if (!grouped[resource]) grouped[resource] = [];
 
-    grouped[key].push(item);
+    grouped[resource].push(task);
   });
+
+  // =========================
+  // GLOBAL TIME RANGE (for scaling)
+  // =========================
+  const allDates = valid.flatMap(t => [
+    new Date(t.CalculatedStart),
+    new Date(t.CalculatedEnd)
+  ]);
+
+  const minDate = new Date(Math.min(...allDates));
+  const maxDate = new Date(Math.max(...allDates));
+
+  const totalMs = maxDate - minDate;
 
   // =========================
   // RENDER
   // =========================
-  return Object.keys(grouped).map(resource => {
+  let html = `<div class="gantt-container">`;
 
-    const tasks = grouped[resource];
+  Object.keys(grouped).forEach(resource => {
 
-    return `
+    const tasks = grouped[resource]
+      .sort((a, b) => (a.Sequence || 0) - (b.Sequence || 0));
+
+    html += `
       <div class="gantt-resource">
-
-        <div class="gantt-resource-title">
-          ${resource}
-        </div>
-
-        <div class="gantt-bars">
-
-          ${tasks.map(t => {
-
-            const start = new Date(t.Start);
-            const end = new Date(t.End);
-
-            const duration =
-              Math.max(
-                1,
-                (end - start) / (1000 * 60 * 60 * 24)
-              );
-
-            return `
-              <div class="gantt-bar">
-                <span class="gantt-label">
-                  ${t.ProjectID}
-                </span>
-
-                <div class="gantt-timeline">
-                  <div class="gantt-fill"
-                       style="width:${Math.min(100, duration * 10)}%">
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join("")}
-
-        </div>
-
-      </div>
+        <div class="gantt-resource-title">${resource}</div>
+        <div class="gantt-track">
     `;
 
-  }).join("");
+    tasks.forEach(t => {
+
+      const start = new Date(t.CalculatedStart);
+      const end = new Date(t.CalculatedEnd);
+
+      const left = ((start - minDate) / totalMs) * 100;
+      const width = ((end - start) / totalMs) * 100;
+
+      html += `
+        <div class="gantt-bar"
+             style="left:${left}%; width:${width}%">
+          ${t.Task || t.TaskName || t.ProjectID}
+        </div>
+      `;
+    });
+
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+
+  return html;
 }
