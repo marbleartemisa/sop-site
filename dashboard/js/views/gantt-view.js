@@ -1,36 +1,22 @@
 export function renderGantt(tasks = []) {
 
-  if (!tasks || !tasks.length) {
+  if (!tasks?.length) {
     return `<div class="gantt-empty">No Gantt data</div>`;
   }
 
   // =========================
-  // CLEAN + FILTER VALID DATA
+  // CLEAN DATA
   // =========================
   const valid = tasks.filter(t =>
     t.CalculatedStart && t.CalculatedEnd
   );
 
   if (!valid.length) {
-    return `<div class="gantt-empty">No calculated schedule</div>`;
+    return `<div class="gantt-empty">No schedule calculated</div>`;
   }
 
   // =========================
-  // GROUP BY RESOURCE
-  // =========================
-  const grouped = {};
-
-  valid.forEach(task => {
-
-    const resource = task.Resource || "UNASSIGNED";
-
-    if (!grouped[resource]) grouped[resource] = [];
-
-    grouped[resource].push(task);
-  });
-
-  // =========================
-  // GLOBAL TIME RANGE (for scaling)
+  // TIME RANGE
   // =========================
   const allDates = valid.flatMap(t => [
     new Date(t.CalculatedStart),
@@ -39,22 +25,53 @@ export function renderGantt(tasks = []) {
 
   const minDate = new Date(Math.min(...allDates));
   const maxDate = new Date(Math.max(...allDates));
-
   const totalMs = maxDate - minDate;
 
   // =========================
-  // RENDER
+  // GROUP BY RESOURCE
   // =========================
-  let html = `<div class="gantt-container">`;
+  const grouped = {};
 
+  valid.forEach(t => {
+    const r = t.Resource || "UNASSIGNED";
+    if (!grouped[r]) grouped[r] = [];
+    grouped[r].push(t);
+  });
+
+  // =========================
+  // HEADER SCALE (simple)
+  // =========================
+  const days = Math.ceil(totalMs / (1000 * 60 * 60 * 24));
+
+  let html = `
+    <div class="gantt-pro">
+
+      <div class="gantt-header">
+        ${Array.from({ length: days }).map((_, i) => {
+          const d = new Date(minDate);
+          d.setDate(d.getDate() + i);
+          return `<div class="gantt-day">${d.getDate()}</div>`;
+        }).join("")}
+      </div>
+
+      <div class="gantt-body">
+  `;
+
+  // =========================
+  // ROWS
+  // =========================
   Object.keys(grouped).forEach(resource => {
 
     const tasks = grouped[resource]
       .sort((a, b) => (a.Sequence || 0) - (b.Sequence || 0));
 
     html += `
-      <div class="gantt-resource">
-        <div class="gantt-resource-title">${resource}</div>
+      <div class="gantt-row">
+
+        <div class="gantt-label">
+          ${resource}
+        </div>
+
         <div class="gantt-track">
     `;
 
@@ -68,8 +85,9 @@ export function renderGantt(tasks = []) {
 
       html += `
         <div class="gantt-bar"
+             title="${t.ProjectID} | ${t.Task || ''}"
              style="left:${left}%; width:${width}%">
-          ${t.Task || t.TaskName || t.ProjectID}
+          ${t.ProjectID}
         </div>
       `;
     });
@@ -80,7 +98,10 @@ export function renderGantt(tasks = []) {
     `;
   });
 
-  html += `</div>`;
+  html += `
+      </div>
+    </div>
+  `;
 
   return html;
 }
