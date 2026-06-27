@@ -4,6 +4,7 @@ import { createProject } from "./services/project-service.js";
 import { fetchSchedule } from "./services/schedule-service.js";
 import { renderGantt } from "./views/gantt-view.js";
 
+
 /* =========================
    STATE
 ========================= */
@@ -499,8 +500,6 @@ export function renderStoneResults(data = {}) {
 /* =========================
    RESULTS
 ========================= */
-
-import { renderGantt } from "./views/gantt-view.js";
 
 function renderResults() {
 
