@@ -4,53 +4,66 @@ export function renderGantt(schedule = []) {
     return `<div class="gantt-empty">No schedule data</div>`;
   }
 
-  // group by project
+  // =========================
+  // GROUP BY RESOURCE
+  // =========================
   const grouped = {};
 
   schedule.forEach(item => {
 
-    if (!grouped[item.ProjectID]) {
-      grouped[item.ProjectID] = [];
-    }
+    const key = item.Resource || "UNKNOWN";
 
-    grouped[item.ProjectID].push(item);
+    if (!grouped[key]) grouped[key] = [];
+
+    grouped[key].push(item);
   });
 
-  return `
-    <div class="gantt-wrapper">
+  // =========================
+  // RENDER
+  // =========================
+  return Object.keys(grouped).map(resource => {
 
-      ${Object.keys(grouped).map(projectId => {
+    const tasks = grouped[resource];
 
-        const tasks = grouped[projectId];
+    return `
+      <div class="gantt-resource">
 
-        return `
-          <div class="gantt-project">
+        <div class="gantt-resource-title">
+          ${resource}
+        </div>
 
-            <div class="gantt-title">
-              ${projectId}
-            </div>
+        <div class="gantt-bars">
 
-            <div class="gantt-bars">
+          ${tasks.map(t => {
 
-              ${tasks.map(t => `
-                <div class="gantt-bar">
-                  <span>${t.Resource}</span>
-                  <small>
-                    ${formatDate(t.Start)} → ${formatDate(t.End)}
-                  </small>
+            const start = new Date(t.Start);
+            const end = new Date(t.End);
+
+            const duration =
+              Math.max(
+                1,
+                (end - start) / (1000 * 60 * 60 * 24)
+              );
+
+            return `
+              <div class="gantt-bar">
+                <span class="gantt-label">
+                  ${t.ProjectID}
+                </span>
+
+                <div class="gantt-timeline">
+                  <div class="gantt-fill"
+                       style="width:${Math.min(100, duration * 10)}%">
+                  </div>
                 </div>
-              `).join("")}
+              </div>
+            `;
+          }).join("")}
 
-            </div>
+        </div>
 
-          </div>
-        `;
-      }).join("")}
+      </div>
+    `;
 
-    </div>
-  `;
-}
-
-function formatDate(date) {
-  return new Date(date).toLocaleDateString();
+  }).join("");
 }
