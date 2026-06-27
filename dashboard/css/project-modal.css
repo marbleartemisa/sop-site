@@ -853,3 +853,29 @@
     font-weight:700;
 
 }
+
+#ganttView {
+  margin-top: 12px;
+}
+
+.gantt-project {
+  margin-bottom: 12px;
+  padding: 10px;
+  background: #0f172a;
+  border-radius: 10px;
+}
+
+.gantt-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #60a5fa;
+  margin-bottom: 6px;
+}
+
+.gantt-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 4px 0;
+  color: #cbd5e1;
+}
