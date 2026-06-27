@@ -1,6 +1,8 @@
 import { stages } from './data/stages.js';
 import { simulateProject } from './simulation.js';
 import { createProject } from "./services/project-service.js";
+import { fetchSchedule } from "./services/schedule-service.js";
+import { renderGantt } from "./views/gantt-view.js";
 
 /* =========================
    STATE
@@ -542,7 +544,23 @@ function renderResults() {
   if (ganttContainer) {
     ganttContainer.innerHTML = renderGantt(result.schedule || []);
   }
-}
+
+   // =========================
+   // GANTT REAL (BACKEND)
+   // =========================
+      (async () => {
+      
+        const ganttContainer =
+          document.getElementById("ganttView");
+      
+        if (!ganttContainer) return;
+      
+        const schedule = await fetchSchedule();
+      
+        ganttContainer.innerHTML =
+          renderGantt(schedule);
+      })();
+   }
 
 /* =========================
    EVENTS
