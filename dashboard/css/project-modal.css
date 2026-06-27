@@ -155,17 +155,26 @@
     gap: 8px;
 }
 
-.stage-item {
+.stage-item{
 
-    display: flex;
+    display:grid;
 
-    align-items: center;
+    grid-template-columns:
+        20px
+        1fr
+        auto;
 
-    gap: 10px;
+    align-items:center;
 
-    color: white;
+    gap:8px;
 
+    padding:4px 0;
     font-size: 14px;
+
+    color:white;
+    border-radius:8px;
+
+    transition:.2s; 
 }
 
 .stage-item input[type="checkbox"] {
@@ -176,6 +185,29 @@
 
     margin: 0;
 }
+
+
+.stage-item:hover{
+
+    background:rgba(255,255,255,.05);
+}
+
+.stage-name{
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+}
+
+.stage-days{
+
+    color:#8fa5d6;
+
+    font-size:12px;
+}
+
 
 /* =========================================================
    BUTTONS
@@ -246,41 +278,6 @@
 
     color: white;
 }
-
-.stage-item{
-
-    display:grid;
-
-    grid-template-columns:
-        20px
-        1fr
-        auto;
-
-    align-items:center;
-
-    gap:8px;
-
-    padding:4px 0;
-
-    color:white;
-}
-
-.stage-name{
-
-    white-space:nowrap;
-
-    overflow:hidden;
-
-    text-overflow:ellipsis;
-}
-
-.stage-days{
-
-    color:#8fa5d6;
-
-    font-size:12px;
-}
-
 
 .form-row{
 
@@ -445,14 +442,6 @@
 
 }
 
-.column-right{
-    position: sticky;
-    top: 16px;
-    align-self: start;
-    height: fit-content;
-}
-
-
 .parameter-card{
 
     background:#101a30;
@@ -472,26 +461,20 @@
     border-color: rgba(79,140,255,.35);
 }
 
+
+
+.column-right{
+    position: sticky;
+    top: 16px;
+    align-self: start;
+    height: fit-content;
+}
+
 .column-right {
     display: flex;
     flex-direction: column;
     height: 100%;
 }
-
-.stage-item{
-
-    padding:8px;
-
-    border-radius:8px;
-
-    transition:.2s;
-}
-
-.stage-item:hover{
-
-    background:rgba(255,255,255,.05);
-}
-
 /* =========================
    SIMULATION UX FIX
 ========================= */
