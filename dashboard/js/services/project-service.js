@@ -1,5 +1,5 @@
 import { buildProject } from "./project-builder.js";
-import { buildProjectTasks } from "./project-task-builder.js";
+import { buildProjectTasks } from "./task-builder.js";
 
 export function createProject(state) {
 
