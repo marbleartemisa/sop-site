@@ -64,35 +64,42 @@ function buildModalHTML() {
         <!-- =======================================
              COLUMN 1
         ======================================== -->
-        <aside class="column-left">
 
-          <div class="modal-header">
-
-            <h2>New Project</h2>
-
-            <button id="btnCloseModal">✕</button>
-
-          </div>
-
-          <input
-              id="projectName"
-              type="text"
-              placeholder="Customer"
-          />
-
-          <div class="section-title">
-              Project Stages
-          </div>
-
-          <div id="stagesContainer"></div>
-
-          <button id="btnSimulate">
-              Create Project
-          </button>
-
-        </aside>
-
-
+            <aside class="column-left">
+            
+                <div class="column-header">
+            
+                    <div class="modal-header">
+            
+                        <h2>New Project</h2>
+            
+                        <button id="btnCloseModal">✕</button>
+            
+                    </div>
+            
+                    <input
+                        id="projectName"
+                        type="text"
+                        placeholder="Customer"
+                       />
+                   </div>
+            
+            
+                <div class="column-scroll">
+            
+                    <div class="section-title">
+                        Project Stages
+                    </div>
+            
+                    <div id="stagesContainer"></div>
+            
+                    <button id="btnSimulate">
+                        Create Project
+                    </button>
+            
+                </div>
+            
+            </aside>
         <!-- =======================================
              COLUMN 2
         ======================================== -->
