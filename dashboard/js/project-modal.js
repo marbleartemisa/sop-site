@@ -601,40 +601,19 @@ function bindEvents() {
 // CREATE PROJECT
 //=====================================
 
-async function onCreateProject() {
+function onCreateProject() {
 
-    const stateData = buildState();
+  const stateData = buildState();
 
-    const data = createProject(stateData);
+  const projectData = createProject(stateData);
 
-    console.log("PROJECT");
-    console.log(data.project);
+  console.log("PROJECT", projectData.project);
 
-    console.log("TASKS");
-    console.log(data.tasks);
-
-    try {
-
-        const response =
-            await saveProject(
-                data.project,
-                data.tasks
-            );
-
-        console.log(response);
-
-        alert("Project created successfully.");
-
-    }
-
-    catch (err) {
-
-        console.error(err);
-
-        alert("Error creating project.");
-
-    }
-
+  // 🔥 NUEVO: guardar en backend
+  saveProject(projectData.project)
+    .then(res => {
+      console.log("SAVED:", res);
+    });
 }
 
 /* =========================
