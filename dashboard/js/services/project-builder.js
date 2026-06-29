@@ -2,35 +2,27 @@ import { simulateProject } from "../simulation.js";
 
 export function buildProject(state) {
 
-    const simulation =
-        simulateProject(state);
+  const simulation = simulateProject(state);
 
-    return {
+  return {
 
-        id: crypto.randomUUID(),
+    ProjectID: crypto.randomUUID(), // 🔥 FIX CRÍTICO
 
-        customer:
-            state.projectName,
+    Customer: state.projectName || "UNKNOWN",
 
-        createdAt:
-            new Date().toISOString(),
+    CreatedDate: new Date().toISOString(),
 
-        currentStage:
-            "Agreement",
+    CurrentStage: "Agreement",
 
-        priority:
-            "Normal",
+    Priority: "Normal",
 
-        simulation,
+    Simulation: simulation,
 
-        carpentry:
-            state.carpentry,
+    Carpentry: state.carpentry || {},
 
-        stone:
-            state.stone,
+    Stone: state.stone || {},
 
-        stages:
-            state.stages
-    };
+    Stages: state.stages || []
 
+  };
 }
