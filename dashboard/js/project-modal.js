@@ -603,42 +603,37 @@ function bindEvents() {
 
 async function onCreateProject() {
 
-  // =====================================
-  // BUILD STATE
-  // =====================================
+    const stateData = buildState();
 
-  const stateData = buildState();
+    const data = createProject(stateData);
 
-  // =====================================
-  // RUN SIMULATION
-  // =====================================
+    console.log("PROJECT");
+    console.log(data.project);
 
-  const simulation =
-    simulateProject(stateData);
+    console.log("TASKS");
+    console.log(data.tasks);
 
-  // =====================================
-  // BUILD PROJECT
-  // =====================================
+    try {
 
-  const project =
-    buildProject(stateData, simulation);
+        const response =
+            await saveProject(
+                data.project,
+                data.tasks
+            );
 
-  // =====================================
-  // BUILD TASKS
-  // =====================================
+        console.log(response);
 
-  const tasks =
-    buildProjectTasks(
-      project,
-      stateData,
-      simulation
-    );
+        alert("Project created successfully.");
 
-  console.log("PROJECT");
-  console.log(project);
+    }
 
-  console.log("TASKS");
-  console.log(tasks);
+    catch (err) {
+
+        console.error(err);
+
+        alert("Error creating project.");
+
+    }
 
 }
 
