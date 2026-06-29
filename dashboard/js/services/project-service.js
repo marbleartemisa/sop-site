@@ -4,58 +4,27 @@ import { post } from "./api.js";
 
 export function createProject(state) {
 
-    //==========================
-    // Build Project
-    //==========================
+    const project = buildProject(state);
 
-    const project =
-        buildProject(state);
-
-    //==========================
-    // Build Tasks
-    //==========================
-
-    const tasks =
-        buildProjectTasks(project);
-
-    //==========================
-    // Return complete package
-    //==========================
+    const tasks = buildProjectTasks(project);
 
     return {
+        project,
+        tasks
+    };
+
+}
+
+export async function saveProject(project, tasks) {
+
+    return await post({
+
+        action: "CREATE_PROJECT",
 
         project,
 
         tasks
 
-    };
-
-}
-
-
-
-export async function saveProject(project, tasks) {
-
-    const response = await fetch(API_URL, {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-
-            action: "CREATE_PROJECT",
-
-            project,
-
-            tasks
-
-        })
-
     });
-
-    return await response.json();
 
 }
