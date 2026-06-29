@@ -54,13 +54,13 @@ export function calculateStone(input = {}) {
   // LED (future input, safe default)
   // =========================
   const led =
-    (input.led || 0) * 60;
+    (input.led || 0) * 30;
 
   // =========================
   // METAL FRAME
   // =========================
   const frame =
-    (input.metalFrame || 0) * 120;
+    (input.metalFrame || 0) * 30;
 
   // =========================
   // BASE TOTAL
