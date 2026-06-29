@@ -12,9 +12,6 @@ export function createProject(state) {
 /*========================================
   SAVE PROJECT TO BACKEND (FIXED)
 ========================================*/
-
-import { post } from "./api.js";
-
 export async function saveProject(project) {
 
   return await post({
