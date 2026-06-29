@@ -8,15 +8,9 @@ export async function post(data) {
   const response = await fetch(API_URL, {
 
     method: "POST",
-    mode: "no-cors", // 🔥 FIX TEMPORAL CORS
-
-    headers: {
-      "Content-Type": "application/json"
-    },
-
     body: JSON.stringify(data)
 
   });
 
-  return response; // no JSON disponible en no-cors
+  return await response.json();
 }
