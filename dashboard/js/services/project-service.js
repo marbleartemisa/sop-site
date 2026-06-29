@@ -32,16 +32,30 @@ export function createProject(state) {
 
 }
 
+
+
 export async function saveProject(project, tasks) {
 
-    return await post({
+    const response = await fetch(API_URL, {
 
-        action: "CREATE_PROJECT",
+        method: "POST",
 
-        project,
+        headers: {
+            "Content-Type": "application/json"
+        },
 
-        tasks
+        body: JSON.stringify({
+
+            action: "CREATE_PROJECT",
+
+            project,
+
+            tasks
+
+        })
 
     });
+
+    return await response.json();
 
 }
