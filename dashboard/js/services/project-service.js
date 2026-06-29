@@ -31,3 +31,17 @@ export function createProject(state) {
     };
 
 }
+
+export async function saveProject(project, tasks) {
+
+    return await post({
+
+        action: "CREATE_PROJECT",
+
+        project,
+
+        tasks
+
+    });
+
+}
