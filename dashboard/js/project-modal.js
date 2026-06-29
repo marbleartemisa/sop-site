@@ -604,18 +604,18 @@ function bindEvents() {
 function onCreateProject() {
 
   const stateData = buildState();
-
   const projectData = createProject(stateData);
 
-  console.log("PROJECT", projectData.project);
+  console.log("PROJECT READY:", projectData.project);
 
-  // 🔥 NUEVO: guardar en backend
   saveProject(projectData.project)
     .then(res => {
-      console.log("SAVED:", res);
+      console.log("🔥 BACKEND RESPONSE:", res);
+    })
+    .catch(err => {
+      console.error("❌ ERROR:", err);
     });
 }
-
 /* =========================
    STAGE CHANGE
 ========================= */
