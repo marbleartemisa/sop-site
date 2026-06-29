@@ -600,18 +600,44 @@ function bindEvents() {
 // CREATE PROJECT
 //=====================================
 
-function onCreateProject() {
+async function onCreateProject() {
+
+  // =====================================
+  // BUILD STATE
+  // =====================================
 
   const stateData = buildState();
 
-  // reutilizamos simulación ya consistente
-  const projectData = createProject(stateData);
+  // =====================================
+  // RUN SIMULATION
+  // =====================================
+
+  const simulation =
+    simulateProject(stateData);
+
+  // =====================================
+  // BUILD PROJECT
+  // =====================================
+
+  const project =
+    buildProject(stateData, simulation);
+
+  // =====================================
+  // BUILD TASKS
+  // =====================================
+
+  const tasks =
+    buildProjectTasks(
+      project,
+      stateData,
+      simulation
+    );
 
   console.log("PROJECT");
-  console.log(projectData.project);
+  console.log(project);
 
   console.log("TASKS");
-  console.log(projectData.tasks);
+  console.log(tasks);
 
 }
 
