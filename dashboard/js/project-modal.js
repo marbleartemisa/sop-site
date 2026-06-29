@@ -1,8 +1,9 @@
 import { stages } from './data/stages.js';
 import { simulateProject } from './simulation.js';
-import { createProject } from "./services/project-service.js";
 import { fetchSchedule } from "./services/schedule-service.js";
 import { renderGantt } from "./views/gantt-view.js";
+import { buildProject } from "./services/project-builder.js";
+import { buildProjectTasks } from "./services/task-builder.js";
 
 
 /* =========================
