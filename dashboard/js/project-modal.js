@@ -4,6 +4,7 @@ import { fetchSchedule } from "./services/schedule-service.js";
 import { renderGantt } from "./views/gantt-view.js";
 import { buildProject } from "./services/project-builder.js";
 import { buildProjectTasks } from "./services/task-builder.js";
+import { createProject, saveProject } from "./services/project-service.js";
 
 
 /* =========================
