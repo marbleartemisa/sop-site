@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+SOP Intelligent Search
+</title>
+
+
+<link rel="stylesheet" href="css/search.css">
+
+
+</head>
+
+
+<body>
+
+
+<div class="search-page">
+
+
+<h1>
+🔎 SOP Intelligent Search
+</h1>
+
+<p>
+Busca conceptos dentro de todos los procedimientos
+</p>
+
+
+
+<div class="search-box">
+
+
+<input 
+id="aiSearch"
+placeholder="Ejemplo: CNC, punchout, aprobación, slabs, instalación..."
+>
+
+
+<button onclick="executeSearch()">
+Buscar
+</button>
+
+
+</div>
+
+
+
+<div id="results">
+
+</div>
+
+
+
+</div>
+
+
+
+<script src="js/search-engine.js"></script>
+<script src="js/search-ui.js"></script>
+
+
+</body>
+
+
+</html>
