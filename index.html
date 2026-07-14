@@ -1129,10 +1129,9 @@ Encontrados:
 </div>
 <div class="ai-results">
 `;
-      
 results.forEach(sop=>{
-const fragment = sop.title;
-html += `
+const fragment = getAISnippet(sop, query);
+html += `      
 <div class="ai-card">
 <h3>
 ${sop.title}
@@ -1140,8 +1139,8 @@ ${sop.title}
 <div class="ai-dept">
 ${getDepartmentBadge(sop.department)}
 </div>
-<p>
-${fragment}...
+<p class="ai-snippet">
+${fragment}
 </p>
 <div class="ai-reason">
       ${explainMatch(sop,query)}
