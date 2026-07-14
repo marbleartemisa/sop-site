@@ -151,7 +151,7 @@
 
 
 
-            @media (max-width: 900px){
+            @media (max-width: 900p{
             
               .logo span{
                 display:none; /* 🔥 oculta texto largo */
@@ -1242,10 +1242,23 @@ function getDepartmentBadge(dep){
 document.getElementById("searchInput").addEventListener("input",filterSOP);
 document.getElementById("deptFilter").addEventListener("change",filterSOP);
 
-function filterSOP(){
-  const search = (document.getElementById("searchInput").value || "")
+function normalizeText(text){
+
+  return (text || "")
     .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/&nbsp;/g," ")
+    .replace(/&[a-z]+;/g," ")
+    .replace(/\s+/g," ")
     .trim();
+
+}
+
+function filterSOP(){
+ const search = normalizeText(
+    document.getElementById("searchInput").value
+);
 
   const dept = document.getElementById("deptFilter").value;
   const hasSearch = search.length > 0;
@@ -1255,11 +1268,11 @@ function filterSOP(){
 
       const matchDept = !dept || sop.department === dept;
 
-      const title = (sop.title || "").toLowerCase();
+      const title = normalizeText(sop.title);
 
-      const text = (sop.search_text || "").toLowerCase();
+      const text = normalizeText(sop.search_text);
       
-      const keywords = (sop.keywords || "").toLowerCase();
+      const keywords = normalizeText(sop.keywords);
       
       
       const matchSearch =
@@ -1276,6 +1289,13 @@ function filterSOP(){
       return score(b, search) - score(a, search);
     });
 
+      
+      console.log(
+      "Resultados encontrados:",
+      filtered.length,
+      filtered
+      );
+      
   if(hasSearch){
     renderSearchAI(filtered,search);
       }else{
