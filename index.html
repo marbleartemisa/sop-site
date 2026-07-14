@@ -594,6 +594,51 @@ tr:hover .sop-nombre {
   }
 }
 
+/* ===== AI SEARCH RESULTS ===== */
+
+.ai-results{
+display:flex;
+flex-direction:column;
+gap:20px;
+}
+
+.ai-card{
+background:rgba(255,255,255,.85);
+border-radius:18px;
+padding:25px;
+box-shadow:
+0 10px 30px rgba(0,0,0,.15);
+transition:.3s;
+}
+
+.ai-card:hover{
+transform:translateY(-5px);
+}
+
+.ai-card h3{
+margin-top:0;
+color:#1e293b;
+}
+
+.ai-card p{
+line-height:1.7;
+color:#475569;
+}
+
+.ai-footer{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:20px;
+}
+
+.ai-footer span{
+background:#e0f2fe;
+padding:6px 12px;
+border-radius:20px;
+font-size:.8rem;
+color:#0369a1;
+}
 
       
 </style>
@@ -951,6 +996,105 @@ function renderSOP(filtered){
   container.innerHTML = html;
 }
 
+function getAISnippet(sop, query){
+
+    const sources = [
+        sop.title || "",
+        sop.keywords || "",
+        sop.search_text || ""
+    ];
+
+
+    const fullText = sources.join(" ");
+
+
+    const lowerText = fullText.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+
+
+    const index = lowerText.indexOf(lowerQuery);
+
+
+    if(index === -1){
+
+        return fullText.substring(0,220) + "...";
+
+    }
+
+
+    const start = Math.max(index - 80,0);
+
+    const end = Math.min(
+        index + query.length + 160,
+        fullText.length
+    );
+
+
+    return "..." + 
+    fullText.substring(start,end) +
+    "...";
+
+}
+      
+function renderSearchAI(results, query){
+
+const container = document.getElementById("sopContainer");
+if(results.length===0){
+container.innerHTML = `
+<div class="sop-info">
+No se encontraron SOP relacionados con 
+<strong>${query}</strong>
+</div>
+`;
+return;
+}
+let html = `
+<div class="sop-info">
+🔎 Resultados inteligentes para:
+<strong>${query}</strong>
+<br>
+Encontrados:
+<strong>${results.length}</strong> SOP relacionados
+</div>
+<div class="ai-results">
+`;
+      
+results.forEach(sop=>{
+const fragment = getAISnippet(
+    sop,
+    query
+);
+html += `
+<div class="ai-card">
+<h3>
+${sop.title}
+</h3>
+<div class="ai-dept">
+${getDepartmentBadge(sop.department)}
+</div>
+<p>
+${fragment}...
+</p>
+<div class="ai-footer">
+<span>
+Coincidencia:
+${Math.min(score(sop,query),100)}%
+</span>
+<a class="sop-btn"
+href="/sop-site/viewer.html?doc=${sop.url}">
+Abrir SOP
+</a>
+</div>
+</div>
+`;
+});
+      
+html+=`
+</div>
+`;
+container.innerHTML=html;
+}
+
 /* ===== BADGES ===== */
 function getDepartmentBadge(dep){
 
@@ -1066,8 +1210,12 @@ function filterSOP(){
       return score(b, search) - score(a, search);
     });
 
-  renderSOP(filtered);
-}
+  if(hasSearch){
+    renderSearchAI(filtered,search);
+      }else{
+    renderSOP(filtered);
+      }
+      }
 
 function filterDept(dep){
   document.getElementById("deptFilter").value = dep;
