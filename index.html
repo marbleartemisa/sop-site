@@ -998,99 +998,67 @@ function renderSOP(filtered){
 
 function getAISnippet(sop, query){
 
-    const sources = [
-        sop.title || "",
-        sop.keywords || "",
-        sop.search_text || ""
-    ];
+    const title = sop.title || "";
+    const keywords = sop.keywords || "";
+    const text = sop.search_text || "";
 
 
-    const fullText = sources
-        .join(" ")
-        .replace(/\s+/g," ")
-        .trim();
+    const fullText = [
+        title,
+        keywords,
+        text
+    ]
+    .join(" ")
+    .replace(/\s+/g," ")
+    .trim();
+
+
+
+    if(!fullText){
+
+        return "Información relacionada encontrada.";
+
+    }
+
 
 
     const lowerText = fullText.toLowerCase();
     const lowerQuery = query.toLowerCase().trim();
 
 
-    // =====================================
-    // SIN TEXTO DISPONIBLE
-    // =====================================
-
-    if(!fullText){
-
-        return `
-        <em>
-        Coincidencia encontrada en:
-        ${sop.title || "SOP"}
-        </em>
-        `;
-
-    }
-
-
-
-    // =====================================
-    // BUSCAR COINCIDENCIA
-    // =====================================
 
     const index = lowerText.indexOf(lowerQuery);
 
 
 
-    // =====================================
-    // NO ENCUENTRA TEXTO
-    // PERO EL SCORE LO DETECTÓ
-    // =====================================
+    // Si encuentra coincidencia
+    if(index >= 0){
 
-    if(index === -1){
+        const start = Math.max(index - 80,0);
 
-        return `
-        <em>
-        Relacionado por:
-        ${sop.keywords || sop.title}
-        </em>
-        `;
+        const end = Math.min(
+            index + lowerQuery.length + 180,
+            fullText.length
+        );
+
+
+        let snippet = fullText.substring(start,end);
+
+
+
+        return snippet;
+
 
     }
 
 
 
-    // =====================================
-    // EXTRAER CONTEXTO
-    // =====================================
-
-    const start = Math.max(index - 90,0);
-
-
-    const end = Math.min(
-        index + lowerQuery.length + 180,
-        fullText.length
+    // Fallback seguro
+    return (
+        title +
+        " - " +
+        keywords.substring(0,150)
     );
-
-
-    let snippet = fullText.substring(start,end);
-
-
-
-    // =====================================
-    // LIMPIEZA VISUAL
-    // =====================================
-
-    if(start > 0){
-        snippet = "..." + snippet;
-    }
-
-
-    if(end < fullText.length){
-        snippet += "...";
-    }
-
-
-
-    return snippet;
 
 }
 
