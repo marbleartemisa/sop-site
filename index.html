@@ -998,6 +998,16 @@ function renderSOP(filtered){
     
 }
 
+function escapeHTML(str){
+
+    return String(str || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}      
 function getAISnippet(sop, query){
 
     const sources = [
@@ -1006,20 +1016,19 @@ function getAISnippet(sop, query){
         sop.search_text || ""
     ];
 
-
     const fullText = sources.join(" ");
-
 
     const lowerText = fullText.toLowerCase();
     const lowerQuery = query.toLowerCase();
-
 
     const index = lowerText.indexOf(lowerQuery);
 
 
     if(index === -1){
 
-        return fullText.substring(0,220) + "...";
+        return escapeHTML(
+            fullText.substring(0,220) + "..."
+        );
 
     }
 
@@ -1032,9 +1041,11 @@ function getAISnippet(sop, query){
     );
 
 
-    return "..." + 
-    fullText.substring(start,end) +
-    "...";
+    return escapeHTML(
+        "..." +
+        fullText.substring(start,end) +
+        "..."
+    );
 
 }
 
