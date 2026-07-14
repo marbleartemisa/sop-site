@@ -1107,65 +1107,68 @@ function explainMatch(sop, query){
 
 }
       
-function renderSearchAI(results, query){
+function getAISnippet(sop, query){
 
-const container = document.getElementById("sopContainer");
-if(results.length===0){
-container.innerHTML = `
-<div class="sop-info">
-No se encontraron SOP relacionados con 
-<strong>${query}</strong>
-</div>
-`;
-return;
-}
-let html = `
-<div class="sop-info">
-🔎 Resultados inteligentes para:
-<strong>${query}</strong>
-<br>
-Encontrados:
-<strong>${results.length}</strong> SOP relacionados
-</div>
-<div class="ai-results">
-`;
-      
-results.forEach(sop=>{
-const fragment = sop.title;
-html += `
-<div class="ai-card">
-<h3>
-${sop.title}
-</h3>
-<div class="ai-dept">
-${getDepartmentBadge(sop.department)}
-</div>
-<p>
-${fragment}...
-</p>
-<div class="ai-reason">
-      ${explainMatch(sop,query)}
-</div>
-<div class="ai-footer">
-<span>
-Coincidencia:
-${Math.min(score(sop,query),100)}%
-</span>
-<a class="sop-btn"
-href="/sop-site/viewer.html?doc=${sop.url}">
-Abrir SOP
-</a>
-</div>
-</div>
-`;
-});
-      
-html+=`
-</div>
-`;
-container.innerHTML=html;
-}
+    const originalText = sop.search_text || "";
 
+    const text = normalizeText(originalText);
+    const search = normalizeText(query);
+
+    const index = text.indexOf(search);
+
+    // no encontró la palabra
+    if(index === -1){
+
+        return {
+            snippet: originalText.substring(0,220) + "...",
+            page:"",
+            line:""
+        };
+
+    }
+
+    //---------------------------------------
+    // Buscar contexto
+    //---------------------------------------
+
+    const start = Math.max(index-120,0);
+    const end   = Math.min(index+search.length+220,text.length);
+
+    const snippet =
+        "..." +
+        originalText.substring(start,end) +
+        "...";
+
+    //---------------------------------------
+    // Calcular página aproximada
+    //---------------------------------------
+
+    const charsPerPage = 2800;
+
+    const page =
+        Math.floor(index/charsPerPage)+1;
+
+    //---------------------------------------
+    // Línea aproximada
+    //---------------------------------------
+
+    const before =
+        originalText.substring(0,index);
+
+    const line =
+        before.split("\n").length;
+
+    return{
+
+        snippet,
+
+        page,
+
+        line
+
+    };
+
+}
 /* ===== BADGES ===== */
 function getDepartmentBadge(dep){
 
