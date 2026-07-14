@@ -1007,7 +1007,19 @@ function escapeHTML(str){
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
 
-}      
+}    
+
+function decodeHTML(text){
+
+    const txt = document.createElement("textarea");
+
+    txt.innerHTML = text;
+
+    return txt.value;
+
+}
+
+
 function getAISnippet(sop, query){
 
     const sources = [
@@ -1016,7 +1028,7 @@ function getAISnippet(sop, query){
         sop.search_text || ""
     ];
 
-    const fullText = sources.join(" ");
+      const fullText = decodeHTML(sources.join(" "));
 
     const lowerText = fullText.toLowerCase();
     const lowerQuery = query.toLowerCase();
