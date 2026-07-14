@@ -1005,34 +1005,92 @@ function getAISnippet(sop, query){
     ];
 
 
-    const fullText = sources.join(" ");
+    const fullText = sources
+        .join(" ")
+        .replace(/\s+/g," ")
+        .trim();
 
 
     const lowerText = fullText.toLowerCase();
-    const lowerQuery = query.toLowerCase();
+    const lowerQuery = query.toLowerCase().trim();
 
 
-    const index = lowerText.indexOf(lowerQuery);
+    // =====================================
+    // SIN TEXTO DISPONIBLE
+    // =====================================
 
+    if(!fullText){
 
-    if(index === -1){
-
-        return fullText.substring(0,220) + "...";
+        return `
+        <em>
+        Coincidencia encontrada en:
+        ${sop.title || "SOP"}
+        </em>
+        `;
 
     }
 
 
-    const start = Math.max(index - 80,0);
+
+    // =====================================
+    // BUSCAR COINCIDENCIA
+    // =====================================
+
+    const index = lowerText.indexOf(lowerQuery);
+
+
+
+    // =====================================
+    // NO ENCUENTRA TEXTO
+    // PERO EL SCORE LO DETECTÓ
+    // =====================================
+
+    if(index === -1){
+
+        return `
+        <em>
+        Relacionado por:
+        ${sop.keywords || sop.title}
+        </em>
+        `;
+
+    }
+
+
+
+    // =====================================
+    // EXTRAER CONTEXTO
+    // =====================================
+
+    const start = Math.max(index - 90,0);
+
 
     const end = Math.min(
-        index + query.length + 160,
+        index + lowerQuery.length + 180,
         fullText.length
     );
 
 
-    return "..." + 
-    fullText.substring(start,end) +
-    "...";
+    let snippet = fullText.substring(start,end);
+
+
+
+    // =====================================
+    // LIMPIEZA VISUAL
+    // =====================================
+
+    if(start > 0){
+        snippet = "..." + snippet;
+    }
+
+
+    if(end < fullText.length){
+        snippet += "...";
+    }
+
+
+
+    return snippet;
 
 }
 
