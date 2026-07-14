@@ -1265,12 +1265,10 @@ function filterSOP(){
       const text = (sop.search_text || "").toLowerCase();
 
 
-      const matchSearch =
+           const matchSearch =
           !hasSearch ||
           title.includes(search) ||
-          keywords.includes(search) ||
-          text.includes(search);
-      
+          keywords.includes(search);
             return matchDept && matchSearch;
           })
     .sort((a, b) => {
