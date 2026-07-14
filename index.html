@@ -1278,11 +1278,21 @@ function filterSOP(){
 
 if(hasSearch){
 
-    const aiResults = SOP_INDEX
-        .filter(sop => score(sop, search) > 0)
-        .sort((a,b)=>score(b,search)-score(a,search));
+      const aiResults = SOP_INDEX
 
-
+      .map(sop=>({
+      
+          sop:sop,
+          score:score(sop,search)
+      
+      }))
+      
+      .filter(x=>x.score>0)
+      
+      .sort((a,b)=>b.score-a.score)
+      
+      .map(x=>x.sop);
+      
     console.log("AI RESULTS:", aiResults.length);
     console.log(aiResults.map(x=>x.title));
 
