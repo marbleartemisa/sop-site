@@ -1120,7 +1120,6 @@ Encontrados:
 `;
       
 results.forEach(sop=>{
-       console.log(sop.title);
 const fragment = getAISnippet(
     sop,
     query
@@ -1277,13 +1276,24 @@ function filterSOP(){
       return score(b, search) - score(a, search);
     });
 
-  if(hasSearch){
-      console.log("RESULTADOS FILTRADOS:", filtered.length);
-      console.log(filtered.map(x=>x.title));
-    renderSearchAI(filtered,search);
-      }else{
+if(hasSearch){
+
+    const aiResults = SOP_INDEX
+        .filter(sop => score(sop, search) > 0)
+        .sort((a,b)=>score(b,search)-score(a,search));
+
+
+    console.log("AI RESULTS:", aiResults.length);
+    console.log(aiResults.map(x=>x.title));
+
+
+    renderSearchAI(aiResults, search);
+
+}else{
+
     renderSOP(filtered);
-      }
+
+}
       }
 
 function filterDept(dep){
