@@ -1259,15 +1259,20 @@ function filterSOP(){
       const matchDept = !dept || sop.department === dept;
 
       const title = (sop.title || "").toLowerCase();
+      
+      const keywords = (sop.keywords || "").toLowerCase();
+      
       const text = (sop.search_text || "").toLowerCase();
 
-      const matchSearch =
-        !hasSearch ||
-        title.includes(search) ||
-        text.includes(search);
 
-      return matchDept && matchSearch;
-    })
+      const matchSearch =
+          !hasSearch ||
+          title.includes(search) ||
+          keywords.includes(search) ||
+          text.includes(search);
+      
+            return matchDept && matchSearch;
+          })
     .sort((a, b) => {
       if (!hasSearch) return 0;
 
@@ -1275,6 +1280,8 @@ function filterSOP(){
     });
 
   if(hasSearch){
+      console.log("RESULTADOS FILTRADOS:", filtered.length);
+      console.log(filtered.map(x=>x.title));
     renderSearchAI(filtered,search);
       }else{
     renderSOP(filtered);
