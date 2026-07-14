@@ -1015,57 +1015,23 @@ function escapeHTML(str){
 
 } 
 
-function getSearchContext(sop, query){
+function highlightSearch(text, query){
 
-    const original = sop.search_text || "";
+    if(!text) return "";
 
-    const text = normalizeText(original);
+    if(!query) return text;
 
-    const search = normalizeText(query);
 
-    const index = text.indexOf(search);
+    const regex = new RegExp(
+        "(" + query + ")",
+        "gi"
+    );
 
-    if(index === -1){
 
-        return{
-
-            page:"-",
-
-            line:"-",
-
-            position:0
-
-        };
-
-    }
-
-    // Página aproximada
-    const charsPerPage = 2800;
-
-    const page =
-        Math.floor(index/charsPerPage)+1;
-
-    // Línea aproximada
-    const line =
-        original
-        .substring(0,index)
-        .split("\n").length;
-
-    // Porcentaje dentro del documento
-    const position =
-        Math.round(
-            index/original.length*100
-        );
-
-    return{
-
-        page,
-
-        line,
-
-        position
-
-    };
+    return text.replace(
+        regex,
+        "<mark>$1</mark>"
+    );
 
 }
       
@@ -1197,11 +1163,12 @@ const fragment = getAISnippet(
     sop,
     query
 );
+const highlighted =
+    highlightSearch(
+        fragment,
+        query
+    );
 
-const info = getSearchContext(
-    sop,
-    query
-);
 html += `
 <div class="ai-card">
 <h3>
