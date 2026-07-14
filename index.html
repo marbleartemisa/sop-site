@@ -1255,53 +1255,79 @@ function normalizeText(text){
 
 }
 
-function filterSOP(){
- const search = normalizeText(
-    document.getElementById("searchInput").value
-);
+function filterSOP() {
 
-  const dept = document.getElementById("deptFilter").value;
-  const hasSearch = search.length > 0;
+    const search = normalizeText(
+        document.getElementById("searchInput").value || ""
+    ).trim();
 
-  const filtered = SOP_INDEX
-    .filter(sop => {
+    const dept = document.getElementById("deptFilter").value;
+    const hasSearch = search.length > 0;
 
-      const matchDept = !dept || sop.department === dept;
+    const filtered = SOP_INDEX
 
-      const title = normalizeText(sop.title);
+        .filter(sop => {
 
-      const text = normalizeText(sop.search_text);
-      
-      const keywords = normalizeText(sop.keywords);
-      
-      
-      const matchSearch =
-          !hasSearch ||
-          title.includes(search) ||
-          text.includes(search) ||
-          keywords.includes(search);
+            // ===========================
+            // FILTRO DEPARTAMENTO
+            // ===========================
 
-      return matchDept && matchSearch;
-    })
-    .sort((a, b) => {
-      if (!hasSearch) return 0;
+            const matchDept =
+                !dept || sop.department === dept;
 
-      return score(b, search) - score(a, search);
-    });
+            // ===========================
+            // CAMPOS NORMALIZADOS
+            // ===========================
 
-      
-      console.log(
-      "Resultados encontrados:",
-      filtered.length,
-      filtered
-      );
-      
-  if(hasSearch){
-    renderSearchAI(filtered,search);
-      }else{
-    renderSOP(filtered);
-      }
-      }
+            const title = normalizeText(sop.title || "");
+            const text = normalizeText(sop.search_text || "");
+            const keywords = normalizeText(sop.keywords || "");
+
+            // ===========================
+            // FILTRO DE BÚSQUEDA
+            // ===========================
+
+            const matchSearch =
+                !hasSearch ||
+                title.includes(search) ||
+                keywords.includes(search) ||
+                text.includes(search);
+
+            return matchDept && matchSearch;
+
+        })
+
+        .sort((a, b) => {
+
+            if (!hasSearch) return 0;
+
+            return score(b, search) - score(a, search);
+
+        });
+
+    // ===========================
+    // DEBUG
+    // ===========================
+
+    console.log("Buscando:", search);
+    console.log("Resultados encontrados:", filtered.length);
+    console.table(filtered);
+
+    // ===========================
+    // RENDER
+    // ===========================
+
+    if (hasSearch) {
+
+        renderSearchAI(filtered, search);
+
+    } else {
+
+        renderSOP(filtered);
+
+    }
+
+}
 
 function filterDept(dep){
   document.getElementById("deptFilter").value = dep;
