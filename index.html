@@ -639,6 +639,12 @@ border-radius:20px;
 font-size:.8rem;
 color:#0369a1;
 }
+.ai-location{
+margin-top:10px;
+font-size:13px;
+color:#64748b;
+font-style:italic;
+}
 
       
 </style>
@@ -1007,7 +1013,62 @@ function escapeHTML(str){
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
 
-}      
+} 
+
+function getSearchContext(sop, query){
+
+    const original = sop.search_text || "";
+
+    const text = normalizeText(original);
+
+    const search = normalizeText(query);
+
+    const index = text.indexOf(search);
+
+    if(index === -1){
+
+        return{
+
+            page:"-",
+
+            line:"-",
+
+            position:0
+
+        };
+
+    }
+
+    // Página aproximada
+    const charsPerPage = 2800;
+
+    const page =
+        Math.floor(index/charsPerPage)+1;
+
+    // Línea aproximada
+    const line =
+        original
+        .substring(0,index)
+        .split("\n").length;
+
+    // Porcentaje dentro del documento
+    const position =
+        Math.round(
+            index/original.length*100
+        );
+
+    return{
+
+        page,
+
+        line,
+
+        position
+
+    };
+
+}
+      
 function getAISnippet(sop, query){
 
     const sources = [
@@ -1131,7 +1192,16 @@ Encontrados:
 `;
       
 results.forEach(sop=>{
-const fragment = sop.title;
+
+const fragment = getAISnippet(
+    sop,
+    query
+);
+
+const info = getSearchContext(
+    sop,
+    query
+);
 html += `
 <div class="ai-card">
 <h3>
@@ -1141,8 +1211,25 @@ ${sop.title}
 ${getDepartmentBadge(sop.department)}
 </div>
 <p>
-${fragment}...
+${fragment}
 </p>
+
+<div class="ai-location">
+
+📄 Página aprox:
+<strong>${info.page}</strong>
+
+&nbsp;&nbsp;
+
+📍 Línea:
+<strong>${info.line}</strong>
+
+&nbsp;&nbsp;
+
+🎯 Posición:
+<strong>${info.position}%</strong>
+
+</div>
 <div class="ai-reason">
       ${explainMatch(sop,query)}
 </div>
