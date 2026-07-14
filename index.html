@@ -1035,6 +1035,64 @@ function getAISnippet(sop, query){
     "...";
 
 }
+
+function explainMatch(sop, query){
+
+    const reasons=[];
+
+    const q = query.toLowerCase();
+
+
+    const title =
+        (sop.title || "").toLowerCase();
+
+    const keywords =
+        (sop.keywords || "").toLowerCase();
+
+    const text =
+        (sop.search_text || "").toLowerCase();
+
+
+    const words =
+        q.split(" ")
+        .filter(w=>w.length>2);
+
+
+    words.forEach(word=>{
+
+        if(title.includes(word)){
+            reasons.push(
+            "Título contiene " + word
+            );
+        }
+
+
+        else if(keywords.includes(word)){
+            reasons.push(
+            "Palabra clave: " + word
+            );
+        }
+
+
+        else if(text.includes(word)){
+            reasons.push(
+            "Contenido del SOP: " + word
+            );
+        }
+
+    });
+
+
+    if(reasons.length===0){
+
+        return "Relacionado con el contenido del SOP";
+
+    }
+
+
+    return reasons.join(" • ");
+
+}
       
 function renderSearchAI(results, query){
 
@@ -1075,6 +1133,9 @@ ${getDepartmentBadge(sop.department)}
 <p>
 ${fragment}...
 </p>
+<div class="ai-reason">
+      ${explainMatch(sop,query)}
+</div>
 <div class="ai-footer">
 <span>
 Coincidencia:
