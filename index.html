@@ -639,12 +639,6 @@ border-radius:20px;
 font-size:.8rem;
 color:#0369a1;
 }
-.ai-location{
-margin-top:10px;
-font-size:13px;
-color:#64748b;
-font-style:italic;
-}
 
       
 </style>
@@ -1013,28 +1007,7 @@ function escapeHTML(str){
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
 
-} 
-
-function highlightSearch(text, query){
-
-    if(!text) return "";
-
-    if(!query) return text;
-
-
-    const regex = new RegExp(
-        "(" + query + ")",
-        "gi"
-    );
-
-
-    return text.replace(
-        regex,
-        "<mark>$1</mark>"
-    );
-
-}
-      
+}      
 function getAISnippet(sop, query){
 
     const sources = [
@@ -1158,17 +1131,7 @@ Encontrados:
 `;
       
 results.forEach(sop=>{
-
-const fragment = getAISnippet(
-    sop,
-    query
-);
-const highlighted =
-    highlightSearch(
-        fragment,
-        query
-    );
-
+const fragment = sop.title;
 html += `
 <div class="ai-card">
 <h3>
@@ -1178,25 +1141,8 @@ ${sop.title}
 ${getDepartmentBadge(sop.department)}
 </div>
 <p>
-${fragment}
+${fragment}...
 </p>
-
-<div class="ai-location">
-
-📄 Página aprox:
-<strong>${info.page}</strong>
-
-&nbsp;&nbsp;
-
-📍 Línea:
-<strong>${info.line}</strong>
-
-&nbsp;&nbsp;
-
-🎯 Posición:
-<strong>${info.position}%</strong>
-
-</div>
 <div class="ai-reason">
       ${explainMatch(sop,query)}
 </div>
