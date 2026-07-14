@@ -999,10 +999,10 @@ function renderSOP(filtered){
 function getAISnippet(sop, query){
 
     const sources = [
-        sop.title || "",
-        sop.keywords || "",
-        sop.search_text || ""
-    ];
+    sop.search_text || "",
+    sop.title || "",
+    sop.keywords || ""
+];
 
 
     const fullText = sources.join(" ");
@@ -1256,12 +1256,17 @@ function filterSOP(){
       const matchDept = !dept || sop.department === dept;
 
       const title = (sop.title || "").toLowerCase();
-      const text = (sop.search_text || "").toLowerCase();
 
+      const text = (sop.search_text || "").toLowerCase();
+      
+      const keywords = (sop.keywords || "").toLowerCase();
+      
+      
       const matchSearch =
-        !hasSearch ||
-        title.includes(search) ||
-        text.includes(search);
+          !hasSearch ||
+          title.includes(search) ||
+          text.includes(search) ||
+          keywords.includes(search);
 
       return matchDept && matchSearch;
     })
