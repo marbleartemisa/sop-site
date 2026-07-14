@@ -998,67 +998,41 @@ function renderSOP(filtered){
 
 function getAISnippet(sop, query){
 
-    const title = sop.title || "";
-    const keywords = sop.keywords || "";
-    const text = sop.search_text || "";
+    const sources = [
+        sop.title || "",
+        sop.keywords || "",
+        sop.search_text || ""
+    ];
 
 
-    const fullText = [
-        title,
-        keywords,
-        text
-    ]
-    .join(" ")
-    .replace(/\s+/g," ")
-    .trim();
-
-
-
-    if(!fullText){
-
-        return "Información relacionada encontrada.";
-
-    }
-
+    const fullText = sources.join(" ");
 
 
     const lowerText = fullText.toLowerCase();
-    const lowerQuery = query.toLowerCase().trim();
-
+    const lowerQuery = query.toLowerCase();
 
 
     const index = lowerText.indexOf(lowerQuery);
 
 
+    if(index === -1){
 
-    // Si encuentra coincidencia
-    if(index >= 0){
-
-        const start = Math.max(index - 80,0);
-
-        const end = Math.min(
-            index + lowerQuery.length + 180,
-            fullText.length
-        );
-
-
-        let snippet = fullText.substring(start,end);
-
-
-
-        return snippet;
-
+        return fullText.substring(0,220) + "...";
 
     }
 
 
+    const start = Math.max(index - 80,0);
 
-    // Fallback seguro
-    return (
-        title +
-        " - " +
-        keywords.substring(0,150)
+    const end = Math.min(
+        index + query.length + 160,
+        fullText.length
     );
+
+
+    return "..." + 
+    fullText.substring(start,end) +
+    "...";
 
 }
 
