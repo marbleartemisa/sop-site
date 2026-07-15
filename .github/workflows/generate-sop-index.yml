@@ -66,24 +66,25 @@ jobs:
   
             [ -z "$revision" ] && revision=$(date +"%Y-%m-%d")
   
-            content=$(cat "$dir/index.html" \
-              | sed 's/<script[^>]*>.*<\/script>//g' \
-              | sed 's/<style[^>]*>.*<\/style>//g' \
-              | sed 's/<[^>]*>/ /g' \
-              | tr '\n' ' ' \
-              | tr '[:upper:]' '[:lower:]' \
-              | sed 's/&nbsp;/ /g' \
-              | tr -s ' ' \
-              | cut -c1-10000)
-  
-            jq \
-              --arg title "$title" \
-              --arg department "$department" \
-              --arg keywords "$keywords" \
-              --arg revision "$revision" \
-              --arg content "$content" \
-              --arg url "$url" \
-              '
+              content=$(perl -0777 -pe '
+                s/<script\b[^>]*>.*?<\/script>//gis;
+                s/<style\b[^>]*>.*?<\/style>//gis;
+                s/<!--.*?-->//gs;
+                s/<[^>]+>/ /g;
+                ' "$dir/index.html" \
+                  | tr '\n' ' ' \
+                  | tr '[:upper:]' '[:lower:]' \
+                  | sed 's/&nbsp;/ /g' \
+                  | tr -s ' ' \
+                  | cut -c1-10000)
+                        jq \
+                          --arg title "$title" \
+                          --arg department "$department" \
+                          --arg keywords "$keywords" \
+                          --arg revision "$revision" \
+                          --arg content "$content" \
+                          --arg url "$url" \
+                          '
               . += [{
                 title: $title,
                 department: $department,
