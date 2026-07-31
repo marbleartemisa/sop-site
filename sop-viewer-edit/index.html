@@ -959,6 +959,35 @@ function scoreEditSOP(sop, search){
     indexSOP = await res.json();
 
 }
+
+  function enriquecerSOPconContenido(){
+
+    cacheSOP = cacheSOP.map(sop=>{
+
+        const urlSheet = (sop.url_doc || "")
+            .replace("https://marbleartemisa.github.io/sop-site/","");
+
+
+        const encontrado = indexSOP.find(item =>
+            item.url === urlSheet
+        );
+
+
+        return {
+
+            ...sop,
+
+            search_text:
+                encontrado?.search_text || "",
+
+            title:
+                encontrado?.title || sop.objetivo
+
+        };
+
+    });
+
+}
   
 async function cargarDatos(){
   const res = await fetch(SHEET_API);
