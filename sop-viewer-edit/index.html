@@ -614,6 +614,67 @@ function decodeHTML(text){
     return txt.value;
 
 }
+
+  function getAISnippet(sop, query){
+
+    const sources = [
+
+        sop.objetivo || "",
+        sop.departamento || "",
+        sop.areas || "",
+        sop.empleado || "",
+        sop.estado || ""
+
+    ];
+
+    const fullText = decodeHTML(
+        sources.join(" ")
+    );
+
+    const lowerText = fullText.toLowerCase();
+
+    const words = query
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(w=>w.length>2);
+
+    let index = -1;
+
+    for(const word of words){
+
+        const pos = lowerText.indexOf(word);
+
+        if(pos!==-1){
+
+            index=pos;
+            break;
+
+        }
+
+    }
+
+    if(index===-1){
+
+        return escapeHTML(
+            fullText.substring(0,220)+"..."
+        );
+
+    }
+
+    const start=Math.max(index-60,0);
+
+    const end=Math.min(
+        index+180,
+        fullText.length
+    );
+
+    return escapeHTML(
+        "..." +
+        fullText.substring(start,end) +
+        "..."
+    );
+
+}
   
   // TABLA SOP
 async function cargarDatos(){
