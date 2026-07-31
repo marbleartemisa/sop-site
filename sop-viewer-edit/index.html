@@ -594,7 +594,28 @@ function capitalizar(texto){
   return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
 }
 
-// TABLA SOP
+
+  function escapeHTML(str){
+
+    return String(str || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+function decodeHTML(text){
+
+    const txt = document.createElement("textarea");
+
+    txt.innerHTML = text;
+
+    return txt.value;
+
+}
+  
+  // TABLA SOP
 async function cargarDatos(){
   const res = await fetch(SHEET_API);
   const data = await res.json();
