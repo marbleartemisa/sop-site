@@ -964,8 +964,8 @@ function scoreEditSOP(sop, search){
 
     cacheSOP = cacheSOP.map(sop=>{
 
-        const urlSheet = (sop.url_doc || "")
-            .replace("https://marbleartemisa.github.io/sop-site/","");
+        const urlSheet = (sop.links || sop.url_doc || "")
+        .replace("https://marbleartemisa.github.io/sop-site/","");
 
 
         const encontrado = indexSOP.find(item =>
