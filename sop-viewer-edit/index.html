@@ -610,6 +610,7 @@ cursor:pointer;
 
 <script>
 let cacheSOP = [];
+let indexSOP = [];
 let renderToken = 0;
 let timeout = null;
 let currentUser = null;
@@ -941,6 +942,17 @@ function scoreEditSOP(sop, search){
   
   
   // TABLA SOP
+
+  async function cargarIndexSOP(){
+
+    const res = await fetch(
+        "/sop-site/SOP_INDEX.json?v=" + Date.now()
+    );
+
+    indexSOP = await res.json();
+
+}
+  
 async function cargarDatos(){
   const res = await fetch(SHEET_API);
   const data = await res.json();
@@ -1146,7 +1158,10 @@ async function renderTabla(){
 });
     document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 
-cargarDatos();
+Promise.all([
+    cargarDatos(),
+    cargarIndexSOP()
+]);
 
 
 // ABRIR SOP
