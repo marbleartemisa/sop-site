@@ -686,15 +686,14 @@ function decodeHTML(text){
 
   function getAISnippet(sop, query){
 
-    const sources = [
+  const sources = [
 
-        sop.objetivo || "",
-        sop.departamento || "",
-        sop.areas || "",
-        sop.empleado || "",
-        sop.estado || ""
+    sop.objetivo || "",
+    sop.departamento || "",
+    sop.areas || "",
+    sop.search_text || ""
 
-    ];
+];
 
     const fullText = decodeHTML(
         sources.join(" ")
@@ -1004,11 +1003,13 @@ function enriquecerSOPconContenido(){
 
 }
   
-async function cargarDatos(){
-  const res = await fetch(SHEET_API);
-  const data = await res.json();
-  cacheSOP = data;
-  renderTabla();
+
+  async function cargarDatos(){
+
+    const res = await fetch(SHEET_API);
+
+    cacheSOP = await res.json();
+
 }
 
 async function renderTabla(){
@@ -1057,17 +1058,13 @@ async function renderTabla(){
 
       if (token !== renderToken) return; // 🔥 cancela renders viejos
 
-      const sop = {
-        Timestamp: row.Timestamp || "",
-        empleado: row.empleado || "",
-        departamento: row.departamento || "",
-        objetivo: row.objetivo || "",
-        areas: row.areas || "",
-        estado: row.estado || "Pendiente",
-        ID_SOP: row.ID_SOP,
-        url_doc: row.url_doc || row.links || ""
-      };
+     const sop = {
 
+    ...row,
+
+    url_doc: row.url_doc || row.links || ""
+
+    };
       // 🔥 FILTRO DEPARTAMENTO
       if (filtroDepto && sop.departamento.toLowerCase() !== filtroDepto.toLowerCase()) {
         continue;
@@ -1175,7 +1172,7 @@ async function renderTabla(){
 
 const resultados = cacheSOP
 
-.map(sop=>({
+.map(sop => ({
 
     sop,
 
@@ -1185,14 +1182,12 @@ const resultados = cacheSOP
     )
 
 }))
-    return {
-        sop: buscable,
-        score: scoreEditSOP(
-            buscable,
-            buscar
-        )
-    };
-})
+
+.filter(x=>x.score>0)
+
+.sort((a,b)=>b.score-a.score)
+
+.map(x=>x.sop);
 .filter(x=>x.score>0)
 .sort((a,b)=>b.score-a.score)
 .map(x=>x.sop);
@@ -1217,6 +1212,8 @@ Promise.all([
 ]).then(()=>{
 
     enriquecerSOPconContenido();
+
+    renderTabla();
 
     console.log("CACHE SOP:", cacheSOP[0]);
     console.log("INDEX SOP:", indexSOP[0]);
