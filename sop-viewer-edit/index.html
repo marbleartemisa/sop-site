@@ -960,33 +960,34 @@ function scoreEditSOP(sop, search){
 
 }
 
-  function enriquecerSOPconContenido(){
+function enriquecerSOPconContenido(){
 
     cacheSOP = cacheSOP.map(sop=>{
 
-        const urlSheet = (sop.links || sop.url_doc || "")
-        .replace("https://marbleartemisa.github.io/sop-site/","");
+        const urlSheet = (sop.links || "")
+            .replace("https://marbleartemisa.github.io/sop-site/","");
 
 
-        const encontrado = indexSOP.find(item => {
+        console.log("URL DESDE SHEET:", urlSheet);
 
-              const jsonURL =
-                  item.url.trim().toLowerCase();
-          
-              const sheetURL =
-                  urlSheet.trim().toLowerCase();
-          
-              return jsonURL === sheetURL;
-          
-          });
 
-          console.log(
-              "RELACION SOP:",
-              sop.url_doc,
-              encontrado
-          );
-          console.log("URL SHEET NORMALIZADA:", urlSheet);
-          console.log("TOTAL INDEX:", indexSOP.length);
+        const encontrado = indexSOP.find(item =>
+            item.url === urlSheet
+        );
+
+
+        console.log(
+            "BUSCANDO:",
+            urlSheet
+        );
+
+
+        console.log(
+            "ENCONTRADO:",
+            encontrado
+        );
+
+
         return {
 
             ...sop,
