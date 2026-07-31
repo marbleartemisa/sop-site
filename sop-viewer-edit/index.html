@@ -675,7 +675,78 @@ function decodeHTML(text){
     );
 
 }
-  
+
+
+function scoreEditSOP(sop, search){
+
+    const q = (search || "")
+        .toLowerCase()
+        .trim();
+
+    if(!q) return 0;
+
+
+    const objetivo =
+        (sop.objetivo || "").toLowerCase();
+
+    const departamento =
+        (sop.departamento || "").toLowerCase();
+
+    const areas =
+        (sop.areas || "").toLowerCase();
+
+    const empleado =
+        (sop.empleado || "").toLowerCase();
+
+
+    const text =
+        (
+            objetivo + " " +
+            departamento + " " +
+            areas + " " +
+            empleado
+        );
+
+
+    let score = 0;
+
+
+    // Coincidencia exacta del objetivo
+    if(objetivo.includes(q)){
+        score += 100;
+    }
+
+
+    // Palabras individuales
+    const words = q
+        .split(/\s+/)
+        .filter(w=>w.length>2);
+
+
+    for(const w of words){
+
+        if(objetivo.includes(w)){
+            score += 40;
+        }
+
+        if(areas.includes(w)){
+            score += 20;
+        }
+
+        if(departamento.includes(w)){
+            score += 10;
+        }
+
+        if(text.includes(w)){
+            score += 5;
+        }
+
+    }
+
+
+    return score;
+
+}
   // TABLA SOP
 async function cargarDatos(){
   const res = await fetch(SHEET_API);
