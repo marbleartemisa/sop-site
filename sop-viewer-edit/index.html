@@ -1173,30 +1173,18 @@ async function renderTabla(){
 
     }
 
-
 const resultados = cacheSOP
 
-.map(sop=>{
-    const index = indexSOP.find(x=>
-        x.url === sop.url_doc ||
-        x.url_doc === sop.url_doc
-    );
+.map(sop=>({
 
+    sop,
 
-    const buscable = {
+    score: scoreEditSOP(
+        sop,
+        buscar
+    )
 
-        ...sop,
-
-        search_text:
-            index?.search_text || "",
-
-        keywords:
-            index?.keywords || "",
-
-        title:
-            index?.title || sop.objetivo
-
-    };
+}))
     return {
         sop: buscable,
         score: scoreEditSOP(
