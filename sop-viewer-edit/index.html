@@ -767,6 +767,9 @@ function scoreEditSOP(sop, search){
     const empleado =
         (sop.empleado || "").toLowerCase();
 
+  const contenido =
+        (sop.search_text || "").toLowerCase();
+
 
     const text =
         (
@@ -809,6 +812,10 @@ function scoreEditSOP(sop, search){
         if(text.includes(w)){
             score += 5;
         }
+      
+        if(contenido.includes(w)){
+        score += 30;
+      }
 
     }
 
@@ -1123,27 +1130,40 @@ async function renderTabla(){
     }
 
 
-    const resultados = cacheSOP
+const resultados = cacheSOP
 
-      .map(sop=>({
-
-          sop:sop,
-
-          score:scoreEditSOP(
-              sop,
-              buscar
-          )
-
-      }))
+.map(sop=>{
+    const index = indexSOP.find(x=>
+        x.url === sop.url_doc ||
+        x.url_doc === sop.url_doc
+    );
 
 
-      .filter(x=>x.score>0)
+    const buscable = {
 
+        ...sop,
 
-      .sort((a,b)=>b.score-a.score)
+        search_text:
+            index?.search_text || "",
 
+        keywords:
+            index?.keywords || "",
 
-      .map(x=>x.sop);
+        title:
+            index?.title || sop.objetivo
+
+    };
+    return {
+        sop: buscable,
+        score: scoreEditSOP(
+            buscable,
+            buscar
+        )
+    };
+})
+.filter(x=>x.score>0)
+.sort((a,b)=>b.score-a.score)
+.map(x=>x.sop);
 
 
 
