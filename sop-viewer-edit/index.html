@@ -860,24 +860,27 @@ function scoreEditSOP(sop, search){
 
     `;
 
-
-    results.forEach(sop=>{
-
-
-        const fragment = getAISnippet(
-            sop,
-            query
-        );
-
-
-        html += `
-
-        <div class="ai-card">
-
-            <h3>
-                ${sop.objetivo}
-            </h3>
-
+      results.forEach(sop=>{
+      
+      
+          console.log("ABRIENDO:", sop.links);
+          console.log("OBJETO SOP COMPLETO:", sop);
+      
+      
+          const fragment = getAISnippet(
+              sop,
+              query
+          );
+      
+      
+          html += `
+      
+          <div class="ai-card">
+      
+              <h3>
+                  ${sop.objetivo}
+              </h3>
+ 
 
             <div class="ai-dept">
 
@@ -1061,13 +1064,13 @@ async function renderTabla(){
 
       if (token !== renderToken) return; // 🔥 cancela renders viejos
 
-     const sop = {
+      const sop = {
 
-    ...row,
-
-    url_doc: row.url_doc || row.links || ""
-
-    };
+          ...row,
+      
+          url_doc: row.links || row.url_doc || ""
+      
+      };
       // 🔥 FILTRO DEPARTAMENTO
       if (filtroDepto && sop.departamento.toLowerCase() !== filtroDepto.toLowerCase()) {
         continue;
@@ -1132,7 +1135,11 @@ async function renderTabla(){
 
         <td>
           <button class="btn-icon"
-            onclick="abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
+                        onclick="abrirSOP(
+                                '${sop.links}',
+                                '${sop.ID_SOP}'
+                            )">
+
             <i class="fa-solid fa-comment-dots"></i>
           </button>
         </td>
