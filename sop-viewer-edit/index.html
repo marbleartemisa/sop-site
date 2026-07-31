@@ -1210,7 +1210,12 @@ const resultados = cacheSOP
 Promise.all([
     cargarDatos(),
     cargarIndexSOP()
-]);
+
+]).then(()=>{
+
+    enriquecerSOPconContenido();
+
+});
 
 
 // ABRIR SOP
