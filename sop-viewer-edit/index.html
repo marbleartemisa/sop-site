@@ -1085,10 +1085,65 @@ async function renderTabla(){
 }
 
 // 🔥 EVENTOS
-    document.getElementById("buscarSOP").addEventListener("input", () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(renderTabla, 300);
-    });
+ document.getElementById("buscarSOP").addEventListener("input", () => {
+
+  clearTimeout(timeout);
+
+  timeout = setTimeout(()=>{
+
+
+    const buscar = document
+      .getElementById("buscarSOP")
+      .value
+      .toLowerCase()
+      .trim();
+
+
+    // Si no hay búsqueda,
+    // volvemos a la tabla normal
+
+    if(!buscar){
+
+        renderTabla();
+
+        return;
+
+    }
+
+
+    const resultados = cacheSOP
+
+      .map(sop=>({
+
+          sop:sop,
+
+          score:scoreEditSOP(
+              sop,
+              buscar
+          )
+
+      }))
+
+
+      .filter(x=>x.score>0)
+
+
+      .sort((a,b)=>b.score-a.score)
+
+
+      .map(x=>x.sop);
+
+
+
+    renderBusquedaAI(
+        resultados,
+        buscar
+    );
+
+
+  },300);
+
+});
     document.getElementById("filtroEstado").addEventListener("change", renderTabla);
 
 cargarDatos();
