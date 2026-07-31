@@ -416,6 +416,74 @@ canvas{
   from{opacity:0; transform:translateY(-20px);}
   to{opacity:1; transform:translateY(0);}
 }
+
+/* ===== BUSQUEDA INTELIGENTE EDITOR ===== */
+
+.ai-results{
+display:flex;
+flex-direction:column;
+gap:20px;
+padding:10px;
+}
+
+
+.ai-card{
+
+background:rgba(255,255,255,.9);
+border-radius:18px;
+padding:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.15);
+
+}
+
+
+.ai-card h3{
+
+margin-top:0;
+color:#003366;
+
+}
+
+
+.ai-snippet{
+
+line-height:1.6;
+color:#475569;
+
+}
+
+
+.ai-footer{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:20px;
+
+}
+
+
+.ai-footer span{
+
+background:#e0f2fe;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+
+}
+
+
+.sop-btn{
+
+background:#003366;
+color:white;
+border:none;
+padding:10px 18px;
+border-radius:8px;
+cursor:pointer;
+
+}
+  
 </style>
 </head>
 <body>
@@ -747,6 +815,131 @@ function scoreEditSOP(sop, search){
     return score;
 
 }
+
+  function renderBusquedaAI(results, query){
+
+    const tabla = document.getElementById("tablaSOP");
+
+    if(results.length===0){
+
+        tabla.innerHTML = `
+        <tr>
+            <td colspan="7">
+                No se encontraron SOP relacionados con 
+                <strong>${query}</strong>
+            </td>
+        </tr>
+        `;
+
+        return;
+    }
+
+
+    let html = `
+
+    <tr>
+        <td colspan="7">
+
+        <div class="ai-results">
+
+        <div class="sop-info">
+        🔎 Resultados inteligentes para:
+        <strong>${query}</strong>
+        <br>
+        Encontrados:
+        <strong>${results.length}</strong>
+        SOP relacionados
+        </div>
+
+    `;
+
+
+    results.forEach(sop=>{
+
+
+        const fragment = getAISnippet(
+            sop,
+            query
+        );
+
+
+        html += `
+
+        <div class="ai-card">
+
+            <h3>
+                ${sop.objetivo}
+            </h3>
+
+
+            <div class="ai-dept">
+
+                <span class="badge dept-${
+                    (sop.departamento || "")
+                    .toLowerCase()
+                }">
+
+                ${sop.departamento}
+
+                </span>
+
+            </div>
+
+
+            <p class="ai-snippet">
+                ${fragment}
+            </p>
+
+
+            <div class="ai-footer">
+
+
+                <span>
+                Coincidencia:
+                ${Math.min(
+                    scoreEditSOP(sop,query),
+                    100
+                )}%
+                </span>
+
+
+                <button 
+                class="sop-btn"
+                onclick="abrirSOP(
+                    '${sop.url_doc}',
+                    '${sop.ID_SOP}'
+                )">
+
+                💬 Editar SOP
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+        `;
+
+    });
+
+
+    html += `
+
+        </div>
+
+        </td>
+    </tr>
+
+    `;
+
+
+    tabla.innerHTML = html;
+
+}
+  
+  
   // TABLA SOP
 async function cargarDatos(){
   const res = await fetch(SHEET_API);
