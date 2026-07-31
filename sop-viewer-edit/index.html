@@ -968,16 +968,25 @@ function scoreEditSOP(sop, search){
         .replace("https://marbleartemisa.github.io/sop-site/","");
 
 
-        const encontrado = indexSOP.find(item =>
-            item.url === urlSheet
-        );
+        const encontrado = indexSOP.find(item => {
+
+              const jsonURL =
+                  item.url.trim().toLowerCase();
+          
+              const sheetURL =
+                  urlSheet.trim().toLowerCase();
+          
+              return jsonURL === sheetURL;
+          
+          });
 
           console.log(
               "RELACION SOP:",
               sop.url_doc,
               encontrado
           );
-
+          console.log("URL SHEET NORMALIZADA:", urlSheet);
+          console.log("TOTAL INDEX:", indexSOP.length);
         return {
 
             ...sop,
