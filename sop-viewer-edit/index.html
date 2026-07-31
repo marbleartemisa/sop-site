@@ -19,7 +19,7 @@
         background-repeat:no-repeat;
         background-size:cover;
         background-attachment:fixed;
-        color:#1f2937;
+        color:white;
       }
  
 
@@ -60,44 +60,89 @@
 }
 
 .btn-icon{
-  background:#003366;
-  color:white;
-  border:none;
-  width:36px;
-  height:36px;
-  border-radius:10px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:0.2s;
+
+background:
+rgba(0,51,102,.85);
+
+color:white;
+
+border:none;
+
+width:38px;
+
+height:38px;
+
+border-radius:50%;
+
+cursor:pointer;
+
+transition:.25s;
+
 }
 
+
 .btn-icon:hover{
-  transform:scale(1.1);
-  background:#0055aa;
+
+background:#00aaff;
+
+transform:scale(1.15);
+
 }
+
 h2{ color:#003366; margin-bottom:15px; text-align:center;}
-input, select{ padding:8px; border-radius:6px; border:1px solid #ccc; width:100%; margin-bottom:10px;}
+input,
+select{
+
+width:280px;
+
+height:42px;
+
+padding:0 14px;
+
+border-radius:8px;
+
+border:1px solid rgba(255,255,255,.35);
+
+background:
+rgba(255,255,255,.18);
+
+color:white;
+
+font-size:15px;
+
+backdrop-filter:blur(8px);
+
+margin-right:10px;
+
+}
+
+
+input::placeholder{
+
+color:#ddd;
+
+}
 
 .table-container{
   overflow-x:auto;
 }
 
 table{
-  width:100%;
-  min-width:1300px;
-  border-collapse:collapse;
+    width:100%;
+  min-width:0;
+  border-collapse:separate;
+  border-spacing:0 8px;
   background:white;
   border-radius:14px;
   overflow:hidden;
   box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
-  
+
 
 th{
   background:#0f172a; /* 🔥 azul oscuro moderno */
-  color:#e2e8f0;
+  color:white;
+  border-radius:8px;
   font-size:12px;
   text-transform:uppercase;
   letter-spacing:.5px;
@@ -106,6 +151,8 @@ th{
   top:0;
   z-index:2;
 }
+
+
 
 td{
   font-size:14px;
@@ -118,36 +165,36 @@ td{
 }
   
 tbody tr{
-  background: rgba(255,255,255,0.75);
-  transition: all 0.2s ease;
+
+  background:
+  rgba(255,255,255,0.18);
+
+  backdrop-filter:blur(8px);
+
+  transition:.25s;
+
 }
 
-tbody tr:nth-child(even){
-  background: rgba(255,255,255,0.65);
-}
 
 tbody tr:hover{
-  background: rgba(255,255,255,0.95);
-  transform: scale(1.01);
+
+  background:
+  rgba(255,255,255,0.35);
+
+  transform:translateY(-2px);
+
 }
 
-th:nth-child(2), td:nth-child(2){ /* Departamento */
-  min-width:160px;
-  white-space:nowrap;
+
+tbody td{
+
+  color:white;
+
+  border-bottom:
+  1px solid rgba(255,255,255,.18);
+
 }
 
-th:nth-child(3), td:nth-child(3){ /* Objetivo */
-  min-width:300px;
-}
-
-th:nth-child(4), td:nth-child(4){ /* Áreas */
-  min-width:200px;
-}
-
-th:nth-child(6), td:nth-child(6){ /* Fecha */
-  min-width:180px;
-  white-space:nowrap;
-}
 
 td{
   vertical-align:middle;
@@ -538,15 +585,13 @@ cursor:pointer;
     <table>
       <thead>
         <tr>
-          <th>Empleado</th>
-          <th>Departamento</th>
           <th>SOP</th>
-          <th>Áreas</th>
+          <th>Departamento</th>
           <th>Estado</th>
           <th>Fecha / Hora</th>
           <th>Abrir</th>
         </tr>
-      </thead>
+        </thead>
       <tbody id="tablaSOP"></tbody>
     </table>
   </div>
@@ -1107,45 +1152,62 @@ async function renderTabla(){
       const fila = document.createElement("tr");
 
       fila.innerHTML = `
-        <td>${sop.empleado}</td>
-
-        <td>
-          <span class="badge dept-${depKey}">
-            ${depLabel}
-          </span>
+        
+        <td class="sop-title">
+            ${sop.objetivo}
         </td>
-
-        <td>${sop.objetivo}</td>
-
+        
         <td>
-          <span class="badge dept-${areaKey}">
-            ${areaLabel}
-          </span>
+            <span class="badge dept-${depKey}">
+                ${depLabel}
+            </span>
         </td>
-
+        
         <td>
-          <span class="estado ${sop.estado.toLowerCase()}">
-            ${sop.estado}
-          </span>
+            <span class="estado ${sop.estado.toLowerCase()}">
+                ${sop.estado}
+            </span>
         </td>
-
+        
         <td>
-          ${sop.Timestamp ? new Date(sop.Timestamp).toLocaleString() : ""}
+            ${sop.Timestamp 
+            ? new Date(sop.Timestamp).toLocaleString()
+            : ""}
         </td>
-
+        
         <td>
-          <button class="btn-icon"
-                        onclick="abrirSOP(
-                                '${sop.links}',
-                                '${sop.ID_SOP}'
-                            )">
-
-            <i class="fa-solid fa-comment-dots"></i>
+         <button class="btn-icon"
+              onclick="event.stopPropagation(); abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
+              <i class="fa-solid fa-comment-dots"></i>
           </button>
         </td>
-      `;
+
+        <td>
+                  
+        `;
+
 
       tabla.appendChild(fila);
+      fila.style.cursor="pointer";
+
+        fila.onclick=()=>{
+        
+        abrirSOP(
+        sop.url_doc,
+        sop.ID_SOP
+        );
+        
+        };
+      fila.style.cursor="pointer";
+
+      fila.addEventListener("click",()=>{
+      
+          abrirSOP(
+              sop.url_doc,
+              sop.ID_SOP
+          );
+
+});
     }
 
   }catch(e){
