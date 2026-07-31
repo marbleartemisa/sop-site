@@ -1004,11 +1004,14 @@ function enriquecerSOPconContenido(){
 }
   
 
-  async function cargarDatos(){
+async function cargarDatos(){
 
     const res = await fetch(SHEET_API);
 
     cacheSOP = await res.json();
+
+    console.log("TOTAL SHEET:", cacheSOP.length);
+    console.log("PRIMER SOP:", cacheSOP[0]);
 
 }
 
@@ -1016,9 +1019,9 @@ async function renderTabla(){
   const tabla = document.getElementById("tablaSOP");
   tabla.innerHTML = "";
 
-  const filtro = document.getElementById("filtroEstado").value;
+  const filtro = document.getElementById("filtroEstado")?.value || "";
   const filtroDepto = document.getElementById("filtroDepartamento")?.value || "";
-  const buscar = document.getElementById("buscarSOP").value.toLowerCase().trim();
+  const buscar = document.getElementById("buscarSOP")?.value.toLowerCase().trim() || "";
 
   try{
 
@@ -1187,9 +1190,6 @@ const resultados = cacheSOP
 
 .sort((a,b)=>b.score-a.score)
 
-.map(x=>x.sop);
-.filter(x=>x.score>0)
-.sort((a,b)=>b.score-a.score)
 .map(x=>x.sop);
 
 
