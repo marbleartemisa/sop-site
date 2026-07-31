@@ -127,15 +127,23 @@ color:#ddd;
   overflow-x:auto;
 }
 
+
 table{
-    width:100%;
-  min-width:0;
-  border-collapse:separate;
-  border-spacing:0 8px;
-  background:white;
-  border-radius:14px;
-  overflow:hidden;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+
+width:100%;
+border-collapse:collapse;
+
+background:rgba(255,255,255,0.15);
+
+backdrop-filter:blur(8px);
+
+border-radius:14px;
+
+overflow:hidden;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.25);
+
 }
 
 
@@ -164,34 +172,33 @@ td{
   border-radius:999px;
 }
   
+
 tbody tr{
 
-  background:
-  rgba(255,255,255,0.18);
+background:
+rgba(255,255,255,0.35);
 
-  backdrop-filter:blur(8px);
-
-  transition:.25s;
+transition:.25s;
 
 }
 
 
 tbody tr:hover{
 
-  background:
-  rgba(255,255,255,0.35);
+background:
+rgba(255,255,255,.65);
 
-  transform:translateY(-2px);
+transform:scale(1.005);
 
 }
 
 
 tbody td{
 
-  color:white;
+  color:#0f172a;
 
   border-bottom:
-  1px solid rgba(255,255,255,.18);
+  1px solid rgba(0,0,0,.12);
 
 }
 
@@ -237,32 +244,7 @@ th, td{
 .dept-medidas{background:#f3e8ff;color:#7e22ce;}
 .dept-taller{background:#dcfce7;color:#166534;}
 
-  /* EMPLEADO */
-th:nth-child(1), td:nth-child(1){
-  min-width:180px;
-  font-weight:500;
-}
 
-/* DEPARTAMENTO */
-th:nth-child(2), td:nth-child(2){
-  min-width:180px;
-}
-
-/* OBJETIVO (🔥 CLAVE) */
-th:nth-child(3), td:nth-child(3){
-  min-width:380px;
-}
-
-/* AREAS */
-th:nth-child(4), td:nth-child(4){
-  min-width:220px;
-}
-
-/* FECHA */
-th:nth-child(6), td:nth-child(6){
-  min-width:200px;
-  white-space:nowrap;
-}
 
 /* CANVAS */
 #canvas-overlay{
@@ -584,14 +566,14 @@ cursor:pointer;
   <div class="table-container">
     <table>
       <thead>
-        <tr>
-          <th>SOP</th>
-          <th>Departamento</th>
-          <th>Estado</th>
-          <th>Fecha / Hora</th>
-          <th>Abrir</th>
-        </tr>
-        </thead>
+      <tr>
+        <th>Departamento</th>
+        <th>SOP</th>
+        <th>Estado</th>
+        <th>Fecha / Hora</th>
+        <th>Abrir</th>
+      </tr>
+      </thead>
       <tbody id="tablaSOP"></tbody>
     </table>
   </div>
@@ -1051,169 +1033,390 @@ function enriquecerSOPconContenido(){
 
 }
   
-
 async function cargarDatos(){
 
     const res = await fetch(SHEET_API);
 
     cacheSOP = await res.json();
 
-    console.log("TOTAL SHEET:", cacheSOP.length);
-    console.log("PRIMER SOP:", cacheSOP[0]);
+
+    cacheSOP = cacheSOP.map(sop=>({
+
+        ...sop,
+
+        url_doc:
+        sop.links ||
+        sop.url_doc ||
+        ""
+
+    }));
+
+
+    console.log(
+        "PRIMER SOP CON URL:",
+        cacheSOP[0]
+    );
 
 }
 
 async function renderTabla(){
+
   const tabla = document.getElementById("tablaSOP");
+
   tabla.innerHTML = "";
 
-  const filtro = document.getElementById("filtroEstado")?.value || "";
-  const filtroDepto = document.getElementById("filtroDepartamento")?.value || "";
-  const buscar = document.getElementById("buscarSOP")?.value.toLowerCase().trim() || "";
+
+  const filtro = 
+    document.getElementById("filtroEstado")?.value || "";
+
+
+  const filtroDepto = 
+    document.getElementById("filtroDepartamento")?.value || "";
+
+
+  const buscar = 
+    document.getElementById("buscarSOP")?.value
+    .toLowerCase()
+    .trim() || "";
+
 
   try{
 
+
     const data = cacheSOP || [];
 
-    // 🔥 PROTECCIÓN: evita renders desordenados
+
     const token = ++renderToken;
+
+
+    // ============================
+    // ELIMINAR DUPLICADOS POR ID
+    // ============================
 
     const unicosMap = new Map();
 
-    // 🔥 LIMPIEZA DE DUPLICADOS
-    for (const row of data) {
 
-      if (!row || !row.ID_SOP) continue;
+    for(const row of data){
+
+
+      if(!row || !row.ID_SOP) continue;
+
 
       const key = String(row.ID_SOP).trim();
-      if (!key) continue;
+
 
       const existente = unicosMap.get(key);
 
-      if (!existente) {
-        unicosMap.set(key, row);
-        continue;
+
+
+      if(!existente){
+
+        unicosMap.set(key,row);
+
+      }else{
+
+
+        const fechaNueva =
+        new Date(row.Timestamp || 0).getTime();
+
+
+        const fechaVieja =
+        new Date(existente.Timestamp || 0).getTime();
+
+
+
+        if(fechaNueva >= fechaVieja){
+
+          unicosMap.set(key,row);
+
+        }
+
       }
 
-      const fechaNueva = new Date(row.Timestamp || 0).getTime();
-      const fechaVieja = new Date(existente.Timestamp || 0).getTime();
-
-      if (fechaNueva >= fechaVieja) {
-        unicosMap.set(key, row);
-      }
     }
 
-    const dataLimpia = Array.from(unicosMap.values());
 
-    for (const row of dataLimpia) {
 
-      if (token !== renderToken) return; // 🔥 cancela renders viejos
+    const dataLimpia =
+      Array.from(unicosMap.values());
+
+
+
+
+    // ============================
+    // CREAR FILAS
+    // ============================
+
+    for(const row of dataLimpia){
+
+
+
+      if(token !== renderToken) return;
+
+
 
       const sop = {
 
-          ...row,
-      
-          url_doc: row.links || row.url_doc || ""
-      
+        ...row,
+
+        url_doc:
+          row.links ||
+          row.url_doc ||
+          ""
+
       };
-      // 🔥 FILTRO DEPARTAMENTO
-      if (filtroDepto && sop.departamento.toLowerCase() !== filtroDepto.toLowerCase()) {
+
+
+
+      console.log(
+        "SOP:",
+        sop.objetivo,
+        "URL:",
+        sop.url_doc
+      );
+
+
+
+
+      // FILTRO DEPARTAMENTO
+
+      if(
+        filtroDepto &&
+        (sop.departamento || "")
+        .toLowerCase()
+        !== filtroDepto.toLowerCase()
+
+      ){
+
         continue;
+
       }
 
-      // 🔥 FILTRO ESTADO
-      if (filtro && sop.estado !== filtro) {
+
+
+      // FILTRO ESTADO
+
+      if(
+        filtro &&
+        sop.estado !== filtro
+
+      ){
+
         continue;
+
       }
 
-      // 🔥 TEXTO BUSQUEDA
-      const textoBusqueda = [
+
+
+
+      // ============================
+      // BUSQUEDA NORMAL
+      // ============================
+
+
+      if(buscar){
+
+
+        const texto = [
+
           sop.objetivo,
           sop.departamento,
           sop.areas,
-          sop.empleado
-        ].join(" ").toLowerCase();
+          sop.empleado,
+          sop.search_text || ""
 
-        if (buscar) {
-          const query = buscar.trim().toLowerCase();
-          const palabras = query.split(/\s+/).filter(Boolean);
-          const texto = textoBusqueda.toLowerCase();
-        
-          const coincide = palabras.every(p => texto.includes(p));
-          if (!coincide) continue;
+        ]
+        .join(" ")
+        .toLowerCase();
+
+
+
+        const palabras =
+          buscar.split(/\s+/)
+          .filter(Boolean);
+
+
+
+        const coincide =
+          palabras.every(
+            p => texto.includes(p)
+          );
+
+
+
+        if(!coincide) continue;
+
+
+      }
+
+
+
+
+      const depKey =
+        (sop.departamento || "")
+        .toLowerCase()
+        .replace(/\s+/g,"-");
+
+
+
+      const depLabel =
+        deptMap[depKey] ||
+        sop.departamento ||
+        "";
+
+
+
+
+      const fila =
+        document.createElement("tr");
+
+
+
+      fila.style.cursor="pointer";
+
+
+
+      // ============================
+      // CLICK EN TODA LA FILA
+      // ============================
+
+      fila.addEventListener(
+        "click",
+        ()=>{
+
+
+          console.log(
+            "ABRIENDO SOP:",
+            sop.url_doc
+          );
+
+
+          abrirSOP(
+            sop.url_doc,
+            sop.ID_SOP
+          );
+
+
         }
+      );
 
-      const depKey = (sop.departamento || "").toLowerCase();
-      const areaKey = (sop.areas || "").toLowerCase();
 
-      const depLabel = deptMap[depKey] || sop.departamento;
-      const areaLabel = deptMap[areaKey] || sop.areas;
 
-      const fila = document.createElement("tr");
+
 
       fila.innerHTML = `
-        
-        <td class="sop-title">
-            ${sop.objetivo}
-        </td>
-        
-        <td>
-            <span class="badge dept-${depKey}">
-                ${depLabel}
-            </span>
-        </td>
-        
-        <td>
-            <span class="estado ${sop.estado.toLowerCase()}">
-                ${sop.estado}
-            </span>
-        </td>
-        
-        <td>
-            ${sop.Timestamp 
-            ? new Date(sop.Timestamp).toLocaleString()
-            : ""}
-        </td>
-        
-        <td>
-         <button class="btn-icon"
-              onclick="event.stopPropagation(); abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
-              <i class="fa-solid fa-comment-dots"></i>
-          </button>
-        </td>
 
-        <td>
-                  
-        `;
+
+      <td>
+
+        <span class="badge dept-${depKey}">
+
+          ${depLabel}
+
+        </span>
+
+      </td>
+
+
+
+      <td>
+
+        ${sop.objetivo || ""}
+
+      </td>
+
+
+
+
+      <td>
+
+
+        <span class="estado ${
+          (sop.estado || "")
+          .toLowerCase()
+        }">
+
+          ${sop.estado || ""}
+
+        </span>
+
+
+      </td>
+
+
+
+
+
+      <td>
+
+        ${
+          sop.Timestamp
+          ?
+          new Date(
+            sop.Timestamp
+          ).toLocaleString()
+          :
+          ""
+
+        }
+
+      </td>
+
+
+
+
+
+      <td>
+
+
+        <button
+
+        class="btn-icon"
+
+        onclick="event.stopPropagation();"
+
+        title="Abrir SOP">
+
+
+          <i class="fa-solid fa-folder-open"></i>
+
+
+        </button>
+
+
+      </td>
+
+
+
+      `;
+
 
 
       tabla.appendChild(fila);
-      fila.style.cursor="pointer";
 
-        fila.onclick=()=>{
-        
-        abrirSOP(
-        sop.url_doc,
-        sop.ID_SOP
-        );
-        
-        };
-      fila.style.cursor="pointer";
 
-      fila.addEventListener("click",()=>{
-      
-          abrirSOP(
-              sop.url_doc,
-              sop.ID_SOP
-          );
-
-});
     }
 
-  }catch(e){
-    console.error(e);
-    alert("Error cargando SOPs");
+
+
   }
+  catch(e){
+
+
+    console.error(
+      "Error renderTabla:",
+      e
+    );
+
+
+    alert(
+      "Error cargando SOPs"
+    );
+
+
+  }
+
+
 }
 
 // 🔥 EVENTOS
