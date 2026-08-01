@@ -1350,16 +1350,32 @@ async function renderTabla(){
 
 
 
-      const sop = {
-
-        ...row,
-
-        url_doc:
-          row.links ||
-          row.url_doc ||
-          ""
-
-      };
+        const sop = {
+        
+            ...row,
+        
+            url_doc: row.links || row.url_doc || ""
+        };        
+        // NORMALIZAR DEPARTAMENTOS
+        if(sop.departamento){
+        
+            const dep = sop.departamento
+                .toLowerCase()
+                .trim();
+        
+        
+            if(dep==="produccion"){
+        
+                sop.departamento="carpinteria";
+        
+            }
+            if(dep==="instalacion"){
+        
+                sop.departamento="stone";
+        
+            }
+        
+        }
 
 
 
@@ -1374,19 +1390,23 @@ async function renderTabla(){
 
 
       // FILTRO DEPARTAMENTO
-
-      if(
-        filtroDepto &&
-        (sop.departamento || "")
-        .toLowerCase()
-        !== filtroDepto.toLowerCase()
-
-      ){
-
-        continue;
-
-      }
-
+          let filtroNormalizado = filtroDepto.toLowerCase();
+          
+          if(filtroNormalizado==="produccion"){
+              filtroNormalizado="carpinteria";
+          }
+          
+          if(filtroNormalizado==="instalacion"){
+              filtroNormalizado="stone";
+          }
+          
+          
+          if(
+              filtroNormalizado &&
+              sop.departamento.toLowerCase() !== filtroNormalizado
+          ){
+              continue;
+          }
 
 
       // FILTRO ESTADO
