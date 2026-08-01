@@ -592,12 +592,11 @@ padding:10px;
 
 
 .ai-card{
-
-background:rgba(255,255,255,.9);
-border-radius:18px;
-padding:25px;
-box-shadow:0 10px 30px rgba(0,0,0,.15);
-
+    background:rgba(255,255,255,.92);
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
+    text-align:left;
 }
 
 
@@ -605,14 +604,27 @@ box-shadow:0 10px 30px rgba(0,0,0,.15);
 
 margin-top:0;
 color:#003366;
+text-align:left;
 
 }
-
-
+  
 .ai-snippet{
+    line-height:1.6;
+    color:#475569;
+    text-align:left;
+}
 
-line-height:1.6;
-color:#475569;
+.ai-snippet mark{
+
+    background:#ffeb3b;
+
+    color:#000;
+
+    padding:2px 5px;
+
+    border-radius:4px;
+
+    font-weight:700;
 
 }
 
@@ -629,10 +641,21 @@ margin-top:20px;
 
 .ai-footer span{
 
-background:#e0f2fe;
-padding:6px 12px;
-border-radius:20px;
-font-size:12px;
+    background:rgba(0,51,102,0.90);
+
+    color:white;
+
+    padding:8px 16px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    letter-spacing:.3px;
+
+    box-shadow:0 3px 8px rgba(0,0,0,.25);
 
 }
 
@@ -920,12 +943,27 @@ function decodeHTML(text){
         fullText.length
     );
 
-    return escapeHTML(
+        let fragmento =
         "..." +
         fullText.substring(start,end) +
-        "..."
-    );
+        "...";
+    
+    
+    words.forEach(word=>{
+    
+        const regex = new RegExp(
+            "(" + word + ")",
+            "gi"
+        );
+    
+        fragmento = fragmento.replace(
+            regex,
+            "<mark>$1</mark>"
+        );
+    
+    });
 
+return fragmento;
 }
 
 
