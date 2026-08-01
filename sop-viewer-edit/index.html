@@ -123,6 +123,104 @@ color:#ddd;
 
 }
 
+  /*==============================
+  ENCABEZADO DEL EDITOR
+==============================*/
+
+.editor-header{
+
+    text-align:center;
+    margin:20px 0 35px;
+
+}
+
+.editor-header h1{
+
+    margin:0;
+
+    font-size:42px;
+
+    font-weight:700;
+
+    color:white;
+
+    letter-spacing:.5px;
+
+    text-shadow:
+        0 4px 15px rgba(0,0,0,.85);
+
+}
+
+.editor-header p{
+
+    margin-top:12px;
+
+    font-size:18px;
+
+    color:#f1f5f9;
+
+    text-shadow:
+        0 2px 10px rgba(0,0,0,.85);
+
+}
+
+
+/*==============================
+  FILTROS
+==============================*/
+
+.filtros{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:18px;
+
+    margin-bottom:35px;
+
+    flex-wrap:wrap;
+
+}
+
+
+.filtros input,
+.filtros select{
+
+width:300px;
+
+height:46px;
+
+padding:0 16px;
+
+border-radius:12px;
+
+border:1px solid rgba(255,255,255,.25);
+
+background:rgba(255,255,255,.15);
+
+backdrop-filter:blur(10px);
+
+color:white;
+
+font-size:15px;
+
+box-shadow:
+0 4px 15px rgba(0,0,0,.18);
+
+}  
+  
+.filtros select option{
+
+    background:#0f172a;
+
+    color:white;
+
+}
+
+
 .table-container{
   overflow-x:auto;
 }
@@ -552,17 +650,39 @@ cursor:pointer;
 
 </div> <!-- 🔥 ESTE CIERRE ES CLAVE -->
 
-<!-- HISTORIAL SOP -->
+<!-- CENTRO DE REVISION SOP  -->
+
+
+
+
+  
 <div class="overlay">
-  <h2>Historial de SOPs</h2>
-  <input type="text" id="buscarSOP" placeholder="Buscar...">
-  <select id="filtroEstado">
-    <option value="">Todos los estados</option>
-    <option value="Pendiente">Pendiente</option>
-    <option value="Trámite">Trámite</option>
-    <option value="Rechazado">Rechazado</option>
-    <option value="Aprobado">Aprobado</option>
-  </select>
+    <div class="editor-header">      
+        <h1>
+            <i class="fa-solid fa-clipboard-check"></i>
+            Centro de Revisión de SOP
+        </h1>
+        <p>
+            Consulte procedimientos, registre observaciones y colabore en el proceso de mejora continua.
+        </p>
+    </div>
+
+    <div class="filtros">
+
+        <input
+            type="text"
+            id="buscarSOP"
+            placeholder="🔍 Buscar procedimiento...">
+        <select id="filtroEstado">
+            <option value="">Todos los estados</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Trámite">Trámite</option>
+            <option value="Rechazado">Rechazado</option>
+            <option value="Aprobado">Aprobado</option>
+        </select>
+
+    </div>
+
   <div class="table-container">
     <table>
       <thead>
@@ -1339,13 +1459,7 @@ async function renderTabla(){
           ${sop.estado || ""}
 
         </span>
-
-
       </td>
-
-
-
-
 
       <td>
 
@@ -1357,66 +1471,30 @@ async function renderTabla(){
           ).toLocaleString()
           :
           ""
-
         }
-
       </td>
-
-
-
-
-
       <td>
-
-
         <button
-
-        class="btn-icon"
-
-        onclick="event.stopPropagation();"
-
-        title="Abrir SOP">
-
-
-          <i class="fa-solid fa-folder-open"></i>
-
-
-        </button>
-
-
+            class="btn-icon"
+            title="Abrir SOP"
+            onclick="event.stopPropagation(); abrirSOP('${sop.url_doc}','${sop.ID_SOP}')">
+            <i class="fa-solid fa-folder-open"></i>
+            </button>
       </td>
-
-
-
       `;
-
-
-
       tabla.appendChild(fila);
-
-
     }
-
-
-
   }
   catch(e){
-
-
     console.error(
       "Error renderTabla:",
       e
     );
 
-
     alert(
       "Error cargando SOPs"
     );
-
-
   }
-
-
 }
 
 // 🔥 EVENTOS
