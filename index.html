@@ -640,6 +640,476 @@ font-size:.8rem;
 color:#0369a1;
 }
 
+/* =========================================================
+   📱 MOBILE UX — SOP LIBRARY
+   SOLO PRESENTACIÓN / NO TOCA JAVASCRIPT
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    /* =====================================================
+       1. BUSCADOR + FILTRO
+       ===================================================== */
+
+    .search-filter-container {
+
+        width: 100%;
+        max-width: none;
+
+        margin: 18px 0 10px;
+
+        padding: 0 12px;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 10px;
+
+    }
+
+
+    .search-filter-container input {
+
+        width: 100% !important;
+
+        height: 48px;
+
+        padding: 0 18px;
+
+        font-size: 16px;
+
+        border-radius: 24px;
+
+    }
+
+
+    .search-filter-container select {
+
+        width: 100% !important;
+
+        height: 48px;
+
+        padding: 0 16px;
+
+        font-size: 15px;
+
+        border-radius: 24px;
+
+    }
+
+
+    /* =====================================================
+       2. BOTONES DE DEPARTAMENTO
+       
+       UNA SOLA LÍNEA
+       SCROLL HORIZONTAL
+       NO WRAP
+       ===================================================== */
+
+    .dept-filter-bar {
+
+        width: 100%;
+
+        display: flex;
+
+        flex-wrap: nowrap;
+
+        justify-content: flex-start;
+
+        align-items: center;
+
+        gap: 8px;
+
+        margin-top: 4px;
+
+        padding: 4px 2px 12px;
+
+        overflow-x: auto;
+
+        overflow-y: hidden;
+
+        -webkit-overflow-scrolling: touch;
+
+        scrollbar-width: none;
+
+    }
+
+
+    .dept-filter-bar::-webkit-scrollbar {
+
+        display: none;
+
+    }
+
+
+    .dept-filter {
+
+        flex: 0 0 auto;
+
+        white-space: nowrap;
+
+        padding: 8px 14px;
+
+        min-height: 36px;
+
+        font-size: 13px;
+
+        border-radius: 20px;
+
+        box-shadow: 0 3px 9px rgba(0,0,0,.14);
+
+    }
+
+
+    .dept-filter:hover {
+
+        transform: none;
+
+    }
+
+
+    /* =====================================================
+       3. EN MOBILE NO NECESITAMOS EL SELECT
+       
+       Los botones horizontales hacen el filtro.
+       ===================================================== */
+
+    #deptFilter {
+
+        display: none;
+
+    }
+
+
+    /* =====================================================
+       4. CONTENEDOR SOP
+       ===================================================== */
+
+    .sop-container {
+
+        width: 100%;
+
+        max-width: none;
+
+        margin: 12px 0 50px;
+
+        padding: 0 10px;
+
+    }
+
+
+    /* =====================================================
+       5. CONTADOR
+       ===================================================== */
+
+    .sop-info {
+
+        width: 100%;
+
+        margin: 8px 0 10px;
+
+        padding: 12px 15px;
+
+        border-radius: 12px;
+
+        font-size: 14px;
+
+        text-align: left;
+
+    }
+
+
+    /* =====================================================
+       6. TABLA → TARJETAS
+       
+       NO CAMBIA renderSOP()
+       Solo cambia la presentación.
+       ===================================================== */
+
+    .table-scroll {
+
+        max-height: none;
+
+        overflow: visible;
+
+    }
+
+
+    .sop-table {
+
+        width: 100%;
+
+        display: block;
+
+        border-collapse: separate;
+
+    }
+
+
+    /* Ocultamos encabezado en móvil */
+
+    .sop-table thead {
+
+        display: none;
+
+    }
+
+
+    .sop-table tbody {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 10px;
+
+    }
+
+
+    .sop-table tbody tr {
+
+        display: grid;
+
+        grid-template-columns: 1fr auto;
+
+        grid-template-areas:
+
+            "department action"
+
+            "title      title"
+
+            "revision   revision";
+
+        width: 100%;
+
+        margin: 0;
+
+        padding: 14px 14px 13px;
+
+        border-radius: 14px;
+
+        background: rgba(255,255,255,.88);
+
+        box-shadow: 0 4px 15px rgba(0,0,0,.12);
+
+        border: 1px solid rgba(255,255,255,.7);
+
+    }
+
+
+    /* =====================================================
+       7. DEPARTAMENTO
+       ===================================================== */
+
+    .sop-table td {
+
+        display: block;
+
+        padding: 0;
+
+        border: none;
+
+    }
+
+
+    .sop-table td[data-label="Departamento"] {
+
+        grid-area: department;
+
+        display: flex;
+
+        align-items: center;
+
+        min-width: 0;
+
+    }
+
+
+    /* =====================================================
+       8. BOTÓN VER
+       ===================================================== */
+
+    .sop-table td:last-child {
+
+        grid-area: action;
+
+        display: flex;
+
+        justify-content: flex-end;
+
+        align-items: center;
+
+        text-align: right;
+
+        white-space: nowrap;
+
+    }
+
+
+    .sop-btn {
+
+        padding: 7px 13px;
+
+        min-height: 34px;
+
+        border-radius: 9px;
+
+        font-size: 13px;
+
+        white-space: nowrap;
+
+    }
+
+
+    /* =====================================================
+       9. NOMBRE DEL SOP
+       ===================================================== */
+
+    .sop-table td[data-label="Procedimiento"] {
+
+        grid-area: title;
+
+        margin-top: 10px;
+
+        padding-right: 4px;
+
+    }
+
+
+    .sop-nombre {
+
+        display: block;
+
+        font-size: 15px;
+
+        line-height: 1.35;
+
+        font-weight: 700;
+
+        color: #1f2d3d;
+
+        letter-spacing: 0;
+
+        word-break: normal;
+
+        overflow-wrap: anywhere;
+
+        white-space: normal;
+
+    }
+
+
+    .sop-nombre:hover {
+
+        transform: none;
+
+    }
+
+
+    /* =====================================================
+       10. REVISION
+       ===================================================== */
+
+    .sop-table td[data-label="Revision"] {
+
+        grid-area: revision;
+
+        margin-top: 8px;
+
+        text-align: left;
+
+        font-size: 12px;
+
+        color: #64748b;
+
+    }
+
+
+    .sop-table td[data-label="Revision"]::before {
+
+        content: "Revisión: ";
+
+        font-weight: 600;
+
+        color: #94a3b8;
+
+    }
+
+
+    /* =====================================================
+       11. BADGES
+       ===================================================== */
+
+    .dept-badge {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        max-width: 100%;
+
+        padding: 5px 10px;
+
+        font-size: 11px;
+
+        line-height: 1.2;
+
+        white-space: nowrap;
+
+    }
+
+
+    /* =====================================================
+       12. FILA SIN HOVER / TOUCH
+       ===================================================== */
+
+    .sop-table tbody tr:hover {
+
+        background: rgba(255,255,255,.88);
+
+    }
+
+
+    /* =====================================================
+       13. BANNER MOBILE
+       
+       Reduce el espacio vertical antes del buscador.
+       ===================================================== */
+
+    .banner {
+
+        padding: 24px 15px 12px;
+
+    }
+
+
+    .banner h1 {
+
+        font-size: 1.55rem;
+
+        line-height: 1.15;
+
+    }
+
+
+    .banner p {
+
+        font-size: .9rem;
+
+    }
+
+
+    .cta-btn {
+
+        margin-top: 10px;
+
+        padding: 9px 22px;
+
+    }
+
+}
       
 </style>
 </head>
