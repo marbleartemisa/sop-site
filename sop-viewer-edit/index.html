@@ -676,6 +676,39 @@ cursor:pointer;
    REDISEÑO BIBLIOTECA SOP — MEJOR CONTRASTE + RESPONSIVE
    ========================================================= */
 
+
+/* ---------- ORDENAMIENTO DE COLUMNAS ---------- */
+.table-container thead th.sortable{
+  cursor:pointer;
+  user-select:none;
+  position:sticky;
+  top:0;
+  transition:background .2s ease, color .2s ease;
+}
+
+.table-container thead th.sortable:hover{
+  background:#172554;
+}
+
+.table-container thead th.sortable .sort-indicator{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  margin-left:6px;
+  font-size:10px;
+  opacity:.55;
+  transition:transform .2s ease, opacity .2s ease;
+}
+
+.table-container thead th.sortable.active .sort-indicator{
+  opacity:1;
+}
+
+.table-container thead th.sortable.active{
+  background:#163e68;
+}
+
 /* ---------- ESCRITORIO ---------- */
 .table-container{
   overflow-x:auto;
@@ -1138,10 +1171,18 @@ cursor:pointer;
     <table>
       <thead>
       <tr>
-        <th>Departamento</th>
-        <th>SOP</th>
-        <th>Estado</th>
-        <th>Fecha / Hora</th>
+        <th class="sortable" data-sort="departamento" title="Ordenar por departamento">
+          Departamento <span class="sort-indicator">↕</span>
+        </th>
+        <th class="sortable" data-sort="objetivo" title="Ordenar alfabéticamente por SOP">
+          SOP <span class="sort-indicator">↕</span>
+        </th>
+        <th class="sortable" data-sort="estado" title="Ordenar por estado">
+          Estado <span class="sort-indicator">↕</span>
+        </th>
+        <th class="sortable" data-sort="fecha" title="Ordenar por fecha y hora">
+          Fecha / Hora <span class="sort-indicator">↕</span>
+        </th>
         <th>Abrir</th>
       </tr>
       </thead>
@@ -1212,6 +1253,10 @@ let indexSOP = [];
 let renderToken = 0;
 let timeout = null;
 let currentUser = null;
+
+// ORDENAMIENTO DE LA BIBLIOTECA
+let sortColumn = "";
+let sortDirection = "asc";
 
   const usuarios = [
   {usuario:"Damian Molina", clave:"Dam1975", rol:"editor", depto:"Comercial", correo:"damian@artemisamarble.com"},
@@ -1645,6 +1690,89 @@ async function cargarDatos(){
 
 }
 
+
+function valorParaOrdenar(sop, columna){
+  switch(columna){
+    case "departamento":
+      return String(sop.departamento || "").trim();
+
+    case "objetivo":
+      return String(sop.objetivo || "").trim();
+
+    case "estado":
+      return String(sop.estado || "").trim();
+
+    case "fecha":
+      return sop.Timestamp ? new Date(sop.Timestamp).getTime() : 0;
+
+    default:
+      return "";
+  }
+}
+
+function compararSOP(a, b, columna){
+  const valorA = valorParaOrdenar(a, columna);
+  const valorB = valorParaOrdenar(b, columna);
+
+  // Fechas: comparación numérica.
+  if(columna === "fecha"){
+    const aVal = Number.isFinite(valorA) ? valorA : 0;
+    const bVal = Number.isFinite(valorB) ? valorB : 0;
+    return aVal - bVal;
+  }
+
+  // Texto: soporta acentos y español correctamente.
+  return String(valorA).localeCompare(
+    String(valorB),
+    "es",
+    {
+      sensitivity:"base",
+      numeric:true
+    }
+  );
+}
+
+function actualizarIndicadoresOrden(){
+  document.querySelectorAll(".table-container thead th.sortable").forEach(th => {
+    const indicator = th.querySelector(".sort-indicator");
+    const columna = th.dataset.sort;
+
+    th.classList.toggle("active", columna === sortColumn);
+
+    if(indicator){
+      if(columna === sortColumn){
+        indicator.textContent = sortDirection === "asc" ? "▲" : "▼";
+      }else{
+        indicator.textContent = "↕";
+      }
+    }
+  });
+}
+
+function ordenarPorColumna(columna){
+  if(!columna) return;
+
+  if(sortColumn === columna){
+    sortDirection = sortDirection === "asc" ? "desc" : "asc";
+  }else{
+    sortColumn = columna;
+    sortDirection = "asc";
+  }
+
+  actualizarIndicadoresOrden();
+  renderTabla();
+}
+
+function inicializarOrdenamiento(){
+  document.querySelectorAll(".table-container thead th.sortable").forEach(th => {
+    th.addEventListener("click", () => {
+      ordenarPorColumna(th.dataset.sort);
+    });
+  });
+
+  actualizarIndicadoresOrden();
+}
+
 async function renderTabla(){
 
   const tabla = document.getElementById("tablaSOP");
@@ -1723,11 +1851,18 @@ async function renderTabla(){
 
 
 
-    const dataLimpia =
+    let dataLimpia =
       Array.from(unicosMap.values());
 
-
-
+    // ============================
+    // ORDENAMIENTO ACTUAL
+    // ============================
+    if(sortColumn){
+      dataLimpia.sort((a,b) => {
+        const resultado = compararSOP(a, b, sortColumn);
+        return sortDirection === "asc" ? resultado : -resultado;
+      });
+    }
 
     // ============================
     // CREAR FILAS
@@ -2142,6 +2277,7 @@ function destacarMenu() {
 
 window.addEventListener("DOMContentLoaded", () => {
   destacarMenu();
+  inicializarOrdenamiento();
 });
 
 // COMENTARIOS
@@ -2667,4 +2803,3 @@ document.querySelectorAll(".menu a").forEach(link => {
 </script>
 </body>
 </html>
-
