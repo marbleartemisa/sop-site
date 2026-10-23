@@ -30,13 +30,95 @@ let purchases = [];
 let hasLoaded = false;
 let searchTimer = null;
 
+
 function normalize(value) {
   return String(value ?? "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .trim();
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
 }
+
+// Normaliza las distintas formas de escribir un material.
+function expandSearchTerm(term) {
+  const word = normalize(term);
+
+  const synonyms = {
+    mela: "melamine melamina",
+    melamine: "melamine melamina",
+    melamina: "melamine melamina",
+    melmine: "melamine melamina",
+    melamin: "melamine melamina",
+
+    white: "white blanco blanca snow pearl polar bright",
+    blanco: "white blanco blanca",
+    blanca: "white blanco blanca",
+    snow: "snow white",
+    pearl: "pearl white",
+    polar: "polar white",
+    bright: "bright white",
+
+    black: "black negro negra",
+    negro: "black negro negra",
+    negra: "black negro negra",
+
+    gray: "gray grey gris",
+    grey: "gray grey gris",
+    gris: "gray grey gris",
+
+    mdf: "mdf",
+    panel: "panel panels",
+    panels: "panel panels"
+  };
+
+  return synonyms[word] || word;
+}
+
+function matchesSearch(purchase, query) {
+  const terms = normalize(query)
+    .split(" ")
+    .filter(Boolean);
+
+  if (!terms.length) return true;
+
+  const item = normalize(purchase.item);
+  const otherFields = normalize([
+    purchase.vendor,
+    purchase.num,
+    purchase.cliente,
+    purchase.type
+  ].join(" "));
+
+  // Buscar primero en la descripción del artículo.
+  // Se acepta una coincidencia parcial o una variante equivalente.
+  const itemMatches = terms.every((term) => {
+    const variants = expandSearchTerm(term).split(" ");
+
+    return variants.some((variant) => {
+      return variant.length > 0 && item.includes(variant);
+    });
+  });
+
+  if (itemMatches) return true;
+
+  // También permite encontrar artículos mediante términos
+  // de referencia como proveedor, número de orden o cliente.
+  return terms.every((term) => {
+    const variants = expandSearchTerm(term).split(" ");
+
+    return variants.some((variant) => {
+      return variant.length > 0 &&
+        (item + " " + otherFields).includes(variant);
+    });
+  });
+}
+
+
+
+
+
 
 function parseCSV(text) {
   // Accept UTF-8 BOM and detect comma or semicolon delimiters.
@@ -270,52 +352,80 @@ function populateVendors() {
   }
 }
 
+
 function getFilteredPurchases() {
-  const query = normalize(elements.search.value);
+  const query = normalize(elements.search.value || "");
   const selectedVendor = elements.vendor.value;
   const months = elements.period.value;
 
   let cutoff = null;
 
+  // Calcular la fecha límite solo si se seleccionó un período.
   if (months !== "all") {
-    cutoff = new Date();
-    cutoff.setMonth(cutoff.getMonth() - Number(months));
-    cutoff.setHours(0, 0, 0, 0);
+    const numberOfMonths = Number(months);
+
+    if (Number.isFinite(numberOfMonths) && numberOfMonths >= 0) {
+      cutoff = new Date();
+      cutoff.setMonth(cutoff.getMonth() - numberOfMonths);
+      cutoff.setHours(0, 0, 0, 0);
+    }
   }
 
   return purchases
     .filter((purchase) => {
-      if (selectedVendor && purchase.vendor !== selectedVendor) {
+      // 1. Filtrar por proveedor.
+      if (
+        selectedVendor &&
+        purchase.vendor !== selectedVendor
+      ) {
         return false;
       }
 
-      if (cutoff && (!purchase.dateValue ||
-          purchase.dateValue < cutoff)) {
+      // 2. Filtrar por antigüedad de la compra.
+      if (
+        cutoff &&
+        (
+          !purchase.dateValue ||
+          Number.isNaN(purchase.dateValue.getTime()) ||
+          purchase.dateValue < cutoff
+        )
+      ) {
         return false;
       }
 
+      // 3. Buscar por descripción, proveedor, orden o cliente.
       if (query) {
-        const searchable = normalize([
-          purchase.item,
-          purchase.vendor,
-          purchase.num,
-          purchase.cliente,
-          purchase.type
-        ].join(" "));
+        const matches = typeof matchesSearch === "function"
+          ? matchesSearch(purchase, query)
+          : normalize([
+              purchase.item,
+              purchase.vendor,
+              purchase.num,
+              purchase.cliente,
+              purchase.type
+            ].join(" ")).includes(query);
 
-        if (!searchable.includes(query)) {
+        if (!matches) {
           return false;
         }
       }
 
       return true;
     })
+    // 4. Ordenar por fecha, de la más reciente a la más antigua.
     .sort((a, b) => {
-      const dateA = a.dateValue?.getTime() ?? 0;
-      const dateB = b.dateValue?.getTime() ?? 0;
+      const dateA = a.dateValue instanceof Date
+        ? a.dateValue.getTime()
+        : 0;
+
+      const dateB = b.dateValue instanceof Date
+        ? b.dateValue.getTime()
+        : 0;
+
       return dateB - dateA;
     });
 }
+
 
 function updateSummary(records) {
   // Compare prices only when records refer to the same item.
