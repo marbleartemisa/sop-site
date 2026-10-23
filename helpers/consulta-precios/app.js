@@ -10,6 +10,7 @@ const elements = {
   searchBtn: $("searchBtn"),
   clearBtn: $("clearSearch"),
   vendor: $("vendorFilter"),
+  client: $("clientFilter"),
   period: $("periodFilter"),
   reset: $("resetBtn"),
   status: $("statusMessage"),
@@ -353,10 +354,34 @@ function populateVendors() {
 }
 
 
+function populateClients() {
+  const selected = elements.client.value;
+
+  const clients = [...new Set(
+    purchases
+      .map((purchase) => purchase.cliente.trim())
+      .filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b));
+
+  elements.client.replaceChildren(
+    new Option("All clients", "")
+  );
+
+  clients.forEach((client) => {
+    elements.client.add(new Option(client, client));
+  });
+
+  if (clients.includes(selected)) {
+    elements.client.value = selected;
+  }
+}
+
 function getFilteredPurchases() {
   const query = normalize(elements.search.value || "");
   const selectedVendor = elements.vendor.value;
+  const selectedClient = elements.client.value;
   const months = elements.period.value;
+
 
   let cutoff = null;
 
@@ -380,6 +405,14 @@ function getFilteredPurchases() {
       ) {
         return false;
       }
+
+      // Filter by client.
+        if (
+          selectedClient &&
+          purchase.cliente !== selectedClient
+        ) {
+          return false;
+        }
 
       // 2. Filtrar por antigüedad de la compra.
       if (
@@ -577,6 +610,7 @@ async function loadPurchases() {
 
     hasLoaded = true;
     populateVendors();
+    populateClients();
     renderResults();
   } catch (error) {
     console.error("Price Consultation:", error);
@@ -607,13 +641,16 @@ elements.clearBtn.addEventListener("click", () => {
 });
 
 elements.vendor.addEventListener("change", renderResults);
+elements.client.addEventListener("change", renderResults);
 elements.period.addEventListener("change", renderResults);
 
 elements.reset.addEventListener("click", () => {
   elements.search.value = "";
   elements.vendor.value = "";
+  elements.client.value = "";
   elements.period.value = "all";
   renderResults();
+
 });
 
 loadPurchases();
