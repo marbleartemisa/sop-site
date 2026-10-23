@@ -1,1 +1,507 @@
 
+"use strict";
+
+const CSV_URL = "./compras.csv";
+
+const $ = (id) => document.getElementById(id);
+
+const elements = {
+  search: $("searchInput"),
+  searchBtn: $("searchBtn"),
+  clearBtn: $("clearSearch"),
+  vendor: $("vendorFilter"),
+  period: $("periodFilter"),
+  reset: $("resetBtn"),
+  status: $("statusMessage"),
+  section: $("resultsSection"),
+  count: $("resultsCount"),
+  updated: $("updatedLabel"),
+  latestPrice: $("latestPrice"),
+  latestDate: $("latestDate"),
+  previousPrice: $("previousPrice"),
+  previousDate: $("previousDate"),
+  change: $("priceChange"),
+  changeNote: $("priceChangeNote"),
+  body: $("resultsBody"),
+  empty: $("emptyMessage")
+};
+
+let purchases = [];
+let hasLoaded = false;
+let searchTimer = null;
+
+function normalize(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function parseCSV(text) {
+  // Accept UTF-8 BOM and detect comma or semicolon delimiters.
+  text = text.replace(/^\uFEFF/, "");
+
+  const firstLine = text.split(/\r?\n/, 1)[0] || "";
+  const commas = (firstLine.match(/,/g) || []).length;
+  const semicolons = (firstLine.match(/;/g) || []).length;
+  const delimiter = semicolons > commas ? ";" : ",";
+
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (char === '"') {
+      if (inQuotes && text[i + 1] === '"') {
+        field += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === delimiter && !inQuotes) {
+      row.push(field);
+      field = "";
+    } else if ((char === "\n" || char === "\r") && !inQuotes) {
+      if (char === "\r" && text[i + 1] === "\n") {
+        i++;
+      }
+
+      row.push(field);
+
+      if (row.some((value) => value.trim() !== "")) {
+        rows.push(row);
+      }
+
+      row = [];
+      field = "";
+    } else {
+      field += char;
+    }
+  }
+
+  if (field !== "" || row.length > 0) {
+    row.push(field);
+
+    if (row.some((value) => value.trim() !== "")) {
+      rows.push(row);
+    }
+  }
+
+  if (rows.length < 2) {
+    throw new Error("The CSV file contains no purchase records.");
+  }
+
+  const headers = rows[0].map((header) => normalize(header));
+  const required = [
+    "cliente", "type", "date", "delivdate",
+    "num", "vendor", "item", "qty", "price", "amount"
+  ];
+
+  const missing = required.filter(
+    (header) => !headers.includes(header)
+  );
+
+  if (missing.length) {
+    throw new Error(
+      "Missing CSV columns: " + missing.join(", ")
+    );
+  }
+
+  return rows.slice(1).map((values) => {
+    const record = {};
+
+    headers.forEach((header, index) => {
+      record[header] = (values[index] ?? "").trim();
+    });
+
+    return {
+      cliente: record.cliente,
+      type: record.type,
+      date: record.date,
+      delivDate: record.delivdate,
+      num: record.num,
+      vendor: record.vendor,
+      item: record.item,
+      qty: parseNumber(record.qty),
+      price: parseNumber(record.price),
+      amount: parseNumber(record.amount),
+      dateValue: parseDate(record.date)
+    };
+  }).filter((purchase) => purchase.item !== "");
+}
+
+function parseNumber(value) {
+  if (typeof value === "number") return value;
+
+  let text = String(value ?? "")
+    .trim()
+    .replace(/[$\s]/g, "");
+
+  if (!text) return NaN;
+
+  // Excel CSV from a US-style number format:
+  // 1,234.56 -> 1234.56
+  if (text.includes(".") && text.includes(",")) {
+    text = text.replace(/,/g, "");
+  } else if (text.includes(",") && !text.includes(".")) {
+    // Supports decimal comma when there is no decimal point.
+    text = text.replace(",", ".");
+  }
+
+  const number = Number(text);
+  return Number.isFinite(number) ? number : NaN;
+}
+
+function parseDate(value) {
+  const text = String(value ?? "").trim();
+
+  // US format: MM/DD/YYYY or M/D/YY.
+  let match = text.match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/
+  );
+
+  if (match) {
+    let year = Number(match[3]);
+
+    if (year < 100) {
+      year += year < 50 ? 2000 : 1900;
+    }
+
+    const date = new Date(
+      year, Number(match[1]) - 1, Number(match[2])
+    );
+
+    if (
+      date.getFullYear() === year &&
+      date.getMonth() === Number(match[1]) - 1 &&
+      date.getDate() === Number(match[2])
+    ) {
+      return date;
+    }
+
+    return null;
+  }
+
+  // ISO format: YYYY-MM-DD.
+  match = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+
+  if (match) {
+    const date = new Date(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3])
+    );
+
+    if (!Number.isNaN(date.getTime())) return date;
+  }
+
+  return null;
+}
+
+function formatDate(date) {
+  if (!date || Number.isNaN(date.getTime())) {
+    return "Date unavailable";
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric"
+  }).format(date);
+}
+
+function formatMoney(value) {
+  if (!Number.isFinite(value)) return "—";
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4
+  }).format(value);
+}
+
+function formatQuantity(value) {
+  if (!Number.isFinite(value)) return "—";
+
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 4
+  }).format(value);
+}
+
+function setStatus(message, isError = false) {
+  elements.status.textContent = message;
+  elements.status.classList.toggle("error", isError);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function populateVendors() {
+  const selected = elements.vendor.value;
+
+  const vendors = [...new Set(
+    purchases
+      .map((purchase) => purchase.vendor.trim())
+      .filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b));
+
+  elements.vendor.replaceChildren(new Option("All vendors", ""));
+
+  vendors.forEach((vendor) => {
+    elements.vendor.add(
+      new Option(vendor, vendor)
+    );
+  });
+
+  if (vendors.includes(selected)) {
+    elements.vendor.value = selected;
+  }
+}
+
+function getFilteredPurchases() {
+  const query = normalize(elements.search.value);
+  const selectedVendor = elements.vendor.value;
+  const months = elements.period.value;
+
+  let cutoff = null;
+
+  if (months !== "all") {
+    cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() - Number(months));
+    cutoff.setHours(0, 0, 0, 0);
+  }
+
+  return purchases
+    .filter((purchase) => {
+      if (selectedVendor && purchase.vendor !== selectedVendor) {
+        return false;
+      }
+
+      if (cutoff && (!purchase.dateValue ||
+          purchase.dateValue < cutoff)) {
+        return false;
+      }
+
+      if (query) {
+        const searchable = normalize([
+          purchase.item,
+          purchase.vendor,
+          purchase.num,
+          purchase.cliente,
+          purchase.type
+        ].join(" "));
+
+        if (!searchable.includes(query)) {
+          return false;
+        }
+      }
+
+      return true;
+    })
+    .sort((a, b) => {
+      const dateA = a.dateValue?.getTime() ?? 0;
+      const dateB = b.dateValue?.getTime() ?? 0;
+      return dateB - dateA;
+    });
+}
+
+function updateSummary(records) {
+  // Compare prices only when records refer to the same item.
+  // This avoids comparing unrelated items in broad searches.
+  const latest = records[0];
+
+  if (!latest) {
+    elements.latestPrice.textContent = "—";
+    elements.latestDate.textContent = "No purchase found";
+    elements.previousPrice.textContent = "—";
+    elements.previousDate.textContent = "Previous purchase";
+    elements.change.textContent = "—";
+    elements.change.className = "price-neutral";
+    elements.changeNote.textContent = "Latest vs. previous";
+    return;
+  }
+
+  const sameItem = records.filter(
+    (purchase) =>
+      normalize(purchase.item) === normalize(latest.item)
+  );
+
+  elements.latestPrice.textContent = formatMoney(latest.price);
+  elements.latestDate.textContent =
+    "Latest: " + formatDate(latest.dateValue);
+
+  if (
+    sameItem.length < 2 ||
+    !Number.isFinite(latest.price) ||
+    !Number.isFinite(sameItem[1].price)
+  ) {
+    elements.previousPrice.textContent = "—";
+    elements.previousDate.textContent =
+      sameItem.length < 2
+        ? "No previous purchase for this exact item"
+        : "Previous price unavailable";
+
+    elements.change.textContent = "—";
+    elements.change.className = "price-neutral";
+    elements.changeNote.textContent =
+      "Search a specific item with two valid prices";
+    return;
+  }
+
+  const previous = sameItem[1];
+
+  elements.previousPrice.textContent = formatMoney(previous.price);
+  elements.previousDate.textContent =
+    "Previous: " + formatDate(previous.dateValue);
+
+  if (previous.price === 0) {
+    elements.change.textContent = "N/A";
+    elements.change.className = "price-neutral";
+    elements.changeNote.textContent = "Previous price is zero";
+    return;
+  }
+
+  const difference = latest.price - previous.price;
+  const percent = (difference / Math.abs(previous.price)) * 100;
+
+  elements.change.textContent =
+    (difference > 0 ? "+" : "") + percent.toFixed(2) + "%";
+
+  elements.change.className =
+    difference > 0
+      ? "price-up"
+      : difference < 0
+        ? "price-down"
+        : "price-neutral";
+
+  elements.changeNote.textContent =
+    (difference > 0 ? "Increase of " :
+      difference < 0 ? "Decrease of " : "No change · ") +
+    (difference !== 0 ? formatMoney(Math.abs(difference)) : "");
+}
+
+function renderResults() {
+  if (!hasLoaded) return;
+
+  elements.clearBtn.hidden = elements.search.value.length === 0;
+
+  const query = elements.search.value.trim();
+  const hasFilters =
+    Boolean(elements.vendor.value) ||
+    elements.period.value !== "all";
+
+  // Avoid displaying the entire purchase database before the
+  // seller searches for something.
+  if (!query && !hasFilters) {
+    elements.section.hidden = true;
+    setStatus(
+      `Purchase history loaded: ${purchases.length.toLocaleString("en-US")} records. Enter an item to search.`
+    );
+    return;
+  }
+
+  const records = getFilteredPurchases();
+
+  elements.section.hidden = false;
+  elements.count.textContent =
+    `${records.length.toLocaleString("en-US")} purchase record(s)`;
+
+  elements.updated.textContent =
+    `Data file: compras.csv · ${new Date().toLocaleDateString("en-US")}`;
+
+  updateSummary(records);
+
+  elements.body.innerHTML = records.map((purchase) => `
+    <tr>
+      <td>${escapeHTML(formatDate(purchase.dateValue))}</td>
+      <td class="item-cell">${escapeHTML(purchase.item)}</td>
+      <td>${escapeHTML(purchase.vendor || "—")}</td>
+      <td>${escapeHTML(purchase.num || "—")}</td>
+      <td class="numeric">${escapeHTML(formatQuantity(purchase.qty))}</td>
+      <td class="numeric">${escapeHTML(formatMoney(purchase.price))}</td>
+      <td class="numeric">${escapeHTML(formatMoney(purchase.amount))}</td>
+    </tr>
+  `).join("");
+
+  elements.empty.hidden = records.length !== 0;
+
+  setStatus(
+    records.length
+      ? `${records.length} matching record(s).`
+      : "No matching purchases. Try a different item or reset the filters."
+  );
+}
+
+async function loadPurchases() {
+  setStatus("Loading purchase history...");
+
+  try {
+    const response = await fetch(
+      `${CSV_URL}?v=${Date.now()}`,
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Could not load compras.csv (HTTP ${response.status}).`
+      );
+    }
+
+    const csvText = await response.text();
+    purchases = parseCSV(csvText);
+
+    hasLoaded = true;
+    populateVendors();
+    renderResults();
+  } catch (error) {
+    console.error("Price Consultation:", error);
+
+    setStatus(
+      "Unable to load purchase history. Check that compras.csv is in this folder and that its headers are correct. " +
+      error.message,
+      true
+    );
+  }
+}
+
+elements.search.addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(renderResults, 150);
+});
+
+elements.searchBtn.addEventListener("click", renderResults);
+
+elements.search.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") renderResults();
+});
+
+elements.clearBtn.addEventListener("click", () => {
+  elements.search.value = "";
+  elements.search.focus();
+  renderResults();
+});
+
+elements.vendor.addEventListener("change", renderResults);
+elements.period.addEventListener("change", renderResults);
+
+elements.reset.addEventListener("click", () => {
+  elements.search.value = "";
+  elements.vendor.value = "";
+  elements.period.value = "all";
+  renderResults();
+});
+
+loadPurchases();
+
