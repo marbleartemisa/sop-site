@@ -540,10 +540,12 @@ function renderResults() {
 
   elements.clearBtn.hidden = elements.search.value.length === 0;
 
-  const query = elements.search.value.trim();
+  const query = elements.search.value.trim();  
   const hasFilters =
     Boolean(elements.vendor.value) ||
+    Boolean(elements.client.value) ||
     elements.period.value !== "all";
+
 
   // Avoid displaying the entire purchase database before the
   // seller searches for something.
