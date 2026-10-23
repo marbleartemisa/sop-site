@@ -533,9 +533,11 @@ function renderResults() {
 
   updateSummary(records);
 
-  elements.body.innerHTML = records.map((purchase) => `
+
+elements.body.innerHTML = records.map((purchase) => `
     <tr>
       <td>${escapeHTML(formatDate(purchase.dateValue))}</td>
+      <td>${escapeHTML(purchase.cliente || "—")}</td>
       <td class="item-cell">${escapeHTML(purchase.item)}</td>
       <td>${escapeHTML(purchase.vendor || "—")}</td>
       <td>${escapeHTML(purchase.num || "—")}</td>
@@ -544,6 +546,7 @@ function renderResults() {
       <td class="numeric">${escapeHTML(formatMoney(purchase.amount))}</td>
     </tr>
   `).join("");
+
 
   elements.empty.hidden = records.length !== 0;
 
