@@ -57,6 +57,7 @@
         </button>
       </div>
 
+
       <div class="filters">
         <div class="filter-field">
           <label for="vendorFilter">Vendor</label>
@@ -64,7 +65,14 @@
             <option value="">All vendors</option>
           </select>
         </div>
-
+      
+        <div class="filter-field">
+          <label for="clientFilter">Client</label>
+          <select id="clientFilter">
+            <option value="">All clients</option>
+          </select>
+        </div>
+      
         <div class="filter-field">
           <label for="periodFilter">Purchase period</label>
           <select id="periodFilter">
@@ -74,11 +82,12 @@
             <option value="3">Last 3 months</option>
           </select>
         </div>
-
+      
         <button id="resetBtn" class="secondary-btn" type="button">
           Reset filters
         </button>
       </div>
+
 
       <div id="statusMessage" class="status" role="status" aria-live="polite">
         Loading purchase history...
