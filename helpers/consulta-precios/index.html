@@ -1,1 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#003366">
+  <title>Price Consultation | Artemisa</title>
+
+  <link rel="icon" href="/sop-site/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/sop-site/" aria-label="Artemisa SOP Home">
+      <img src="/sop-site/logo.png" alt="Artemisa logo">
+      <span>ARTEMISA MARBLE &amp; CABINETS</span>
+    </a>
+
+    <nav class="topnav">
+      <a href="/sop-site/">Inicio</a>
+      <a href="/sop-site/" class="active">Price Consultation</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">ARTEMISA MARBLE &amp; CABINETS</div>
+      <h1>Purchase Price History</h1>
+      <p>
+        Consult previous purchases, compare supplier prices
+        and review historical costs before preparing a quotation.
+      </p>
+    </section>
+
+    <section class="search-panel">
+      <label for="searchInput">Search item</label>
+
+      <div class="search-row">
+        <div class="search-box">
+          <span class="search-icon" aria-hidden="true">&#128269;</span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Enter an item name, supplier or PO number..."
+            autocomplete="off"
+          >
+          <button id="clearSearch" class="clear-btn" type="button"
+            aria-label="Clear search" hidden>&times;</button>
+        </div>
+
+        <button id="searchBtn" class="primary-btn" type="button">
+          Search
+        </button>
+      </div>
+
+      <div class="filters">
+        <div class="filter-field">
+          <label for="vendorFilter">Vendor</label>
+          <select id="vendorFilter">
+            <option value="">All vendors</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label for="periodFilter">Purchase period</label>
+          <select id="periodFilter">
+            <option value="all">All history</option>
+            <option value="12">Last 12 months</option>
+            <option value="6">Last 6 months</option>
+            <option value="3">Last 3 months</option>
+          </select>
+        </div>
+
+        <button id="resetBtn" class="secondary-btn" type="button">
+          Reset filters
+        </button>
+      </div>
+
+      <div id="statusMessage" class="status" role="status" aria-live="polite">
+        Loading purchase history...
+      </div>
+    </section>
+
+    <section id="resultsSection" hidden>
+      <div class="section-heading">
+        <div>
+          <h2>Purchase Results</h2>
+          <p id="resultsCount">0 records</p>
+        </div>
+        <span class="updated-label" id="updatedLabel"></span>
+      </div>
+
+      <div class="summary-grid">
+        <article class="summary-card">
+          <span>Latest unit price</span>
+          <strong id="latestPrice">—</strong>
+          <small id="latestDate">Latest purchase</small>
+        </article>
+
+        <article class="summary-card">
+          <span>Previous unit price</span>
+          <strong id="previousPrice">—</strong>
+          <small id="previousDate">Previous purchase</small>
+        </article>
+
+        <article class="summary-card">
+          <span>Price change</span>
+          <strong id="priceChange">—</strong>
+          <small id="priceChangeNote">Latest vs. previous</small>
+        </article>
+      </div>
+
+      <div class="table-card">
+        <div class="table-heading">
+          <h3>Purchase history</h3>
+          <span>Sorted by purchase date, newest first</span>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Item</th>
+                <th>Vendor</th>
+                <th>PO #</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="resultsBody"></tbody>
+          </table>
+        </div>
+
+        <div id="emptyMessage" class="empty-state" hidden>
+          <span class="empty-icon">&#128269;</span>
+          <h3>No matching purchases found</h3>
+          <p>Try another search term or reset the filters.</p>
+        </div>
+      </div>
+
+      <p class="disclaimer">
+        Historical purchase prices are references for estimating costs.
+        Verify the current supplier price before issuing a quotation.
+      </p>
+    </section>
+
+    <footer class="footer">
+      Artemisa Marble &amp; Cabinets · Internal Purchase Reference
+    </footer>
+  </main>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
 
