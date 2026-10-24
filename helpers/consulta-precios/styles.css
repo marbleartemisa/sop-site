@@ -671,3 +671,28 @@ tbody tr:last-child td {
   }
 }
 
+
+/* Información complementaria del artículo */
+.item-name {
+  font-weight: 700;
+  color: #172033;
+}
+
+.item-description {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 400;
+  white-space: normal;
+}
+
+.item-memo {
+  margin-top: 5px;
+  padding-left: 7px;
+  border-left: 2px solid #0072c6;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 400;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
