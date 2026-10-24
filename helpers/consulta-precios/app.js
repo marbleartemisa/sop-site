@@ -460,12 +460,28 @@ function getFilteredPurchases() {
 }
 
 
+
 function updateSummary(records) {
-  // Compare prices only when records refer to the same item.
-  // This avoids comparing unrelated items in broad searches.
   const latest = records[0];
 
+  // Referencias a los títulos de las tres tarjetas.
+  const latestLabel = elements.latestPrice
+    .closest(".summary-card")
+    .querySelector("span");
+
+  const previousLabel = elements.previousPrice
+    .closest(".summary-card")
+    .querySelector("span");
+
+  const changeLabel = elements.change
+    .closest(".summary-card")
+    .querySelector("span");
+
   if (!latest) {
+    latestLabel.textContent = "Latest unit price";
+    previousLabel.textContent = "Previous unit price";
+    changeLabel.textContent = "Price change";
+
     elements.latestPrice.textContent = "—";
     elements.latestDate.textContent = "No purchase found";
     elements.previousPrice.textContent = "—";
@@ -476,9 +492,18 @@ function updateSummary(records) {
     return;
   }
 
+  // Identificar el artículo de referencia de las estadísticas.
+  const itemName = latest.item;
+
+  latestLabel.textContent = `Latest unit price · ${itemName}`;
+  previousLabel.textContent = `Previous unit price · ${itemName}`;
+  changeLabel.textContent = `Price change · ${itemName}`;
+
+  // Las compras recibidas están ordenadas de más reciente
+  // a más antigua. Comparamos únicamente el mismo artículo.
   const sameItem = records.filter(
     (purchase) =>
-      normalize(purchase.item) === normalize(latest.item)
+      normalize(purchase.item) === normalize(itemName)
   );
 
   elements.latestPrice.textContent = formatMoney(latest.price);
@@ -499,7 +524,7 @@ function updateSummary(records) {
     elements.change.textContent = "—";
     elements.change.className = "price-neutral";
     elements.changeNote.textContent =
-      "Search a specific item with two valid prices";
+      "Two valid prices are needed for comparison";
     return;
   }
 
@@ -530,25 +555,29 @@ function updateSummary(records) {
         : "price-neutral";
 
   elements.changeNote.textContent =
-    (difference > 0 ? "Increase of " :
-      difference < 0 ? "Decrease of " : "No change · ") +
+    (difference > 0
+      ? "Increase of "
+      : difference < 0
+        ? "Decrease of "
+        : "No change · ") +
     (difference !== 0 ? formatMoney(Math.abs(difference)) : "");
 }
+
+
 
 function renderResults() {
   if (!hasLoaded) return;
 
   elements.clearBtn.hidden = elements.search.value.length === 0;
 
-  const query = elements.search.value.trim();  
+  const query = elements.search.value.trim();
   const hasFilters =
     Boolean(elements.vendor.value) ||
     Boolean(elements.client.value) ||
     elements.period.value !== "all";
 
-
-  // Avoid displaying the entire purchase database before the
-  // seller searches for something.
+  // No mostrar toda la base de compras sin una consulta
+  // o un filtro seleccionado.
   if (!query && !hasFilters) {
     elements.section.hidden = true;
     setStatus(
@@ -557,6 +586,8 @@ function renderResults() {
     return;
   }
 
+  // getFilteredPurchases ya ordena las compras por fecha
+  // descendente. Conservamos ese orden al crear los grupos.
   const records = getFilteredPurchases();
 
   elements.section.hidden = false;
@@ -568,29 +599,81 @@ function renderResults() {
 
   updateSummary(records);
 
+  // Agrupar por descripción normalizada del artículo.
+  // No cambia el nombre original que se muestra en la tabla.
+  const groups = new Map();
 
-elements.body.innerHTML = records.map((purchase) => `
-    <tr>
-      <td>${escapeHTML(formatDate(purchase.dateValue))}</td>
-      <td>${escapeHTML(purchase.cliente || "—")}</td>
-      <td class="item-cell">${escapeHTML(purchase.item)}</td>
-      <td>${escapeHTML(purchase.vendor || "—")}</td>
-      <td>${escapeHTML(purchase.num || "—")}</td>
-      <td class="numeric">${escapeHTML(formatQuantity(purchase.qty))}</td>
-      <td class="numeric">${escapeHTML(formatMoney(purchase.price))}</td>
-      <td class="numeric">${escapeHTML(formatMoney(purchase.amount))}</td>
+  records.forEach((purchase) => {
+    const key = normalize(purchase.item);
+
+    if (!groups.has(key)) {
+      groups.set(key, []);
+    }
+
+    groups.get(key).push(purchase);
+  });
+
+  // Construir la tabla agrupando los artículos iguales.
+  // El orden de los grupos corresponde a la compra más
+  // reciente de cada artículo.
+  const rowsHTML = [];
+
+  groups.forEach((items) => {
+    const itemName = items[0].item;
+
+    rowsHTML.push(`
+      <tr class="item-group-row">
+        <td colspan="8">
+          ${escapeHTML(itemName)}
+          <span class="group-count">
+            ${items.length} purchase${items.length === 1 ? "" : "s"}
+          </span>
+        </td>
+      </tr>
+    `);
+
+    items.forEach((purchase) => {
+      rowsHTML.push(`
+        <tr>
+          <td>${escapeHTML(formatDate(purchase.dateValue))}</td>
+          <td>${escapeHTML(purchase.cliente || "—")}</td>
+          <td class="item-cell">${escapeHTML(purchase.item)}</td>
+          <td>${escapeHTML(purchase.vendor || "—")}</td>
+          <td>${escapeHTML(purchase.num || "—")}</td>
+          <td class="numeric">${escapeHTML(formatQuantity(purchase.qty))}</td>
+          <td class="numeric">${escapeHTML(formatMoney(purchase.price))}</td>
+          <td class="numeric">${escapeHTML(formatMoney(purchase.amount))}</td>
+        </tr>
+      `);
+    });
+  });
+
+  // Sumar los importes de los registros filtrados una sola vez.
+  const totalAmount = records.reduce((sum, purchase) => {
+    return sum + (
+      Number.isFinite(purchase.amount) ? purchase.amount : 0
+    );
+  }, 0);
+
+  // Total general al final de la tabla.
+  rowsHTML.push(`
+    <tr class="total-row">
+      <td colspan="7">TOTAL GENERAL (${records.length} records)</td>
+      <td class="numeric">${escapeHTML(formatMoney(totalAmount))}</td>
     </tr>
-  `).join("");
+  `);
 
+  elements.body.innerHTML = rowsHTML.join("");
 
   elements.empty.hidden = records.length !== 0;
 
   setStatus(
     records.length
-      ? `${records.length} matching record(s).`
+      ? `${records.length} matching record(s) · Total amount: ${formatMoney(totalAmount)}`
       : "No matching purchases. Try a different item or reset the filters."
   );
 }
+
 
 async function loadPurchases() {
   setStatus("Loading purchase history...");
