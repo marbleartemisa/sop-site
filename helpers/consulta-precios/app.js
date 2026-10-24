@@ -84,38 +84,28 @@ function matchesSearch(purchase, query) {
 
   if (!terms.length) return true;
 
-  const item = normalize(purchase.item);
-  const otherFields = normalize([
+  // Incluir los tres campos relacionados con el artículo,
+  // además de proveedor, cliente, orden y tipo.
+  const searchableText = normalize([
+    purchase.item,
+    purchase.itemDescription,
+    purchase.memo,
     purchase.vendor,
     purchase.num,
     purchase.cliente,
     purchase.type
   ].join(" "));
 
-  // Buscar primero en la descripción del artículo.
-  // Se acepta una coincidencia parcial o una variante equivalente.
-  const itemMatches = terms.every((term) => {
-    const variants = expandSearchTerm(term).split(" ");
-
-    return variants.some((variant) => {
-      return variant.length > 0 && item.includes(variant);
-    });
-  });
-
-  if (itemMatches) return true;
-
-  // También permite encontrar artículos mediante términos
-  // de referencia como proveedor, número de orden o cliente.
+  // Cada palabra buscada puede encontrarse en cualquiera
+  // de los campos, no necesariamente en el mismo campo.
   return terms.every((term) => {
     const variants = expandSearchTerm(term).split(" ");
 
-    return variants.some((variant) => {
-      return variant.length > 0 &&
-        (item + " " + otherFields).includes(variant);
-    });
+    return variants.some((variant) =>
+      variant.length > 0 && searchableText.includes(variant)
+    );
   });
 }
-
 
 
 
@@ -209,6 +199,8 @@ function parseCSV(text) {
       num: record.num,
       vendor: record.vendor,
       item: record.item,
+      itemDescription: record.itemdescription || "",
+      memo: record.memo || "",
       qty: parseNumber(record.qty),
       price: parseNumber(record.price),
       amount: parseNumber(record.amount),
@@ -637,7 +629,27 @@ function renderResults() {
         <tr>
           <td>${escapeHTML(formatDate(purchase.dateValue))}</td>
           <td>${escapeHTML(purchase.cliente || "—")}</td>
-          <td class="item-cell">${escapeHTML(purchase.item)}</td>
+          
+            <td class="item-cell">
+              <div class="item-name">${escapeHTML(purchase.item)}</div>
+            
+              ${
+                purchase.itemDescription
+                  ? `<div class="item-description">
+                      ${escapeHTML(purchase.itemDescription)}
+                    </div>`
+                  : ""
+              }
+            
+              ${
+                purchase.memo
+                  ? `<div class="item-memo">
+                      <strong>Memo:</strong> ${escapeHTML(purchase.memo)}
+                    </div>`
+                  : ""
+              }
+            </td>
+
           <td>${escapeHTML(purchase.vendor || "—")}</td>
           <td>${escapeHTML(purchase.num || "—")}</td>
           <td class="numeric">${escapeHTML(formatQuantity(purchase.qty))}</td>
