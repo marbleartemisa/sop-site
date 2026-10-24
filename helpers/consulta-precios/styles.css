@@ -562,3 +562,112 @@ tbody tr:last-child td {
   text-align: right;
 }
 
+
+/* =========================================
+   PRICE CONSULTATION - TABLA COMPACTA
+   Intentar mostrar todas las columnas
+   sin desplazamiento horizontal
+   ========================================= */
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-scroll table {
+  width: 100%;
+  table-layout: fixed;
+  white-space: normal;
+}
+
+/* Espaciado más compacto */
+.table-scroll th,
+.table-scroll td {
+  padding: 10px 8px;
+  overflow-wrap: anywhere;
+  vertical-align: middle;
+}
+
+/* DATE */
+.table-scroll th:nth-child(1),
+.table-scroll td:nth-child(1) {
+  width: 9%;
+}
+
+/* CLIENT */
+.table-scroll th:nth-child(2),
+.table-scroll td:nth-child(2) {
+  width: 16%;
+  white-space: normal;
+}
+
+/* ITEM */
+.table-scroll th:nth-child(3),
+.table-scroll td:nth-child(3) {
+  width: 22%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* VENDOR */
+.table-scroll th:nth-child(4),
+.table-scroll td:nth-child(4) {
+  width: 16%;
+  white-space: normal;
+}
+
+/* PO # */
+.table-scroll th:nth-child(5),
+.table-scroll td:nth-child(5) {
+  width: 7%;
+  text-align: center;
+}
+
+/* QTY */
+.table-scroll th:nth-child(6),
+.table-scroll td:nth-child(6) {
+  width: 6%;
+  text-align: right;
+}
+
+/* UNIT PRICE */
+.table-scroll th:nth-child(7),
+.table-scroll td:nth-child(7) {
+  width: 11%;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* AMOUNT */
+.table-scroll th:nth-child(8),
+.table-scroll td:nth-child(8) {
+  width: 13%;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Encabezados de grupos de artículos */
+.table-scroll .item-group-row td {
+  width: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Total general */
+.table-scroll .total-row td {
+  white-space: normal;
+}
+
+/* Pantallas pequeñas: permitir scroll si realmente hace falta */
+@media (max-width: 760px) {
+  .table-scroll table {
+    min-width: 850px;
+    table-layout: auto;
+  }
+
+  .table-scroll th,
+  .table-scroll td {
+    padding: 10px;
+  }
+}
+
