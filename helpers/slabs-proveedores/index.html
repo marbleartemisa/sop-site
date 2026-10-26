@@ -16,18 +16,34 @@
 </head>
 
 <body>
-  <header class="topbar">
-    <a class="brand" href="/sop-site/" aria-label="Artemisa home">
-      <img src="/sop-site/logo.png" alt="Artemisa logo">
-      <span>ARTEMISA MARBLE &amp; CABINETS</span>
-    </a>
+ 
+<header class="topbar">
+  <a class="brand" href="/sop-site/" aria-label="Artemisa home">
+    <img src="/sop-site/logo.png" alt="Artemisa logo">
+    <span>ARTEMISA MARBLE &amp; CABINETS</span>
+  </a>
 
-    <nav aria-label="Main navigation">
-      <a href="/sop-site/">Inicio</a>
-      <a href="/sop-site/">Helpers</a>
-      <a class="active" href="/sop-site/helpers/slabs-proveedores/">Supplier Slabs</a>
-    </nav>
-  </header>
+  <nav aria-label="Main navigation">
+
+    <a href="/sop-site/">Inicio</a>
+
+    <!-- HELPERS DROPDOWN -->
+    <div class="dropdown">
+      <button type="button" class="drop-btn" onclick="toggleDropdown(this)">
+        Helpers <i class="fa-solid fa-chevron-down"></i>
+      </button>
+
+      <div class="dropdown-content">
+        <a href="/sop-site/helpers/slabs/">Slabs</a>
+        <a href="/sop-site/helpers/consulta-precios/">Price Consultation</a>
+        <a class="active" href="/sop-site/helpers/slabs-proveedores/">Supplier Slabs</a>
+        <a href="/sop-site/hardware-seller/">List of items</a>
+        <a href="/sop-site/dashboard/">Production Schedule (Stone)</a>
+      </div>
+    </div>
+
+  </nav>
+</header>
 
   <main class="container">
     <section class="hero">
