@@ -280,22 +280,66 @@
     });
   }
 
-  function photo(url, alt, className) {
-    const safeURL = String(url ?? "").trim();
+  
+function photo(url, alt, className) {
+  const originalURL = String(url ?? "").trim();
 
-    if (!/^https?:\/\//i.test(safeURL)) {
-      return '<div class="photo-fallback">Photo not available</div>';
+  if (!originalURL) {
+    return '<div class="photo-fallback">Photo not available</div>';
+  }
+
+  let imageURL = originalURL;
+
+  try {
+    const parsed = new URL(originalURL);
+
+    // Convert Google Drive sharing links into image URLs.
+    if (
+      parsed.hostname === "drive.google.com" ||
+      parsed.hostname === "www.drive.google.com"
+    ) {
+      let fileId = "";
+
+      // Format: /file/d/FILE_ID/view
+      const match = parsed.pathname.match(/\/file\/d\/([^/]+)/);
+
+      if (match) {
+        fileId = match[1];
+      } else {
+        // Formats using ?id=FILE_ID
+        fileId = parsed.searchParams.get("id") || "";
+      }
+
+      if (fileId) {
+        imageURL =
+          "https://drive.google.com/thumbnail?id=" +
+          encodeURIComponent(fileId) +
+          "&sz=w1600";
+      }
     }
 
-    return `
-      <img class="${className}"
-        src="${esc(safeURL)}"
-        alt="${esc(alt)}"
-        loading="lazy"
-        referrerpolicy="no-referrer"
-        onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'photo-fallback',textContent:'Photo unavailable'}))">
-    `;
+    if (!/^https?:$/.test(new URL(imageURL).protocol)) {
+      throw new Error("Unsupported image URL");
+    }
+  } catch (error) {
+    return '<div class="photo-fallback">Invalid photo URL</div>';
   }
+
+  const safeURL = esc(imageURL);
+  const safeAlt = esc(alt);
+
+  return `
+    <img
+      class="${className}"
+      src="${safeURL}"
+      alt="${safeAlt}"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('div'),{className:'photo-fallback',textContent:'Photo unavailable — check Drive sharing permissions'}))"
+    >
+  `;
+}
+
 
   function primaryPrice(slab) {
     // Prefer a per-slab price for the card; otherwise show per-SF.
