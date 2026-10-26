@@ -248,6 +248,18 @@
       });
   }
 
+
+function formatSize(value) {
+  return String(value ?? "")
+    .replace(/\uFFFD/g, "")
+    .replace(/�/g, "")
+    .replace(/[\u201C\u201D\u2033]/g, '"')
+    .replace(/\s*[xX×]\s*/g, " x ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+
   function searchText(slab) {
     return norm([
       slab.ID, slab.VENDOR, slab.GROUP, slab.CODE,
@@ -382,8 +394,8 @@ function photo(url, alt, className) {
           <div class="card-meta">
             ${slab.GROUP ? `Group: ${esc(slab.GROUP)}<br>` : ""}
             ${slab.FINISH ? `Finish: ${esc(slab.FINISH)}<br>` : ""}
-            ${slab.TECHNOLOGY ? `Technology: ${esc(slab.TECHNOLOGY)}<br>` : ""}
-            ${slab.SIZE ? `Size: ${esc(slab.SIZE)}<br>` : ""}
+            ${slab.TECHNOLOGY ? `Technology: ${esc(slab.TECHNOLOGY)}<br>` : ""}  
+            ${slab.SIZE ? `Size: ${esc(formatSize(slab.SIZE))}<br>` : ""}
             ${slab.SF ? `Area: ${esc(slab.SF)} sq. ft.` : ""}
           </div>
 
@@ -516,7 +528,7 @@ function photo(url, alt, className) {
             ${detailItem("Group", slab.GROUP)}
             ${detailItem("Finish", slab.FINISH)}
             ${detailItem("Technology", slab.TECHNOLOGY)}
-            ${detailItem("Dimensions", slab.SIZE)}
+            ${detailItem("Dimensions", formatSize(slab.SIZE))}
             ${detailItem("Area (sq. ft.)", slab.SF)}
           </div>
 
