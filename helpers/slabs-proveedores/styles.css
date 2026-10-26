@@ -759,22 +759,24 @@ dialog::backdrop {
 
 
 /* Enlarged slab photo viewer */
+
 .image-lightbox {
   position: fixed;
   inset: 0;
-  z-index: 100000;
+  z-index: 2147483647;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 60px 24px 24px;
-  background: rgba(8, 15, 28, 0.94);
+  box-sizing: border-box;
+  background: rgba(8, 15, 28, 0.97);
   cursor: zoom-out;
 }
 
 .image-lightbox img {
   display: block;
-  max-width: 100%;
-  max-height: calc(100vh - 100px);
+  max-width: 96vw;
+  max-height: calc(100dvh - 100px);
   width: auto;
   height: auto;
   object-fit: contain;
@@ -787,11 +789,12 @@ dialog::backdrop {
   position: absolute;
   top: 14px;
   right: 22px;
+  z-index: 1;
   width: 46px;
   height: 46px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
+  background: #263449;
   color: #fff;
   font-size: 34px;
   line-height: 1;
@@ -799,21 +802,17 @@ dialog::backdrop {
 }
 
 .image-lightbox-close:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: #40536d;
 }
 
-body.lightbox-open {
-  overflow: hidden;
-}
-
-/* Make it comfortable on phones and tablets */
 @media (max-width: 600px) {
   .image-lightbox {
     padding: 58px 10px 14px;
   }
 
   .image-lightbox img {
-    max-height: calc(100vh - 85px);
+    max-width: 98vw;
+    max-height: calc(100dvh - 85px);
   }
 
   .image-lightbox-close {
@@ -821,4 +820,5 @@ body.lightbox-open {
     right: 10px;
   }
 }
+
 
