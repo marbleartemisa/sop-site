@@ -635,6 +635,64 @@ function photo(url, alt, className) {
 
   el.reset.addEventListener("click", resetFilters);
 
+  
+  // Full-screen photo viewer for the detail window.
+  function openImageViewer(src, alt) {
+    const overlay = document.createElement("div");
+    overlay.className = "image-lightbox";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-label", "Expanded slab photo");
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "image-lightbox-close";
+    closeButton.type = "button";
+    closeButton.textContent = "×";
+    closeButton.setAttribute("aria-label", "Close enlarged photo");
+
+    const image = document.createElement("img");
+    image.src = src;
+    image.alt = alt || "Slab photo";
+
+    overlay.append(closeButton, image);
+    document.body.appendChild(overlay);
+    document.body.classList.add("lightbox-open");
+
+    function closeViewer() {
+      overlay.remove();
+      document.body.classList.remove("lightbox-open");
+      document.removeEventListener("keydown", handleKeydown);
+    }
+
+    function handleKeydown(event) {
+      if (event.key === "Escape") {
+        closeViewer();
+      }
+    }
+
+    closeButton.addEventListener("click", closeViewer);
+
+    overlay.addEventListener("click", event => {
+      if (event.target === overlay) {
+        closeViewer();
+      }
+    });
+
+    document.addEventListener("keydown", handleKeydown);
+    closeButton.focus();
+  }
+
+  // Click either photo inside the slab detail window to enlarge it.
+  el.content.addEventListener("click", event => {
+    const image = event.target.closest(".detail-photo, .used-photo");
+
+    if (!image || !image.src) return;
+
+    event.preventDefault();
+    openImageViewer(image.currentSrc || image.src, image.alt);
+  });
+
+  
   el.groups.addEventListener("click", event => {
     const card = event.target.closest(".slab-card");
     if (!card) return;
