@@ -1,1 +1,143 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#003366">
+  <title>Supplier Slabs | Artemisa</title>
+
+  <link rel="icon" href="/sop-site/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="/sop-site/" aria-label="Artemisa home">
+      <img src="/sop-site/logo.png" alt="Artemisa logo">
+      <span>ARTEMISA MARBLE &amp; CABINETS</span>
+    </a>
+
+    <nav aria-label="Main navigation">
+      <a href="/sop-site/">Inicio</a>
+      <a href="/sop-site/helpers/">Helpers</a>
+      <a class="active" href="/sop-site/helpers/slabs-proveedores/">Supplier Slabs</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">ARTEMISA MARBLE &amp; CABINETS</div>
+      <h1>Supplier Slab Gallery</h1>
+      <p>
+        Explore materials offered by our suppliers, compare available
+        finishes and thicknesses, and review pricing options with your customer.
+      </p>
+      <div class="notice">
+        <span class="notice-icon">i</span>
+        <span>
+          <strong>Supplier catalog:</strong>
+          Materials are not warehouse inventory. Confirm current pricing,
+          stock, lead time and availability with the supplier before quoting.
+        </span>
+      </div>
+    </section>
+
+    <section class="search-panel" aria-label="Search and filters">
+      <label for="searchInput">Find a material</label>
+
+      <div class="search-row">
+        <div class="searchbox">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search"
+            placeholder="Search name, code, vendor, finish or group..."
+            autocomplete="off">
+          <button id="clearSearch" type="button"
+            aria-label="Clear search" hidden>×</button>
+        </div>
+        <button class="primary" id="searchBtn" type="button">Search</button>
+      </div>
+
+      <div class="filters">
+        <label>Vendor
+          <select id="vendorFilter">
+            <option value="">All vendors</option>
+          </select>
+        </label>
+
+        <label>Group
+          <select id="groupFilter">
+            <option value="">All groups</option>
+          </select>
+        </label>
+
+        <label>Finish
+          <select id="finishFilter">
+            <option value="">All finishes</option>
+          </select>
+        </label>
+
+        <label>Technology
+          <select id="technologyFilter">
+            <option value="">All technologies</option>
+          </select>
+        </label>
+
+        <label>Thickness
+          <select id="thicknessFilter">
+            <option value="">All thicknesses</option>
+          </select>
+        </label>
+
+        <label>Price type
+          <select id="priceTypeFilter">
+            <option value="">All price types</option>
+            <option value="slab">Price per slab</option>
+            <option value="sf">Price per square foot</option>
+          </select>
+        </label>
+
+        <button class="secondary" id="resetBtn" type="button">
+          Reset filters
+        </button>
+      </div>
+
+      <p id="statusMessage" class="status" role="status" aria-live="polite">
+        Loading supplier catalog...
+      </p>
+    </section>
+
+    <section id="resultsSection" hidden>
+      <div class="section-heading">
+        <div>
+          <h2>Available supplier materials</h2>
+          <p id="resultsCount">0 materials</p>
+        </div>
+        <span class="catalog-label">Supplier reference · Not warehouse stock</span>
+      </div>
+
+      <div id="slabGroups"></div>
+
+      <div id="emptyMessage" class="empty" hidden>
+        <h3>No matching materials found</h3>
+        <p>Try another search or reset the filters.</p>
+      </div>
+    </section>
+
+    <footer>
+      Artemisa Marble &amp; Cabinets · Supplier Material Catalog
+    </footer>
+  </main>
+
+  <dialog id="slabDialog" aria-labelledby="dialogTitle">
+    <button id="closeDialog" class="close" type="button"
+      aria-label="Close details">×</button>
+    <div id="dialogContent"></div>
+  </dialog>
+</body>
+</html>
+
