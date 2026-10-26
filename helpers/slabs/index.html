@@ -1,1 +1,139 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#003366">
+  <title>Slabs | Artemisa</title>
+
+  <link rel="icon" href="/sop-site/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="/sop-site/">
+      <img src="/sop-site/logo.png" alt="Artemisa logo">
+      <span>ARTEMISA MARBLE &amp; CABINETS</span>
+    </a>
+
+    <nav>
+      <a href="/sop-site/">Inicio</a>
+      <a class="active" href="/sop-site/helpers/slabs/">Slabs</a>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <section class="hero">
+      <div class="eyebrow">ARTEMISA MARBLE &amp; CABINETS</div>
+      <h1>Slab Gallery</h1>
+      <p>
+        Explore stone and porcelain slabs, compare options
+        and review details before confirming availability in AppSheet.
+      </p>
+    </section>
+
+    <section class="search-panel">
+      <label for="searchInput">Search slabs</label>
+
+      <div class="search-row">
+        <div class="searchbox">
+          <span aria-hidden="true">⌕</span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search name, code, type, location, origin or keywords..."
+            autocomplete="off"
+          >
+          <button id="clearSearch" type="button" hidden aria-label="Clear search">×</button>
+        </div>
+
+        <button class="primary" id="searchBtn" type="button">Search</button>
+      </div>
+
+      <div class="filters">
+        <label>
+          Type
+          <select id="typeFilter">
+            <option value="">All types</option>
+          </select>
+        </label>
+
+        <label>
+          Owner
+          <select id="ownerFilter">
+            <option value="">All owners</option>
+          </select>
+        </label>
+
+        <label>
+          Thickness
+          <select id="thFilter">
+            <option value="">All thicknesses</option>
+          </select>
+        </label>
+
+        <label>
+          Location
+          <select id="locationFilter">
+            <option value="">All locations</option>
+          </select>
+        </label>
+
+        <label>
+          MSRP
+          <select id="priceFilter">
+            <option value="">Any price</option>
+            <option value="0-1000">Up to $1,000</option>
+            <option value="1000-2000">$1,000–$2,000</option>
+            <option value="2000-3500">$2,000–$3,500</option>
+            <option value="3500-999999999">$3,500+</option>
+          </select>
+        </label>
+
+        <button class="secondary" id="resetBtn" type="button">
+          Reset filters
+        </button>
+      </div>
+
+      <p id="statusMessage" class="status" role="status">
+        Loading slab catalog...
+      </p>
+    </section>
+
+    <section id="resultsSection" hidden>
+      <div class="section-heading">
+        <div>
+          <h2>Slab catalog</h2>
+          <p id="resultsCount">0 slabs</p>
+        </div>
+        <small>Sales reference · Verify availability in AppSheet</small>
+      </div>
+
+      <div id="slabGroups"></div>
+
+      <div id="emptyMessage" class="empty" hidden>
+        <h3>No matching slabs found</h3>
+        <p>Try another search term or reset the filters.</p>
+      </div>
+    </section>
+
+    <footer>
+      Artemisa Marble &amp; Cabinets · Slab Sales Reference
+    </footer>
+  </main>
+
+  <dialog id="slabDialog">
+    <button id="closeDialog" class="close" type="button" aria-label="Close details">×</button>
+    <div id="dialogContent"></div>
+  </dialog>
+</body>
+</html>
+
