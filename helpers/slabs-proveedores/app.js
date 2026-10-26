@@ -637,50 +637,59 @@ function photo(url, alt, className) {
 
   
   // Full-screen photo viewer for the detail window.
-  function openImageViewer(src, alt) {
-    const overlay = document.createElement("div");
-    overlay.className = "image-lightbox";
-    overlay.setAttribute("role", "dialog");
-    overlay.setAttribute("aria-modal", "true");
-    overlay.setAttribute("aria-label", "Expanded slab photo");
 
-    const closeButton = document.createElement("button");
-    closeButton.className = "image-lightbox-close";
-    closeButton.type = "button";
-    closeButton.textContent = "×";
-    closeButton.setAttribute("aria-label", "Close enlarged photo");
+function openImageViewer(src, alt) {
+  // Remove any previous image viewer.
+  document.querySelectorAll(".image-lightbox").forEach(viewer => {
+    viewer.remove();
+  });
 
-    const image = document.createElement("img");
-    image.src = src;
-    image.alt = alt || "Slab photo";
+  const overlay = document.createElement("div");
+  overlay.className = "image-lightbox";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-label", "Expanded slab photo");
 
-    overlay.append(closeButton, image);
-    document.body.appendChild(overlay);
-    document.body.classList.add("lightbox-open");
+  const closeButton = document.createElement("button");
+  closeButton.className = "image-lightbox-close";
+  closeButton.type = "button";
+  closeButton.textContent = "×";
+  closeButton.setAttribute("aria-label", "Close enlarged photo");
 
-    function closeViewer() {
-      overlay.remove();
-      document.body.classList.remove("lightbox-open");
-      document.removeEventListener("keydown", handleKeydown);
-    }
+  const image = document.createElement("img");
+  image.src = src;
+  image.alt = alt || "Slab photo";
 
-    function handleKeydown(event) {
-      if (event.key === "Escape") {
-        closeViewer();
-      }
-    }
+  // Only the selected image is added to the viewer.
+  overlay.append(closeButton, image);
 
-    closeButton.addEventListener("click", closeViewer);
+  // IMPORTANT: place the viewer inside the modal dialog,
+  // so it appears above the detail screen.
+  el.dialog.appendChild(overlay);
 
-    overlay.addEventListener("click", event => {
-      if (event.target === overlay) {
-        closeViewer();
-      }
-    });
-
-    document.addEventListener("keydown", handleKeydown);
-    closeButton.focus();
+  function closeViewer() {
+    overlay.remove();
+    document.removeEventListener("keydown", handleKeydown);
   }
+
+  function handleKeydown(event) {
+    if (event.key === "Escape") {
+      closeViewer();
+    }
+  }
+
+  closeButton.addEventListener("click", closeViewer);
+
+  overlay.addEventListener("click", event => {
+    if (event.target === overlay) {
+      closeViewer();
+    }
+  });
+
+  document.addEventListener("keydown", handleKeydown);
+  closeButton.focus();
+}
+
 
   // Click either photo inside the slab detail window to enlarge it.
   el.content.addEventListener("click", event => {
