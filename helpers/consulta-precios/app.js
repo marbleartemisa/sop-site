@@ -556,6 +556,63 @@ function updateSummary(records) {
 }
 
 
+function getLastMigratedPO() {
+  if (!purchases.length) {
+    return null;
+  }
+
+  // Encontrar la fecha más reciente de Date.
+  const datedPurchases = purchases.filter(
+    (purchase) =>
+      purchase.dateValue instanceof Date &&
+      !Number.isNaN(purchase.dateValue.getTime())
+  );
+
+  if (!datedPurchases.length) {
+    return null;
+  }
+
+  const latestDate = Math.max(
+    ...datedPurchases.map(
+      (purchase) => purchase.dateValue.getTime()
+    )
+  );
+
+  // Considerar únicamente las compras de esa fecha.
+  const latestPurchases = datedPurchases.filter(
+    (purchase) =>
+      purchase.dateValue.getTime() === latestDate
+  );
+
+  // De esa fecha, seleccionar el Num más alto.
+  const lastPurchase = latestPurchases.reduce(
+    (highest, purchase) => {
+      const currentNum = Number(
+        String(purchase.num || "").replace(/,/g, "").trim()
+      );
+
+      const highestNum = Number(
+        String(highest.num || "").replace(/,/g, "").trim()
+      );
+
+      if (!Number.isFinite(currentNum)) {
+        return highest;
+      }
+
+      if (!Number.isFinite(highestNum) || currentNum > highestNum) {
+        return purchase;
+      }
+
+      return highest;
+    }
+  );
+
+  return {
+    num: lastPurchase.num,
+    date: lastPurchase.dateValue
+  };
+}
+
 
 function renderResults() {
   if (!hasLoaded) return;
@@ -570,13 +627,29 @@ function renderResults() {
 
   // No mostrar toda la base de compras sin una consulta
   // o un filtro seleccionado.
-  if (!query && !hasFilters) {
-    elements.section.hidden = true;
+ 
+if (!query && !hasFilters) {
+  elements.section.hidden = true;
+
+  const lastPO = getLastMigratedPO();
+
+  if (lastPO) {
     setStatus(
-      `Purchase history loaded: ${purchases.length.toLocaleString("en-US")} records. Enter an item to search.`
+      `Purchase history loaded: ${purchases.length.toLocaleString("en-US")} records. ` +
+      `Last Migrated PO: ${lastPO.num} · ` +
+      `Purchase Date: ${formatDate(lastPO.date)}. ` +
+      `Purchase orders after this point may not yet be migrated.`
     );
-    return;
+  } else {
+    setStatus(
+      `Purchase history loaded: ${purchases.length.toLocaleString("en-US")} records. ` +
+      `No valid purchase date was found in the data.`
+    );
   }
+
+  return;
+}
+
 
   // getFilteredPurchases ya ordena las compras por fecha
   // descendente. Conservamos ese orden al crear los grupos.
