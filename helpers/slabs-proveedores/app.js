@@ -619,21 +619,53 @@ function photo(url, alt, className) {
     }
   }
 
-  el.search.addEventListener("input", render);
-  el.searchBtn.addEventListener("click", render);
+
+  // Evita renderizar la tabla con cada pulsación.
+  let searchTimer;
+
+  el.search.addEventListener("input", () => {
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(() => {
+      render();
+    }, 250);
+  });
+
+  el.searchBtn.addEventListener("click", () => {
+    clearTimeout(searchTimer);
+    render();
+  });
+
+  el.search.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      clearTimeout(searchTimer);
+      render();
+    }
+  });
 
   el.clear.addEventListener("click", () => {
+    clearTimeout(searchTimer);
     el.search.value = "";
     render();
     el.search.focus();
   });
 
   [
-    el.vendor, el.group, el.finish,
-    el.technology, el.thickness, el.priceType
-  ].forEach(select => select.addEventListener("change", render));
+    el.vendor,
+    el.group,
+    el.finish,
+    el.technology,
+    el.thickness,
+    el.priceType
+  ].forEach(select => {
+    select.addEventListener("change", render);
+  });
 
-  el.reset.addEventListener("click", resetFilters);
+  el.reset.addEventListener("click", () => {
+    clearTimeout(searchTimer);
+    resetFilters();
+  });
+
 
   
   // Full-screen photo viewer for the detail window.
