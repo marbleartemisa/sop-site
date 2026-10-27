@@ -420,10 +420,32 @@
     }
   }
 
-  el.search.addEventListener("input", render);
-  el.searchBtn.addEventListener("click", render);
+
+  // Control de búsqueda para evitar renderizados innecesarios.
+  let searchTimer;
+
+  el.search.addEventListener("input", () => {
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(() => {
+      render();
+    }, 250);
+  });
+
+  el.searchBtn.addEventListener("click", () => {
+    clearTimeout(searchTimer);
+    render();
+  });
+
+  el.search.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      clearTimeout(searchTimer);
+      render();
+    }
+  });
 
   el.clear.addEventListener("click", () => {
+    clearTimeout(searchTimer);
     el.search.value = "";
     render();
     el.search.focus();
@@ -435,9 +457,16 @@
     el.th,
     el.location,
     el.price
-  ].forEach(select => select.addEventListener("change", render));
+  ].forEach(select => {
+    select.addEventListener("change", () => {
+      clearTimeout(searchTimer);
+      render();
+    });
+  });
 
   el.reset.addEventListener("click", () => {
+    clearTimeout(searchTimer);
+
     el.search.value = "";
 
     [
@@ -446,7 +475,9 @@
       el.th,
       el.location,
       el.price
-    ].forEach(select => select.value = "");
+    ].forEach(select => {
+      select.value = "";
+    });
 
     render();
 
@@ -454,6 +485,7 @@
       `Loaded ${slabs.length} slab records. Confirm availability in AppSheet.`
     );
   });
+
 
   el.groups.addEventListener("click", event => {
     const card = event.target.closest(".slab-card");
