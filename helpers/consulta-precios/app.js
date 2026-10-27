@@ -793,16 +793,28 @@ async function loadPurchases() {
   }
 }
 
+
 elements.search.addEventListener("input", () => {
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(renderResults, 150);
+
+  // Esperar brevemente a que el usuario termine de escribir.
+  searchTimer = setTimeout(() => {
+    renderResults();
+  }, 300);
 });
 
-elements.searchBtn.addEventListener("click", renderResults);
+elements.searchBtn.addEventListener("click", () => {
+  clearTimeout(searchTimer);
+  renderResults();
+});
 
 elements.search.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") renderResults();
+  if (event.key === "Enter") {
+    clearTimeout(searchTimer);
+    renderResults();
+  }
 });
+
 
 elements.clearBtn.addEventListener("click", () => {
   elements.search.value = "";
