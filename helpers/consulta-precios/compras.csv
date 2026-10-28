@@ -1,4 +1,4 @@
-Cliente,Type,Date,Deliv Date,Num,Vendor,Item,Qty,Sales Price,Amount,Item Description,Memo
+Cliente,Type,Date,DelivDate,Num,Vendor,Item,Qty,Price,Amount,ItemDescription,Memo
 Amarilis & Carlos Lopez,Purchase Order,01/24/2023,01/24/2023,101,Lioher Enterprise Corp,Melamine Panels:MDF 3/4 Cashemere Super Ma (MDF 3/4 Cashemere Super Matte),3.00,201.51,604.53,MDF 3/4 Cashemere Super Matte,Melamine 3/4 Cashemere Super Matte Lioher
 Amarilis & Carlos Lopez,Purchase Order,01/24/2023,01/24/2023,101,Lioher Enterprise Corp,30 Finance:Credit Card Fee (Non-cash payment adjustment of 3% (Visa or Master) and 5% for Americ...,1.00,12.94,12.94,Non-cash payment adjustment of 3% (Visa or Master) and 5% for American Express (non refundable),Non-cash payment  adjustment of 2%
 Amarilis & Carlos Lopez,Purchase Order,01/24/2023,01/24/2023,101,Lioher Enterprise Corp,Sales Tax Paid on purchases (Sales Tax paid on purchases ( use Tax )),1.00,42.32,42.32,Sales Tax paid on purchases ( use Tax ),Sales Tax to be refunded
