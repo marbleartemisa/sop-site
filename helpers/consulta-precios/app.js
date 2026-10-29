@@ -30,6 +30,8 @@ const elements = {
 let purchases = [];
 let hasLoaded = false;
 let searchTimer = null;
+let visiblePurchaseLimit = 100;
+let lastPurchaseFilterKey = "";
 
 
 function normalize(value) {
@@ -614,61 +616,84 @@ function getLastMigratedPO() {
 }
 
 
+
 function renderResults() {
   if (!hasLoaded) return;
 
   elements.clearBtn.hidden = elements.search.value.length === 0;
 
   const query = elements.search.value.trim();
+
   const hasFilters =
     Boolean(elements.vendor.value) ||
     Boolean(elements.client.value) ||
     elements.period.value !== "all";
 
-  // No mostrar toda la base de compras sin una consulta
-  // o un filtro seleccionado.
- 
-if (!query && !hasFilters) {
-  elements.section.hidden = true;
+  // Reiniciar la paginación cuando cambia la consulta o los filtros.
+  const filterKey = [
+    query,
+    elements.vendor.value,
+    elements.client.value,
+    elements.period.value
+  ].join("|");
 
-  const lastPO = getLastMigratedPO();
-
-  if (lastPO) {
-    setStatus(
-      `Purchase history loaded: ${purchases.length.toLocaleString("en-US")} records. ` +
-      `Last Migrated PO: ${lastPO.num} · ` +
-      `Purchase Date: ${formatDate(lastPO.date)}. ` +
-      `Purchase orders after this point may not yet be migrated.`
-    );
-  } else {
-    setStatus(
-      `Purchase history loaded: ${purchases.length.toLocaleString("en-US")} records. ` +
-      `No valid purchase date was found in the data.`
-    );
+  if (filterKey !== lastPurchaseFilterKey) {
+    lastPurchaseFilterKey = filterKey;
+    visiblePurchaseLimit = 100;
   }
 
-  return;
-}
+  // No mostrar toda la base sin una consulta o filtro.
+  if (!query && !hasFilters) {
+    elements.section.hidden = true;
 
+    const lastPO = getLastMigratedPO();
 
-  // getFilteredPurchases ya ordena las compras por fecha
-  // descendente. Conservamos ese orden al crear los grupos.
+    if (lastPO) {
+      setStatus(
+        `Purchase history loaded: ${purchases.length.toLocaleString("en-US")} records. ` +
+        `Last Migrated PO: ${lastPO.num} · ` +
+        `Purchase Date: ${formatDate(lastPO.date)}. ` +
+        `Purchase orders after this point may not yet be migrated.`
+      );
+    } else {
+      setStatus(
+        `Purchase history loaded: ${purchases.length.toLocaleString("en-US")} records. ` +
+        `No valid purchase date was found in the data.`
+      );
+    }
+
+    return;
+  }
+
+  // Obtener TODOS los registros coincidentes.
   const records = getFilteredPurchases();
 
   elements.section.hidden = false;
+
   elements.count.textContent =
     `${records.length.toLocaleString("en-US")} purchase record(s)`;
 
   elements.updated.textContent =
     `Data file: compras.csv · ${new Date().toLocaleDateString("en-US")}`;
 
+  // Las estadísticas siempre usan todos los registros coincidentes.
   updateSummary(records);
 
-  // Agrupar por descripción normalizada del artículo.
-  // No cambia el nombre original que se muestra en la tabla.
-  const groups = new Map();
+  // Limitar únicamente las filas que se dibujan en pantalla.
+  const visibleRecords = records.slice(0, visiblePurchaseLimit);
+
+  // Contar todas las compras de cada artículo.
+  const groupCounts = new Map();
 
   records.forEach((purchase) => {
+    const key = normalize(purchase.item);
+    groupCounts.set(key, (groupCounts.get(key) || 0) + 1);
+  });
+
+  // Agrupar solamente las filas que vamos a mostrar.
+  const groups = new Map();
+
+  visibleRecords.forEach((purchase) => {
     const key = normalize(purchase.item);
 
     if (!groups.has(key)) {
@@ -678,20 +703,18 @@ if (!query && !hasFilters) {
     groups.get(key).push(purchase);
   });
 
-  // Construir la tabla agrupando los artículos iguales.
-  // El orden de los grupos corresponde a la compra más
-  // reciente de cada artículo.
   const rowsHTML = [];
 
-  groups.forEach((items) => {
+  groups.forEach((items, key) => {
     const itemName = items[0].item;
+    const fullGroupCount = groupCounts.get(key) || items.length;
 
     rowsHTML.push(`
       <tr class="item-group-row">
         <td colspan="8">
           ${escapeHTML(itemName)}
           <span class="group-count">
-            ${items.length} purchase${items.length === 1 ? "" : "s"}
+            ${fullGroupCount} purchase${fullGroupCount === 1 ? "" : "s"}
           </span>
         </td>
       </tr>
@@ -702,62 +725,115 @@ if (!query && !hasFilters) {
         <tr>
           <td>${escapeHTML(formatDate(purchase.dateValue))}</td>
           <td>${escapeHTML(purchase.cliente || "—")}</td>
-          
-            <td class="item-cell">
-              <div class="item-name">${escapeHTML(purchase.item)}</div>
-            
-              ${
-                purchase.itemDescription
-                  ? `<div class="item-description">
-                      ${escapeHTML(purchase.itemDescription)}
-                    </div>`
-                  : ""
-              }
-            
-              ${
-                purchase.memo
-                  ? `<div class="item-memo">
-                      <strong>Memo:</strong> ${escapeHTML(purchase.memo)}
-                    </div>`
-                  : ""
-              }
-            </td>
+
+          <td class="item-cell">
+            <div class="item-name">
+              ${escapeHTML(purchase.item)}
+            </div>
+
+            ${
+              purchase.itemDescription
+                ? `<div class="item-description">
+                    ${escapeHTML(purchase.itemDescription)}
+                  </div>`
+                : ""
+            }
+
+            ${
+              purchase.memo
+                ? `<div class="item-memo">
+                    <strong>Memo:</strong>
+                    ${escapeHTML(purchase.memo)}
+                  </div>`
+                : ""
+            }
+          </td>
 
           <td>${escapeHTML(purchase.vendor || "—")}</td>
           <td>${escapeHTML(purchase.num || "—")}</td>
-          <td class="numeric">${escapeHTML(formatQuantity(purchase.qty))}</td>
-          <td class="numeric">${escapeHTML(formatMoney(purchase.price))}</td>
-          <td class="numeric">${escapeHTML(formatMoney(purchase.amount))}</td>
+          <td class="numeric">
+            ${escapeHTML(formatQuantity(purchase.qty))}
+          </td>
+          <td class="numeric">
+            ${escapeHTML(formatMoney(purchase.price))}
+          </td>
+          <td class="numeric">
+            ${escapeHTML(formatMoney(purchase.amount))}
+          </td>
         </tr>
       `);
     });
   });
 
-  // Sumar los importes de los registros filtrados una sola vez.
+  // El total corresponde a TODOS los registros, no solo los visibles.
   const totalAmount = records.reduce((sum, purchase) => {
     return sum + (
       Number.isFinite(purchase.amount) ? purchase.amount : 0
     );
   }, 0);
 
-  // Total general al final de la tabla.
   rowsHTML.push(`
     <tr class="total-row">
-      <td colspan="7">TOTAL GENERAL (${records.length} records)</td>
-      <td class="numeric">${escapeHTML(formatMoney(totalAmount))}</td>
+      <td colspan="7">
+        TOTAL GENERAL (${records.length} records)
+      </td>
+      <td class="numeric">
+        ${escapeHTML(formatMoney(totalAmount))}
+      </td>
     </tr>
   `);
 
+  // Insertar las filas en una sola operación.
   elements.body.innerHTML = rowsHTML.join("");
 
   elements.empty.hidden = records.length !== 0;
 
+  // Crear el botón de carga progresiva una sola vez.
+  let loadMoreButton = document.getElementById("loadMorePurchases");
+
+  if (!loadMoreButton) {
+    const table = elements.body.closest("table");
+
+    loadMoreButton = document.createElement("button");
+    loadMoreButton.id = "loadMorePurchases";
+    loadMoreButton.type = "button";
+    loadMoreButton.textContent = "Load 100 More";
+
+    loadMoreButton.style.cssText =
+      "display:block;margin:16px auto;padding:12px 22px;" +
+      "border:0;border-radius:8px;background:#0072C6;" +
+      "color:white;font-weight:600;cursor:pointer;";
+
+    if (table) {
+      table.insertAdjacentElement("afterend", loadMoreButton);
+    }
+
+    loadMoreButton.addEventListener("click", () => {
+      visiblePurchaseLimit += 100;
+      renderResults();
+    });
+  }
+
+  // Mostrar el botón solo cuando queden filas por cargar.
+  loadMoreButton.hidden = visiblePurchaseLimit >= records.length;
+
+  if (!loadMoreButton.hidden) {
+    loadMoreButton.textContent =
+      `Load 100 More (${Math.min(
+        100,
+        records.length - visiblePurchaseLimit
+      )} remaining in next batch)`;
+  }
+
   setStatus(
     records.length
-      ? `${records.length} matching record(s) · Total amount: ${formatMoney(totalAmount)}`
+      ? `${records.length.toLocaleString("en-US")} matching record(s) · ` +
+        `Showing ${visibleRecords.length.toLocaleString("en-US")} · ` +
+        `Total amount: ${formatMoney(totalAmount)}`
       : "No matching purchases. Try a different item or reset the filters."
   );
 }
+
 
 
 async function loadPurchases() {
@@ -794,46 +870,68 @@ async function loadPurchases() {
 }
 
 
-elements.search.addEventListener("input", () => {
-  clearTimeout(searchTimer);
 
-  // Esperar brevemente a que el usuario termine de escribir.
-  searchTimer = setTimeout(() => {
-    renderResults();
-  }, 300);
-});
+  // ==========================================
+  // SEARCH EVENTS - PURCHASE PRICE HISTORY
+  // ==========================================
 
-elements.searchBtn.addEventListener("click", () => {
-  clearTimeout(searchTimer);
-  renderResults();
-});
-
-elements.search.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
+  function cancelPendingSearch() {
     clearTimeout(searchTimer);
+    searchTimer = null;
+  }
+
+  function renderImmediately() {
+    cancelPendingSearch();
     renderResults();
   }
-});
 
+  // Esperar a que el usuario haga una pausa al escribir.
+  // Evita procesar la búsqueda después de cada tecla.
+  elements.search.addEventListener("input", () => {
+    cancelPendingSearch();
 
-elements.clearBtn.addEventListener("click", () => {
-  elements.search.value = "";
-  elements.search.focus();
-  renderResults();
-});
+    searchTimer = setTimeout(() => {
+      searchTimer = null;
+      renderResults();
+    }, 450);
+  });
 
-elements.vendor.addEventListener("change", renderResults);
-elements.client.addEventListener("change", renderResults);
-elements.period.addEventListener("change", renderResults);
+  // Botón Search
+  elements.searchBtn.addEventListener("click", renderImmediately);
 
-elements.reset.addEventListener("click", () => {
-  elements.search.value = "";
-  elements.vendor.value = "";
-  elements.client.value = "";
-  elements.period.value = "all";
-  renderResults();
+  // Buscar al presionar Enter
+  elements.search.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      renderImmediately();
+    }
+  });
 
-});
+  // Limpiar búsqueda
+  elements.clearBtn.addEventListener("click", () => {
+    cancelPendingSearch();
+    elements.search.value = "";
+    renderResults();
+    elements.search.focus();
+  });
+
+  // Actualizar resultados al cambiar filtros
+  elements.vendor.addEventListener("change", renderImmediately);
+  elements.client.addEventListener("change", renderImmediately);
+  elements.period.addEventListener("change", renderImmediately);
+
+  // Restablecer todos los filtros
+  elements.reset.addEventListener("click", () => {
+    cancelPendingSearch();
+
+    elements.search.value = "";
+    elements.vendor.value = "";
+    elements.client.value = "";
+    elements.period.value = "all";
+
+    renderResults();
+  });
+
 
 loadPurchases();
 
