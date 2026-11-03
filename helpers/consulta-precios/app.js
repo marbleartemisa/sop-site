@@ -425,13 +425,22 @@ function getFilteredPurchases() {
         }
 
       // Filter by exact Purchase Order number.
-        if (
-          quickPOFilter &&
-          normalize(purchase.num) !== normalize(quickPOFilter)
-        ) {
-          return false;
-        }
 
+          if (quickPOFilter) {
+          
+            const normalizePO = (value) =>
+              String(value ?? "")
+                .toLowerCase()
+                .replace(/[^a-z0-9]/g, "");
+          
+            if (
+              normalizePO(purchase.num) !==
+              normalizePO(quickPOFilter)
+            ) {
+              return false;
+            }
+          }
+      
       // 2. Filtrar por antigüedad de la compra.
       if (
         cutoff &&
