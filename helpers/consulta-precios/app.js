@@ -971,36 +971,7 @@ elements.body.addEventListener("click", (event) => {
   renderResults();
 
 });
-// ==========================================
-// QUICK FILTERS FROM PURCHASE HISTORY TABLE
-// ==========================================
 
-elements.body.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-filter]");
-
-  if (!button) return;
-
-  const type = button.dataset.filter;
-  const value = button.dataset.value;
-
-  cancelPendingSearch();
-
-  if (type === "client") {
-    elements.client.value = value;
-  }
-
-  if (type === "vendor") {
-    elements.vendor.value = value;
-  }
-
-  if (type === "po") {
-    // Clicking the same PO again removes its filter.
-    quickPOFilter =
-      quickPOFilter === value ? "" : value;
-  }
-
-  renderResults();
-});
 
   // Esperar a que el usuario haga una pausa al escribir.
   // Evita procesar la búsqueda después de cada tecla.
