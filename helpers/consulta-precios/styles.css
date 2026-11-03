@@ -696,3 +696,21 @@ tbody tr:last-child td {
   white-space: normal;
   overflow-wrap: anywhere;
 }
+
+.history-filter {
+  border: 0;
+  padding: 3px 0;
+  background: transparent;
+  color: #003f7d;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+}
+
+.history-filter:hover {
+  color: #0072C6;
+  text-decoration-color: #0072C6;
+}
