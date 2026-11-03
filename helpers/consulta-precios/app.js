@@ -32,7 +32,7 @@ let hasLoaded = false;
 let searchTimer = null;
 let visiblePurchaseLimit = 100;
 let lastPurchaseFilterKey = "";
-
+let quickPOFilter = "";
 
 function normalize(value) {
   return String(value ?? "")
@@ -325,6 +325,21 @@ function escapeHTML(value) {
   })[char]);
 }
 
+function filterButton(value, type) {
+  if (!value) return "—";
+
+  return `
+    <button
+      type="button"
+      class="history-filter"
+      data-filter="${type}"
+      data-value="${escapeHTML(value)}"
+    >
+      ${escapeHTML(value)}
+    </button>
+  `;
+}
+
 function populateVendors() {
   const selected = elements.vendor.value;
 
@@ -404,6 +419,14 @@ function getFilteredPurchases() {
         if (
           selectedClient &&
           purchase.cliente !== selectedClient
+        ) {
+          return false;
+        }
+
+      // Filter by exact Purchase Order number.
+        if (
+          quickPOFilter &&
+          normalize(purchase.num) !== normalize(quickPOFilter)
         ) {
           return false;
         }
@@ -624,18 +647,20 @@ function renderResults() {
 
   const query = elements.search.value.trim();
 
-  const hasFilters =
-    Boolean(elements.vendor.value) ||
-    Boolean(elements.client.value) ||
-    elements.period.value !== "all";
+ const hasFilters =
+  Boolean(elements.vendor.value) ||
+  Boolean(elements.client.value) ||
+  Boolean(quickPOFilter) ||
+  elements.period.value !== "all";
 
   // Reiniciar la paginación cuando cambia la consulta o los filtros.
-  const filterKey = [
-    query,
-    elements.vendor.value,
-    elements.client.value,
-    elements.period.value
-  ].join("|");
+    const filterKey = [
+      query,
+      elements.vendor.value,
+      elements.client.value,
+      quickPOFilter,
+      elements.period.value
+    ].join("|");
 
   if (filterKey !== lastPurchaseFilterKey) {
     lastPurchaseFilterKey = filterKey;
@@ -724,7 +749,7 @@ function renderResults() {
       rowsHTML.push(`
         <tr>
           <td>${escapeHTML(formatDate(purchase.dateValue))}</td>
-          <td>${escapeHTML(purchase.cliente || "—")}</td>
+          <td>${filterButton(purchase.cliente, "client")}</td>
 
           <td class="item-cell">
             <div class="item-name">
@@ -749,8 +774,8 @@ function renderResults() {
             }
           </td>
 
-          <td>${escapeHTML(purchase.vendor || "—")}</td>
-          <td>${escapeHTML(purchase.num || "—")}</td>
+          <td>${filterButton(purchase.vendor, "vendor")}</td>
+          <td>${filterButton(purchase.num, "po")}</td>
           <td class="numeric">
             ${escapeHTML(formatQuantity(purchase.qty))}
           </td>
@@ -885,6 +910,37 @@ async function loadPurchases() {
     renderResults();
   }
 
+// ==========================================
+// QUICK FILTERS FROM PURCHASE HISTORY TABLE
+// ==========================================
+
+elements.body.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-filter]");
+
+  if (!button) return;
+
+  const type = button.dataset.filter;
+  const value = button.dataset.value;
+
+  cancelPendingSearch();
+
+  if (type === "client") {
+    elements.client.value = value;
+  }
+
+  if (type === "vendor") {
+    elements.vendor.value = value;
+  }
+
+  if (type === "po") {
+    // Clicking the same PO again removes its filter.
+    quickPOFilter =
+      quickPOFilter === value ? "" : value;
+  }
+
+  renderResults();
+});
+
   // Esperar a que el usuario haga una pausa al escribir.
   // Evita procesar la búsqueda después de cada tecla.
   elements.search.addEventListener("input", () => {
@@ -923,12 +979,14 @@ async function loadPurchases() {
   // Restablecer todos los filtros
   elements.reset.addEventListener("click", () => {
     cancelPendingSearch();
-
+  
     elements.search.value = "";
     elements.vendor.value = "";
     elements.client.value = "";
     elements.period.value = "all";
-
+  
+    quickPOFilter = "";  // Limpiar también el filtro rápido de PO
+  
     renderResults();
   });
 
