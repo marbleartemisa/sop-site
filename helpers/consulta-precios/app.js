@@ -340,6 +340,7 @@ function filterButton(value, type) {
   `;
 }
 
+
 function populateVendors() {
   const selected = elements.vendor.value;
 
@@ -910,6 +911,57 @@ async function loadPurchases() {
     renderResults();
   }
 
+// ==========================================
+// QUICK FILTERS FROM PURCHASE HISTORY TABLE
+// ==========================================
+
+elements.body.addEventListener("click", (event) => {
+
+  const button = event.target.closest("button[data-filter]");
+
+  if (!button) return;
+
+  const type = button.dataset.filter;
+  const value = button.dataset.value;
+
+  cancelPendingSearch();
+
+  // Start a completely independent CLIENT inquiry.
+  if (type === "client") {
+
+    elements.search.value = "";
+    elements.vendor.value = "";
+    elements.client.value = value;
+    elements.period.value = "all";
+
+    quickPOFilter = "";
+  }
+
+  // Start a completely independent VENDOR inquiry.
+  else if (type === "vendor") {
+
+    elements.search.value = "";
+    elements.client.value = "";
+    elements.vendor.value = value;
+    elements.period.value = "all";
+
+    quickPOFilter = "";
+  }
+
+  // Start a completely independent PURCHASE ORDER inquiry.
+  else if (type === "po") {
+
+    elements.search.value = "";
+    elements.client.value = "";
+    elements.vendor.value = "";
+    elements.period.value = "all";
+
+    quickPOFilter = value;
+  }
+
+  renderResults();
+
+});
 // ==========================================
 // QUICK FILTERS FROM PURCHASE HISTORY TABLE
 // ==========================================
