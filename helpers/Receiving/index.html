@@ -1,1 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#003366">
 
+  <title>Receiving | Artemisa Marble & Cabinets</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+
+      <a class="brand" href="/sop-site/">
+        <img src="/sop-site/logo.png" alt="Artemisa Marble & Cabinets">
+        <span>
+          <strong>ARTEMISA</strong>
+          <small>MARBLE & CABINETS</small>
+        </span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="/sop-site/">Home</a>
+        <a href="/sop-site/helpers/">Help</a>
+        <a href="#" class="active">Receiving</a>
+      </nav>
+
+      <div class="user-indicator">
+        <span class="user-dot"></span>
+        <span>Internal System</span>
+      </div>
+
+    </div>
+  </header>
+
+
+  <main class="page-container">
+
+    <!-- PAGE INTRO -->
+    <section class="page-heading">
+
+      <div class="heading-copy">
+        <div class="eyebrow">OPERATIONS / MATERIAL CONTROL</div>
+
+        <h1>Receiving & Material Traceability</h1>
+
+        <p>
+          Centralized historical records of material purchases, supplier
+          communications, project references and supporting photographs.
+        </p>
+      </div>
+
+      <div class="heading-status">
+        <span class="status-indicator"></span>
+        Historical database
+      </div>
+
+    </section>
+
+
+    <!-- PURPOSE -->
+    <section class="purpose-panel">
+
+      <div class="purpose-icon">i</div>
+
+      <div>
+        <strong>Why this system exists</strong>
+        <p>
+          Receiving helps Artemisa recover material traceability by bringing
+          historical information into one searchable place. A message or
+          photograph is historical evidence — it does not automatically
+          confirm that material was received or is still physically available.
+        </p>
+      </div>
+
+    </section>
+
+
+    <!-- MAIN NAVIGATION -->
+    <section class="module-tabs">
+
+      <button class="module-tab active" data-tab="history">
+        <span class="tab-icon">⌕</span>
+        Historical Search
+      </button>
+
+      <button class="module-tab" data-tab="receipts" disabled
+              title="Receipt registration will be enabled in a later stage">
+        <span class="tab-icon">▤</span>
+        Verified Receipts
+        <span class="coming-soon">NEXT STAGE</span>
+      </button>
+
+    </section>
+
+
+    <!-- HISTORY VIEW -->
+    <section id="historyView">
+
+      <!-- SEARCH -->
+      <section class="panel search-panel">
+
+        <div class="panel-heading">
+          <div>
+            <h2>Search historical records</h2>
+            <p>
+              Search by material, supplier, purchase order, project,
+              brand or words contained in the original message.
+            </p>
+          </div>
+        </div>
+
+        <form id="searchForm">
+
+          <div class="search-row">
+
+            <div class="search-input-wrap">
+              <span class="search-symbol">⌕</span>
+
+              <input
+                type="search"
+                id="searchInput"
+                placeholder="Example: Cosentino, Dekton Awake, PO number, project..."
+                autocomplete="off"
+              >
+
+              <button type="button" id="clearSearch" class="clear-search"
+                      aria-label="Clear search">
+                ×
+              </button>
+            </div>
+
+            <button type="submit" class="primary-button" id="searchButton">
+              Search records
+            </button>
+
+          </div>
+
+
+          <!-- FILTERS -->
+          <div class="filters-heading">
+            <span>FILTERS</span>
+            <button type="button" id="resetFilters" class="text-button">
+              Reset filters
+            </button>
+          </div>
+
+          <div class="filter-grid">
+
+            <label class="filter-field">
+              <span>From date</span>
+              <input type="date" id="dateFrom">
+            </label>
+
+            <label class="filter-field">
+              <span>To date</span>
+              <input type="date" id="dateTo">
+            </label>
+
+            <label class="filter-field">
+              <span>Media type</span>
+              <select id="mediaType">
+                <option value="">All media</option>
+                <option value="IMAGE">Images</option>
+                <option value="VIDEO">Videos</option>
+                <option value="DOCUMENT">Documents</option>
+                <option value="TEXT">Text only</option>
+              </select>
+            </label>
+
+            <label class="filter-field">
+              <span>Association status</span>
+              <select id="matchStatus">
+                <option value="">All records</option>
+                <option value="MATCHED">Associated</option>
+                <option value="CANDIDATE">Candidate</option>
+                <option value="REVIEW">Needs review</option>
+                <option value="UNMATCHED">Not associated</option>
+              </select>
+            </label>
+
+            <label class="filter-field">
+              <span>File category</span>
+              <select id="fileType">
+                <option value="">All file types</option>
+                <option value="IMAGE">Images</option>
+                <option value="VIDEO">Videos</option>
+                <option value="PDF">PDF</option>
+                <option value="DOCUMENT">Documents</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </label>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+      <!-- SUMMARY -->
+      <section class="summary-grid">
+
+        <article class="summary-card">
+          <div class="summary-label">Messages found</div>
+          <div class="summary-value" id="messageCount">—</div>
+          <div class="summary-description">Historical communications</div>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-label">Associated files</div>
+          <div class="summary-value" id="fileCount">—</div>
+          <div class="summary-description">Photos and documents</div>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-label">Current search</div>
+          <div class="summary-value summary-text" id="searchDescription">Not started</div>
+          <div class="summary-description">Search criteria</div>
+        </article>
+
+      </section>
+
+
+      <!-- RESULTS -->
+      <section class="results-section">
+
+        <div class="results-heading">
+
+          <div>
+            <h2>Historical records</h2>
+            <p id="resultsSubtitle">
+              Search the historical database to view messages and related files.
+            </p>
+          </div>
+
+          <div class="results-tools">
+            <span id="resultsCount">0 records</span>
+          </div>
+
+        </div>
+
+
+        <div id="systemMessage" class="system-message">
+          <div class="system-message-icon">i</div>
+
+          <div>
+            <strong>Secure connection pending</strong>
+            <p>
+              The historical database is ready. The secure connection between
+              this interface and the internal Apps Script service has not yet
+              been enabled.
+            </p>
+          </div>
+        </div>
+
+
+        <div id="resultsContainer" class="results-container">
+
+          <div class="empty-state">
+
+            <div class="empty-icon">⌕</div>
+
+            <h3>Search the Artemisa history</h3>
+
+            <p>
+              Enter a material, supplier, project or other keyword to find
+              historical messages and their associated photographs.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="pagination" id="pagination" hidden>
+          <button type="button" id="previousPage" class="secondary-button">
+            Previous
+          </button>
+
+          <span id="pageIndicator">Page 1</span>
+
+          <button type="button" id="nextPage" class="secondary-button">
+            Next
+          </button>
+        </div>
+
+      </section>
+
+    </section>
+
+
+    <!-- RECEIPTS PLACEHOLDER -->
+    <section id="receiptsView" hidden>
+
+      <div class="panel future-panel">
+        <div class="future-icon">▤</div>
+        <h2>Verified Receipt Control</h2>
+
+        <p>
+          This stage will allow authorized internal users to register
+          confirmed material receipts, quantities, suppliers, purchase orders,
+          projects and material condition.
+        </p>
+
+        <p class="future-note">
+          Historical messages and photographs will remain separate from
+          verified receipt records.
+        </p>
+      </div>
+
+    </section>
+
+
+    <footer class="page-footer">
+      <span>ARTEMISA MARBLE & CABINETS</span>
+      <span>Receiving & Material Traceability</span>
+    </footer>
+
+  </main>
+
+</body>
+</html>
