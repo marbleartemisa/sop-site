@@ -98,7 +98,10 @@
         Verified Receipts
         <span class="coming-soon">NEXT STAGE</span>
       </button>
-
+      <button class="module-tab" data-tab="newMessage">
+        <span class="tab-icon">✉</span>
+        New Message
+      </button>
     </section>
 
 
@@ -319,6 +322,129 @@
 
     </section>
 
+    <!-- NEW MESSAGE VIEW -->
+<section id="newMessageView" hidden>
+
+  <div class="panel outgoing-panel">
+
+    <div class="panel-heading">
+      <div>
+        <h2>Register a new message</h2>
+        <p>
+          Prepare and save an outgoing communication before copying
+          it into WhatsApp or another messaging application.
+        </p>
+      </div>
+    </div>
+
+    <form id="outgoingMessageForm">
+
+      <div class="outgoing-form-grid">
+
+        <label class="outgoing-field">
+          <span>Sender / Prepared by *</span>
+          <input
+            type="text"
+            id="outgoingSender"
+            placeholder="Enter sender name"
+            required
+          >
+        </label>
+
+        <label class="outgoing-field">
+          <span>Subject</span>
+          <input
+            type="text"
+            id="outgoingSubject"
+            placeholder="Message subject"
+          >
+        </label>
+
+        <label class="outgoing-field">
+          <span>Category</span>
+          <select id="outgoingCategory">
+            <option value="">Select category</option>
+            <option value="MATERIAL REQUEST">Material request</option>
+            <option value="PURCHASE">Purchase</option>
+            <option value="DELIVERY">Delivery</option>
+            <option value="PROJECT UPDATE">Project update</option>
+            <option value="INTERNAL COORDINATION">Internal coordination</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </label>
+
+      </div>
+
+      <div class="outgoing-section">
+        <div class="outgoing-section-heading">
+          <div>
+            <h3>Recipients *</h3>
+            <p>Select one or more active contacts.</p>
+          </div>
+          <span id="selectedContactCount" class="selected-count">
+            0 selected
+          </span>
+        </div>
+
+        <input
+          type="search"
+          id="contactSearchInput"
+          class="contact-search"
+          placeholder="Search contacts by name or department..."
+          autocomplete="off"
+        >
+
+        <div id="contactList" class="contact-list">
+          <div class="contact-loading">Loading contacts...</div>
+        </div>
+      </div>
+
+      <div class="outgoing-section">
+        <label class="outgoing-field">
+          <span>Message *</span>
+          <textarea
+            id="outgoingMessageText"
+            rows="12"
+            placeholder="Write your message here. Line breaks will be preserved..."
+            required
+          ></textarea>
+        </label>
+        <p class="field-help">
+          The original message formatting and line breaks will be preserved.
+        </p>
+      </div>
+
+      <div class="outgoing-actions">
+        <button
+          type="submit"
+          id="saveOutgoingMessage"
+          class="primary-button"
+        >
+          Save Message
+        </button>
+
+        <button
+          type="button"
+          id="copyOutgoingMessage"
+          class="secondary-button"
+          disabled
+        >
+          Copy Message
+        </button>
+      </div>
+
+          <div
+            id="outgoingMessageFeedback"
+            class="outgoing-feedback"
+            role="status"
+            aria-live="polite"
+            hidden
+          ></div>
+    
+        </form>
+      </div>
+    
+    </section>
 
     <footer class="page-footer">
       <span>ARTEMISA MARBLE & CABINETS</span>
