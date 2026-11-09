@@ -22,6 +22,14 @@ const RECEIVING_STATE = {
   loading: false
 };
 
+const OUTGOING_STATE = {
+  contacts: [],
+  selectedContactIDs: [],
+  contactsLoaded: false,
+  saving: false,
+  lastSavedMessage: null
+};
+
 document.addEventListener("DOMContentLoaded", initializeReceiving);
 
 
@@ -78,6 +86,47 @@ function initializeReceiving() {
       changeModule(tab.dataset.tab);
     });
   });
+
+  // New outgoing message module
+const outgoingForm = document.getElementById("outgoingMessageForm");
+const contactSearch = document.getElementById("contactSearchInput");
+const contactList = document.getElementById("contactList");
+const copyButton = document.getElementById("copyOutgoingMessage");
+
+if (outgoingForm) {
+  outgoingForm.addEventListener("submit", saveOutgoingMessage);
+}
+
+if (contactSearch) {
+  contactSearch.addEventListener("input", function() {
+    renderOutgoingContacts(contactSearch.value);
+  });
+}
+
+if (contactList) {
+  contactList.addEventListener("change", function(event) {
+    if (!event.target.matches(".outgoing-contact-checkbox")) return;
+
+    const contactID = event.target.value;
+
+    if (event.target.checked) {
+      if (!OUTGOING_STATE.selectedContactIDs.includes(contactID)) {
+        OUTGOING_STATE.selectedContactIDs.push(contactID);
+      }
+    } else {
+      OUTGOING_STATE.selectedContactIDs =
+        OUTGOING_STATE.selectedContactIDs.filter(function(id) {
+          return id !== contactID;
+        });
+    }
+
+    updateSelectedContactCount();
+  });
+}
+
+if (copyButton) {
+  copyButton.addEventListener("click", copyOutgoingMessage);
+}
 
   const previousPage = document.getElementById("previousPage");
   const nextPage = document.getElementById("nextPage");
@@ -144,11 +193,13 @@ function initializeReceiving() {
 function changeModule(moduleName) {
   const historyView = document.getElementById("historyView");
   const receiptsView = document.getElementById("receiptsView");
+  const newMessageView = document.getElementById("newMessageView");
 
-  if (!historyView || !receiptsView) return;
+  if (!historyView || !receiptsView || !newMessageView) return;
 
   historyView.hidden = moduleName !== "history";
   receiptsView.hidden = moduleName !== "receipts";
+  newMessageView.hidden = moduleName !== "newMessage";
 
   document.querySelectorAll(".module-tab").forEach(function(tab) {
     tab.classList.toggle(
@@ -156,8 +207,319 @@ function changeModule(moduleName) {
       tab.dataset.tab === moduleName
     );
   });
+
+  if (moduleName === "newMessage") {
+    loadOutgoingContacts();
+  }
 }
 
+/* --------------------------------------------------
+   OUTGOING MESSAGES
+-------------------------------------------------- */
+
+async function loadOutgoingContacts() {
+  if (OUTGOING_STATE.contactsLoaded) {
+    renderOutgoingContacts();
+    return;
+  }
+
+  const container = document.getElementById("contactList");
+  if (!container) return;
+
+  container.innerHTML =
+    '<div class="contact-loading">Loading contacts...</div>';
+
+  try {
+    const params = new URLSearchParams({
+      action: "GET_CONTACTS"
+    });
+
+    const response = await fetch(
+      RECEIVING_CONFIG.API_URL + "?" + params.toString(),
+      {
+        method: "GET",
+        redirect: "follow",
+        cache: "no-store"
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("HTTP error " + response.status);
+    }
+
+    const payload = await response.json();
+
+    if (!payload || payload.ok !== true) {
+      throw new Error(
+        payload && payload.error
+          ? payload.error
+          : "Unable to retrieve contacts."
+      );
+    }
+
+    const data = payload.data;
+
+    OUTGOING_STATE.contacts = Array.isArray(data)
+      ? data
+      : [];
+
+    OUTGOING_STATE.contactsLoaded = true;
+
+    renderOutgoingContacts();
+
+  } catch (error) {
+    console.error("Contact loading error:", error);
+
+    container.innerHTML = `
+      <div class="contact-error">
+        Unable to load contacts. ${escapeHTML(error.message)}
+      </div>
+    `;
+  }
+}
+
+
+function renderOutgoingContacts(searchTerm) {
+  const container = document.getElementById("contactList");
+  if (!container) return;
+
+  const term = String(searchTerm || "").trim().toLowerCase();
+
+  const contacts = OUTGOING_STATE.contacts.filter(function(contact) {
+    const searchable = [
+      contact.Name,
+      contact.Department,
+      contact.Phone,
+      contact.Email
+    ].join(" ").toLowerCase();
+
+    return searchable.includes(term);
+  });
+
+  if (!contacts.length) {
+    container.innerHTML = `
+      <div class="contact-empty">
+        No contacts found.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = contacts.map(function(contact) {
+    const selected = OUTGOING_STATE.selectedContactIDs
+      .includes(contact.ContactID);
+
+    return `
+      <label class="outgoing-contact">
+        <input
+          type="checkbox"
+          class="outgoing-contact-checkbox"
+          value="${escapeHTML(contact.ContactID)}"
+          ${selected ? "checked" : ""}
+        >
+
+        <span class="contact-checkmark"></span>
+
+        <span class="contact-details">
+          <strong>${escapeHTML(contact.Name || "Unnamed contact")}</strong>
+          <small>
+            ${escapeHTML(contact.Department || "—")}
+            ${contact.Phone
+              ? " · " + escapeHTML(contact.Phone)
+              : ""}
+          </small>
+        </span>
+      </label>
+    `;
+  }).join("");
+}
+
+
+function updateSelectedContactCount() {
+  const counter = document.getElementById("selectedContactCount");
+
+  if (counter) {
+    const count = OUTGOING_STATE.selectedContactIDs.length;
+    counter.textContent = count + (count === 1 ? " selected" : " selected");
+  }
+}
+
+
+async function saveOutgoingMessage(event) {
+  event.preventDefault();
+
+  if (OUTGOING_STATE.saving) return;
+
+  const sender = document.getElementById("outgoingSender").value.trim();
+  const subject = document.getElementById("outgoingSubject").value.trim();
+  const category = document.getElementById("outgoingCategory").value;
+  const messageText =
+    document.getElementById("outgoingMessageText").value;
+
+  if (!sender) {
+    showOutgoingFeedback("Enter the sender's name.", "error");
+    return;
+  }
+
+  if (!OUTGOING_STATE.selectedContactIDs.length) {
+    showOutgoingFeedback("Select at least one recipient.", "error");
+    return;
+  }
+
+  if (!messageText.trim()) {
+    showOutgoingFeedback("Write the message before saving.", "error");
+    return;
+  }
+
+  const saveButton = document.getElementById("saveOutgoingMessage");
+
+  OUTGOING_STATE.saving = true;
+
+  if (saveButton) {
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+  }
+
+  try {
+    const requestBody = {
+      action: "CREATE_OUTGOING_MESSAGE",
+      data: {
+        ContactIDs: OUTGOING_STATE.selectedContactIDs,
+        Sender: sender,
+        Subject: subject,
+        MessageText: messageText,
+        Category: category,
+        CreatedBy: sender
+      }
+    };
+
+    const response = await fetch(RECEIVING_CONFIG.API_URL, {
+      method: "POST",
+      redirect: "follow",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP error " + response.status);
+    }
+
+    const payload = await response.json();
+
+    if (!payload || payload.ok !== true) {
+      throw new Error(
+        payload && payload.error
+          ? payload.error
+          : "The message could not be saved."
+      );
+    }
+
+    const result = payload.data || {};
+
+    if (result.Success === false || result.success === false) {
+      throw new Error(result.Error || result.error || "Save failed.");
+    }
+
+    OUTGOING_STATE.lastSavedMessage = {
+      Subject: subject,
+      MessageText: messageText,
+      MessageID: result.MessageID || ""
+    };
+
+    const copyButton =
+      document.getElementById("copyOutgoingMessage");
+
+    if (copyButton) {
+      copyButton.disabled = false;
+    }
+
+    showOutgoingFeedback(
+      "Message saved successfully. ID: " +
+      (result.MessageID || "Created") +
+      " · Recipients: " +
+      (result.RecipientCount || OUTGOING_STATE.selectedContactIDs.length),
+      "success"
+    );
+
+  } catch (error) {
+    console.error("Outgoing message save error:", error);
+
+    showOutgoingFeedback(
+      "Unable to save message: " + error.message,
+      "error"
+    );
+
+  } finally {
+    OUTGOING_STATE.saving = false;
+
+    if (saveButton) {
+      saveButton.disabled = false;
+      saveButton.textContent = "Save Message";
+    }
+  }
+}
+
+
+async function copyOutgoingMessage() {
+  const saved = OUTGOING_STATE.lastSavedMessage;
+
+  if (!saved) {
+    showOutgoingFeedback(
+      "Save the message before copying it.",
+      "error"
+    );
+    return;
+  }
+
+  const textToCopy = saved.MessageText;
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(textToCopy);
+    } else {
+      const temporary = document.createElement("textarea");
+
+      temporary.value = textToCopy;
+      temporary.style.position = "fixed";
+      temporary.style.opacity = "0";
+
+      document.body.appendChild(temporary);
+      temporary.select();
+
+      const copied = document.execCommand("copy");
+      temporary.remove();
+
+      if (!copied) {
+        throw new Error("Clipboard access is unavailable.");
+      }
+    }
+
+    showOutgoingFeedback(
+      "Message copied. You can now paste it into WhatsApp.",
+      "success"
+    );
+
+  } catch (error) {
+    console.error("Copy error:", error);
+
+    showOutgoingFeedback(
+      "Unable to copy automatically. Please select and copy the message manually.",
+      "error"
+    );
+  }
+}
+
+
+function showOutgoingFeedback(message, type) {
+  const feedback = document.getElementById("outgoingMessageFeedback");
+  if (!feedback) return;
+
+  feedback.hidden = false;
+  feedback.className = "outgoing-feedback " + type;
+  feedback.textContent = message;
+}
 
 /* --------------------------------------------------
    HISTORICAL SEARCH
@@ -1069,10 +1431,9 @@ function escapeHTML(value) {
       "<": "&lt;",
       ">": "&gt;",
       '"': "&quot;",
-      "'": "&#039;"
+      "'": "&#39;"
     };
 
     return entities[character];
   });
 }
-
