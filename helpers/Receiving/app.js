@@ -620,6 +620,22 @@ function updatePagination(data) {
 -------------------------------------------------- */
 
 function resetSearchFilters() {
+
+  // Limpiar cadena de búsqueda
+  const searchInput = document.getElementById("searchInput");
+
+  if (searchInput) {
+    searchInput.value = "";
+  }
+
+  // Limpiar indicador visual del campo
+  const searchWrapper = document.querySelector(".search-input-wrap");
+
+  if (searchWrapper) {
+    searchWrapper.classList.remove("has-value");
+  }
+
+  // Limpiar todos los filtros
   [
     "dateFrom",
     "dateTo",
@@ -627,14 +643,24 @@ function resetSearchFilters() {
     "matchStatus",
     "fileType"
   ].forEach(function(id) {
+
     const element = document.getElementById(id);
-    if (element) element.value = "";
+
+    if (element) {
+      element.value = "";
+    }
+
   });
 
+  // Reiniciar paginación
+  RECEIVING_STATE.offset = 0;
+
+  // Actualizar indicador Current Search
   updateSearchDescription();
 
-  RECEIVING_STATE.offset = 0;
+  // Ejecutar búsqueda sin restricciones
   searchHistoricalRecords();
+
 }
 
 
