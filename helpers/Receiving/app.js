@@ -228,15 +228,7 @@ async function searchHistoricalRecords(keepState) {
     RECEIVING_STATE.results = Array.isArray(data.results)
       ? data.results
       : [];
-      console.table(
-      RECEIVING_STATE.results.map(function(item) {
-        return {
-          ID: item.MessageID,
-          Date: item.DateISO,
-          Time: item.Time
-        };
-      })
-    );
+    
     
     RECEIVING_STATE.totalMessages =
       Number(data.totalMessages || 0);
