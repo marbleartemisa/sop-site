@@ -12,8 +12,8 @@
  */
 
 const RECEIVING_CONFIG = {
-  API_ENABLED: false,
-  API_URL: ""
+  API_ENABLED: true,
+  API_URL: "https://script.google.com/macros/s/AKfycby0y93mBO3FOi3O9XRX0FpBwMEo5A6ZvAJEs-PI56n4pQ-fLjSkIiuKnPFqEcNZYMG2/exec"
 };
 
 
