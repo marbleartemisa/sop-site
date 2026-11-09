@@ -775,3 +775,251 @@ button {
     display: none;
   }
 }
+
+
+/* --------------------------------------------------
+   OUTGOING MESSAGE FORM
+-------------------------------------------------- */
+
+.outgoing-panel {
+  padding: 25px;
+}
+
+.outgoing-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+  margin-top: 25px;
+}
+
+.outgoing-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.outgoing-field > span {
+  color: #536174;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.outgoing-field input,
+.outgoing-field select,
+.outgoing-field textarea {
+  width: 100%;
+  border: 1px solid #d7e0e9;
+  border-radius: 7px;
+  background: white;
+  color: var(--ink);
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.outgoing-field input,
+.outgoing-field select {
+  height: 42px;
+}
+
+.outgoing-field textarea {
+  min-height: 220px;
+  resize: vertical;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.outgoing-field input:focus,
+.outgoing-field select:focus,
+.outgoing-field textarea:focus,
+.contact-search:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0, 114, 198, 0.09);
+}
+
+.outgoing-section {
+  margin-top: 27px;
+}
+
+.outgoing-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.outgoing-section-heading h3 {
+  color: var(--navy);
+  font-size: 14px;
+  margin: 0;
+}
+
+.outgoing-section-heading p {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 5px 0 0;
+}
+
+.selected-count {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.contact-search {
+  width: 100%;
+  height: 41px;
+  border: 1px solid #d7e0e9;
+  border-radius: 7px;
+  padding: 0 12px;
+  outline: none;
+  font: inherit;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.contact-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.outgoing-contact {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+
+.outgoing-contact:hover {
+  border-color: #a9c9e7;
+  background: #f8fbff;
+}
+
+.outgoing-contact:has(input:checked) {
+  border-color: var(--blue);
+  background: #f0f7fd;
+}
+
+.outgoing-contact-checkbox {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  accent-color: var(--blue);
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.contact-details strong {
+  color: #23354a;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.contact-details small {
+  color: var(--muted);
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.contact-loading,
+.contact-empty,
+.contact-error {
+  grid-column: 1 / -1;
+  padding: 20px;
+  text-align: center;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.contact-error {
+  color: var(--red);
+}
+
+.field-help {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.outgoing-actions {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.outgoing-actions .secondary-button {
+  min-height: 47px;
+  padding: 0 22px;
+  font-weight: 700;
+}
+
+.outgoing-actions button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.outgoing-feedback {
+  margin-top: 16px;
+  padding: 13px 15px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.outgoing-feedback.success {
+  color: #166534;
+  background: #edf8f0;
+  border: 1px solid #c9e9d1;
+}
+
+.outgoing-feedback.error {
+  color: #9f2929;
+  background: #fff1f0;
+  border: 1px solid #f2cccc;
+}
+
+@media (max-width: 700px) {
+  .outgoing-panel {
+    padding: 17px;
+  }
+
+  .outgoing-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-list {
+    grid-template-columns: 1fr;
+  }
+
+  .outgoing-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .outgoing-actions button {
+    width: 100%;
+  }
+}
