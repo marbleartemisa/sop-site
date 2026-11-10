@@ -181,9 +181,15 @@ if (copyButton) {
 
   addReceivingStyles();
   updateSearchDescription();
-
+  
+  // Connect synchronization refresh button.
+  bindReceivingSyncButton();
+  
+  // Load synchronization status immediately.
+  loadReceivingSyncStatus();
+  
   console.info("Artemisa Receiving initialized.");
-}
+  }
 
 
 /* --------------------------------------------------
@@ -211,20 +217,11 @@ function changeModule(moduleName) {
   if (moduleName === "newMessage") {
     loadOutgoingContacts();
   }
-    // Load synchronization status when entering Historical Search.
+
+  bindReceivingSyncButton();
+
   if (moduleName === "history") {
     loadReceivingSyncStatus();
-  }
-
-  // Bind the manual refresh button only once.
-  const refreshSyncButton = document.getElementById("refreshSyncStatus");
-
-  if (refreshSyncButton && !refreshSyncButton.dataset.syncBound) {
-    refreshSyncButton.addEventListener("click", function() {
-      loadReceivingSyncStatus();
-    });
-
-    refreshSyncButton.dataset.syncBound = "true";
   }
 }
 
