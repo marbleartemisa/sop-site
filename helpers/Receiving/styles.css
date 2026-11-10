@@ -1023,3 +1023,147 @@ button {
     width: 100%;
   }
 }
+
+
+/* =========================================
+   RECEIVING DATABASE SYNC STATUS
+========================================= */
+
+.sync-status-panel {
+  background: #ffffff;
+  border: 1px solid #dce5ef;
+  border-radius: 14px;
+  padding: 22px;
+  margin: 22px 0;
+  box-shadow: 0 3px 12px rgba(15, 35, 60, 0.04);
+}
+
+.sync-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.sync-status-eyebrow {
+  display: block;
+  color: #0072c6;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  margin-bottom: 7px;
+}
+
+.sync-status-header h2 {
+  color: #15314f;
+  font-size: 18px;
+  margin: 0 0 5px;
+}
+
+.sync-status-header p {
+  color: #718096;
+  font-size: 12px;
+  margin: 0;
+}
+
+.sync-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.sync-status-card {
+  background: #f6f9fc;
+  border: 1px solid #e5edf5;
+  border-radius: 10px;
+  padding: 18px;
+  min-width: 0;
+}
+
+.sync-status-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #53677e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+}
+
+.sync-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sync-status-dot.received {
+  background: #16865c;
+}
+
+.sync-status-dot.indexed {
+  background: #0072c6;
+}
+
+.sync-status-date {
+  color: #15314f;
+  font-size: 21px;
+  font-weight: 750;
+  margin-top: 15px;
+  overflow-wrap: anywhere;
+}
+
+.sync-status-description {
+  color: #7b8999;
+  font-size: 11px;
+  margin-top: 7px;
+}
+
+.sync-status-feedback {
+  margin-top: 15px;
+  padding: 11px 13px;
+  border-radius: 8px;
+  background: #edf4fa;
+  color: #35536f;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sync-status-feedback.is-warning {
+  background: #fff5df;
+  color: #8a5b00;
+  border: 1px solid #f2dfb4;
+}
+
+.sync-status-feedback.is-success {
+  background: #eaf7f0;
+  color: #176b47;
+  border: 1px solid #ccebd9;
+}
+
+.sync-status-feedback.is-error {
+  background: #fff0f0;
+  color: #a52c2c;
+  border: 1px solid #f2d0d0;
+}
+
+@media (max-width: 650px) {
+  .sync-status-panel {
+    padding: 16px;
+  }
+
+  .sync-status-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sync-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sync-status-date {
+    font-size: 19px;
+  }
+}
+
