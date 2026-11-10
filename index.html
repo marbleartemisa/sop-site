@@ -1676,6 +1676,14 @@ function mostrarUsuario(user){
   userNameSpan.textContent = user.usuario; // mostrar nombre
   userDiv.style.display = "flex";          // mostrar bloque
 }
+
+function getReceivingSender() {
+  if (!currentUser) {
+    return "";
+  }
+
+  return currentUser.usuario || "";
+}
       
 function mostrarBienvenida(nombre){
   const msg = document.getElementById("welcome-msg");
