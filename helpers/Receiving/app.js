@@ -972,6 +972,27 @@ async function loadReceivingSyncStatus() {
     }
   }
 }
+
+function bindReceivingSyncButton() {
+  const button = document.getElementById("refreshSyncStatus");
+
+  if (!button || button.dataset.syncBound === "true") {
+    return;
+  }
+
+  button.addEventListener("click", function(event) {
+    event.preventDefault();
+
+    console.log("Refresh sync status clicked.");
+
+    loadReceivingSyncStatus();
+  });
+
+  button.dataset.syncBound = "true";
+
+  console.log("Receiving sync button connected.");
+}
+
 function getSearchFilters() {
   return {
     dateFrom: document.getElementById("dateFrom")?.value || "",
