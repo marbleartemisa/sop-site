@@ -211,7 +211,23 @@ function changeModule(moduleName) {
   if (moduleName === "newMessage") {
     loadOutgoingContacts();
   }
+    // Load synchronization status when entering Historical Search.
+  if (moduleName === "history") {
+    loadReceivingSyncStatus();
+  }
+
+  // Bind the manual refresh button only once.
+  const refreshSyncButton = document.getElementById("refreshSyncStatus");
+
+  if (refreshSyncButton && !refreshSyncButton.dataset.syncBound) {
+    refreshSyncButton.addEventListener("click", function() {
+      loadReceivingSyncStatus();
+    });
+
+    refreshSyncButton.dataset.syncBound = "true";
+  }
 }
+
 
 /* --------------------------------------------------
    OUTGOING MESSAGES
@@ -784,13 +800,181 @@ async function searchHistoricalRecords(keepState) {
       error.message +
       ". Check the API connection and browser console."
     );
-
+ 
   } finally {
     RECEIVING_STATE.loading = false;
+
+    // Refresh synchronization status after a historical search.
+    loadReceivingSyncStatus();
   }
 }
 
+function formatReceivingSyncDate(value, formattedValue) {
+  if (formattedValue) return String(formattedValue);
 
+  if (!value) return "No records found";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return date.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+}
+
+
+async function loadReceivingSyncStatus() {
+  const receivedElement = document.getElementById("latestReceivedDate");
+  const indexedElement = document.getElementById("latestIndexedDate");
+  const feedbackElement = document.getElementById("syncStatusFeedback");
+  const refreshButton = document.getElementById("refreshSyncStatus");
+
+  if (!receivedElement || !indexedElement || !feedbackElement) {
+    return;
+  }
+
+  if (!RECEIVING_CONFIG.API_ENABLED || !RECEIVING_CONFIG.API_URL) {
+    feedbackElement.className = "sync-status-feedback is-error";
+    feedbackElement.textContent = "The Receiving API is not configured.";
+    return;
+  }
+
+  // Evita consultas simultáneas.
+  if (RECEIVING_STATE.syncStatusLoading) return;
+
+  RECEIVING_STATE.syncStatusLoading = true;
+
+  if (refreshButton) {
+    refreshButton.disabled = true;
+    refreshButton.textContent = "Checking...";
+  }
+
+  feedbackElement.className = "sync-status-feedback";
+  feedbackElement.textContent = "Checking database synchronization...";
+
+  try {
+    const params = new URLSearchParams({
+      action: "GET_RECEIVING_SYNC_STATUS"
+    });
+
+    const requestUrl =
+      RECEIVING_CONFIG.API_URL + "?" + params.toString();
+
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      redirect: "follow",
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP error " + response.status);
+    }
+
+    const payload = await response.json();
+
+    if (!payload || payload.ok !== true) {
+      throw new Error(
+        payload && payload.error
+          ? payload.error
+          : "The API returned an invalid response."
+      );
+    }
+
+    const data = payload.data || {};
+
+    if (data.Success === false || data.success === false) {
+      throw new Error(data.Error || data.error || "Unable to read synchronization status.");
+    }
+
+    const latestReceived =
+      data.LatestReceived || data.latestReceived || null;
+
+    const latestIndexed =
+      data.LatestIndexed || data.latestIndexed || null;
+
+    const receivedFormatted =
+      data.LatestReceivedFormatted || data.latestReceivedFormatted || "";
+
+    const indexedFormatted =
+      data.LatestIndexedFormatted || data.latestIndexedFormatted || "";
+
+    receivedElement.textContent = formatReceivingSyncDate(
+      latestReceived,
+      receivedFormatted
+    );
+
+    indexedElement.textContent = formatReceivingSyncDate(
+      latestIndexed,
+      indexedFormatted
+    );
+
+    // Preferimos el resultado calculado por Apps Script.
+    // Si no viene, comparamos las fechas en el navegador.
+    let hasPendingIndexing;
+
+    if (typeof data.HasPendingIndexing === "boolean") {
+      hasPendingIndexing = data.HasPendingIndexing;
+    } else if (typeof data.hasPendingIndexing === "boolean") {
+      hasPendingIndexing = data.hasPendingIndexing;
+    } else {
+      const receivedTime = latestReceived
+        ? new Date(latestReceived).getTime()
+        : NaN;
+
+      const indexedTime = latestIndexed
+        ? new Date(latestIndexed).getTime()
+        : NaN;
+
+      hasPendingIndexing =
+        Number.isFinite(receivedTime) &&
+        (!Number.isFinite(indexedTime) || receivedTime > indexedTime);
+    }
+
+    const hasReceived = Boolean(latestReceived || receivedFormatted);
+    const hasIndexed = Boolean(latestIndexed || indexedFormatted);
+
+    if (!hasReceived && !hasIndexed) {
+      feedbackElement.className = "sync-status-feedback";
+      feedbackElement.textContent =
+        "No message records were found in the source or search index.";
+
+    } else if (hasPendingIndexing || (hasReceived && !hasIndexed)) {
+      feedbackElement.className = "sync-status-feedback is-warning";
+      feedbackElement.textContent =
+        "Attention: new messages have been received but may not yet be available in Historical Search.";
+
+    } else {
+      feedbackElement.className = "sync-status-feedback is-success";
+      feedbackElement.textContent =
+        "Synchronization is up to date. The latest received message is included in the historical search index.";
+    }
+
+    console.info("Receiving synchronization status:", data);
+
+  } catch (error) {
+    console.error("Receiving synchronization status error:", error);
+
+    feedbackElement.className = "sync-status-feedback is-error";
+    feedbackElement.textContent =
+      "Unable to verify synchronization status. " + error.message;
+
+  } finally {
+    RECEIVING_STATE.syncStatusLoading = false;
+
+    if (refreshButton) {
+      refreshButton.disabled = false;
+      refreshButton.textContent = "Refresh status";
+    }
+  }
+}
 function getSearchFilters() {
   return {
     dateFrom: document.getElementById("dateFrom")?.value || "",
