@@ -345,6 +345,61 @@ function updateSelectedContactCount() {
 }
 
 
+async function uploadOutgoingMessageFile(messageId, file) {
+
+  const base64 = await new Promise((resolve, reject) => {
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const result = String(reader.result || '');
+      resolve(result.split(',')[1] || '');
+    };
+
+    reader.onerror = () => {
+      reject(new Error('Could not read ' + file.name));
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+  const requestBody = {
+    action: "UPLOAD_OUTGOING_MESSAGE_FILES",
+    data: {
+      MessageID: messageId,
+      FileName: file.name,
+      MimeType: file.type || "application/octet-stream",
+      Base64: base64
+    }
+  };
+
+  const response = await fetch(RECEIVING_CONFIG.API_URL, {
+    method: "POST",
+    redirect: "follow",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(requestBody)
+  });
+
+  if (!response.ok) {
+    throw new Error("HTTP error " + response.status);
+  }
+
+  const payload = await response.json();
+
+  if (!payload || payload.ok !== true) {
+    throw new Error(
+      payload && payload.error
+        ? payload.error
+        : "Upload failed."
+    );
+  }
+
+  return payload.data || {};
+}
+
+
 async function saveOutgoingMessage(event) {
   event.preventDefault();
 
@@ -355,6 +410,17 @@ async function saveOutgoingMessage(event) {
   const category = document.getElementById("outgoingCategory").value;
   const messageText =
     document.getElementById("outgoingMessageText").value;
+
+  const attachmentInput =
+    document.getElementById("outgoingAttachments");
+
+  const files = attachmentInput
+    ? Array.from(attachmentInput.files || [])
+    : [];
+
+  const MAX_FILE_SIZE = 8 * 1024 * 1024;
+  const MAX_TOTAL_SIZE = 20 * 1024 * 1024;
+  const MAX_FILES = 10;
 
   if (!sender) {
     showOutgoingFeedback("Enter the sender's name.", "error");
@@ -371,7 +437,39 @@ async function saveOutgoingMessage(event) {
     return;
   }
 
-  const saveButton = document.getElementById("saveOutgoingMessage");
+  if (files.length > MAX_FILES) {
+    showOutgoingFeedback(
+      "You can attach a maximum of 10 files.",
+      "error"
+    );
+    return;
+  }
+
+  const oversizedFile = files.find(file => file.size > MAX_FILE_SIZE);
+
+  if (oversizedFile) {
+    showOutgoingFeedback(
+      "File exceeds the 8 MB limit: " + oversizedFile.name,
+      "error"
+    );
+    return;
+  }
+
+  const totalSize = files.reduce(
+    (total, file) => total + file.size,
+    0
+  );
+
+  if (totalSize > MAX_TOTAL_SIZE) {
+    showOutgoingFeedback(
+      "Total attachments cannot exceed 20 MB.",
+      "error"
+    );
+    return;
+  }
+
+  const saveButton =
+    document.getElementById("saveOutgoingMessage");
 
   OUTGOING_STATE.saving = true;
 
@@ -381,6 +479,8 @@ async function saveOutgoingMessage(event) {
   }
 
   try {
+
+    // STEP 1: Save the main message.
     const requestBody = {
       action: "CREATE_OUTGOING_MESSAGE",
       data: {
@@ -419,13 +519,23 @@ async function saveOutgoingMessage(event) {
     const result = payload.data || {};
 
     if (result.Success === false || result.success === false) {
-      throw new Error(result.Error || result.error || "Save failed.");
+      throw new Error(
+        result.Error || result.error || "Save failed."
+      );
+    }
+
+    const messageId = result.MessageID || "";
+
+    if (!messageId) {
+      throw new Error(
+        "The message was saved but no MessageID was returned. Attachments were not uploaded."
+      );
     }
 
     OUTGOING_STATE.lastSavedMessage = {
       Subject: subject,
       MessageText: messageText,
-      MessageID: result.MessageID || ""
+      MessageID: messageId
     };
 
     const copyButton =
@@ -435,15 +545,72 @@ async function saveOutgoingMessage(event) {
       copyButton.disabled = false;
     }
 
-    showOutgoingFeedback(
-      "Message saved successfully. ID: " +
-      (result.MessageID || "Created") +
-      " · Recipients: " +
-      (result.RecipientCount || OUTGOING_STATE.selectedContactIDs.length),
-      "success"
-    );
+    // STEP 2: Upload attachments individually.
+    const uploadedFiles = [];
+    const failedFiles = [];
+
+    for (const file of files) {
+
+      try {
+
+        const uploadResult =
+          await uploadOutgoingMessageFile(messageId, file);
+
+        uploadedFiles.push({
+          name: file.name,
+          result: uploadResult
+        });
+
+      } catch (uploadError) {
+
+        console.error(
+          "Attachment upload error:",
+          file.name,
+          uploadError
+        );
+
+        failedFiles.push({
+          name: file.name,
+          error: uploadError.message
+        });
+      }
+    }
+
+    // STEP 3: Report the final result.
+    if (failedFiles.length === 0) {
+
+      if (attachmentInput) {
+        attachmentInput.value = "";
+      }
+
+      showOutgoingFeedback(
+        "Message saved successfully. ID: " +
+        messageId +
+        " · Recipients: " +
+        (result.RecipientCount || OUTGOING_STATE.selectedContactIDs.length) +
+        " · Attachments uploaded: " +
+        uploadedFiles.length,
+        "success"
+      );
+
+    } else {
+
+      showOutgoingFeedback(
+        "Message saved successfully (ID: " +
+        messageId +
+        "), but " +
+        failedFiles.length +
+        " attachment(s) failed. Uploaded: " +
+        uploadedFiles.length +
+        ". Failed: " +
+        failedFiles.map(file => file.name).join(", ") +
+        ". Do not save the message again; it already exists.",
+        "error"
+      );
+    }
 
   } catch (error) {
+
     console.error("Outgoing message save error:", error);
 
     showOutgoingFeedback(
@@ -452,6 +619,7 @@ async function saveOutgoingMessage(event) {
     );
 
   } finally {
+
     OUTGOING_STATE.saving = false;
 
     if (saveButton) {
@@ -460,6 +628,7 @@ async function saveOutgoingMessage(event) {
     }
   }
 }
+
 
 
 async function copyOutgoingMessage() {
