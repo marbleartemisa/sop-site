@@ -208,6 +208,77 @@
 
       </section>
 
+      
+      <!-- RECEIVING SYNC STATUS -->
+      <section class="sync-status-panel" id="receivingSyncStatus">
+
+        <div class="sync-status-header">
+          <div>
+            <span class="sync-status-eyebrow">RECEIVING · UPDATE STATUS</span>
+            <h2>Database synchronization</h2>
+            <p>Comparison between received messages and searchable records.</p>
+          </div>
+
+          <button
+            type="button"
+            id="refreshSyncStatus"
+            class="secondary-button"
+          >
+            Refresh status
+          </button>
+        </div>
+
+        <div class="sync-status-grid">
+
+          <article class="sync-status-card">
+            <div class="sync-status-label">
+              <span class="sync-status-dot received"></span>
+              LAST MESSAGE RECEIVED
+            </div>
+
+            <div
+              class="sync-status-date"
+              id="latestReceivedDate"
+            >
+              Checking...
+            </div>
+
+            <div class="sync-status-description">
+              Latest record in MESSAGES_CLEAN
+            </div>
+          </article>
+
+          <article class="sync-status-card">
+            <div class="sync-status-label">
+              <span class="sync-status-dot indexed"></span>
+              LAST MESSAGE INDEXED
+            </div>
+
+            <div
+              class="sync-status-date"
+              id="latestIndexedDate"
+            >
+              Checking...
+            </div>
+
+            <div class="sync-status-description">
+              Latest record available for historical search
+            </div>
+          </article>
+
+        </div>
+
+        <div
+          id="syncStatusFeedback"
+          class="sync-status-feedback"
+          role="status"
+          aria-live="polite"
+        >
+          Checking database synchronization...
+        </div>
+
+      </section>
+
 
       <!-- SUMMARY -->
       <section class="summary-grid">
