@@ -1221,3 +1221,330 @@ button {
     width: 100%;
   }
 }
+
+
+/* ==================================================
+   ARTEMISA RECEIVING - PROFESSIONAL ERP INTERFACE
+================================================== */
+
+#receiptsView {
+  color: var(--ink);
+}
+
+#receiptsView .receiving-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* HEADER */
+
+#receiptsView .receiving-header {
+  padding: 28px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: linear-gradient(120deg, #082c4d, #064b7e);
+  border: 0;
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+#receiptsView .receiving-header h2 {
+  color: #fff;
+  font-size: 25px;
+  letter-spacing: -0.6px;
+  margin: 7px 0;
+}
+
+#receiptsView .receiving-header p {
+  color: rgba(255,255,255,.76);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+#receiptsView .section-eyebrow {
+  display: block;
+  color: #1683c8;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  margin-bottom: 7px;
+}
+
+#receiptsView .receiving-header .section-eyebrow {
+  color: #91cfff;
+}
+
+#receiptsView .receiving-status-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 30px;
+  color: #d8edff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+#receiptsView .receiving-status-label::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #52d6a0;
+}
+
+/* PANELS */
+
+#receiptsView .receiving-search-panel,
+#receiptsView .receiving-form-panel {
+  padding: 26px 28px;
+}
+
+#receiptsView .receiving-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+#receiptsView .receiving-panel-heading h3 {
+  color: var(--navy);
+  font-size: 17px;
+  font-weight: 750;
+  margin: 0;
+}
+
+#receiptsView .receiving-panel-heading p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+
+/* SEARCH */
+
+#receiptsView .receiving-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+#receiptsView .receiving-search-box .search-icon {
+  color: var(--blue);
+  font-size: 23px;
+}
+
+#receiptsView .receiving-search-box input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid #d4dee9;
+  border-radius: 7px;
+  background: #fbfdff;
+  color: var(--ink);
+  font-size: 12px;
+  outline: none;
+}
+
+#receiptsView .receiving-search-box input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,114,198,.10);
+}
+
+#receiptsView .btn-primary {
+  min-height: 44px;
+  padding: 0 23px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background .2s ease, transform .2s ease;
+}
+
+#receiptsView .btn-primary:hover {
+  background: var(--blue-dark);
+  transform: translateY(-1px);
+}
+
+#receiptsView .empty-search-state {
+  padding: 13px 15px;
+  border: 1px dashed #d5e0eb;
+  border-radius: 7px;
+  background: #f8fafc;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+#receiptsView .empty-search-state p {
+  margin: 0;
+}
+
+/* RECEIPT ID */
+
+#receiptsView .receipt-id-label {
+  padding: 9px 13px;
+  border-radius: 6px;
+  background: #edf5fc;
+  color: var(--blue-dark);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .6px;
+  white-space: nowrap;
+}
+
+/* FORM SECTIONS */
+
+#receiptsView .form-section {
+  padding: 22px 0;
+  border-top: 1px solid #e8edf3;
+}
+
+#receiptsView .form-section:first-child {
+  border-top: 0;
+  padding-top: 5px;
+}
+
+#receiptsView .form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+#receiptsView .form-section-title > span {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #eaf3fb;
+  color: var(--blue-dark);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+#receiptsView .form-section-title h4 {
+  margin: 0;
+  color: #193b5b;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+/* FIELD GRID */
+
+#receiptsView .form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 19px 17px;
+}
+
+#receiptsView .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+#receiptsView .form-field label {
+  color: #46566a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+#receiptsView .form-field input,
+#receiptsView .form-field select,
+#receiptsView .form-field textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #d5dee8;
+  border-radius: 7px;
+  background: #fff;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+#receiptsView .form-field textarea {
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+#receiptsView .form-field input:focus,
+#receiptsView .form-field select:focus,
+#receiptsView .form-field textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,114,198,.09);
+}
+
+#receiptsView .form-field input[readonly] {
+  background: #f2f5f8;
+  color: #64748b;
+}
+
+#receiptsView .form-field input::placeholder,
+#receiptsView .form-field textarea::placeholder {
+  color: #9aa7b6;
+  font-size: 11px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  #receiptsView .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  #receiptsView .receiving-header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 22px;
+  }
+
+  #receiptsView .receiving-search-panel,
+  #receiptsView .receiving-form-panel {
+    padding: 19px 16px;
+  }
+
+  #receiptsView .form-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  #receiptsView .receiving-search-box {
+    flex-wrap: wrap;
+  }
+
+  #receiptsView .receiving-search-box input {
+    flex-basis: calc(100% - 40px);
+  }
+
+  #receiptsView .receiving-search-box .btn-primary {
+    width: 100%;
+  }
+
+  #receiptsView .receiving-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
