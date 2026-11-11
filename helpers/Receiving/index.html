@@ -373,7 +373,466 @@
 
 
     <!-- RECEIPTS PLACEHOLDER -->
-    <section id="receiptsView" hidden>
+    <section id="
+<!-- MATERIAL RECEIVING -->
+<section id="receiptsView" hidden>
+
+  <div class="receiving-workspace">
+
+    <!-- HEADER -->
+    <div class="panel receiving-header">
+      <div>
+        <span class="section-eyebrow">ARTEMISA / OPERATIONS</span>
+        <h2>Material Receiving</h2>
+        <p>
+          Register, identify and track all materials physically
+          received by Artemisa.
+        </p>
+      </div>
+
+      <div class="receiving-header-actions">
+        <span class="receiving-status-label">
+          RECEIVING CONTROL
+        </span>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="panel receiving-search-panel">
+
+      <div class="receiving-panel-heading">
+        <div>
+          <h3>Find Received Materials</h3>
+          <p>
+            Search using any available information.
+          </p>
+        </div>
+      </div>
+
+      <div class="receiving-search-box">
+        <span class="search-icon">⌕</span>
+
+        <input
+          type="search"
+          id="materialSearchInput"
+          placeholder="Search material, brand, supplier, PO, tracking, project, invoice..."
+          autocomplete="off"
+        >
+
+        <button
+          type="button"
+          id="materialSearchButton"
+          class="btn-primary"
+        >
+          Search
+        </button>
+      </div>
+
+      <div
+        id="materialSearchResults"
+        class="material-search-results"
+      >
+        <div class="empty-search-state">
+          <p>
+            Search for a material or reference to find
+            previous receiving records.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- REGISTRATION FORM -->
+    <div class="panel receiving-form-panel">
+
+      <div class="receiving-panel-heading">
+        <div>
+          <span class="section-eyebrow">MATERIAL RECORD</span>
+          <h3 id="materialFormTitle">Register New Material Receipt</h3>
+          <p>
+            Enter the information currently available.
+            Unknown information can be added later.
+          </p>
+        </div>
+
+        <span
+          id="materialReceiptId"
+          class="receipt-id-label"
+        >
+          NEW RECEIPT
+        </span>
+      </div>
+
+      <form id="materialReceiptForm">
+
+        <!-- SECTION 1 -->
+        <div class="form-section">
+
+          <div class="form-section-title">
+            <span>01</span>
+            <h4>Physical Receipt</h4>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-field">
+              <label for="materialReceivedDate">
+                Received Date *
+              </label>
+              <input
+                type="date"
+                id="materialReceivedDate"
+                required
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialReceivedBy">
+                Received By
+              </label>
+              <input
+                type="text"
+                id="materialReceivedBy"
+                readonly
+                placeholder="Logged-in user"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialOriginType">
+                Origin Type
+              </label>
+              <select id="materialOriginType">
+                <option value="">Select if known</option>
+                <option value="ARTEMISA">Artemisa Purchase</option>
+                <option value="CUSTOMER">Sent by Customer</option>
+                <option value="UNKNOWN">Unknown Origin</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="materialReceivedCondition">
+                Material Condition
+              </label>
+              <select id="materialReceivedCondition">
+                <option value="">Not specified</option>
+                <option value="GOOD">Good</option>
+                <option value="DAMAGED">Damaged</option>
+                <option value="PARTIAL">Partial / Incomplete</option>
+                <option value="UNDER_REVIEW">Under Review</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 2 -->
+        <div class="form-section">
+
+          <div class="form-section-title">
+            <span>02</span>
+            <h4>Material Identification</h4>
+          </div>
+
+          <div class="form-field">
+            <label for="materialDescription">
+              Material Description *
+            </label>
+            <textarea
+              id="materialDescription"
+              rows="3"
+              required
+              placeholder="Describe what physically arrived..."
+            ></textarea>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-field">
+              <label for="materialQuantity">
+                Quantity
+              </label>
+              <input
+                type="number"
+                id="materialQuantity"
+                min="0"
+                step="any"
+                placeholder="Quantity received"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialUnit">
+                Unit
+              </label>
+              <select id="materialUnit">
+                <option value="">Select unit</option>
+                <option value="SLABS">Slabs</option>
+                <option value="PIECES">Pieces</option>
+                <option value="BOXES">Boxes</option>
+                <option value="BUNDLES">Bundles</option>
+                <option value="SETS">Sets</option>
+                <option value="UNITS">Units</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="materialBrand">Brand</label>
+              <input
+                type="text"
+                id="materialBrand"
+                placeholder="Manufacturer / Brand"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialModel">Model / SKU / Color</label>
+              <input
+                type="text"
+                id="materialModel"
+                placeholder="Model, SKU, color, reference..."
+              >
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 3 -->
+        <div class="form-section">
+
+          <div class="form-section-title">
+            <span>03</span>
+            <h4>Supplier & Shipping Information</h4>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-field">
+              <label for="materialSupplier">
+                Supplier / Store
+              </label>
+              <input
+                type="text"
+                id="materialSupplier"
+                placeholder="Supplier or store name"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialShipFrom">
+                Ship From
+              </label>
+              <input
+                type="text"
+                id="materialShipFrom"
+                placeholder="City, State"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialSender">
+                Sender
+              </label>
+              <input
+                type="text"
+                id="materialSender"
+                placeholder="Sender name or company"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialCarrier">
+                Carrier
+              </label>
+              <input
+                type="text"
+                id="materialCarrier"
+                placeholder="UPS, FedEx, freight company..."
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialTracking">
+                Tracking Number
+              </label>
+              <input
+                type="text"
+                id="materialTracking"
+                placeholder="Tracking reference"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialPO">
+                Purchase Order (PO)
+              </label>
+              <input
+                type="text"
+                id="materialPO"
+                placeholder="PO number"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialInvoice">
+                Invoice Number
+              </label>
+              <input
+                type="text"
+                id="materialInvoice"
+                placeholder="Invoice reference"
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="materialProject">
+                Related Project
+              </label>
+              <select id="materialProject">
+                <option value="">Not identified / Not assigned</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 4 -->
+        <div class="form-section">
+
+          <div class="form-section-title">
+            <span>04</span>
+            <h4>Additional Information</h4>
+          </div>
+
+          <div class="form-field">
+            <label for="materialOriginalText">
+              Original Text / References
+            </label>
+            <textarea
+              id="materialOriginalText"
+              rows="4"
+              placeholder="Copy any available information from labels, WhatsApp messages, emails, invoices, packing lists or other sources..."
+            ></textarea>
+          </div>
+
+          <div class="form-field">
+            <label for="materialStorageLocation">
+              Storage Location
+            </label>
+            <input
+              type="text"
+              id="materialStorageLocation"
+              placeholder="Warehouse, rack, area..."
+            >
+          </div>
+
+          <div class="form-field">
+            <label for="materialNotes">
+              Notes / Observations
+            </label>
+            <textarea
+              id="materialNotes"
+              rows="3"
+              placeholder="Condition, missing information, discrepancies, follow-up..."
+            ></textarea>
+          </div>
+
+        </div>
+
+        <!-- SECTION 5 -->
+        <div class="form-section">
+
+          <div class="form-section-title">
+            <span>05</span>
+            <h4>Photographs & Documents</h4>
+          </div>
+
+          <div
+            id="materialFileDropzone"
+            class="material-file-dropzone"
+          >
+
+            <div class="upload-icon">⇧</div>
+
+            <h4>Attach Photos & Documents</h4>
+
+            <p>
+              Add material photos, labels, packing lists,
+              invoices, receipts and other supporting files.
+            </p>
+
+            <label
+              for="materialReceiptFiles"
+              class="btn-secondary upload-select-button"
+            >
+              Select Files
+            </label>
+
+            <input
+              type="file"
+              id="materialReceiptFiles"
+              multiple
+              accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv"
+              hidden
+            >
+
+            <div class="upload-file-types">
+              PHOTOS · PACKING LIST · INVOICE · OTHER DOCUMENTS
+            </div>
+
+          </div>
+
+          <div
+            id="materialSelectedFiles"
+            class="material-selected-files"
+          ></div>
+
+          <div
+            id="materialExistingFiles"
+            class="material-existing-files"
+          ></div>
+
+        </div>
+
+        <!-- FORM FEEDBACK -->
+        <div
+          id="materialReceiptFeedback"
+          class="form-feedback"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+        <!-- ACTIONS -->
+        <div class="receiving-form-actions">
+
+          <button
+            type="button"
+            id="resetMaterialReceipt"
+            class="btn-secondary"
+          >
+            Clear Form
+          </button>
+
+          <button
+            type="submit"
+            id="saveMaterialReceipt"
+            class="btn-primary"
+          >
+            Save Material Receipt
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</section>
+" hidden>
 
       <div class="panel future-panel">
         <div class="future-icon">▤</div>
