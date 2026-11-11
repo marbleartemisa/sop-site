@@ -777,7 +777,7 @@ function renderResults() {
             ${
               purchase.memo
                 ? `<div class="item-memo">
-                    <strong>Memo:</strong>
+                    <strong>item:</strong>
                     ${escapeHTML(purchase.memo)}
                   </div>`
                 : ""
