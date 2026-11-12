@@ -523,76 +523,111 @@
         </div>
 
         <!-- SECTION 2 -->
-        <div class="form-section">
 
-          <div class="form-section-title">
-            <span>02</span>
-            <h4>Material Identification</h4>
+
+          <div class="form-section">
+          
+            <div class="form-section-title">
+              <span>02</span>
+              <h4>Materials Received</h4>
+            </div>
+          
+            <p class="form-section-description">
+              Add each material type as a separate item. Enter the quantity
+              received for each item. You can add as many items as necessary.
+            </p>
+          
+            <div id="materialItemsContainer">
+          
+              <!-- Initial item -->
+              <div class="material-item-card">
+          
+                <div class="material-item-heading">
+                  <h5>Material 1</h5>
+                </div>
+          
+                <div class="form-field">
+                  <label>Material Description *</label>
+                  <textarea
+                    data-field="ItemName"
+                    rows="2"
+                    required
+                    placeholder="Describe the material, hardware, model or product..."
+                  ></textarea>
+                </div>
+          
+                <div class="form-grid">
+          
+                  <div class="form-field">
+                    <label>Quantity *</label>
+                    <input
+                      type="number"
+                      data-field="Quantity"
+                      min="0.01"
+                      step="any"
+                      required
+                      placeholder="Qty"
+                    >
+                  </div>
+          
+                  <div class="form-field">
+                    <label>Unit</label>
+                    <select data-field="Unit">
+                      <option value="">Select unit</option>
+                      <option value="SLABS">Slabs</option>
+                      <option value="PIECES">Pieces</option>
+                      <option value="BOXES">Boxes</option>
+                      <option value="BUNDLES">Bundles</option>
+                      <option value="KITS">Kits</option>
+                      <option value="SETS">Sets</option>
+                      <option value="UNITS">Units</option>
+                      <option value="OTHER">Other</option>
+                    </select>
+                  </div>
+          
+                  <div class="form-field">
+                    <label>Material / Category</label>
+                    <input
+                      type="text"
+                      data-field="Material"
+                      placeholder="Stone, hardware, cabinet, accessory..."
+                    >
+                  </div>
+          
+                  <div class="form-field">
+                    <label>Brand</label>
+                    <input
+                      type="text"
+                      data-field="Brand"
+                      placeholder="Manufacturer / Brand"
+                    >
+                  </div>
+          
+                  <div class="form-field">
+                    <label>Model / SKU / Reference</label>
+                    <input
+                      type="text"
+                      data-field="Model"
+                      placeholder="Model number, SKU or color reference"
+                    >
+                  </div>
+          
+                </div>
+          
+              </div>
+          
+            </div>
+          
+            <button
+              type="button"
+              id="addMaterialItem"
+              class="btn-secondary"
+            >
+              + Add Another Material
+            </button>
+          
           </div>
 
-          <div class="form-field">
-            <label for="materialDescription">
-              Material Description *
-            </label>
-            <textarea
-              id="materialDescription"
-              rows="3"
-              required
-              placeholder="Describe what physically arrived..."
-            ></textarea>
-          </div>
-
-          <div class="form-grid">
-
-            <div class="form-field">
-              <label for="materialQuantity">
-                Quantity
-              </label>
-              <input
-                type="number"
-                id="materialQuantity"
-                min="0"
-                step="any"
-                placeholder="Quantity received"
-              >
-            </div>
-
-            <div class="form-field">
-              <label for="materialUnit">
-                Unit
-              </label>
-              <select id="materialUnit">
-                <option value="">Select unit</option>
-                <option value="SLABS">Slabs</option>
-                <option value="PIECES">Pieces</option>
-                <option value="BOXES">Boxes</option>
-                <option value="BUNDLES">Bundles</option>
-                <option value="SETS">Sets</option>
-                <option value="UNITS">Units</option>
-                <option value="OTHER">Other</option>
-              </select>
-            </div>
-
-            <div class="form-field">
-              <label for="materialBrand">Brand</label>
-              <input
-                type="text"
-                id="materialBrand"
-                placeholder="Manufacturer / Brand"
-              >
-            </div>
-
-            <div class="form-field">
-              <label for="materialModel">Model / SKU / Color</label>
-              <input
-                type="text"
-                id="materialModel"
-                placeholder="Model, SKU, color, reference..."
-              >
-            </div>
-
-          </div>
-        </div>
 
         <!-- SECTION 3 -->
         <div class="form-section">
