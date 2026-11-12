@@ -61,24 +61,34 @@ function initializeMaterialFileSelection() {
 
   // Prevent duplicate event listeners
   if (input.dataset.initialized === 'true') return;
+
   input.dataset.initialized = 'true';
 
   input.addEventListener('change', function() {
+
     addMaterialFiles(Array.from(input.files || []));
+
+    // Allow selecting the same file again
     input.value = '';
+
   });
 
   dropzone.addEventListener('dragover', function(event) {
+
     event.preventDefault();
     dropzone.classList.add('drag-over');
+
   });
 
   dropzone.addEventListener('dragleave', function(event) {
+
     event.preventDefault();
     dropzone.classList.remove('drag-over');
+
   });
 
   dropzone.addEventListener('drop', function(event) {
+
     event.preventDefault();
     dropzone.classList.remove('drag-over');
 
@@ -87,10 +97,36 @@ function initializeMaterialFileSelection() {
     );
 
     addMaterialFiles(files);
+
   });
 
   renderMaterialSelectedFiles();
+
 }
+
+
+/********************************************************
+ * MATERIAL RECEIVING - DEFAULT DATE
+ ********************************************************/
+
+function initializeMaterialReceivedDate() {
+
+  const receivedDate = document.getElementById('materialReceivedDate');
+
+  if (!receivedDate || receivedDate.value) return;
+
+  const today = new Date();
+
+  const localDate = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0')
+  ].join('-');
+
+  receivedDate.value = localDate;
+
+}
+
 
 
 /********************************************************
@@ -122,11 +158,32 @@ function addMaterialFiles(files) {
  * RENDER SELECTED FILES
  ********************************************************/
 
+
+function getMaterialFileIcon(file) {
+
+  const name = String(file.name || '').toLowerCase();
+  const type = String(file.type || '').toLowerCase();
+
+  if (type.startsWith('image/') ||
+      /\.(jpg|jpeg|png|gif|webp|bmp|heic|heif)$/.test(name)) {
+    return '🖼️';
+  }
+
+  if (type === 'application/pdf' || name.endsWith('.pdf')) {
+    return '📕';
+  }
+
+  if (/\.(doc|docx)$/.test(name)) return '📘';
+
+  if (/\.(xls|xlsx|csv)$/.test(name)) return '📗';
+
+  return '📎';
+}
+
+
 function renderMaterialSelectedFiles() {
 
-  const container = document.getElementById(
-    'materialSelectedFiles'
-  );
+  const container = document.getElementById('materialSelectedFiles');
 
   if (!container) return;
 
@@ -146,10 +203,12 @@ function renderMaterialSelectedFiles() {
 
       ${files.map(function(file, index) {
 
-        const size = formatMaterialFileSize(file.size);
-
         return `
           <div class="selected-file-item">
+
+            <span class="selected-file-icon">
+              ${getMaterialFileIcon(file)}
+            </span>
 
             <div class="selected-file-info">
               <span class="selected-file-name">
@@ -157,7 +216,7 @@ function renderMaterialSelectedFiles() {
               </span>
 
               <span class="selected-file-size">
-                ${size}
+                ${formatMaterialFileSize(file.size)}
               </span>
             </div>
 
@@ -166,8 +225,22 @@ function renderMaterialSelectedFiles() {
               class="remove-material-file"
               data-index="${index}"
               aria-label="Remove ${escapeMaterialHTML(file.name)}"
+              title="Remove file"
             >
-              ×
+              <svg viewBox="0 0 24 24"
+                   width="17"
+                   height="17"
+                   fill="none"
+                   stroke="currentColor"
+                   stroke-width="1.8"
+                   stroke-linecap="round"
+                   stroke-linejoin="round"
+                   aria-hidden="true">
+                <path d="M3 6h18"/>
+                <path d="M8 6V4h8v2"/>
+                <path d="m19 6-1 14H6L5 6"/>
+                <path d="M10 11v5M14 11v5"/>
+              </svg>
             </button>
 
           </div>
@@ -178,24 +251,22 @@ function renderMaterialSelectedFiles() {
     </div>
   `;
 
-  container.querySelectorAll('.remove-material-file')
-    .forEach(function(button) {
+  container.querySelectorAll('.remove-material-file').forEach(function(button) {
 
-      button.addEventListener('click', function() {
+    button.addEventListener('click', function() {
 
-        const index = Number(button.dataset.index);
+      const index = Number(button.dataset.index);
 
-        MATERIAL_RECEIVING_STATE.selectedFiles.splice(
-          index,
-          1
-        );
+      MATERIAL_RECEIVING_STATE.selectedFiles.splice(index, 1);
 
-        renderMaterialSelectedFiles();
-
-      });
+      renderMaterialSelectedFiles();
 
     });
+
+  });
+
 }
+
 
 
 /********************************************************
@@ -384,6 +455,26 @@ function getMaterialItemsFromForm() {
   });
 
   return items;
+}
+
+/* --------------------------------------------------
+   FORMATO DE FECHA
+-------------------------------------------------- */
+function formatReceivingDate(value) {
+
+  if (!value) return '';
+
+  const date = value instanceof Date
+    ? value
+    : new Date(String(value).substring(0, 10) + 'T12:00:00');
+
+  if (isNaN(date.getTime())) return String(value);
+
+  return [
+    String(date.getDate()).padStart(2, '0'),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    date.getFullYear()
+  ].join('/');
 }
 
 /* --------------------------------------------------
@@ -1802,6 +1893,7 @@ function showApiError(errorText) {
   const pagination = document.getElementById("pagination");
   if (pagination) pagination.hidden = true;
 }
+
 
 
 /* --------------------------------------------------
