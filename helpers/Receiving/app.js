@@ -480,8 +480,21 @@ function formatReceivingDate(value) {
 /* --------------------------------------------------
    INITIALIZATION
 -------------------------------------------------- */
+/********************************************************
+ * ARTEMISA RECEIVING - MAIN INITIALIZATION
+ ********************************************************/
 
 function initializeReceiving() {
+
+  // Prevent duplicate initialization
+  if (window.RECEIVING_INITIALIZED) return;
+  window.RECEIVING_INITIALIZED = true;
+
+
+  /******************************************************
+   * 1. HISTORICAL SEARCH ELEMENTS
+   ******************************************************/
+
   const searchForm = document.getElementById("searchForm");
   const searchInput = document.getElementById("searchInput");
   const clearSearch = document.getElementById("clearSearch");
@@ -489,17 +502,33 @@ function initializeReceiving() {
   const resultsContainer = document.getElementById("resultsContainer");
 
   if (!searchForm || !searchInput || !resultsContainer) {
+
     console.error("Receiving: required HTML elements are missing.");
+
+    // Allow initialization again if the page is loaded later
+    window.RECEIVING_INITIALIZED = false;
+
     return;
   }
 
+
+  /******************************************************
+   * 2. HISTORICAL SEARCH
+   ******************************************************/
+
   searchForm.addEventListener("submit", function(event) {
+
     event.preventDefault();
+
     RECEIVING_STATE.offset = 0;
+
     searchHistoricalRecords();
+
   });
 
+
   searchInput.addEventListener("input", function() {
+
     const wrapper = document.querySelector(".search-input-wrap");
 
     if (wrapper) {
@@ -508,111 +537,200 @@ function initializeReceiving() {
         Boolean(searchInput.value)
       );
     }
+
   });
 
+
   if (clearSearch) {
+
     clearSearch.addEventListener("click", function() {
+
       searchInput.value = "";
+
       searchInput.focus();
 
       const wrapper = document.querySelector(".search-input-wrap");
-      if (wrapper) wrapper.classList.remove("has-value");
+
+      if (wrapper) {
+        wrapper.classList.remove("has-value");
+      }
+
     });
+
   }
+
 
   if (resetFilters) {
+
     resetFilters.addEventListener("click", resetSearchFilters);
+
   }
 
+
+  /******************************************************
+   * 3. MODULE NAVIGATION
+   ******************************************************/
+
   document.querySelectorAll(".module-tab").forEach(function(tab) {
+
     tab.addEventListener("click", function() {
+
       if (tab.disabled) return;
+
       changeModule(tab.dataset.tab);
+
     });
+
   });
 
-  // New outgoing message module
-const outgoingForm = document.getElementById("outgoingMessageForm");
-const contactSearch = document.getElementById("contactSearchInput");
-const contactList = document.getElementById("contactList");
-const copyButton = document.getElementById("copyOutgoingMessage");
 
-if (outgoingForm) {
-  outgoingForm.addEventListener("submit", saveOutgoingMessage);
-}
+  /******************************************************
+   * 4. OUTGOING MESSAGES MODULE
+   ******************************************************/
 
-if (contactSearch) {
-  contactSearch.addEventListener("input", function() {
-    renderOutgoingContacts(contactSearch.value);
-  });
-}
+  const outgoingForm = document.getElementById("outgoingMessageForm");
+  const contactSearch = document.getElementById("contactSearchInput");
+  const contactList = document.getElementById("contactList");
+  const copyButton = document.getElementById("copyOutgoingMessage");
 
-if (contactList) {
-  contactList.addEventListener("change", function(event) {
-    if (!event.target.matches(".outgoing-contact-checkbox")) return;
 
-    const contactID = event.target.value;
+  if (outgoingForm) {
 
-    if (event.target.checked) {
-      if (!OUTGOING_STATE.selectedContactIDs.includes(contactID)) {
-        OUTGOING_STATE.selectedContactIDs.push(contactID);
+    outgoingForm.addEventListener("submit", saveOutgoingMessage);
+
+  }
+
+
+  if (contactSearch) {
+
+    contactSearch.addEventListener("input", function() {
+
+      renderOutgoingContacts(contactSearch.value);
+
+    });
+
+  }
+
+
+  if (contactList) {
+
+    contactList.addEventListener("change", function(event) {
+
+      if (!event.target.matches(".outgoing-contact-checkbox")) return;
+
+      const contactID = event.target.value;
+
+      if (event.target.checked) {
+
+        if (!OUTGOING_STATE.selectedContactIDs.includes(contactID)) {
+
+          OUTGOING_STATE.selectedContactIDs.push(contactID);
+
+        }
+
+      } else {
+
+        OUTGOING_STATE.selectedContactIDs =
+          OUTGOING_STATE.selectedContactIDs.filter(function(id) {
+
+            return id !== contactID;
+
+          });
+
       }
-    } else {
-      OUTGOING_STATE.selectedContactIDs =
-        OUTGOING_STATE.selectedContactIDs.filter(function(id) {
-          return id !== contactID;
-        });
-    }
 
-    updateSelectedContactCount();
-  });
-}
+      updateSelectedContactCount();
 
-if (copyButton) {
-  copyButton.addEventListener("click", copyOutgoingMessage);
-}
+    });
+
+  }
+
+
+  if (copyButton) {
+
+    copyButton.addEventListener("click", copyOutgoingMessage);
+
+  }
+
+
+  /******************************************************
+   * 5. HISTORICAL SEARCH PAGINATION
+   ******************************************************/
 
   const previousPage = document.getElementById("previousPage");
   const nextPage = document.getElementById("nextPage");
 
+
   if (previousPage) {
+
     previousPage.addEventListener("click", function() {
+
       if (RECEIVING_STATE.offset >= RECEIVING_CONFIG.PAGE_SIZE) {
+
         RECEIVING_STATE.offset -= RECEIVING_CONFIG.PAGE_SIZE;
+
         searchHistoricalRecords(true);
+
       }
+
     });
+
   }
 
+
   if (nextPage) {
+
     nextPage.addEventListener("click", function() {
+
       const nextOffset =
         RECEIVING_STATE.offset + RECEIVING_CONFIG.PAGE_SIZE;
 
       if (nextOffset < RECEIVING_STATE.totalMessages) {
+
         RECEIVING_STATE.offset = nextOffset;
+
         searchHistoricalRecords(true);
+
       }
+
     });
+
   }
 
+
+  /******************************************************
+   * 6. HISTORICAL MESSAGE INTERACTIONS
+   ******************************************************/
+
   resultsContainer.addEventListener("click", function(event) {
+
     const link = event.target.closest("a");
+
     if (link) return;
 
     const card = event.target.closest("[data-message-index]");
+
     if (!card) return;
 
     const index = Number(card.dataset.messageIndex);
+
     const message = RECEIVING_STATE.results[index];
 
-    if (message) showMessageDetail(message);
+    if (message) {
+
+      showMessageDetail(message);
+
+    }
+
   });
 
+
   resultsContainer.addEventListener("keydown", function(event) {
+
     if (event.key !== "Enter" && event.key !== " ") return;
 
     const card = event.target.closest("[data-message-index]");
+
     if (!card) return;
 
     event.preventDefault();
@@ -620,21 +738,52 @@ if (copyButton) {
     const message =
       RECEIVING_STATE.results[Number(card.dataset.messageIndex)];
 
-    if (message) showMessageDetail(message);
+    if (message) {
+
+      showMessageDetail(message);
+
+    }
+
   });
 
+
+  /******************************************************
+   * 7. RECEIVING INTERFACE
+   ******************************************************/
+
   addReceivingStyles();
+
   updateSearchDescription();
-  
-  // Connect synchronization refresh button.
+
+
+  /******************************************************
+   * 8. SYNCHRONIZATION STATUS
+   ******************************************************/
+
   bindReceivingSyncButton();
-  
-  // Load synchronization status immediately.
+
   loadReceivingSyncStatus();
+
+
+  /******************************************************
+   * 9. MATERIAL RECEIVING MODULE
+   ******************************************************/
+
+  initializeMaterialReceivedDate();
+
   initializeMaterialItems();
+
   initializeMaterialFileSelection();
+
+
+  /******************************************************
+   * 10. INITIALIZATION COMPLETE
+   ******************************************************/
+
   console.info("Artemisa Receiving initialized.");
-  }
+
+}
+
 
 
 /* --------------------------------------------------
