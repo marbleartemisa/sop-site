@@ -230,6 +230,162 @@ function escapeMaterialHTML(value) {
 }
 
 
+function initializeMaterialItems() {
+
+  const container = document.getElementById('materialItemsContainer');
+  const addButton = document.getElementById('addMaterialItem');
+
+  if (!container || !addButton) {
+    console.warn('Material items editor elements not found.');
+    return;
+  }
+
+  if (container.dataset.initialized === 'true') return;
+
+  container.dataset.initialized = 'true';
+
+  addButton.addEventListener('click', function () {
+    addMaterialItemCard();
+  });
+
+  container.addEventListener('click', function (event) {
+
+    const removeButton = event.target.closest('.remove-material-item');
+
+    if (!removeButton) return;
+
+    const cards = container.querySelectorAll('.material-item-card');
+
+    if (cards.length <= 1) return;
+
+    removeButton.closest('.material-item-card').remove();
+
+    refreshMaterialItemCards();
+  });
+
+  refreshMaterialItemCards();
+}
+
+
+function addMaterialItemCard() {
+
+  const container = document.getElementById('materialItemsContainer');
+
+  if (!container) return;
+
+  const firstCard = container.querySelector('.material-item-card');
+
+  if (!firstCard) return;
+
+  const newCard = firstCard.cloneNode(true);
+
+  // Clear all fields in the new item
+  newCard.querySelectorAll('[data-field]').forEach(function (field) {
+    field.value = '';
+  });
+
+  container.appendChild(newCard);
+
+  refreshMaterialItemCards();
+
+  const description = newCard.querySelector('[data-field="ItemName"]');
+
+  if (description) description.focus();
+}
+
+
+function refreshMaterialItemCards() {
+
+  const container = document.getElementById('materialItemsContainer');
+
+  if (!container) return;
+
+  const cards = Array.from(
+    container.querySelectorAll('.material-item-card')
+  );
+
+  cards.forEach(function (card, index) {
+
+    const heading = card.querySelector('.material-item-heading');
+
+    if (!heading) return;
+
+    const title = heading.querySelector('h5');
+
+    if (title) {
+      title.textContent = 'Material ' + (index + 1);
+    }
+
+    // Remove an existing remove button before recreating it
+    const oldButton = heading.querySelector('.remove-material-item');
+
+    if (oldButton) oldButton.remove();
+
+    const removeButton = document.createElement('button');
+
+    removeButton.type = 'button';
+    removeButton.className = 'remove-material-item';
+    removeButton.textContent = 'Remove';
+    removeButton.setAttribute(
+      'aria-label',
+      'Remove Material ' + (index + 1)
+    );
+
+    removeButton.disabled = cards.length === 1;
+
+    heading.appendChild(removeButton);
+
+  });
+}
+
+
+function getMaterialItemsFromForm() {
+
+  const container = document.getElementById('materialItemsContainer');
+
+  if (!container) {
+    throw new Error('Material items container not found.');
+  }
+
+  const cards = container.querySelectorAll('.material-item-card');
+
+  const items = Array.from(cards).map(function (card) {
+
+    const item = {};
+
+    card.querySelectorAll('[data-field]').forEach(function (field) {
+
+      const fieldName = field.dataset.field;
+
+      item[fieldName] = field.value.trim();
+
+    });
+
+    item.Quantity = Number(item.Quantity);
+
+    return item;
+
+  });
+
+  if (!items.length) {
+    throw new Error('Add at least one material.');
+  }
+
+  items.forEach(function (item, index) {
+
+    if (!item.ItemName) {
+      throw new Error('Material ' + (index + 1) + ': description is required.');
+    }
+
+    if (!Number.isFinite(item.Quantity) || item.Quantity <= 0) {
+      throw new Error('Material ' + (index + 1) + ': enter a valid quantity.');
+    }
+
+  });
+
+  return items;
+}
+
 /* --------------------------------------------------
    INITIALIZATION
 -------------------------------------------------- */
@@ -384,6 +540,7 @@ if (copyButton) {
   
   // Load synchronization status immediately.
   loadReceivingSyncStatus();
+  initializeMaterialItems();
   initializeMaterialFileSelection();
   console.info("Artemisa Receiving initialized.");
   }
