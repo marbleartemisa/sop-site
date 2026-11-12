@@ -30,7 +30,204 @@ const OUTGOING_STATE = {
   lastSavedMessage: null
 };
 
+
+const MATERIAL_RECEIVING_STATE = {
+  selectedFiles: [],
+  existingFiles: [],
+  receiptId: null,
+  saving: false,
+  uploading: false
+};
+
+
 document.addEventListener("DOMContentLoaded", initializeReceiving);
+
+
+
+/********************************************************
+ * MATERIAL RECEIVING - FILE SELECTION
+ ********************************************************/
+
+function initializeMaterialFileSelection() {
+
+  const input = document.getElementById('materialReceiptFiles');
+  const dropzone = document.getElementById('materialFileDropzone');
+  const selectedContainer = document.getElementById('materialSelectedFiles');
+
+  if (!input || !dropzone || !selectedContainer) {
+    console.warn('Material Receiving file elements not found.');
+    return;
+  }
+
+  // Prevent duplicate event listeners
+  if (input.dataset.initialized === 'true') return;
+  input.dataset.initialized = 'true';
+
+  input.addEventListener('change', function() {
+    addMaterialFiles(Array.from(input.files || []));
+    input.value = '';
+  });
+
+  dropzone.addEventListener('dragover', function(event) {
+    event.preventDefault();
+    dropzone.classList.add('drag-over');
+  });
+
+  dropzone.addEventListener('dragleave', function(event) {
+    event.preventDefault();
+    dropzone.classList.remove('drag-over');
+  });
+
+  dropzone.addEventListener('drop', function(event) {
+    event.preventDefault();
+    dropzone.classList.remove('drag-over');
+
+    const files = Array.from(
+      event.dataTransfer.files || []
+    );
+
+    addMaterialFiles(files);
+  });
+
+  renderMaterialSelectedFiles();
+}
+
+
+/********************************************************
+ * ADD SELECTED FILES
+ ********************************************************/
+
+function addMaterialFiles(files) {
+
+  files.forEach(function(file) {
+
+    const alreadyAdded =
+      MATERIAL_RECEIVING_STATE.selectedFiles.some(function(existing) {
+        return existing.name === file.name &&
+          existing.size === file.size &&
+          existing.lastModified === file.lastModified;
+      });
+
+    if (!alreadyAdded) {
+      MATERIAL_RECEIVING_STATE.selectedFiles.push(file);
+    }
+
+  });
+
+  renderMaterialSelectedFiles();
+}
+
+
+/********************************************************
+ * RENDER SELECTED FILES
+ ********************************************************/
+
+function renderMaterialSelectedFiles() {
+
+  const container = document.getElementById(
+    'materialSelectedFiles'
+  );
+
+  if (!container) return;
+
+  const files = MATERIAL_RECEIVING_STATE.selectedFiles;
+
+  if (!files.length) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="selected-files-heading">
+      Selected files (${files.length})
+    </div>
+
+    <div class="selected-files-list">
+
+      ${files.map(function(file, index) {
+
+        const size = formatMaterialFileSize(file.size);
+
+        return `
+          <div class="selected-file-item">
+
+            <div class="selected-file-info">
+              <span class="selected-file-name">
+                ${escapeMaterialHTML(file.name)}
+              </span>
+
+              <span class="selected-file-size">
+                ${size}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              class="remove-material-file"
+              data-index="${index}"
+              aria-label="Remove ${escapeMaterialHTML(file.name)}"
+            >
+              ×
+            </button>
+
+          </div>
+        `;
+
+      }).join('')}
+
+    </div>
+  `;
+
+  container.querySelectorAll('.remove-material-file')
+    .forEach(function(button) {
+
+      button.addEventListener('click', function() {
+
+        const index = Number(button.dataset.index);
+
+        MATERIAL_RECEIVING_STATE.selectedFiles.splice(
+          index,
+          1
+        );
+
+        renderMaterialSelectedFiles();
+
+      });
+
+    });
+}
+
+
+/********************************************************
+ * FILE HELPERS
+ ********************************************************/
+
+function formatMaterialFileSize(bytes) {
+
+  if (bytes < 1024) return bytes + ' B';
+
+  if (bytes < 1024 * 1024) {
+    return (bytes / 1024).toFixed(1) + ' KB';
+  }
+
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+
+function escapeMaterialHTML(value) {
+
+  return String(value).replace(/[&<>"']/g, function(char) {
+
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char];
+
+  });
+}
 
 
 /* --------------------------------------------------
@@ -187,7 +384,7 @@ if (copyButton) {
   
   // Load synchronization status immediately.
   loadReceivingSyncStatus();
-  
+  initializeMaterialFileSelection();
   console.info("Artemisa Receiving initialized.");
   }
 
