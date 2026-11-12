@@ -1548,3 +1548,245 @@ button {
   }
 }
 
+
+/* ==================================================
+   RECEIVING - FILE UPLOAD & MOBILE EXPERIENCE
+================================================== */
+
+/* UPLOAD AREA */
+
+#receiptsView .material-file-dropzone {
+  border: 2px dashed #bdcddd;
+  border-radius: 12px;
+  background: #f7fafd;
+  padding: 32px 22px;
+  text-align: center;
+  transition: background .2s, border-color .2s;
+}
+
+#receiptsView .material-file-dropzone:hover {
+  background: #eff7fd;
+  border-color: var(--blue);
+}
+
+#receiptsView .upload-icon {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 15px;
+  border-radius: 15px;
+  background: #e4f1fc;
+  color: var(--blue);
+  font-size: 29px;
+  font-weight: 700;
+}
+
+#receiptsView .material-file-dropzone h4 {
+  color: var(--navy);
+  font-size: 15px;
+  margin: 0 0 9px;
+}
+
+#receiptsView .material-file-dropzone p {
+  max-width: 470px;
+  margin: 0 auto 19px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+#receiptsView .upload-select-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 22px;
+  cursor: pointer;
+}
+
+#receiptsView .upload-file-types {
+  margin-top: 17px;
+  color: #8492a5;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .8px;
+  line-height: 1.6;
+}
+
+/* SECONDARY BUTTON */
+
+#receiptsView .btn-secondary {
+  min-height: 43px;
+  padding: 0 18px;
+  border: 1px solid #d4dee9;
+  border-radius: 7px;
+  background: #fff;
+  color: #43566b;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+
+#receiptsView .btn-secondary:hover {
+  background: #f1f6fa;
+  border-color: #a9c5dd;
+}
+
+/* SELECTED FILES */
+
+#receiptsView .material-selected-files,
+#receiptsView .material-existing-files {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+
+#receiptsView .material-selected-files:empty,
+#receiptsView .material-existing-files:empty {
+  display: none;
+}
+
+/* FILE CARDS - compatible with future JS rendering */
+
+#receiptsView .material-selected-files > *,
+#receiptsView .material-existing-files > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* FEEDBACK */
+
+#receiptsView .form-feedback {
+  display: none;
+  margin-top: 18px;
+  padding: 13px 15px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+#receiptsView .form-feedback.success {
+  display: block;
+  color: #166534;
+  background: #edf8f0;
+  border: 1px solid #c9e9d1;
+}
+
+#receiptsView .form-feedback.error {
+  display: block;
+  color: #9f2929;
+  background: #fff1f0;
+  border: 1px solid #f2cccc;
+}
+
+/* FORM ACTIONS */
+
+#receiptsView .receiving-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+  padding-top: 22px;
+  border-top: 1px solid #e8edf3;
+}
+
+#receiptsView .receiving-form-actions .btn-primary {
+  min-height: 48px;
+  padding: 0 27px;
+}
+
+/* MOBILE FIRST ADJUSTMENTS */
+
+@media (max-width: 600px) {
+
+  #receiptsView .receiving-workspace {
+    gap: 14px;
+  }
+
+  #receiptsView .receiving-header {
+    padding: 22px 19px;
+    border-radius: 10px;
+  }
+
+  #receiptsView .receiving-header h2 {
+    font-size: 22px;
+  }
+
+  #receiptsView .receiving-search-panel,
+  #receiptsView .receiving-form-panel {
+    padding: 20px 16px;
+    border-radius: 10px;
+  }
+
+  #receiptsView .form-section {
+    padding: 19px 0;
+  }
+
+  #receiptsView .form-section-title {
+    margin-bottom: 17px;
+  }
+
+  #receiptsView .form-section-title h4 {
+    font-size: 14px;
+  }
+
+  #receiptsView .form-field {
+    gap: 8px;
+  }
+
+  #receiptsView .form-field label {
+    font-size: 12px;
+  }
+
+  #receiptsView .form-field input,
+  #receiptsView .form-field select {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  #receiptsView .form-field textarea {
+    min-height: 105px;
+    font-size: 16px;
+  }
+
+  #receiptsView .material-file-dropzone {
+    padding: 25px 14px;
+    border-radius: 10px;
+  }
+
+  #receiptsView .upload-icon {
+    width: 58px;
+    height: 58px;
+  }
+
+  #receiptsView .upload-select-button {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  #receiptsView .material-selected-files,
+  #receiptsView .material-existing-files {
+    grid-template-columns: 1fr;
+  }
+
+  #receiptsView .receiving-form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 10px;
+    padding-top: 18px;
+  }
+
+  #receiptsView .receiving-form-actions button {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  #receiptsView .receipt-id-label {
+    align-self: flex-start;
+  }
+}
