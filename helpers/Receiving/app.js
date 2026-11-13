@@ -267,7 +267,6 @@ function renderMaterialSelectedFiles() {
 
 }
 
-
 function readMaterialFileAsBase64(file) {
   return new Promise(function(resolve, reject) {
     const reader = new FileReader();
@@ -539,6 +538,7 @@ function refreshMaterialItemCards() {
 }
 
 
+
 async function saveMaterialReceipt(event) {
   event.preventDefault();
 
@@ -548,18 +548,75 @@ async function saveMaterialReceipt(event) {
 
   if (!form || MATERIAL_RECEIVING_STATE.saving) return;
 
-  if (MATERIAL_RECEIVING_STATE.receiptId) {
-  if (feedback) {
-        feedback.textContent =
-          'This receipt has already been saved. Receipt ID: ' +
-          MATERIAL_RECEIVING_STATE.receiptId;
-        feedback.className = 'receipt-feedback success';
+  try {
+
+    MATERIAL_RECEIVING_STATE.saving = true;
+
+    if (saveButton) {
+      saveButton.disabled = true;
+      saveButton.textContent = 'Processing...';
+    }
+
+    /*
+     * CASE 1:
+     * Receipt already exists.
+     * Only retry pending file uploads.
+     * Never create another receipt.
+     */
+    if (MATERIAL_RECEIVING_STATE.receiptId) {
+
+      const receiptId = MATERIAL_RECEIVING_STATE.receiptId;
+
+      if (!MATERIAL_RECEIVING_STATE.selectedFiles.length) {
+
+        if (feedback) {
+          feedback.textContent =
+            'Receipt already saved: ' + receiptId +
+            '. There are no pending files to upload.';
+
+          feedback.className = 'receipt-feedback success';
+        }
+
+        return;
       }
+
+      if (feedback) {
+        feedback.textContent = 'Retrying pending file uploads...';
+        feedback.className = 'receipt-feedback';
+      }
+
+      const uploadResult = await uploadPendingMaterialFiles(receiptId);
+
+      if (feedback) {
+
+        if (uploadResult.failed.length > 0) {
+
+          feedback.textContent =
+            'Receipt: ' + receiptId +
+            '. Files uploaded: ' + uploadResult.uploaded +
+            '. Files still pending: ' + uploadResult.failed.length +
+            '. Please retry again.';
+
+          feedback.className = 'receipt-feedback error';
+
+        } else {
+
+          feedback.textContent =
+            'Receipt: ' + receiptId +
+            '. All pending files uploaded successfully.';
+
+          feedback.className = 'receipt-feedback success';
+        }
+      }
+
       return;
     }
 
-  try {
-    // Validate the form and collect all material rows.
+    /*
+     * CASE 2:
+     * New receipt.
+     */
+
     if (!form.reportValidity()) return;
 
     const items = getMaterialItemsFromForm();
@@ -583,13 +640,6 @@ async function saveMaterialReceipt(event) {
       StorageLocation: document.getElementById('materialStorageLocation').value.trim(),
       Notes: document.getElementById('materialNotes').value.trim()
     };
-
-    MATERIAL_RECEIVING_STATE.saving = true;
-
-    if (saveButton) {
-      saveButton.disabled = true;
-      saveButton.textContent = 'Saving...';
-    }
 
     if (feedback) {
       feedback.textContent = 'Saving receipt and materials...';
@@ -620,40 +670,76 @@ async function saveMaterialReceipt(event) {
 
     const savedData = result.data;
 
+    if (!savedData || !savedData.ReceiptID) {
+      throw new Error('The server did not return a valid ReceiptID.');
+    }
+
+    // Store ReceiptID immediately to prevent duplicate creation.
     MATERIAL_RECEIVING_STATE.receiptId = savedData.ReceiptID;
 
-    const uploadResult = await uploadPendingMaterialFiles(
-    savedData.ReceiptID
-    );
-    
+    console.log('Material Receipt saved:', savedData);
+
+    /*
+     * Upload selected files after receipt creation.
+     */
+    let uploadResult = {
+      uploaded: 0,
+      failed: []
+    };
+
+    const selectedCount = MATERIAL_RECEIVING_STATE.selectedFiles.length;
+
+    if (selectedCount > 0) {
+
+      if (feedback) {
+        feedback.textContent =
+          'Receipt saved. Uploading ' + selectedCount + ' file(s)...';
+
+        feedback.className = 'receipt-feedback';
+      }
+
+      uploadResult = await uploadPendingMaterialFiles(savedData.ReceiptID);
+    }
+
+    /*
+     * Final feedback.
+     */
     if (feedback) {
+
       let message =
         'Receipt saved successfully. Receipt ID: ' +
         savedData.ReceiptID +
         ' | Materials saved: ' +
         savedData.ItemCount + '.';
-    
-      if (uploadResult.uploaded > 0) {
-        message += ' Files uploaded: ' + uploadResult.uploaded + '.';
-      }
-    
-      if (uploadResult.failed.length > 0) {
+
+      if (selectedCount === 0) {
+
+        message += ' No attachments were selected.';
+
+        feedback.className = 'receipt-feedback success';
+
+      } else if (uploadResult.failed.length > 0) {
+
         message +=
-          ' Files pending: ' + uploadResult.failed.length +
-          '. Please retry the remaining files.';
+          ' Files uploaded: ' + uploadResult.uploaded +
+          '. Files pending: ' + uploadResult.failed.length +
+          '. Press Save again to retry the pending files.';
+
         feedback.className = 'receipt-feedback error';
-    
+
       } else {
-        message += ' All attachments uploaded successfully.';
+
+        message +=
+          ' Files uploaded successfully: ' + uploadResult.uploaded + '.';
+
         feedback.className = 'receipt-feedback success';
       }
-    
+
       feedback.textContent = message;
     }
 
-    console.log('Material Receipt saved:', savedData);
-
   } catch (error) {
+
     console.error('Material Receipt save error:', error);
 
     if (feedback) {
@@ -662,6 +748,7 @@ async function saveMaterialReceipt(event) {
     }
 
   } finally {
+
     MATERIAL_RECEIVING_STATE.saving = false;
 
     if (saveButton) {
@@ -670,6 +757,7 @@ async function saveMaterialReceipt(event) {
     }
   }
 }
+
 
 function getMaterialItemsFromForm() {
 
