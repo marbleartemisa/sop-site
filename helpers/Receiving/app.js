@@ -104,6 +104,86 @@ function initializeMaterialFileSelection() {
 
 }
 
+/********************************************************
+ * INICIALIZAR SCANNER
+ ********************************************************/
+
+function initializeMaterialScanner() {
+
+  const container = document.getElementById('materialItemsContainer');
+
+  if (!container || container.dataset.scannerInitialized === 'true') {
+    return;
+  }
+
+  container.dataset.scannerInitialized = 'true';
+
+  // Open the device camera or photo selector
+  container.addEventListener('click', function(event) {
+
+    const button = event.target.closest('[data-action="scan-label"]');
+
+    if (!button) return;
+
+    const card = button.closest('.material-item-card');
+
+    if (!card) return;
+
+    const input = card.querySelector('[data-scan-input]');
+
+    if (!input) return;
+
+    // Open camera / image selector from a direct user action
+    input.click();
+
+  });
+
+  // Receive the captured photograph
+  container.addEventListener('change', function(event) {
+
+    const input = event.target;
+
+    if (!input.matches('[data-scan-input]')) return;
+
+    const file = input.files && input.files[0];
+
+    if (!file) return;
+
+    const card = input.closest('.material-item-card');
+
+    if (!card) return;
+
+    const status = card.querySelector('[data-scan-status]');
+
+    if (!file.type.startsWith('image/')) {
+
+      if (status) {
+        status.textContent = 'Please select a valid image.';
+      }
+
+      input.value = '';
+      return;
+    }
+
+    // Keep the original image associated with this item
+    card._scanLabelFile = file;
+
+    if (status) {
+      status.textContent =
+        'Label photo captured: ' + file.name +
+        '. Ready for identification.';
+    }
+
+    // Allow selecting the same image again
+    input.value = '';
+
+    console.log('MATERIAL LABEL PHOTO:', file.name);
+    console.log('ASSOCIATED ITEM:', card);
+
+  });
+
+}
+
 
 /********************************************************
  * MATERIAL RECEIVING - DEFAULT DATE
@@ -1120,10 +1200,9 @@ function initializeReceiving() {
    ******************************************************/
 
   initializeMaterialReceivedDate();
-
   initializeMaterialItems();
-
   initializeMaterialFileSelection();
+  initializeMaterialScanner();
 
   const materialReceiptForm = document.getElementById('materialReceiptForm');
   
