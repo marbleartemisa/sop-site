@@ -268,6 +268,135 @@ function renderMaterialSelectedFiles() {
 }
 
 
+function readMaterialFileAsBase64(file) {
+  return new Promise(function(resolve, reject) {
+    const reader = new FileReader();
+
+    reader.onload = function() {
+      const result = String(reader.result || '');
+      const commaIndex = result.indexOf(',');
+
+      if (commaIndex === -1) {
+        reject(new Error('Could not read file: ' + file.name));
+        return;
+      }
+
+      resolve(result.substring(commaIndex + 1));
+    };
+
+    reader.onerror = function() {
+      reject(new Error('Error reading file: ' + file.name));
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+
+async function uploadMaterialReceiptFile(receiptId, file) {
+  if (!receiptId) {
+    throw new Error('ReceiptID is required for file upload.');
+  }
+
+  if (file.size > 8 * 1024 * 1024) {
+    throw new Error(file.name + ' exceeds the 8 MB limit.');
+  }
+
+  const base64 = await readMaterialFileAsBase64(file);
+
+  const payload = {
+    ReceiptID: receiptId,
+    FileName: file.name,
+    MimeType: file.type || 'application/octet-stream',
+    SizeBytes: file.size,
+    Base64: base64
+  };
+
+  const response = await fetch(RECEIVING_CONFIG.API_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      method: 'POST',
+      action: 'UPLOAD_RECEIPT_FILES',
+      data: payload
+    })
+  });
+
+  const result = await response.json();
+
+  if (!result.ok) {
+    throw new Error(result.error || 'Upload failed: ' + file.name);
+  }
+
+  return result.data;
+}
+
+
+async function uploadPendingMaterialFiles(receiptId) {
+  const files = MATERIAL_RECEIVING_STATE.selectedFiles.slice();
+
+  if (!files.length) {
+    return {
+      uploaded: 0,
+      failed: []
+    };
+  }
+
+  MATERIAL_RECEIVING_STATE.uploading = true;
+
+  const feedback = document.getElementById('materialReceiptFeedback');
+
+  let uploaded = 0;
+  const failed = [];
+
+  try {
+    for (const file of files) {
+      try {
+        if (feedback) {
+          feedback.textContent =
+            'Uploading files: ' + (uploaded + 1) + ' of ' + files.length +
+            ' — ' + file.name;
+        }
+
+        const savedFile = await uploadMaterialReceiptFile(receiptId, file);
+
+        uploaded++;
+
+        // Remove only the successfully uploaded file.
+        const index = MATERIAL_RECEIVING_STATE.selectedFiles.indexOf(file);
+
+        if (index !== -1) {
+          MATERIAL_RECEIVING_STATE.selectedFiles.splice(index, 1);
+        }
+
+        if (savedFile) {
+          MATERIAL_RECEIVING_STATE.existingFiles.push(savedFile);
+        }
+
+        renderMaterialSelectedFiles();
+
+      } catch (error) {
+        console.error('File upload failed:', file.name, error);
+        failed.push({
+          name: file.name,
+          error: error.message
+        });
+      }
+    }
+
+  } finally {
+    MATERIAL_RECEIVING_STATE.uploading = false;
+  }
+
+  return {
+    uploaded: uploaded,
+    failed: failed
+  };
+}
+
 
 /********************************************************
  * FILE HELPERS
@@ -493,15 +622,33 @@ async function saveMaterialReceipt(event) {
 
     MATERIAL_RECEIVING_STATE.receiptId = savedData.ReceiptID;
 
+    const uploadResult = await uploadPendingMaterialFiles(
+    savedData.ReceiptID
+    );
+    
     if (feedback) {
-      feedback.textContent =
+      let message =
         'Receipt saved successfully. Receipt ID: ' +
         savedData.ReceiptID +
         ' | Materials saved: ' +
-        savedData.ItemCount +
-        '. Attachments have not been uploaded yet.';
-
-      feedback.className = 'receipt-feedback success';
+        savedData.ItemCount + '.';
+    
+      if (uploadResult.uploaded > 0) {
+        message += ' Files uploaded: ' + uploadResult.uploaded + '.';
+      }
+    
+      if (uploadResult.failed.length > 0) {
+        message +=
+          ' Files pending: ' + uploadResult.failed.length +
+          '. Please retry the remaining files.';
+        feedback.className = 'receipt-feedback error';
+    
+      } else {
+        message += ' All attachments uploaded successfully.';
+        feedback.className = 'receipt-feedback success';
+      }
+    
+      feedback.textContent = message;
     }
 
     console.log('Material Receipt saved:', savedData);
