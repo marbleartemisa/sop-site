@@ -410,6 +410,110 @@ function refreshMaterialItemCards() {
 }
 
 
+async function saveMaterialReceipt(event) {
+  event.preventDefault();
+
+  const form = document.getElementById('materialReceiptForm');
+  const saveButton = document.getElementById('saveMaterialReceipt');
+  const feedback = document.getElementById('materialReceiptFeedback');
+
+  if (!form || MATERIAL_RECEIVING_STATE.saving) return;
+
+  try {
+    // Validate the form and collect all material rows.
+    if (!form.reportValidity()) return;
+
+    const items = getMaterialItemsFromForm();
+
+    const receipt = {
+      ReceiptDate: document.getElementById('materialReceivedDate').value,
+      ReceivedBy: document.getElementById('materialReceivedBy').value.trim(),
+      OriginType: document.getElementById('materialOriginType').value,
+      Supplier: document.getElementById('materialSupplier').value.trim(),
+      ShipFrom: document.getElementById('materialShipFrom').value.trim(),
+      Sender: document.getElementById('materialSender').value.trim(),
+      Carrier: document.getElementById('materialCarrier').value.trim(),
+      TrackingNumber: document.getElementById('materialTracking').value.trim(),
+      PONumber: document.getElementById('materialPO').value.trim(),
+      InvoiceNumber: document.getElementById('materialInvoice').value.trim(),
+      Project: document.getElementById('materialProject').value,
+      ReceiptType: 'MATERIAL_RECEIVING',
+      Status: 'RECEIVED',
+      Condition: document.getElementById('materialReceivedCondition').value,
+      OriginalText: document.getElementById('materialOriginalText').value.trim(),
+      StorageLocation: document.getElementById('materialStorageLocation').value.trim(),
+      Notes: document.getElementById('materialNotes').value.trim()
+    };
+
+    MATERIAL_RECEIVING_STATE.saving = true;
+
+    if (saveButton) {
+      saveButton.disabled = true;
+      saveButton.textContent = 'Saving...';
+    }
+
+    if (feedback) {
+      feedback.textContent = 'Saving receipt and materials...';
+      feedback.className = 'receipt-feedback';
+    }
+
+    const response = await fetch(RECEIVING_CONFIG.API_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        method: 'POST',
+        action: 'CREATE_RECEIPT_WITH_ITEMS',
+        data: {
+          receipt: receipt,
+          items: items
+        }
+      })
+    });
+
+    const result = await response.json();
+
+    if (!result.ok) {
+      throw new Error(result.error || 'Could not save the receipt.');
+    }
+
+    const savedData = result.data;
+
+    MATERIAL_RECEIVING_STATE.receiptId = savedData.ReceiptID;
+
+    if (feedback) {
+      feedback.textContent =
+        'Receipt saved successfully. Receipt ID: ' +
+        savedData.ReceiptID +
+        ' | Materials saved: ' +
+        savedData.ItemCount +
+        '. Attachments have not been uploaded yet.';
+
+      feedback.className = 'receipt-feedback success';
+    }
+
+    console.log('Material Receipt saved:', savedData);
+
+  } catch (error) {
+    console.error('Material Receipt save error:', error);
+
+    if (feedback) {
+      feedback.textContent = 'Error: ' + error.message;
+      feedback.className = 'receipt-feedback error';
+    }
+
+  } finally {
+    MATERIAL_RECEIVING_STATE.saving = false;
+
+    if (saveButton) {
+      saveButton.disabled = false;
+      saveButton.textContent = 'Save Material Receipt';
+    }
+  }
+}
+
 function getMaterialItemsFromForm() {
 
   const container = document.getElementById('materialItemsContainer');
@@ -775,7 +879,12 @@ function initializeReceiving() {
 
   initializeMaterialFileSelection();
 
-
+  const materialReceiptForm = document.getElementById('materialReceiptForm');
+  
+  if (materialReceiptForm && !materialReceiptForm.dataset.saveInitialized) {
+    materialReceiptForm.addEventListener('submit', saveMaterialReceipt);
+    materialReceiptForm.dataset.saveInitialized = 'true';
+  }
   /******************************************************
    * 10. INITIALIZATION COMPLETE
    ******************************************************/
