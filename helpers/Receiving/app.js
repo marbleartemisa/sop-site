@@ -419,6 +419,16 @@ async function saveMaterialReceipt(event) {
 
   if (!form || MATERIAL_RECEIVING_STATE.saving) return;
 
+  if (MATERIAL_RECEIVING_STATE.receiptId) {
+  if (feedback) {
+        feedback.textContent =
+          'This receipt has already been saved. Receipt ID: ' +
+          MATERIAL_RECEIVING_STATE.receiptId;
+        feedback.className = 'receipt-feedback success';
+      }
+      return;
+    }
+
   try {
     // Validate the form and collect all material rows.
     if (!form.reportValidity()) return;
