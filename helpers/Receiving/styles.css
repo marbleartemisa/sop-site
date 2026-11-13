@@ -1839,3 +1839,41 @@ button {
   border-color: #d9534f;
   color: #ff7777;
 }
+
+
+.material-scan-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.material-scan-button svg {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.material-scan-button:hover {
+  filter: brightness(1.15);
+}
+
+@media (max-width: 600px) {
+  .material-scan-button {
+    width: 100%;
+    min-height: 58px;
+    font-size: 14px;
+  }
+
+  .material-scan-button svg {
+    width: 32px;
+    height: 32px;
+  }
+}
