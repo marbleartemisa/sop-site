@@ -293,6 +293,7 @@ function readMaterialFileAsBase64(file) {
 
 
 async function uploadMaterialReceiptFile(receiptId, file) {
+
   if (!receiptId) {
     throw new Error('ReceiptID is required for file upload.');
   }
@@ -307,7 +308,6 @@ async function uploadMaterialReceiptFile(receiptId, file) {
     ReceiptID: receiptId,
     FileName: file.name,
     MimeType: file.type || 'application/octet-stream',
-    SizeBytes: file.size,
     Base64: base64
   };
 
@@ -332,6 +332,7 @@ async function uploadMaterialReceiptFile(receiptId, file) {
 
   return result.data;
 }
+
 
 
 async function uploadPendingMaterialFiles(receiptId) {
