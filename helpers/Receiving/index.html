@@ -537,86 +537,186 @@
               received for each item. You can add as many items as necessary.
             </p>
           
-            <div id="materialItemsContainer">
+
+          <div id="materialItemsContainer">
           
-              <!-- Initial item -->
-              <div class="material-item-card">
+            <!-- Initial item -->
+            <div class="material-item-card">
           
-                <div class="material-item-heading">
-                  <h5>Material 1</h5>
+              <div class="material-item-heading">
+                <h5>Material 1</h5>
+              </div>
+          
+              <!-- SMART MATERIAL IDENTIFICATION -->
+              <div class="material-scan-section">
+          
+                <div class="material-scan-heading">
+                  <div>
+                    <strong>Material Identification</strong>
+                    <small>Read a barcode or photograph the product label.</small>
+                  </div>
+                </div>
+          
+                <button
+                  type="button"
+                  class="btn-secondary material-scan-button"
+                  data-action="scan-label"
+                >
+                  <span aria-hidden="true">📷</span>
+                  Scan Barcode / Label
+                </button>
+          
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  data-scan-input
+                  hidden
+                >
+          
+                <div class="material-scan-status" data-scan-status>
+                  No label scanned. You can also enter the information manually.
+                </div>
+          
+              </div>
+          
+              <!-- MATERIAL DESCRIPTION -->
+              <div class="form-field">
+                <label>Material Description *</label>
+                <textarea
+                  data-field="ItemName"
+                  rows="2"
+                  required
+                  placeholder="Describe the material, hardware, model or product..."
+                ></textarea>
+              </div>
+          
+              <!-- QUANTITY AND BASIC INFORMATION -->
+              <div class="form-grid">
+          
+                <div class="form-field">
+                  <label>Quantity *</label>
+                  <input
+                    type="number"
+                    data-field="Quantity"
+                    min="0.01"
+                    step="any"
+                    required
+                    placeholder="Qty"
+                  >
                 </div>
           
                 <div class="form-field">
-                  <label>Material Description *</label>
-                  <textarea
-                    data-field="ItemName"
-                    rows="2"
-                    required
-                    placeholder="Describe the material, hardware, model or product..."
-                  ></textarea>
+                  <label>Unit</label>
+                  <select data-field="Unit">
+                    <option value="">Select unit</option>
+                    <option value="SLABS">Slabs</option>
+                    <option value="PIECES">Pieces</option>
+                    <option value="BOXES">Boxes</option>
+                    <option value="BUNDLES">Bundles</option>
+                    <option value="KITS">Kits</option>
+                    <option value="SETS">Sets</option>
+                    <option value="UNITS">Units</option>
+                    <option value="OTHER">Other</option>
+                  </select>
                 </div>
           
-                <div class="form-grid">
+                <div class="form-field">
+                  <label>Material / Category</label>
+                  <input
+                    type="text"
+                    data-field="Material"
+                    placeholder="Stone, hardware, cabinet, accessory..."
+                  >
+                </div>
           
-                  <div class="form-field">
-                    <label>Quantity *</label>
-                    <input
-                      type="number"
-                      data-field="Quantity"
-                      min="0.01"
-                      step="any"
-                      required
-                      placeholder="Qty"
-                    >
-                  </div>
+                <div class="form-field">
+                  <label>Brand</label>
+                  <input
+                    type="text"
+                    data-field="Brand"
+                    placeholder="Brand"
+                  >
+                </div>
           
-                  <div class="form-field">
-                    <label>Unit</label>
-                    <select data-field="Unit">
-                      <option value="">Select unit</option>
-                      <option value="SLABS">Slabs</option>
-                      <option value="PIECES">Pieces</option>
-                      <option value="BOXES">Boxes</option>
-                      <option value="BUNDLES">Bundles</option>
-                      <option value="KITS">Kits</option>
-                      <option value="SETS">Sets</option>
-                      <option value="UNITS">Units</option>
-                      <option value="OTHER">Other</option>
-                    </select>
-                  </div>
+                <div class="form-field">
+                  <label>Manufacturer</label>
+                  <input
+                    type="text"
+                    data-field="Manufacturer"
+                    placeholder="Manufacturer"
+                  >
+                </div>
           
-                  <div class="form-field">
-                    <label>Material / Category</label>
-                    <input
-                      type="text"
-                      data-field="Material"
-                      placeholder="Stone, hardware, cabinet, accessory..."
-                    >
-                  </div>
+                <div class="form-field">
+                  <label>Model / SKU / Reference</label>
+                  <input
+                    type="text"
+                    data-field="Model"
+                    placeholder="Model number, SKU or reference"
+                  >
+                </div>
           
-                  <div class="form-field">
-                    <label>Brand</label>
-                    <input
-                      type="text"
-                      data-field="Brand"
-                      placeholder="Manufacturer / Brand"
-                    >
-                  </div>
+                <div class="form-field">
+                  <label>Barcode</label>
+                  <input
+                    type="text"
+                    data-field="Barcode"
+                    placeholder="Barcode number"
+                  >
+                </div>
           
-                  <div class="form-field">
-                    <label>Model / SKU / Reference</label>
-                    <input
-                      type="text"
-                      data-field="Model"
-                      placeholder="Model number, SKU or color reference"
-                    >
-                  </div>
+                <div class="form-field">
+                  <label>Color</label>
+                  <input
+                    type="text"
+                    data-field="Color"
+                    placeholder="Color / Design"
+                  >
+                </div>
           
+                <div class="form-field">
+                  <label>Thickness</label>
+                  <input
+                    type="text"
+                    data-field="Thickness"
+                    placeholder="e.g. 19 mm / 3/4 inch"
+                  >
+                </div>
+          
+                <div class="form-field">
+                  <label>Dimensions</label>
+                  <input
+                    type="text"
+                    data-field="Dimensions"
+                    placeholder="Length × Width × Thickness"
+                  >
+                </div>
+          
+                <div class="form-field">
+                  <label>Finish</label>
+                  <input
+                    type="text"
+                    data-field="Finish"
+                    placeholder="Finish / Texture"
+                  >
+                </div>
+          
+                <div class="form-field">
+                  <label>Lot Number</label>
+                  <input
+                    type="text"
+                    data-field="LotNumber"
+                    placeholder="Lot / Batch"
+                  >
                 </div>
           
               </div>
           
             </div>
+          
+          </div>
+
           
             <button
               type="button"
