@@ -108,17 +108,84 @@ function initializeMaterialFileSelection() {
  * INICIALIZAR SCANNER
  ********************************************************/
 
-async function analyzeMaterialLabelWithAI(file) {
+async function compressMaterialLabelImage(file) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
 
+    image.onload = function() {
+      try {
+        const maxDimension = 2000;
+        const scale = Math.min(
+          1,
+          maxDimension / Math.max(image.width, image.height)
+        );
+
+        const canvas = document.createElement('canvas');
+
+        canvas.width = Math.round(image.width * scale);
+        canvas.height = Math.round(image.height * scale);
+
+        const context = canvas.getContext('2d');
+
+        context.drawImage(
+          image, 0, 0, canvas.width, canvas.height
+        );
+
+        canvas.toBlob(
+          function(blob) {
+            URL.revokeObjectURL(objectUrl);
+
+            if (!blob) {
+              reject(new Error('Image compression failed.'));
+              return;
+            }
+
+            resolve(blob);
+          },
+          'image/jpeg',
+          0.88
+        );
+
+      } catch (error) {
+        URL.revokeObjectURL(objectUrl);
+        reject(error);
+      }
+    };
+
+    image.onerror = function() {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Could not read the label photograph.'));
+    };
+
+    image.src = objectUrl;
+  });
+}
+
+
+async function analyzeMaterialLabelWithAI(file) {
   if (!file) {
     throw new Error('No label photograph was selected.');
   }
 
-  if (file.size > 8 * 1024 * 1024) {
-    throw new Error('The photograph exceeds the 8 MB limit.');
+  if (file.size > 20 * 1024 * 1024) {
+    throw new Error('Original photograph exceeds 20 MB.');
   }
 
-  const base64 = await readMaterialFileAsBase64(file);
+  // Compress image before sending it to Gemini.
+  const compressedImage = await compressMaterialLabelImage(file);
+
+  if (compressedImage.size > 8 * 1024 * 1024) {
+    throw new Error('Compressed photograph exceeds 8 MB.');
+  }
+
+  console.log('Original image:', 
+    (file.size / 1024).toFixed(0), 'KB');
+
+  console.log('Compressed image:',
+    (compressedImage.size / 1024).toFixed(0), 'KB');
+
+  const base64 = await readMaterialFileAsBase64(compressedImage);
 
   const response = await fetch(RECEIVING_CONFIG.API_URL, {
     method: 'POST',
@@ -131,7 +198,7 @@ async function analyzeMaterialLabelWithAI(file) {
       action: 'ANALYZE_MATERIAL_LABEL',
       data: {
         imageBase64: base64,
-        mimeType: file.type
+        mimeType: 'image/jpeg'
       }
     })
   });
@@ -146,6 +213,7 @@ async function analyzeMaterialLabelWithAI(file) {
 
   return responseData.data.result;
 }
+
 
 
 
