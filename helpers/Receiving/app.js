@@ -210,7 +210,11 @@ async function analyzeMaterialLabelWithAI(file) {
       responseData.error || 'Gemini identification failed.'
     );
   }
-
+    console.log(
+      'GEMINI SERVER TIME:',
+      responseData.data.timing.geminiMs / 1000,
+      'seconds'
+    );
   return responseData.data.result;
 }
 
