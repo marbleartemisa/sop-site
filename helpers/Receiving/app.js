@@ -108,6 +108,48 @@ function initializeMaterialFileSelection() {
  * INICIALIZAR SCANNER
  ********************************************************/
 
+async function analyzeMaterialLabelWithAI(file) {
+
+  if (!file) {
+    throw new Error('No label photograph was selected.');
+  }
+
+  if (file.size > 8 * 1024 * 1024) {
+    throw new Error('The photograph exceeds the 8 MB limit.');
+  }
+
+  const base64 = await readMaterialFileAsBase64(file);
+
+  const response = await fetch(RECEIVING_CONFIG.API_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      method: 'POST',
+      action: 'ANALYZE_MATERIAL_LABEL',
+      data: {
+        imageBase64: base64,
+        mimeType: file.type
+      }
+    })
+  });
+
+  const responseData = await response.json();
+
+  if (!responseData.ok) {
+    throw new Error(
+      responseData.error || 'Gemini identification failed.'
+    );
+  }
+
+  return responseData.data.result;
+}
+
+
+
+
 function initializeMaterialScanner() {
 
   const container = document.getElementById('materialItemsContainer');
@@ -118,71 +160,123 @@ function initializeMaterialScanner() {
 
   container.dataset.scannerInitialized = 'true';
 
-  // Open the device camera or photo selector
+  // Open camera
   container.addEventListener('click', function(event) {
 
     const button = event.target.closest('[data-action="scan-label"]');
-
     if (!button) return;
 
     const card = button.closest('.material-item-card');
-
     if (!card) return;
 
     const input = card.querySelector('[data-scan-input]');
-
-    if (!input) return;
-
-    // Open camera / image selector from a direct user action
-    input.click();
+    if (input) input.click();
 
   });
 
-  // Receive the captured photograph
-  container.addEventListener('change', function(event) {
+  // Receive photograph and analyze it with Gemini
+  container.addEventListener('change', async function(event) {
 
     const input = event.target;
 
     if (!input.matches('[data-scan-input]')) return;
 
     const file = input.files && input.files[0];
-
     if (!file) return;
 
     const card = input.closest('.material-item-card');
-
     if (!card) return;
 
     const status = card.querySelector('[data-scan-status]');
+    const button = card.querySelector('[data-action="scan-label"]');
 
     if (!file.type.startsWith('image/')) {
-
-      if (status) {
-        status.textContent = 'Please select a valid image.';
-      }
-
+      if (status) status.textContent = 'Please select a valid image.';
       input.value = '';
       return;
     }
 
-    // Keep the original image associated with this item
-    card._scanLabelFile = file;
-
-    if (status) {
-      status.textContent =
-        'Label photo captured: ' + file.name +
-        '. Ready for identification.';
+    if (file.size > 8 * 1024 * 1024) {
+      if (status) status.textContent = 'Image exceeds the 8 MB limit.';
+      input.value = '';
+      return;
     }
 
-    // Allow selecting the same image again
+    // Preserve original photograph for later Drive upload
+    card._scanLabelFile = file;
     input.value = '';
 
-    console.log('MATERIAL LABEL PHOTO:', file.name);
-    console.log('ASSOCIATED ITEM:', card);
+    if (button) button.disabled = true;
+
+    if (status) {
+      status.textContent = 'Analyzing product label with Gemini AI...';
+    }
+
+    try {
+
+      const result = await analyzeMaterialLabelWithAI(file);
+
+      const fieldMap = {
+        ItemName: 'itemName',
+        Material: 'material',
+        Brand: 'brand',
+        Manufacturer: 'manufacturer',
+        Model: 'model',
+        Barcode: 'barcode',
+        Color: 'color',
+        Thickness: 'thickness',
+        Dimensions: 'dimensions',
+        Finish: 'finish',
+        LotNumber: 'lotNumber'
+      };
+
+      // Fill the corresponding material card
+      Object.keys(fieldMap).forEach(function(fieldName) {
+
+        const field = card.querySelector(
+          '[data-field="' + fieldName + '"]'
+        );
+
+        const value = result[fieldMap[fieldName]];
+
+        if (field && value) {
+          field.value = value;
+          field.dispatchEvent(new Event('input', { bubbles: true }));
+          field.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+      });
+
+      // Preserve additional AI information for review
+      card._aiProductDescription = result.productDescription || '';
+      card._aiHandlingInstructions = result.handlingInstructions || '';
+      card._aiConfidenceNotes = result.confidenceNotes || '';
+
+      if (status) {
+        status.textContent =
+          'AI identification complete. Please review the information.';
+      }
+
+      console.log('GEMINI IDENTIFICATION:', result);
+
+    } catch (error) {
+
+      console.error('GEMINI IDENTIFICATION ERROR:', error);
+
+      if (status) {
+        status.textContent = 'AI identification failed: ' + error.message;
+      }
+
+    } finally {
+
+      if (button) button.disabled = false;
+
+    }
 
   });
 
 }
+
 
 
 /********************************************************
