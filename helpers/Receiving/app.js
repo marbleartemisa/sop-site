@@ -220,6 +220,46 @@ async function analyzeMaterialLabelWithAI(file) {
 
 
 
+async function analyzeMaterialTextWithAI(text) {
+
+  if (!text || !text.trim()) {
+    throw new Error('Please paste the Google Lens product description.');
+  }
+
+  const response = await fetch(RECEIVING_CONFIG.API_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      method: 'POST',
+      action: 'ANALYZE_MATERIAL_TEXT',
+      data: {
+        text: text.trim()
+      }
+    })
+  });
+
+  const responseData = await response.json();
+
+  if (!responseData.ok) {
+    throw new Error(
+      responseData.error || 'Product text identification failed.'
+    );
+  }
+
+  if (responseData.data.timing) {
+    console.log(
+      'GEMINI TEXT SERVER TIME:',
+      (responseData.data.timing.geminiMs / 1000).toFixed(2),
+      'seconds'
+    );
+  }
+
+  return responseData.data.result;
+}
+
 
 
 function initializeMaterialScanner() {
@@ -245,6 +285,110 @@ function initializeMaterialScanner() {
     if (input) input.click();
 
   });
+
+  // Analyze Google Lens text
+container.addEventListener('click', async function(event) {
+
+  const button = event.target.closest(
+    '[data-action="analyze-material-text"]'
+  );
+
+  if (!button) return;
+
+  const card = button.closest('.material-item-card');
+  if (!card) return;
+
+  const textArea = card.querySelector('[data-lens-text]');
+  const status = card.querySelector('[data-text-status]');
+
+  const sourceText = textArea ? textArea.value.trim() : '';
+
+  if (!sourceText) {
+    if (status) {
+      status.textContent = 'Please paste the Google Lens text first.';
+    }
+    return;
+  }
+
+  button.disabled = true;
+
+  if (status) {
+    status.textContent = 'Identifying product and analyzing its purpose...';
+  }
+
+  try {
+
+    const result = await analyzeMaterialTextWithAI(sourceText);
+
+    const fieldMap = {
+      ItemName: 'itemName',
+      Material: 'material',
+      Brand: 'brand',
+      Manufacturer: 'manufacturer',
+      Model: 'model',
+      Barcode: 'barcode',
+      Color: 'color',
+      Thickness: 'thickness',
+      Dimensions: 'dimensions',
+      Finish: 'finish',
+      LotNumber: 'lotNumber'
+    };
+
+    Object.keys(fieldMap).forEach(function(fieldName) {
+
+      const field = card.querySelector(
+        '[data-field="' + fieldName + '"]'
+      );
+
+      const value = result[fieldMap[fieldName]];
+
+      if (field && value) {
+        field.value = value;
+
+        field.dispatchEvent(
+          new Event('input', { bubbles: true })
+        );
+
+        field.dispatchEvent(
+          new Event('change', { bubbles: true })
+        );
+      }
+
+    });
+
+    // Preserve additional information for review
+    card._aiProductCode = result.productCode || '';
+    card._aiPackageQuantity = result.packageQuantity || '';
+    card._aiPackageUnit = result.packageUnit || '';
+    card._aiPackageType = result.packageType || '';
+
+    card._aiProductDescription = result.productDescription || '';
+    card._aiHandlingInstructions = result.handlingInstructions || '';
+    card._aiConfidenceNotes = result.confidenceNotes || '';
+
+    if (status) {
+      status.textContent =
+        'Product identified successfully. Please review the information.';
+    }
+
+    console.log('GEMINI TEXT IDENTIFICATION:', result);
+
+  } catch (error) {
+
+    console.error('GEMINI TEXT IDENTIFICATION ERROR:', error);
+
+    if (status) {
+      status.textContent =
+        'Product identification failed: ' + error.message;
+    }
+
+  } finally {
+
+    button.disabled = false;
+
+  }
+
+});
 
   // Receive photograph and analyze it with Gemini
   container.addEventListener('change', async function(event) {
