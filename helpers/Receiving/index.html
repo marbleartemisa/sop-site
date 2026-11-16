@@ -593,6 +593,37 @@
                 <div class="material-scan-status" data-scan-status>
                   No label scanned. You can also enter the information manually.
                 </div>
+
+                <!-- GOOGLE LENS TEXT IDENTIFICATION -->
+                  <div class="material-lens-section">
+                  
+                    <div class="form-field">
+                      <label>Product Identification – Google Lens</label>
+                  
+                      <textarea
+                        data-lens-text
+                        rows="4"
+                        placeholder="Paste the complete Google Lens description here. Include product name, purpose, specifications, components, model and other details..."
+                      ></textarea>
+                    </div>
+                  
+                    <button
+                      type="button"
+                      class="btn-secondary"
+                      data-action="analyze-material-text"
+                    >
+                      <span>IDENTIFY PRODUCT FROM TEXT</span>
+                    </button>
+                  
+                    <div
+                      class="material-scan-status"
+                      data-text-status
+                      aria-live="polite"
+                    >
+                      Paste the product information to identify this material.
+                    </div>
+                  
+                  </div>
           
               </div>
           
